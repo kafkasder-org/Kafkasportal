@@ -1,0 +1,132 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+!.env.production.example
+
+# local IDE settings (contains secrets)
+.vscode/settings.local.json
+
+# vercel
+.vercel
+.vercel.json
+
+# deployment artifacts
+.env.vercel
+.env.production
+.vercel-build-output/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+
+.cursor/rules/kluster-code-verify.mdc
+.kluster
+
+# test results
+/test-results/
+*.test-results
+
+# code quality reports
+/jscpd-report/
+
+# lint output files (temporary files created by IDE or tools)
+lint-*.txt
+lint-output.txt
+lint-current.txt
+*-output.txt
+*-current.txt
+
+# temporary documentation files
+.analysis-progress.md
+.devam-progress.md
+.progress-update.txt
+.roomodes
+REFACTORING_PLAN.md
+REFACTORING_SUMMARY.md
+
+# obsolete documentation
+COMPONENT_GUIDE.md
+DOCUMENTATION_INDEX.md
+QUICK_START.md
+README_TR.md
+SECURITY.md
+TESTING-CHECKLIST.md
+testsprite_tests/
+
+# YoYo AI version control directory
+.yoyo/
+
+.gemini/
+gha-creds-*.json
+
+# Auto-generated entries
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Sensitive files (auto-detected)
+.env.example
+.env.local
+.env.production.example
+node_modules
+
