@@ -1,62 +1,44 @@
 # Dernek Yönetim Sistemi
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
 ![Convex](https://img.shields.io/badge/Convex-Database-orange.svg)
 
 Türkçe olarak geliştirilmiş, **yardım dernekleri, vakıflar ve sivil toplum kuruluşları** için profesyonel bir yönetim platformu.
 
+> **Not:** Bazı özellikler development aşamasındadır. Detaylar için [docs/TODO.md](docs/TODO.md) dosyasına bakın.
+
 ## 🚀 Özellikler
 
 ### Çekirdek Modüller
-- ✅ **Kimlik Doğrulama ve Yetkilendirme** - Email/şifre giriş, RBAC, CSRF koruması
-- ✅ **İhtiyaç Sahipleri Yönetimi** - Detaylı kişisel bilgi kaydı, başvuru takibi
-- ✅ **Bağış Yönetimi** - Standart bağışlar, kumbara sistemi (GPS konum takibi)
-- ✅ **Burs Sistemi** - Öğrenci kayıtları, yetim burs programı
-- ✅ **Finansal Yönetim** - Gelir-gider takibi, mali raporlar, çoklu para birimi
-- ✅ **İş Yönetimi** - Görev atama, toplantı planlama, eylem öğesi takibi
-- ✅ **İletişim Sistemi** - Kurum içi mesajlaşma, toplu SMS/e-posta
+- ✅ **Kimlik Doğrulama** - Email/şifre, RBAC, CSRF koruması
+- ✅ **İhtiyaç Sahipleri** - Başvuru ve takip sistemi
+- ✅ **Bağış Yönetimi** - Standart bağışlar + kumbara sistemi (GPS takipli)
+- ✅ **Burs Sistemi** - Öğrenci ve yetim burs programları
+- ✅ **Finansal Yönetim** - Gelir-gider takibi, raporlar
+- ✅ **İş Yönetimi** - Görev ve toplantı yönetimi
+- ✅ **İletişim** - Kurum içi mesajlaşma, toplu SMS/e-posta
 
 ### Gelişmiş Özellikler
-- 📊 **Analitik ve Raporlama** - Dashboard istatistikleri, grafiksel raporlar
-- 📈 **Performans İzleme** - Gerçek zamanlı FPS monitoring, Web Vitals takibi
-- 🧠 **Gelişmiş Cache Sistemi** - Akıllı API response caching, prefetching
-- 🔒 **Güvenlik Özellikleri** - TC kimlik maskeleme, hassas veri koruması
+- 📊 Analitik ve raporlama dashboard'u
+- 📈 Performans izleme (Web Vitals)
+- 🧠 Akıllı API cache sistemi
+- 🔒 Veri güvenliği (TC maskeleme, CSRF, rate limiting)
 
-## 🛠️ Teknoloji Yığını
+## 🛠️ Teknoloji Stack
 
-### Frontend
-- **Next.js 14** - React tabanlı full-stack framework
-- **React 18** - Kullanıcı arayüzü kütüphanesi
-- **TypeScript** - Tip güvenliği sağlayan programlama dili
-- **Tailwind CSS** - Utility-first CSS framework
-- **Framer Motion** - Animasyon ve geçiş efektleri
-- **Lucide React** - İkon kütüphanesi
-- **Recharts** - Grafik ve chart bileşenleri
-
-### Backend & Veritabanı
-- **Convex** - Gerçek zamanlı veritabanı ve backend platformu
-- **Next.js API Routes** - RESTful API endpoint'leri
-- **PostgreSQL** (Convex üzerinden) - İlişkisel veritabanı
-
-### Durum Yönetimi & Cache
-- **Zustand** - Hafif durum yönetimi kütüphanesi
-- **@tanstack/react-query** - Veri fetching ve caching
-- **Özel Smart Cache sistemi** - Gelişmiş API response caching
-
-### Güvenlik & İzleme
-- **CSRF koruması** - Cross-site request forgery önlemi
-- **Rate limiting** - API istek sınırlaması
-- **Sentry** - Hata takip ve performans izleme
-- **Özel logger sistemi** - Detaylı loglama ve maskeleme
+**Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS, Framer Motion  
+**Backend:** Convex (real-time database), Next.js API Routes  
+**State:** Zustand, TanStack Query  
+**Security:** CSRF protection, Rate limiting, Sentry
 
 ## 📋 Gereksinimler
 
-- Node.js 18+ 
-- npm veya pnpm
-- Convex hesabı ve API anahtarları
-- Modern web tarayıcısı
+- Node.js 20.9.0+
+- npm 9.0.0+ veya pnpm
+- Convex hesabı
+- (Opsiyonel) Sentry hesabı
 
 ## 🔧 Kurulum
 
@@ -68,211 +50,114 @@ cd dernek-yonetim-sistemi
 
 ### 2. Bağımlılıkları Yükleyin
 ```bash
-# npm kullanıyorsanız
 npm install
-
-# pnpm kullanıyorsanız
-pnpm install
 ```
 
-### 3. Ortam Değişkenlerini Yapılandırın
+### 3. Environment Variables
 ```bash
 cp .env.example .env.local
 ```
 
-`.env.local` dosyasını açın ve aşağıdaki değişkenleri doldurun:
+Gerekli değişkenler için [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) dosyasına bakın.
 
-```env
-# Convex Configuration
-CONVEX_DEPLOYMENT=
-NEXT_PUBLIC_CONVEX_URL=
-
-# Authentication
-NEXTAUTH_SECRET=
-NEXTAUTH_URL=
-
-# Sentry (Opsiyonel)
-SENTRY_DSN=
-NEXT_PUBLIC_SENTRY_DSN=
-
-# Rate Limiting
-RATE_LIMIT_MAX_REQUESTS=
-RATE_LIMIT_WINDOW_MS=
-
-# CSRF
-CSRF_SECRET=
-```
-
-### 4. Convex Veritabanını Kurun
+### 4. Convex Setup
 ```bash
-# Convex CLI'yı yükleyin (henüz yüklü değilse)
 npm install -g convex
-
-# Convex development sunucusunu başlatın
 npx convex dev
 ```
 
 ### 5. Uygulamayı Başlatın
 ```bash
-# Geliştirme sunucusu
 npm run dev
-# veya
-pnpm dev
-
-# Üretim build'i
-npm run build
-npm start
-# veya
-pnpm build
-pnpm start
 ```
 
-Uygulama başarıyla başlatıldığında: [http://localhost:3000](http://localhost:3000) adresinde erişilebilir olacaktır.
+Uygulama [http://localhost:3000](http://localhost:3000) adresinde çalışacaktır.
 
-## 📝 Geliştirme Talimatları
+## 📝 Proje Yapısı
 
-### Proje Yapısı
 ```
 src/
-├── app/                    # Next.js App Router yapısı
-│   ├── (dashboard)/       # Dashboard layout ve sayfalar
-│   ├── api/               # API route'ları
-│   └── login/             # Giriş sayfası
-├── components/            # Yeniden kullanılabilir UI bileşenleri
+├── app/                    # Next.js App Router (pages & API)
+├── components/            # React componentleri
 │   ├── ui/               # Temel UI bileşenleri
 │   └── layouts/          # Layout bileşenleri
-├── lib/                   # Yardımcı kütüphaneler
-│   ├── performance-monitor.tsx  # Performans izleme sistemi
-│   └── api-cache.ts      # Gelişmiş caching sistemi
-├── stores/               # Zustand durum yönetimi
-├── types/                # TypeScript tip tanımlamaları
+├── lib/                   # Utility kütüphaneleri
+├── stores/               # Zustand state yönetimi
+├── types/                # TypeScript tipleri
 └── config/               # Yapılandırma dosyaları
+convex/                   # Convex backend (schema, queries, mutations)
+docs/                     # Dokümantasyon
+e2e/                      # Playwright E2E testleri
 ```
 
-### Kod Kalitesi
-- **ESLint** ve **Prettier** otomatik olarak çalışır
-- **TypeScript** ile tip güvenliği sağlanmıştır
-- **Husky** pre-commit hook'ları ile kod kalitesi korunur
+## 🧪 Test
 
-### Test
 ```bash
 # Birim testleri
-npm run test
-# veya
-pnpm test
+npm test
 
-# E2E testler
-npm run test:e2e
-# veya
-pnpm test:e2e
+# E2E testleri
+npm run e2e
 
 # Test coverage
 npm run test:coverage
-# veya
-pnpm test:coverage
 ```
-
-### Performans İzleme
-Uygulama performansını gerçek zamanlı olarak izlemek için:
-- Dashboard'da sağ üst köşedeki performans panelini açın
-- Web Vitals metriklerini görüntüleyin
-- Memory usage ve FPS monitoring verilerini takip edin
-
-## 🔒 Güvenlik
-
-### Uygulanan Güvenlik Önlemleri
-- **CSRF Koruması** - Tüm form gönderimlerinde otomatik koruma
-- **Rate Limiting** - API isteklerinde otomatik sınırlama
-- **Veri Maskeleme** - TC kimlik numarası gibi hassas bilgiler otomatik maskelenir
-- **Input Validasyonu** - Tüm kullanıcı girişleri doğrulanır
-- **Error Tracking** - Sentry ile hata takibi ve güvenlik uyarıları
-
-### Güvenlik Önerileri
-- Güçlü şifre politikaları uygulayın
-- Düzenli olarak bağımlılıkları güncelleyin
-- Production ortamında debug modunu kapatın
-- Hassas verileri loglarken dikkatli olun
-
-## 📊 Raporlama ve Analitik
-
-### Mevcut Raporlar
-- **Bağış Raporları** - Aylık/yıllık bağış istatistikleri
-- **Burs Raporları** - Bursiyer ve ödeme takibi
-- **Finansal Raporlar** - Gelir-gider tabloları
-- **Kullanıcı Aktivite Raporları** - Sistem kullanım istatistikleri
-
-### Özelleştirilebilir Dashboard
-- Drag-and-drop widget sistemi
-- Grafiksel veri görselleştirme
-- Filtreleme ve sıralama seçenekleri
-- Export (PDF/Excel) özellikleri
 
 ## 🚀 Deployment
 
-### Vercel ile Deploy (Önerilen)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/dernek-yonetim-sistemi)
+### Vercel (Önerilen)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
-### Manuel Deploy
 ```bash
-# Production build oluştur
+# Production build
 npm run build
 
-# Convex migration'ları çalıştır
+# Convex deploy
 npx convex deploy
 
-# Ortam değişkenlerini yapılandırın
-# Deploy script'ini çalıştırın
+# Vercel deploy
+npm run vercel:prod
 ```
 
-### Docker Deploy (Yakında)
-```bash
-# Docker image oluştur
-docker build -t dernek-yonetim-sistemi .
+Detaylı deployment rehberi için [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) dosyasına bakın.
 
-# Container'ı çalıştır
-docker run -p 3000:3000 --env-file .env.local dernek-yonetim-sistemi
-```
+## 🔒 Güvenlik
+
+- **CSRF Koruması** - Tüm form gönderimlerinde
+- **Rate Limiting** - API endpoint'lerinde
+- **Veri Maskeleme** - TC kimlik ve hassas bilgiler
+- **Input Validasyonu** - Zod ile tüm girişler
+- **Error Tracking** - Sentry entegrasyonu
+
+## 📊 Dokümantasyon
+
+- [API Dokümantasyonu](docs/API.md)
+- [TODO ve Roadmap](docs/TODO.md)
+- [Environment Variables](docs/ENVIRONMENT.md)
+- [Deployment Rehberi](docs/DEPLOYMENT.md)
+- [Katkı Kılavuzu](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
 
 ## 🤝 Katkıda Bulunma
 
-### Katkı Süreci
+Katkılarınızı bekliyoruz! Lütfen [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını okuyun.
+
+**Hızlı Katkı:**
 1. Fork yapın
-2. Feature branch'i oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add some amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Commit edin (`git commit -m 'feat: add amazing feature'`)
+4. Push yapın (`git push origin feature/amazing-feature`)
 5. Pull Request oluşturun
-
-### Kod Stili
-- **Conventional Commits** kullanın
-- **TypeScript** tip tanımlamalarına dikkat edin
-- **Component-based** mimariyi koruyun
-- **Test** yazmayı unutmayın
-
-### Katkı Türleri
-- 🐛 **Bug Raporları** - Issues sekmesinden bildirin
-- 💡 **Feature Önerileri** - Yeni özellik fikirleri
-- 📚 **Dokümantasyon** - README ve wiki iyileştirmeleri
-- 🌍 **Çeviri** - Multi-language desteği
-- 🔧 **Kod Katkısı** - Yeni özellikler ve bug düzeltmeleri
 
 ## 🐛 Sorun Bildirme
 
-Bir sorun mu buldunuz? Lütfen şu adımları izleyin:
-
-1. **Issues** sekmesine gidin
-2. Yeni bir issue oluşturun
-3. Aşağıdaki bilgileri ekleyin:
-   - Sorunun açıklaması
-   - Adımlarla tekrar üretme talimatları
-   - Beklenen vs gerçek davranış
-   - Ekran görüntüleri (varsa)
-   - Ortam bilgileri (tarayıcı, işletim sistemi)
+Sorun bulduğunuzda [Issues](https://github.com/your-username/dernek-yonetim-sistemi/issues) sekmesinden bildirebilirsiniz.
 
 ## 📞 Destek
 
-- **Dokümantasyon** - [Wiki](https://github.com/your-username/dernek-yonetim-sistemi/wiki)
-- **Issues** - [GitHub Issues](https://github.com/your-username/dernek-yonetim-sistemi/issues)
-- **Discussions** - [GitHub Discussions](https://github.com/your-username/dernek-yonetim-sistemi/discussions)
+- **Dokümantasyon:** [Wiki](https://github.com/your-username/dernek-yonetim-sistemi/wiki)
+- **Issues:** [GitHub Issues](https://github.com/your-username/dernek-yonetim-sistemi/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/your-username/dernek-yonetim-sistemi/discussions)
 
 ## 📄 Lisans
 
@@ -280,17 +165,11 @@ Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
 
 ## 🙏 Teşekkürler
 
-- [Next.js](https://nextjs.org/) - Harika framework için
-- [Convex](https://convex.dev/) - Gerçek zamanlı veritabanı çözümü
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework'ü
-- [Tüm katkıda bulunanlar](CONTRIBUTORS.md)
-
-## 📈 Proje Durumu
-
-- ✅ **Aktif Geliştirme** - Sürekli yeni özellikler ekleniyor
-- ✅ **Production Ready** - Canlı ortamda kullanılıyor
-- ✅ **Topluluk Desteği** - Açık kaynak topluluğu tarafından destekleniyor
+- [Next.js](https://nextjs.org/)
+- [Convex](https://convex.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Tüm katkıda bulunanlar](https://github.com/your-username/dernek-yonetim-sistemi/graphs/contributors)
 
 ---
 
-**⭐ Bu projeyi beğendiyseniz, lütfen yıldız verin!**
+**⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!**

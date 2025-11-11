@@ -183,8 +183,8 @@ async function sendMessageHandler(
       // This is a placeholder - implement based on your data structure
       const phoneNumbers = recipients
         .map((_user) => {
-          // TODO: Get phone number from user profile or linked beneficiary
-          // For now, return empty string - SMS will be skipped
+          // TODO: Telefon numarası schema'ya eklenmeli (bkz: docs/TODO.md #2)
+          // users.phone veya beneficiary.phone üzerinden alınmalı
           return '';
         })
         .filter((phone): phone is string => typeof phone === 'string' && phone.length > 0);

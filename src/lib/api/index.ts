@@ -23,8 +23,8 @@ export default api;
 export { convexApiClient as api };
 export type { ConvexResponse, QueryParams, CreateDocumentData, UpdateDocumentData };
 
-// Export empty objects for removed APIs to prevent import errors
-// TODO: Implement these or remove usage from components
+// Placeholder API exports - tam implementation için bkz: docs/TODO.md #4
+// TODO: Bu API'leri ya tam implement et ya da kullanan componentlerden kaldır
 export const parametersApi = {
   getAllParameters: async () => {
     try {

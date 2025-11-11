@@ -505,7 +505,7 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
       id: 'documents',
       title: 'Dokümanlar',
       icon: FileText,
-      count: 0, // TODO: Get actual document count
+      count: 0, // TODO: Gerçek döküman sayısı alınmalı (bkz: docs/TODO.md #5)
       description: 'Kimlik, belgeler ve diğer dokümanları görüntüle ve yönet',
     },
     {

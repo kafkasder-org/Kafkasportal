@@ -1,339 +1,316 @@
 # Katkıda Bulunma Kılavuzu
 
-Dernek Yönetim Sistemi projesine katkıda bulunmak için teşekkür ederiz! Bu kılavuz, katkı sürecini anlamanıza ve projeye etkili bir şekilde katkıda bulunmanıza yardımcı olacaktır.
+Dernek Yönetim Sistemi projesine katkıda bulunmak için teşekkür ederiz!
 
 ## 🎯 Hızlı Başlangıç
 
 1. **Fork** yapın
 2. **Branch** oluşturun (`git checkout -b feature/harika-ozellik`)
-3. **Değişikliklerinizi** yapın
-4. **Test** edin
-5. **Commit** edin (`git commit -m 'feat: harika özellik eklendi'`)
-6. **Push** yapın (`git push origin feature/harika-ozellik`)
-7. **Pull Request** oluşturun
+3. **Değişikliklerinizi** yapın ve test edin
+4. **Commit** edin (`git commit -m 'feat: harika özellik eklendi'`)
+5. **Push** yapın (`git push origin feature/harika-ozellik`)
+6. **Pull Request** oluşturun
 
 ## 📋 Katkı Türleri
 
 ### 🐛 Bug Raporları
 
-Bir hata bulduğunuzda:
-
-1. **Issues** sekmesine gidin
-2. "Bug report" şablonunu kullanın
-3. Aşağıdaki bilgileri ekleyin:
-   - Hatanın açıklaması
-   - Tekrar üretme adımları
-   - Beklenen davranış
-   - Gerçek davranış
-   - Ekran görüntüleri
-   - Ortam bilgileri (tarayıcı, OS)
+**Issues** sekmesinden "Bug report" şablonunu kullanarak bildirin. Şunları ekleyin:
+- Hatanın açıklaması ve tekrar üretme adımları
+- Beklenen vs gerçek davranış
+- Ekran görüntüleri
+- Ortam bilgileri (tarayıcı, OS, Node.js versiyonu)
 
 ### 💡 Feature Önerileri
 
-Yeni bir özellik önermek için:
-
-1. **Issues** sekmesine gidin
-2. "Feature request" şablonunu kullanın
-3. Aşağıdakileri açıklayın:
-   - Özelliğin amacı
-   - Kullanım senaryoları
-   - Önerilen implementasyon
-   - Alternatif çözümler
+**Issues** sekmesinden "Feature request" şablonunu kullanın:
+- Özelliğin amacı ve kullanım senaryoları
+- Önerilen implementasyon
+- Alternatif çözümler
 
 ### 🔧 Kod Katkıları
 
-#### Geliştirme Ortamı Kurulumu
+#### Geliştirme Ortamı
 
 ```bash
-# 1. Fork yapın ve klonlayın
+# 1. Fork & Clone
 git clone https://github.com/YOUR_USERNAME/dernek-yonetim-sistemi.git
 cd dernek-yonetim-sistemi
 
-# 2. Bağımlılıkları yükleyin
+# 2. Dependencies
 npm install
 
-# 3. Geliştirme sunucusunu başlatın
+# 3. Environment setup
+cp .env.example .env.local
+# .env.local dosyasını doldurun
+
+# 4. Convex setup
+npx convex dev
+
+# 5. Dev server
 npm run dev
 ```
 
+Detaylı kurulum için [README.md](README.md) ve [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) dosyalarına bakın.
+
 #### Branch Stratejisi
 
-- `main` - Production kodu
-- `develop` - Geliştirme branch'i
-- `feature/*` - Yeni özellikler
-- `bugfix/*` - Hata düzeltmeleri
-- `hotfix/*` - Acil düzeltmeler
+- `main` - Production kodu (korumalı)
+- `feature/*` - Yeni özellikler (`feature/user-profile`)
+- `bugfix/*` - Hata düzeltmeleri (`bugfix/login-error`)
+- `hotfix/*` - Acil production düzeltmeleri
 
 #### Commit Mesajları
 
-Conventional Commits standardını kullanın:
+**Conventional Commits** standardını kullanın:
 
 ```
 <type>(<scope>): <description>
 
 [optional body]
-
-[optional footer(s)]
 ```
 
 **Tipler:**
 - `feat:` - Yeni özellik
 - `fix:` - Hata düzeltme
-- `docs:` - Dokümantasyon değişiklikleri
-- `style:` - Kod stili değişiklikleri
-- `refactor:` - Kod refactor'ü
-- `test:` - Test eklemeleri/düzeltmeleri
-- `chore:` - Yapılandırma değişiklikleri
+- `docs:` - Dokümantasyon
+- `style:` - Kod formatı (loglama değil)
+- `refactor:` - Kod refactor
+- `test:` - Test ekleme/düzeltme
+- `chore:` - Build, dependency güncellemeleri
 
 **Örnekler:**
 ```bash
 feat(auth): add two-factor authentication
 fix(api): resolve user creation bug
 docs(readme): update installation instructions
-```
-
-### 📚 Dokümantasyon
-
-- README dosyalarını güncelleyin
-- Kod yorumlarını ekleyin/iyileştirin
-- Wiki sayfaları oluşturun
-- Örnekler ve tutorial'lar yazın
-
-### 🌍 Çeviri
-
-- Türkçe → İngilizce çeviriler
-- UI metinlerinin yerelleştirilmesi
-- Dokümantasyon çevirileri
-
-## 🧪 Test
-
-### Test Türleri
-
-1. **Birim Testleri** - Component ve utility testleri
-2. **Entegrasyon Testleri** - API ve veritabanı testleri
-3. **E2E Testleri** - Kullanıcı akışı testleri
-
-### Test Komutları
-
-```bash
-# Tüm testleri çalıştır
-npm test
-
-# Testleri izleme modunda çalıştır
-npm run test:watch
-
-# Coverage raporu oluştur
-npm run test:coverage
-
-# E2E testleri
-npm run test:e2e
-```
-
-### Test Yazma En İyi Uygulamaları
-
-- Test dosyalarını `*.test.ts(x)` veya `*.spec.ts(x)` olarak adlandırın
-- Her component için en az bir test yazın
-- Edge case'leri test edin
-- Mock data kullanın
-- Test isimleri açıklayıcı olsun
-
-#### Örnek Test
-
-```typescript
-// Button.test.tsx
-import { render, screen } from '@testing-library/react'
-import Button from './Button'
-
-describe('Button', () => {
-  it('renders correctly', () => {
-    render(<Button>Click me</Button>)
-    expect(screen.getByText('Click me')).toBeInTheDocument()
-  })
-
-  it('handles click events', () => {
-    const handleClick = jest.fn()
-    render(<Button onClick={handleClick}>Click me</Button>)
-    
-    screen.getByText('Click me').click()
-    expect(handleClick).toHaveBeenCalledTimes(1)
-  })
-})
+refactor(utils): simplify date formatting
 ```
 
 ## 🎨 Kod Stili
 
 ### TypeScript
 
-- Tür tanımlamaları kullanın, `any` tipinden kaçının
-- Interface'ler type alias'lara tercih edin
-- Generic'leri uygun şekilde kullanın
-
 ```typescript
 // ✅ İyi
 interface User {
-  id: string
-  name: string
-  email: string
+  id: string;
+  name: string;
+  email: string;
+}
+
+function getUser(id: string): Promise<User> {
+  // ...
 }
 
 // ❌ Kötü
 type User = {
-  id: any
-  name: string
-  email: string
+  id: any;  // 'any' kullanmayın
+  name: string;
 }
 ```
 
-### React Component'leri
-
-- Functional component'leri tercih edin
-- Custom hook'ları kullanın
-- Props interface'lerini tanımlayın
+### React Components
 
 ```typescript
-// ✅ İyi
+// ✅ İyi - Functional component + type
 interface ButtonProps {
-  children: React.ReactNode
-  onClick?: () => void
-  variant?: 'primary' | 'secondary'
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: 'primary' | 'secondary';
 }
 
-export function Button({ children, onClick, variant = 'primary' }: ButtonProps) {
+export function Button({ 
+  children, 
+  onClick, 
+  variant = 'primary' 
+}: ButtonProps) {
   return (
     <button className={`btn btn-${variant}`} onClick={onClick}>
       {children}
     </button>
-  )
+  );
 }
 ```
 
-### CSS ve Stil
+### CSS/Tailwind
 
-- Tailwind CSS utility class'larını kullanın
+- **Tailwind utility classes** kullanın
 - Custom CSS'den kaçının
-- Responsive design prensiplerini uygulayın
+- Responsive design uygulayın
 
 ```typescript
 // ✅ İyi
 <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow">
 
-// ❌ Kötü
-<div style={{ 
-  display: 'flex', 
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '16px',
-  backgroundColor: 'white',
-  borderRadius: '8px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-}}>
+// ❌ Kötü - inline styles
+<div style={{ display: 'flex', padding: '16px' }}>
 ```
 
-## 📁 Proje Yapısı
+### Otomatik Format
 
+```bash
+# Lint check
+npm run lint:check
+
+# Lint fix
+npm run lint:fix
+
+# Format
+npm run format
+
+# Type check
+npm run typecheck
 ```
-src/
-├── app/                    # Next.js App Router
-├── components/            # React component'leri
-│   ├── ui/               # Temel UI component'leri
-│   └── layouts/          # Layout component'leri
-├── lib/                   # Yardımcı fonksiyonlar
-├── hooks/                 # Custom React hook'ları
-├── stores/               # Zustand store'ları
-├── types/                # TypeScript tipleri
-└── utils/                 # Utility fonksiyonlar
+
+**Pre-commit hooks** otomatik çalışır (Husky + lint-staged).
+
+## 🧪 Test
+
+### Test Yazma
+
+```bash
+# Testleri çalıştır
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Coverage
+npm run test:coverage
+
+# E2E
+npm run e2e
+```
+
+### Test Best Practices
+
+- Test dosyaları: `*.test.ts(x)` veya `*.spec.ts(x)`
+- Her component için test yazın
+- Edge case'leri test edin
+- Açıklayıcı test isimleri kullanın
+
+```typescript
+// ✅ İyi - açıklayıcı test
+describe('Button', () => {
+  it('should call onClick when clicked', () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click</Button>);
+    fireEvent.click(screen.getByText('Click'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
 ```
 
 ## 🔄 Pull Request Süreci
 
-### PR Oluşturma
+### PR Oluşturmadan Önce
 
-1. **Başlık** - Açıklayıcı ve kısa başlık
-2. **Açıklama** - Değişikliklerin detaylı açıklaması
-3. **Related Issues** - İlgili issue'ları bağlayın
-4. **Screenshots** - UI değişiklikleri için ekran görüntüleri
-5. **Testler** - Yazılan testleri belirtin
+- [ ] Kod lint/format edildi
+- [ ] Type check geçiyor
+- [ ] Testler geçiyor
+- [ ] Değişiklikler test edildi
 
 ### PR Şablonu
 
 ```markdown
 ## Açıklama
-Bu PR'da yapılan değişikliklerin açıklaması...
+Bu PR'da yapılan değişikliklerin kısa açıklaması...
 
-## Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+## Değişiklik Türü
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
 - [ ] Documentation update
 
-## Testler
-- [ ] Unit test'ler eklendi/güncellendi
-- [ ] E2E test'ler eklendi/güncellendi
+## Test
+- [ ] Unit testler eklendi/güncellendi
+- [ ] E2E testler eklendi/güncellendi
 - [ ] Manuel test yapıldı
 
 ## Screenshots (varsa)
-Before/After ekran görüntüleri...
+...
 
 ## Checklist
 - [ ] Kod review yapıldı
-- [ ] Test'ler geçiyor
+- [ ] Testler geçiyor
 - [ ] Dokümantasyon güncellendi
-- [ ] Breaking change varsa belirtildi
 ```
 
 ### Review Süreci
 
-1. **Otomatik kontroller** - CI/CD pipeline'ı
-2. **Kod review** - En az 1 onay gerekli
-3. **Test'ler** - Tüm test'ler geçmeli
+1. **Otomatik kontroller** - CI/CD pipeline (lint, test, build)
+2. **Kod review** - En az 1 maintainer onayı
+3. **Testler** - Tüm testler yeşil
 4. **Merge** - Squash merge tercih edilir
 
-## 🚀 Release Süreci
+## 📚 Dokümantasyon
 
-### Version Semantics
+### Katkıda Bulunabileceğiniz Alanlar
 
-- **MAJOR** - Breaking changes (1.0.0)
-- **MINOR** - Yeni özellikler (0.1.0)
-- **PATCH** - Bug düzeltmeleri (0.0.1)
+- README iyileştirmeleri
+- API dokümantasyonu ([docs/API.md](docs/API.md))
+- Kod yorumları (sadece gerektiğinde)
+- Wiki sayfaları
+- Tutorial ve örnekler
 
-### Changelog
+### Dokümantasyon Stili
 
-Her release için `CHANGELOG.md` güncellenir:
+- Türkçe yazın (ana dil)
+- Kısa ve öz olsun
+- Kod örnekleri ekleyin
+- Screenshot'lar kullanın
 
-```markdown
-## [1.2.0] - 2024-01-15
-### Added
-- Yeni kullanıcı rolü: Gönüllü
-- Advanced search özelliği
+## 🌍 Çeviri
 
-### Changed
-- Dashboard layout güncellendi
+Multi-language desteği için katkı:
+- UI metinlerinin İngilizce çevirisi
+- Dokümantasyon çevirileri
+- i18n altyapısı geliştirme
 
-### Fixed
-- Mobile navigation bug'ı düzeltildi
+## ❓ Sık Sorulan Sorular
+
+### "Convex dev çalışmıyor"
+```bash
+npm install -g convex
+npx convex dev
 ```
 
-## 🆘 Yardım
+### "Lint hataları alıyorum"
+```bash
+npm run lint:fix
+```
 
-### Sorularınız mı var?
+### "Testler başarısız"
+```bash
+# Cache temizle
+npm run clean
+npm install
+npm test
+```
 
-- **GitHub Discussions** - Genel sorular için
-- **GitHub Issues** - Bug ve feature request'ler için
-- **Wiki** - Dokümantasyon için
-
-### Kaynaklar
-
-- [Next.js Dokümantasyonu](https://nextjs.org/docs)
-- [Convex Dokümantasyonu](https://docs.convex.dev/)
-- [Tailwind CSS Dokümantasyonu](https://tailwindcss.com/docs)
-- [TypeScript Dokümantasyonu](https://www.typescriptlang.org/docs/)
+### "PR'ım merge olmadı"
+- CI/CD geçiyor mu?
+- Kod review onayı var mı?
+- Conflicts çözüldü mü?
 
 ## 📞 İletişim
 
-- **Project Maintainers** - @your-username
-- **Discord** - [Join our Discord](https://discord.gg/your-invite)
-- **Email** - contact@your-project.com
+- **Issues:** Sorularınız için GitHub Issues kullanın
+- **Discussions:** Genel tartışmalar için GitHub Discussions
+- **Security:** Güvenlik açıkları için özel olarak bildirin
+
+## 🙏 Teşekkürler
+
+Her katkınız değerlidir! Projeyi geliştirmede bize yardımcı olduğunuz için teşekkür ederiz.
 
 ---
 
-**Katılımınız için teşekkürler!** 🎉 Bu projeyi birlikte harika bir hale getireceğiz.
+## 📚 İlgili Dokümantasyon
+
+- [README](README.md) - Proje genel bakış
+- [TODO](docs/TODO.md) - Planlanan özellikler
+- [DEPLOYMENT](docs/DEPLOYMENT.md) - Deploy rehberi
+- [ENVIRONMENT](docs/ENVIRONMENT.md) - Environment variables
+- [API](docs/API.md) - API dokümantasyonu
+- [CHANGELOG](CHANGELOG.md) - Değişiklik geçmişi

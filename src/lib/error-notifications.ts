@@ -156,6 +156,6 @@ export async function sendCriticalErrorEmail(
     title: options.title,
   });
 
-  // TODO: Integrate with email service
-  // This would use the existing email service from the project
+  // TODO: Email servisi entegrasyonu (bkz: docs/TODO.md #1)
+  // Mevcut email servisi ile critical error'larda admin'lere bildirim gönder
 }

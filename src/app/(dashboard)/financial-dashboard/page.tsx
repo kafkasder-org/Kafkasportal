@@ -98,8 +98,8 @@ export default function FinancialDashboardPage() {
   }, [monthlyData]);
 
   const handleExport = () => {
-    // TODO: Implement export functionality
-    // eslint-disable-next-line no-console
+    // TODO: PDF/Excel export ekle (bkz: docs/TODO.md #3)
+    // Öneri: jsPDF + jspdf-autotable kullan (zaten dependency'de var)
     console.log('Exporting financial data...');
   };
 

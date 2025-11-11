@@ -66,6 +66,7 @@ const DynamicCell = dynamic(() => import('recharts').then((mod) => mod.Cell), { 
 export default function DashboardPage() {
   const { user, isAuthenticated, isLoading } = useAuthStore();
 
+  // ⚠️ DEMO DATA: Aşağıdaki veriler gerçek API'lerden alınmalı (bkz: docs/TODO.md - Mock Data)
   // Sample chart data - memoized to prevent re-renders (moved before early returns)
   const donationData = useMemo(
     () => [
@@ -111,6 +112,7 @@ export default function DashboardPage() {
     );
   }
 
+  // ⚠️ DEMO DATA: Bu değerler gerçek API'lerden alınmalı
   const stats = [
     {
       title: 'Toplam İhtiyaç Sahibi',

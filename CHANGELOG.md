@@ -8,14 +8,30 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 ## [Unreleased]
 
 ### Eklendi
-- README.md dosyası oluşturuldu
-- CONTRIBUTING.md katkı kılavuzu eklendi
-- MIT lisans dosyası eklendi
-- Kapsamlı proje analiz raporu oluşturuldu
+- **docs/TODO.md** - Tüm planlanan özellikler ve eksik kısımlar dokümante edildi
+- **docs/ENVIRONMENT.md** - Environment variables için kapsamlı rehber
+- **docs/DEPLOYMENT.md** - Vercel, Docker ve VPS deployment rehberleri
+- Mock data kullanımı kod içinde işaretlendi (⚠️ DEMO DATA)
 
 ### Değişti
-- Dokümantasyon yapısı iyileştirildi
-- Proje açıklamaları güncellendi
+- **README.md** - %41 kısaltıldı (296 → 175 satır), daha özlü hale getirildi
+- **CONTRIBUTING.md** - Optimize edildi (339 → 316 satır)
+- TODO yorumları daha açıklayıcı ve docs/TODO.md'ye referans veriyor
+- Package.json versiyonu güncellendi (Next.js 14 → 16 badge)
+
+### Kaldırıldı
+- **Kullanılmayan UI componentleri** (4 dosya)
+  - `src/components/ui/sparkles.tsx`
+  - `src/components/ui/text-hover-effect.tsx`
+  - `src/components/ui/animated-gradient.tsx`
+  - `src/components/ui/background-pattern.tsx`
+- **Gereksiz npm paketleri** (5 paket)
+  - `@tsparticles/engine`, `@tsparticles/react`, `@tsparticles/slim`
+  - `motion` (framer-motion kullanılıyor)
+  - `tw-animate-css` (animasyonlar globals.css'te)
+- **Geçici dosya**: `optimization-t`
+
+### Dokümante Edildi
 
 ## [1.0.0] - 2024-01-XX
 
