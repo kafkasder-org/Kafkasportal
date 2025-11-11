@@ -1,15 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { User, Calendar, AlertCircle, Clock } from 'lucide-react';
 import type { TaskDocument } from '@/types/database';
 import {
   getPriorityColor,
-  getStatusColor,
   getPriorityLabel,
-  getStatusLabel,
   isTaskOverdue,
   isTaskDueSoon,
 } from '@/lib/validations/task';
@@ -31,7 +29,6 @@ interface KanbanColumnProps {
 
 interface TaskCardProps {
   task: TaskDocument;
-  onTaskMove: (taskId: string, newStatus: TaskDocument['status']) => void;
   onTaskClick: (task: TaskDocument) => void;
 }
 
@@ -58,18 +55,25 @@ const COLUMNS = [
   },
 ];
 
-function TaskCard({ task, onTaskMove, onTaskClick }: TaskCardProps) {
+const TaskCard = memo(({ task, onTaskClick }: TaskCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleDragStart = (e: React.DragEvent) => {
-    setIsDragging(true);
-    e.dataTransfer.setData('text/plain', task._id);
-    e.dataTransfer.effectAllowed = 'move';
-  };
+  const handleDragStart = useCallback(
+    (e: React.DragEvent) => {
+      setIsDragging(true);
+      e.dataTransfer.setData('text/plain', task._id);
+      e.dataTransfer.effectAllowed = 'move';
+    },
+    [task._id]
+  );
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
+
+  const handleClick = useCallback(() => {
+    onTaskClick(task);
+  }, [onTaskClick, task]);
 
   const isOverdue = task.due_date ? isTaskOverdue(task.due_date) : false;
   const isDueSoon = task.due_date ? isTaskDueSoon(task.due_date) : false;
@@ -82,7 +86,7 @@ function TaskCard({ task, onTaskMove, onTaskClick }: TaskCardProps) {
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onClick={() => onTaskClick(task)}
+      onClick={handleClick}
     >
       <CardContent className="p-4">
         {/* Title */}
@@ -148,74 +152,78 @@ function TaskCard({ task, onTaskMove, onTaskClick }: TaskCardProps) {
       </CardContent>
     </Card>
   );
-}
+});
 
-function KanbanColumn({ title, status, tasks, onTaskMove, onTaskClick, color }: KanbanColumnProps) {
-  const [dragOver, setDragOver] = useState(false);
+TaskCard.displayName = 'TaskCard';
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOver(true);
-  };
+const KanbanColumn = memo(
+  ({ title, status, tasks, onTaskMove, onTaskClick, color }: KanbanColumnProps) => {
+    const [dragOver, setDragOver] = useState(false);
 
-  const handleDragLeave = () => {
-    setDragOver(false);
-  };
+    const handleDragOver = useCallback((e: React.DragEvent) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      setDragOver(true);
+    }, []);
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
+    const handleDragLeave = useCallback(() => {
+      setDragOver(false);
+    }, []);
 
-    const taskId = e.dataTransfer.getData('text/plain');
-    if (taskId) {
-      onTaskMove(taskId, status);
-    }
-  };
+    const handleDrop = useCallback(
+      (e: React.DragEvent) => {
+        e.preventDefault();
+        setDragOver(false);
 
-  const columnTasks = tasks.filter((task) => task.status === status);
+        const taskId = e.dataTransfer.getData('text/plain');
+        if (taskId) {
+          onTaskMove(taskId, status);
+        }
+      },
+      [onTaskMove, status]
+    );
 
-  return (
-    <div className="flex flex-col h-full">
-      {/* Column Header */}
-      <CardHeader className={`pb-3 ${color}`}>
-        <CardTitle className="text-sm font-medium flex items-center justify-between">
-          <span>{title}</span>
-          <Badge variant="secondary" className="text-xs">
-            {columnTasks.length}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
+    const columnTasks = tasks.filter((task) => task.status === status);
 
-      {/* Column Content */}
-      <CardContent className={`flex-1 p-3 ${color} min-h-[400px]`}>
-        <div
-          className={`space-y-3 h-full transition-colors duration-200 ${
-            dragOver ? 'border-2 border-dashed border-blue-500 bg-blue-100 rounded-lg p-2' : ''
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          {columnTasks.length === 0 ? (
-            <div className="flex items-center justify-center h-32 text-gray-500 text-sm">
-              Bu sütunda görev yok
-            </div>
-          ) : (
-            columnTasks.map((task) => (
-              <TaskCard
-                key={task._id}
-                task={task}
-                onTaskMove={onTaskMove}
-                onTaskClick={onTaskClick}
-              />
-            ))
-          )}
-        </div>
-      </CardContent>
-    </div>
-  );
-}
+    return (
+      <div className="flex flex-col h-full">
+        {/* Column Header */}
+        <CardHeader className={`pb-3 ${color}`}>
+          <CardTitle className="text-sm font-medium flex items-center justify-between">
+            <span>{title}</span>
+            <Badge variant="secondary" className="text-xs">
+              {columnTasks.length}
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+
+        {/* Column Content */}
+        <CardContent className={`flex-1 p-3 ${color} min-h-[400px]`}>
+          <div
+            className={`space-y-3 h-full transition-colors duration-200 ${
+              dragOver ? 'border-2 border-dashed border-blue-500 bg-blue-100 rounded-lg p-2' : ''
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {columnTasks.length === 0 ? (
+              <div className="flex items-center justify-center h-32 text-gray-500 text-sm">
+                Bu sütunda görev yok
+              </div>
+            ) : (
+              columnTasks.map((task) => (
+                <TaskCard key={task._id} task={task} onTaskClick={onTaskClick} />
+              ))
+            )}
+          </div>
+        </CardContent>
+      </div>
+    );
+  }
+);
+
+KanbanColumn.displayName = 'KanbanColumn';
 
 export function KanbanBoard({ tasks, onTaskMove, onTaskClick }: KanbanBoardProps) {
   return (

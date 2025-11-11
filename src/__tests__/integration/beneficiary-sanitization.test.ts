@@ -234,7 +234,7 @@ describe('Beneficiary Sanitization Integration', () => {
         firstName: rawFormData.firstName.trim(),
         lastName: rawFormData.lastName.trim(),
         identityNumber: sanitizeTcNo(rawFormData.identityNumber) || undefined,
-        mobilePhone: '5551234567', // Use format schema accepts
+        mobilePhone: sanitizePhone(rawFormData.mobilePhone) || undefined,
         email: sanitizeEmail(rawFormData.email),
         monthlyIncome: sanitizeNumber(rawFormData.monthlyIncome),
         monthlyExpense: sanitizeNumber(rawFormData.monthlyExpense),
@@ -321,15 +321,17 @@ describe('Beneficiary Sanitization Integration', () => {
         firstName: 'Ahmet',
         lastName: 'Yılmaz',
         nationality: 'Türkiye',
+        identityNumber: '11111111110', // Added required field
+        mobilePhone: '+905551234567', // Added required field
         emergencyContacts: sanitizedContacts,
         category: BeneficiaryCategory.IHTIYAC_SAHIBI_AILE,
         fundRegion: FundRegion.SERBEST,
         fileConnection: FileConnection.CALISMA_SAHASI,
         fileNumber: 'FILE001',
-        mernisCheck: false,
-        birthDate: '2000-01-01', // Added missing required field
-        city: 'ISTANBUL', // Added missing required field
-        district: 'Kadıköy', // Added missing required field
+        mernisCheck: true,
+        birthDate: '2000-01-01',
+        city: 'ISTANBUL',
+        district: 'Kadıköy',
       };
 
       const result = beneficiarySchema.safeParse(data);

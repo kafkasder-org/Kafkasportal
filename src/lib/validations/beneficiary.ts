@@ -63,7 +63,7 @@ const tcKimlikNoSchema = z
 // Telefon numarası validasyonu (E.164 format)
 const phoneSchema = z
   .string()
-  .regex(/^(\+905\d{8}|5\d{9})$/, 'Telefon numarası geçerli Türk cep telefonu formatında olmalıdır')
+  .regex(/^(\+905\d{9}|5\d{9})$/, 'Telefon numarası geçerli Türk cep telefonu formatında olmalıdır')
   .optional();
 
 // Email validasyonu
@@ -113,7 +113,7 @@ export const quickAddBeneficiarySchema = z.object({
     .max(50, 'Uyruk en fazla 50 karakter olmalıdır'),
   birthDate: pastDateSchema,
   identityNumber: tcKimlikNoSchema.optional(),
-    mernisCheck: z.boolean().default(false),
+  mernisCheck: z.boolean().default(false),
   fundRegion: z.nativeEnum(FundRegion, {
     message: 'Fon bölgesi seçiniz',
   }),
