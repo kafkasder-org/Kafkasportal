@@ -19,7 +19,7 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'src/__tests__/',
@@ -29,6 +29,10 @@ export default defineConfig({
         'postcss.config.mjs',
         'tailwind.config.js',
       ],
+    },
+    reporters: ['default', 'junit'],
+    outputFile: {
+      junit: './junit.xml',
     },
   },
   resolve: {
