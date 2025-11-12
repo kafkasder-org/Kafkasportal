@@ -200,7 +200,7 @@ export function QuickFilters({
       <Button
         variant={!selectedValue ? 'default' : 'outline'}
         size="sm"
-        onClick={() => onChange('')}
+        onClick={() => { onChange(''); }}
         className="h-8 text-xs"
       >
         Tümü

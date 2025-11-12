@@ -245,7 +245,7 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => deleteMutation.mutate(doc._id)}
+                        onClick={() => { deleteMutation.mutate(doc._id); }}
                         disabled={deleteMutation.isPending}
                         className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                       >

@@ -153,7 +153,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
 
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    return () => { window.removeEventListener('storage', handleStorageChange); };
   }, []);
 
   // Detect scroll for header shadow effect - OPTIMIZED

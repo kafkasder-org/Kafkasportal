@@ -46,7 +46,7 @@ export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className 
     };
 
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    return () => { window.removeEventListener('storage', handleStorageChange); };
   }, []);
 
   const toggleModule = (moduleId: string) => {

@@ -525,7 +525,7 @@ export function MessageForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => setShowPreview(!showPreview)}
+              onClick={() => { setShowPreview(!showPreview); }}
               className="w-full"
             >
               {showPreview ? 'Önizlemeyi Gizle' : 'Önizleme'}

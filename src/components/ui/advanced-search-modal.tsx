@@ -412,7 +412,7 @@ export function useAdvancedSearch() {
 
   return {
     isOpen,
-    onOpen: () => setIsOpen(true),
-    onClose: () => setIsOpen(false),
+    onOpen: () => { setIsOpen(true); },
+    onClose: () => { setIsOpen(false); },
   };
 }

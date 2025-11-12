@@ -75,7 +75,7 @@ export function BeneficiaryFormWizard({
     },
   });
 
-  const { handleSubmit, trigger, formState: { errors } } = methods;
+  const { handleSubmit, trigger } = methods;
 
   // CREATE MUTATION
   const createMutation = useMutation({

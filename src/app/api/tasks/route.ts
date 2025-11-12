@@ -3,7 +3,7 @@ import { convexTasks, normalizeQueryParams } from '@/lib/convex/api';
 import logger from '@/lib/logger';
 import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
-import { parseBody, handleApiError } from '@/lib/api/route-helpers';
+import { parseBody } from '@/lib/api/route-helpers';
 
 function validateTask(data: Record<string, unknown>): {
   isValid: boolean;

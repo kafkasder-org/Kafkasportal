@@ -18,7 +18,7 @@ interface PersonalInfoStepProps {
   isUpdateMode?: boolean;
 }
 
-export function PersonalInfoStep({ isUpdateMode = false }: PersonalInfoStepProps) {
+export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: PersonalInfoStepProps) {
   const {
     register,
     formState: { errors },

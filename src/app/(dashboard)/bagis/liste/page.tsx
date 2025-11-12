@@ -141,8 +141,8 @@ export default function DonationsPage() {
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DonationForm
-              onSuccess={() => setShowCreateForm(false)}
-              onCancel={() => setShowCreateForm(false)}
+              onSuccess={() => { setShowCreateForm(false); }}
+              onCancel={() => { setShowCreateForm(false); }}
             />
           </DialogContent>
         </Dialog>

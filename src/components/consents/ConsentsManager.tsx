@@ -164,7 +164,7 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
                 <Label>Rıza Metni *</Label>
                 <Textarea
                   value={formData.consentText}
-                  onChange={(e) => setFormData({ ...formData, consentText: e.target.value })}
+                  onChange={(e) => { setFormData({ ...formData, consentText: e.target.value }); }}
                   rows={4}
                   placeholder="Rıza beyanı metnini girin..."
                 />

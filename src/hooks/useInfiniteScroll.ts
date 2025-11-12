@@ -1,7 +1,7 @@
 'use client';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface UseInfiniteScrollOptions {
   limit?: number;
@@ -107,7 +107,7 @@ export function usePaginatedQuery(
     },
   });
 
-  const currentPage = 1; // Can be managed externally
+  const _currentPage = 1; // Can be managed externally
   const total = data?.pages[0]?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
   const items = data?.pages[0]?.items ?? [];
