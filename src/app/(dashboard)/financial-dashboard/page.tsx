@@ -100,7 +100,9 @@ export default function FinancialDashboardPage() {
   const handleExport = () => {
     // TODO: PDF/Excel export ekle (bkz: docs/TODO.md #3)
     // Öneri: jsPDF + jspdf-autotable kullan (zaten dependency'de var)
-    console.log('Exporting financial data...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Exporting financial data...');
+    }
   };
 
   const formatCurrency = (amount: number) => {

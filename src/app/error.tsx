@@ -33,7 +33,7 @@ export default function Error({
         document.documentElement.getAttribute('cz-shortcut-listen') ||
         document.documentElement.getAttribute('data-gr-ext') ||
         document.documentElement.getAttribute('data-loom-ext');
-      if (hasExtensions) {
+      if (hasExtensions && process.env.NODE_ENV === 'development') {
         console.warn('⚠️ Browser extensions detected - may cause hydration issues');
       }
     }

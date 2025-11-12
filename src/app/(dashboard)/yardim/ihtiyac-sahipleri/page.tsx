@@ -113,7 +113,7 @@ export default function BeneficiariesPage() {
 
   // Performance monitoring
   React.useEffect(() => {
-    if (!isGoodPerformance()) {
+    if (!isGoodPerformance() && process.env.NODE_ENV === 'development') {
       console.warn('Performance degraded:', { fps: getFPS() });
     }
   }, [getFPS, isGoodPerformance]);

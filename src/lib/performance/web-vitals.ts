@@ -21,7 +21,9 @@ function sendToAnalytics(metric: Metric): void {
       delta: Math.round(metric.delta * 100) / 100,
       rating,
     };
-    console.log(`📊 Web Vital: ${metricData.name} = ${metricData.value}ms (${metricData.rating})`, metricData);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`📊 Web Vital: ${metricData.name} = ${metricData.value}ms (${metricData.rating})`, metricData);
+    }
   }
 
   // Send to Google Analytics 4 (if configured)

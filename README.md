@@ -4,10 +4,13 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
 ![Convex](https://img.shields.io/badge/Convex-Database-orange.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
 
 Türkçe olarak geliştirilmiş, **yardım dernekleri, vakıflar ve sivil toplum kuruluşları** için profesyonel bir yönetim platformu.
 
-> **Not:** Bazı özellikler development aşamasındadır. Detaylar için [docs/TODO.md](docs/TODO.md) dosyasına bakın.
+> **v1.0.0 Production Release** - İlk stabil sürüm yayında! 🎉
+> 
+> **Demo Mode:** Analitik ve bazı finansal raporlar demo data kullanmaktadır. v1.1.0'da gerçek API entegrasyonu tamamlanacaktır. Detaylar için [docs/TODO.md](docs/TODO.md) dosyasına bakın.
 
 ## 🚀 Özellikler
 

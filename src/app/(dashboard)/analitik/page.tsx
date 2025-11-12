@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageLayout } from '@/components/layouts/PageLayout';
+import { DemoBanner } from '@/components/ui/demo-banner';
 import { TrendingUp, Users, MousePointerClick, Clock, Activity, Eye, Zap } from 'lucide-react';
 import {
   AreaChart,
@@ -112,6 +113,9 @@ export default function AnalyticsPage() {
       description="Kullanıcı davranışı ve sistem performansı takibi"
       badge={{ text: `${stats.totalEvents.toLocaleString('tr-TR')} Olay`, variant: 'default' }}
     >
+      {/* Demo Mode Banner */}
+      <DemoBanner />
+
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4 mb-6">
         <Card>

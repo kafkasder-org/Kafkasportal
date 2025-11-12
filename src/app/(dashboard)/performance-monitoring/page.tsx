@@ -116,7 +116,9 @@ export default function PerformanceMonitoringPage() {
         enableWebVitals={isMonitoring}
         enableCustomMetrics={isMonitoring}
         onMetrics={(metrics) => {
-          console.log('Performance metrics:', metrics);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Performance metrics:', metrics);
+          }
         }}
         routeName="performance-dashboard"
       />

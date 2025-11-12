@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { StatCard } from '@/components/ui/stat-card';
 import { PageLayout } from '@/components/layouts/PageLayout';
+import { DemoBanner } from '@/components/ui/demo-banner';
 import {
   Users,
   Heart,
@@ -215,6 +216,9 @@ export default function DashboardPage() {
         description="Sistemin genel durumunu buradan takip edebilirsiniz"
         badge={{ text: 'Sistem Aktif', variant: 'default' }}
       >
+        {/* Demo Mode Banner */}
+        <DemoBanner />
+
         {/* Stats Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
           {stats.map((stat) => (

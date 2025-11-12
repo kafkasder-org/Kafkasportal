@@ -23,6 +23,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { DemoBanner } from '@/components/ui/demo-banner';
 import { toast } from 'sonner';
 import {
   Search,
@@ -320,6 +321,9 @@ export default function IncomeExpensePage() {
 
   return (
     <div className="space-y-6">
+      {/* Demo Mode Banner */}
+      <DemoBanner />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

@@ -311,7 +311,7 @@ export function usePrefetchWithCache() {
         // Update React Query cache
         queryClient.setQueryData([endpoint, params], data);
       } catch (error) {
-        if ((error as Error).name !== 'AbortError') {
+        if ((error as Error).name !== 'AbortError' && process.env.NODE_ENV === 'development') {
           console.warn('Prefetch failed:', error);
         }
       } finally {
