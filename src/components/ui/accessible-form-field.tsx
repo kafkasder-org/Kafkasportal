@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, ReactNode } from 'react';
+import { forwardRef, ReactNode, useId } from 'react';
 import { cn } from '@/lib/utils';
 
 interface AccessibleFormFieldProps {
@@ -32,8 +32,10 @@ export const AccessibleFormField = forwardRef<
     className,
     htmlFor,
   }, ref) => {
-    const errorId = error ? `${htmlFor}-error` : undefined;
-    const hintId = hint ? `${htmlFor}-hint` : undefined;
+    // Sanitize htmlFor to prevent XSS in ID generation
+    const sanitizedHtmlFor = htmlFor ? htmlFor.replace(/[^a-zA-Z0-9_-]/g, '') : 'field';
+    const errorId = error ? `${sanitizedHtmlFor}-error` : undefined;
+    const hintId = hint ? `${sanitizedHtmlFor}-hint` : undefined;
     const ariaDescribedBy = [errorId, hintId].filter(Boolean).join(' ') || undefined;
 
     return (
@@ -99,8 +101,9 @@ interface AccessibleInputProps
 export const AccessibleInput = forwardRef<
   HTMLInputElement,
   AccessibleInputProps
->(({ label, error, hint, className, id, required, disabled, ...props }, ref) => {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+](({ label, error, hint, className, id, required, disabled, ...props }, ref) => {
+  const generatedId = useId();
+  const inputId = id || `input-${generatedId}`;
 
   if (label) {
     return (
@@ -184,7 +187,8 @@ export const AccessibleSelect = forwardRef<
     },
     ref
   ) => {
-    const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
+    const generatedId = useId();
+    const selectId = id || `select-${generatedId}`;
 
     if (label) {
       return (

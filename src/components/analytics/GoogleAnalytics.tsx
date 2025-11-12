@@ -24,17 +24,16 @@ export function GoogleAnalytics() {
       <Script
         id="google-analytics"
         strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gaMeasurementId}', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
+      >
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${gaMeasurementId}', {
+            page_path: window.location.pathname,
+          });
+        `}
+      </Script>
     </>
   );
 }

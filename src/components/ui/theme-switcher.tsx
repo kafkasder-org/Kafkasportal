@@ -22,24 +22,21 @@ export function ThemeSwitcher({ defaultTheme = 'system', className }: ThemeSwitc
   }, []);
 
   // Initialize theme
-  useEffect(() => {
-    setMounted(true);
-
-    // Load saved theme
-    const saved = localStorage.getItem('theme') as Theme | null;
-    if (saved) {
-      setTheme(saved);
-      applyTheme(saved);
-    } else {
-      const system = getSystemTheme();
-      applyTheme(system);
-    }
-  }, [getSystemTheme]);
-
   // Apply theme to document
   const applyTheme = useCallback((newTheme: Theme) => {
+    // Safely access document element
+    if (typeof document === 'undefined') return;
+    
     const html = document.documentElement;
+    if (!html) return;
+    
     let effectiveTheme = newTheme;
+
+    // Validate theme value to prevent XSS
+    if (!['light', 'dark', 'system'].includes(newTheme)) {
+      console.warn('Invalid theme value:', newTheme);
+      return;
+    }
 
     if (newTheme === 'system') {
       effectiveTheme = getSystemTheme();
@@ -54,6 +51,24 @@ export function ThemeSwitcher({ defaultTheme = 'system', className }: ThemeSwitc
     // Save preference
     localStorage.setItem('theme', newTheme);
   }, [getSystemTheme]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    // Load saved theme
+    const saved = localStorage.getItem('theme') as Theme | null;
+    if (saved) {
+      setTheme(saved);
+      applyTheme(saved);
+    } else {
+      const system = getSystemTheme();
+      applyTheme(system);
+    }
+  }, [mounted, getSystemTheme, applyTheme]);
 
   // Handle theme toggle
   const toggleTheme = useCallback(() => {

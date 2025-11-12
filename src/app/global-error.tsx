@@ -268,7 +268,7 @@ export default function GlobalError({
                 Tekrar Dene
               </button>
               <button
-                onClick={() => (window.location.href = '/')}
+                onClick={() => window.location.replace('/')}
                 style={{
                   width: '100%',
                   padding: '0.5rem 1rem',
@@ -329,7 +329,7 @@ export default function GlobalError({
                   onClick={() => {
                     localStorage.clear();
                     sessionStorage.clear();
-                    window.location.href = '/';
+                    window.location.replace('/');
                   }}
                   style={{
                     width: '100%',

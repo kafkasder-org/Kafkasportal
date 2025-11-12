@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 
@@ -16,6 +17,7 @@ export default function Error({
   reset: () => void;
 }) {
   const [resetCount, setResetCount] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     // Log error to console in development
@@ -157,7 +159,7 @@ export default function Error({
             Tekrar Dene
           </Button>
           <Button
-            onClick={() => (window.location.href = '/genel')}
+            onClick={() => router.push('/genel')}
             className="w-full"
             variant="outline"
           >
@@ -184,7 +186,7 @@ export default function Error({
           )}
           {isTestError && (
             <Button
-              onClick={() => (window.location.href = '/test-error-boundary')}
+              onClick={() => router.push('/test-error-boundary')}
               className="w-full"
               variant="outline"
             >

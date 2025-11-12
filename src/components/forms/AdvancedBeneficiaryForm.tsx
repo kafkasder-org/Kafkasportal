@@ -252,7 +252,8 @@ export function AdvancedBeneficiaryForm({
     ] as const;
 
     dateFields.forEach((field) => {
-      if (sanitized[field]) {
+      // Type-safe property access to prevent object injection
+      if (Object.prototype.hasOwnProperty.call(sanitized, field) && sanitized[field]) {
         const dateValue = sanitized[field];
         if (typeof dateValue === 'string') {
           // String tarih varsa ISO format'a çevir
@@ -288,10 +289,12 @@ export function AdvancedBeneficiaryForm({
     ] as const;
 
     textFields.forEach((field) => {
-      if (sanitized[field] && typeof sanitized[field] === 'string') {
-        sanitized[field] = sanitizeObject({ [field]: sanitized[field] }, { allowHtml: false })[
-          field
-        ];
+      // Type-safe property access to prevent object injection  
+      if (Object.prototype.hasOwnProperty.call(sanitized, field) && 
+          sanitized[field] && typeof sanitized[field] === 'string') {
+        const fieldValue = sanitized[field] as string;
+        const sanitizedObj = sanitizeObject({ [field]: fieldValue }, { allowHtml: false });
+        sanitized[field] = sanitizedObj[field];
       }
     });
 

@@ -85,8 +85,8 @@ async function updateDonationHandler(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await extractParams(params);
   try {
+    const { id } = await extractParams(params);
     await verifyCsrfToken(request);
     await requireModuleAccess('donations');
 

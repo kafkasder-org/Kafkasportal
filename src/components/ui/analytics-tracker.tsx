@@ -108,7 +108,10 @@ export function AnalyticsTrackerComponent({
 
     const handleClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      tracker.trackUserInteraction('click', target.className || target.tagName);
+      // Sanitize className and tagName to prevent XSS
+      const className = target.className ? String(target.className).replace(/[<>\"'&]/g, '') : '';
+      const tagName = target.tagName ? String(target.tagName).toLowerCase() : '';
+      tracker.trackUserInteraction('click', className || tagName);
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {

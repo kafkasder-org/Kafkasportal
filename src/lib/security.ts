@@ -476,13 +476,31 @@ export class PasswordSecurity {
   }
 
   static generateSecurePassword(length: number = 12): string {
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-    let password = '';
-
-    for (let i = 0; i < length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    // Use crypto.getRandomValues for secure random generation
+    const charTypes = {
+      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      lower: 'abcdefghijklmnopqrstuvwxyz',
+      numbers: '0123456789',
+      symbols: '!@#$%^&*'
+    };
+    
+    const allChars = Object.values(charTypes).join('');
+    const array = new Uint8Array(length);
+    
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      crypto.getRandomValues(array);
+    } else {
+      // Fallback to Math.random for environments without crypto
+      for (let i = 0; i < length; i++) {
+        array[i] = Math.floor(Math.random() * 256);
+      }
     }
-
+    
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += allChars[array[i] % allChars.length];
+    }
+    
     return password;
   }
 }

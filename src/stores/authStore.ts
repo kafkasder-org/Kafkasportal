@@ -270,7 +270,7 @@ export const useAuthStore = create<AuthStore>()(
             if (callback) {
               callback();
             } else {
-              window.location.href = '/login';
+              window.location.replace('/login');
             }
           },
 

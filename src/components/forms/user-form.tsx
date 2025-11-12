@@ -42,11 +42,30 @@ const baseSchema = z.object({
 export type UserFormValues = z.infer<typeof baseSchema>;
 
 const generateSecurePassword = () => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*?';
   const length = 12;
+  // Use crypto.getRandomValues for secure random generation
+  const charset = {
+    upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
+    lower: 'abcdefghijkmnopqrstuvwxyz',
+    numbers: '23456789',
+    symbols: '!@#$%&*?'
+  };
+  
+  const allChars = charset.upper + charset.lower + charset.numbers + charset.symbols;
+  const array = new Uint8Array(length);
+  
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    crypto.getRandomValues(array);
+  } else {
+    // Fallback for environments without crypto (should not happen in modern browsers)
+    for (let i = 0; i < length; i++) {
+      array[i] = Math.floor(Math.random() * 256);
+    }
+  }
+  
   let password = '';
-  for (let i = 0; i < length; i += 1) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  for (let i = 0; i < length; i++) {
+    password += allChars[array[i] % allChars.length];
   }
   return password;
 };
