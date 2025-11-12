@@ -126,7 +126,7 @@ async function updateDonationHandler(
     });
 
     const errorMessage = _error instanceof Error ? _error.message : '';
-    if (errorMessage?.includes('not found')) {
+    if (errorMessage.includes('not found')) {
       return NextResponse.json({ success: false, _error: 'Bağış bulunamadı' }, { status: 404 });
     }
 

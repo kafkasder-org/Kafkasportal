@@ -1,6 +1,6 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
+import { Id } from './_generated/dataModel';
 
 const isValidTcNumber = (value: string): boolean => /^\d{11}$/.test(value);
 
@@ -16,19 +16,19 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     let scholarships;
-    
+
     if (args.category) {
       scholarships = await ctx.db
-        .query("scholarships")
-        .withIndex("by_category", (q) => q.eq("category", args.category as string))
+        .query('scholarships')
+        .withIndex('by_category', (q) => q.eq('category', args.category as string))
         .collect();
     } else if (args.isActive !== undefined) {
       scholarships = await ctx.db
-        .query("scholarships")
-        .withIndex("by_is_active", (q) => q.eq("is_active", args.isActive!))
+        .query('scholarships')
+        .withIndex('by_is_active', (q) => q.eq('is_active', args.isActive!))
         .collect();
     } else {
-      scholarships = await ctx.db.query("scholarships").collect();
+      scholarships = await ctx.db.query('scholarships').collect();
     }
 
     const skip = args.skip || 0;
@@ -44,7 +44,7 @@ export const list = query({
 
 // Get scholarship by ID
 export const get = query({
-  args: { id: v.id("scholarships") },
+  args: { id: v.id('scholarships') },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -56,7 +56,7 @@ export const create = mutation({
     title: v.string(),
     description: v.optional(v.string()),
     amount: v.number(),
-    currency: v.union(v.literal("TRY"), v.literal("USD"), v.literal("EUR")),
+    currency: v.union(v.literal('TRY'), v.literal('USD'), v.literal('EUR')),
     duration_months: v.optional(v.number()),
     category: v.string(),
     eligibility_criteria: v.optional(v.string()),
@@ -68,9 +68,9 @@ export const create = mutation({
     is_active: v.boolean(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("scholarships", {
+    return await ctx.db.insert('scholarships', {
       ...args,
-      created_by: "system" as Id<"users">, // Temporary - should be actual user ID
+      created_by: 'system' as Id<'users'>, // Temporary - should be actual user ID
       created_at: new Date().toISOString(),
     });
   },
@@ -79,7 +79,7 @@ export const create = mutation({
 // Update scholarship program
 export const update = mutation({
   args: {
-    id: v.id("scholarships"),
+    id: v.id('scholarships'),
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     amount: v.optional(v.number()),
@@ -97,7 +97,7 @@ export const update = mutation({
     const { id, ...updates } = args;
     const scholarship = await ctx.db.get(id);
     if (!scholarship) {
-      throw new Error("Scholarship not found");
+      throw new Error('Scholarship not found');
     }
 
     await ctx.db.patch(id, updates);
@@ -107,11 +107,11 @@ export const update = mutation({
 
 // Delete scholarship
 export const remove = mutation({
-  args: { id: v.id("scholarships") },
+  args: { id: v.id('scholarships') },
   handler: async (ctx, args) => {
     const scholarship = await ctx.db.get(args.id);
     if (!scholarship) {
-      throw new Error("Scholarship not found");
+      throw new Error('Scholarship not found');
     }
     await ctx.db.delete(args.id);
     return { success: true };
@@ -126,19 +126,19 @@ export const listApplications = query({
   args: {
     limit: v.optional(v.number()),
     skip: v.optional(v.number()),
-    scholarship_id: v.optional(v.id("scholarships")),
+    scholarship_id: v.optional(v.id('scholarships')),
     status: v.optional(v.string()),
     tc_no: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (args.tc_no) {
       if (!isValidTcNumber(args.tc_no)) {
-        throw new Error("Invalid TC number format");
+        throw new Error('Invalid TC number format');
       }
 
       const applications = await ctx.db
-        .query("scholarship_applications")
-        .withIndex("by_tc_no", (q) => q.eq("applicant_tc_no", args.tc_no!))
+        .query('scholarship_applications')
+        .withIndex('by_tc_no', (q) => q.eq('applicant_tc_no', args.tc_no!))
         .collect();
 
       const skip = args.skip || 0;
@@ -152,19 +152,30 @@ export const listApplications = query({
     }
 
     let applications;
-    
+
     if (args.scholarship_id) {
       applications = await ctx.db
-        .query("scholarship_applications")
-        .withIndex("by_scholarship", (q) => q.eq("scholarship_id", args.scholarship_id!))
+        .query('scholarship_applications')
+        .withIndex('by_scholarship', (q) => q.eq('scholarship_id', args.scholarship_id!))
         .collect();
     } else if (args.status) {
       applications = await ctx.db
-        .query("scholarship_applications")
-        .withIndex("by_status", (q) => q.eq("status", args.status as "approved" | "rejected" | "draft" | "under_review" | "submitted" | "waitlisted"))
+        .query('scholarship_applications')
+        .withIndex('by_status', (q) =>
+          q.eq(
+            'status',
+            args.status as
+              | 'approved'
+              | 'rejected'
+              | 'draft'
+              | 'under_review'
+              | 'submitted'
+              | 'waitlisted'
+          )
+        )
         .collect();
     } else {
-      applications = await ctx.db.query("scholarship_applications").collect();
+      applications = await ctx.db.query('scholarship_applications').collect();
     }
 
     const skip = args.skip || 0;
@@ -181,7 +192,7 @@ export const listApplications = query({
 // Get application by ID
 // Requires authentication and ADMIN/MANAGER role (contains TC number)
 export const getApplication = query({
-  args: { id: v.id("scholarship_applications") },
+  args: { id: v.id('scholarship_applications') },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -190,8 +201,8 @@ export const getApplication = query({
 // Create scholarship application
 export const createApplication = mutation({
   args: {
-    scholarship_id: v.id("scholarships"),
-    student_id: v.optional(v.id("beneficiaries")),
+    scholarship_id: v.id('scholarships'),
+    student_id: v.optional(v.id('beneficiaries')),
     applicant_name: v.string(),
     applicant_tc_no: v.string(),
     applicant_phone: v.string(),
@@ -213,16 +224,16 @@ export const createApplication = mutation({
   },
   handler: async (ctx, args) => {
     if (!isValidTcNumber(args.applicant_tc_no)) {
-      throw new Error("Invalid TC number format");
+      throw new Error('Invalid TC number format');
     }
 
     const priorityScore = calculatePriorityScore(args);
 
-    return await ctx.db.insert("scholarship_applications", {
+    return await ctx.db.insert('scholarship_applications', {
       ...args,
       applicant_tc_no: args.applicant_tc_no,
       priority_score: priorityScore,
-      status: "draft",
+      status: 'draft',
       created_at: new Date().toISOString(),
     });
   },
@@ -232,10 +243,19 @@ export const createApplication = mutation({
 // Requires authentication and ADMIN/MANAGER role (accesses TC number data)
 export const updateApplication = mutation({
   args: {
-    id: v.id("scholarship_applications"),
-    status: v.optional(v.union(v.literal("draft"), v.literal("submitted"), v.literal("under_review"), v.literal("approved"), v.literal("rejected"), v.literal("waitlisted"))),
+    id: v.id('scholarship_applications'),
+    status: v.optional(
+      v.union(
+        v.literal('draft'),
+        v.literal('submitted'),
+        v.literal('under_review'),
+        v.literal('approved'),
+        v.literal('rejected'),
+        v.literal('waitlisted')
+      )
+    ),
     reviewer_notes: v.optional(v.string()),
-    reviewed_by: v.optional(v.id("users")),
+    reviewed_by: v.optional(v.id('users')),
     reviewed_at: v.optional(v.string()),
     submitted_at: v.optional(v.string()),
   },
@@ -243,10 +263,10 @@ export const updateApplication = mutation({
     const { id, ...updates } = args;
     const application = await ctx.db.get(id);
     if (!application) {
-      throw new Error("Application not found");
+      throw new Error('Application not found');
     }
 
-    if (updates.status === "submitted" && !updates.submitted_at) {
+    if (updates.status === 'submitted' && !updates.submitted_at) {
       (updates as { submitted_at?: string }).submitted_at = new Date().toISOString();
     }
 
@@ -258,19 +278,19 @@ export const updateApplication = mutation({
 // Submit application
 // Requires authentication and ADMIN/MANAGER role (accesses TC number data)
 export const submitApplication = mutation({
-  args: { id: v.id("scholarship_applications") },
+  args: { id: v.id('scholarship_applications') },
   handler: async (ctx, args) => {
     const application = await ctx.db.get(args.id);
     if (!application) {
-      throw new Error("Application not found");
+      throw new Error('Application not found');
     }
 
-    if (application.status !== "draft") {
-      throw new Error("Only draft applications can be submitted");
+    if (application.status !== 'draft') {
+      throw new Error('Only draft applications can be submitted');
     }
 
     await ctx.db.patch(args.id, {
-      status: "submitted",
+      status: 'submitted',
       submitted_at: new Date().toISOString(),
     });
 
@@ -325,24 +345,27 @@ export const listPayments = query({
   args: {
     limit: v.optional(v.number()),
     skip: v.optional(v.number()),
-    application_id: v.optional(v.id("scholarship_applications")),
-    status: v.optional(v.string()),
+    application_id: v.optional(v.id('scholarship_applications')),
+    status: v.optional(
+      v.union(v.literal('pending'), v.literal('cancelled'), v.literal('failed'), v.literal('paid'))
+    ),
   },
   handler: async (ctx, args) => {
     let payments;
-    
+
     if (args.application_id) {
       payments = await ctx.db
-        .query("scholarship_payments")
-        .withIndex("by_application", (q) => q.eq("application_id", args.application_id!))
+        .query('scholarship_payments')
+        .withIndex('by_application', (q) => q.eq('application_id', args.application_id!))
         .collect();
-    } else if (args.status) {
+    } else if (args.status !== undefined) {
+      const status = args.status as 'pending' | 'cancelled' | 'failed' | 'paid';
       payments = await ctx.db
-        .query("scholarship_payments")
-        .withIndex("by_status", (q) => q.eq("status", args.status as any))
+        .query('scholarship_payments')
+        .withIndex('by_status', (q) => q.eq('status', status))
         .collect();
     } else {
-      payments = await ctx.db.query("scholarship_payments").collect();
+      payments = await ctx.db.query('scholarship_payments').collect();
     }
 
     const skip = args.skip || 0;
@@ -359,19 +382,19 @@ export const listPayments = query({
 // Create scholarship payment
 export const createPayment = mutation({
   args: {
-    application_id: v.id("scholarship_applications"),
+    application_id: v.id('scholarship_applications'),
     payment_date: v.string(),
     amount: v.number(),
-    currency: v.union(v.literal("TRY"), v.literal("USD"), v.literal("EUR")),
+    currency: v.union(v.literal('TRY'), v.literal('USD'), v.literal('EUR')),
     payment_method: v.string(),
     payment_reference: v.optional(v.string()),
     bank_account: v.optional(v.string()),
     notes: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("scholarship_payments", {
+    return await ctx.db.insert('scholarship_payments', {
       ...args,
-      status: "pending",
+      status: 'pending',
       created_at: new Date().toISOString(),
     });
   },
@@ -380,9 +403,14 @@ export const createPayment = mutation({
 // Update payment status
 export const updatePayment = mutation({
   args: {
-    id: v.id("scholarship_payments"),
-    status: v.union(v.literal("pending"), v.literal("paid"), v.literal("failed"), v.literal("cancelled")),
-    processed_by: v.optional(v.id("users")),
+    id: v.id('scholarship_payments'),
+    status: v.union(
+      v.literal('pending'),
+      v.literal('paid'),
+      v.literal('failed'),
+      v.literal('cancelled')
+    ),
+    processed_by: v.optional(v.id('users')),
     receipt_file_id: v.optional(v.string()),
     notes: v.optional(v.string()),
   },
@@ -390,7 +418,7 @@ export const updatePayment = mutation({
     const { id, ...updates } = args;
     const payment = await ctx.db.get(id);
     if (!payment) {
-      throw new Error("Payment not found");
+      throw new Error('Payment not found');
     }
 
     await ctx.db.patch(id, updates);
@@ -401,28 +429,31 @@ export const updatePayment = mutation({
 // Get payment statistics
 export const getStatistics = query({
   args: {
-    scholarship_id: v.optional(v.id("scholarships")),
+    scholarship_id: v.optional(v.id('scholarships')),
   },
   handler: async (ctx, args) => {
     let applications;
-    
+
     if (args.scholarship_id) {
       applications = await ctx.db
-        .query("scholarship_applications")
-        .withIndex("by_scholarship", (q) => q.eq("scholarship_id", args.scholarship_id!))
+        .query('scholarship_applications')
+        .withIndex('by_scholarship', (q) => q.eq('scholarship_id', args.scholarship_id!))
         .collect();
     } else {
-      applications = await ctx.db.query("scholarship_applications").collect();
+      applications = await ctx.db.query('scholarship_applications').collect();
     }
 
-    const statusCounts = applications.reduce((acc, app) => {
-      acc[app.status] = (acc[app.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const statusCounts = applications.reduce(
+      (acc, app) => {
+        acc[app.status] = (acc[app.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
-    const payments = await ctx.db.query("scholarship_payments").collect();
+    const payments = await ctx.db.query('scholarship_payments').collect();
     const totalPaid = payments
-      .filter((p: { status: string }) => p.status === "paid")
+      .filter((p: { status: string }) => p.status === 'paid')
       .reduce((sum: number, p: { amount: number }) => sum + p.amount, 0);
 
     return {

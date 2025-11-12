@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { convex } from '@/lib/convex/client';
 import { api as convexApi } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 import {
   Dialog,
   DialogContent,
@@ -50,7 +51,7 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
     queryFn: async () => {
       if (!convex) return [];
       return await convex.query(convexApi.consents.getBeneficiaryConsents, {
-        beneficiaryId: beneficiaryId as any,
+        beneficiaryId: beneficiaryId as Id<'beneficiaries'>,
       });
     },
     enabled: !!beneficiaryId && !!convex,
@@ -92,7 +93,7 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
     mutationFn: async (consentId: string) => {
       if (!convex) throw new Error('Convex not initialized');
       return await convex.mutation(convexApi.consents.deleteConsent, {
-        consentId: consentId as any,
+        consentId: consentId as Id<'consents'>,
       });
     },
     onSuccess: () => {
@@ -103,12 +104,18 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
   });
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: 'default' | 'secondary' | 'destructive'; icon: any }> = {
+    const variants: Record<
+      string,
+      { variant: 'default' | 'secondary' | 'destructive'; icon: any }
+    > = {
       active: { variant: 'default', icon: CheckCircle2 },
       revoked: { variant: 'destructive', icon: XCircle },
       expired: { variant: 'secondary', icon: Clock },
     };
-    const { variant, icon: Icon } = variants[status] || { variant: 'secondary', icon: CheckCircle2 };
+    const { variant, icon: Icon } = variants[status] || {
+      variant: 'secondary',
+      icon: CheckCircle2,
+    };
     return (
       <Badge variant={variant} className="gap-1">
         <Icon className="h-3 w-3" />
@@ -147,7 +154,10 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label>Rıza Türü</Label>
-                <Select value={formData.consentType} onValueChange={(v) => setFormData({ ...formData, consentType: v })}>
+                <Select
+                  value={formData.consentType}
+                  onValueChange={(v) => setFormData({ ...formData, consentType: v })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -164,7 +174,9 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
                 <Label>Rıza Metni *</Label>
                 <Textarea
                   value={formData.consentText}
-                  onChange={(e) => { setFormData({ ...formData, consentText: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, consentText: e.target.value });
+                  }}
                   rows={4}
                   placeholder="Rıza beyanı metnini girin..."
                 />
@@ -197,7 +209,10 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
               </div>
               <div className="space-y-2">
                 <Label>Durum</Label>
-                <Select value={formData.status} onValueChange={(v: any) => setFormData({ ...formData, status: v })}>
+                <Select
+                  value={formData.status}
+                  onValueChange={(v: any) => setFormData({ ...formData, status: v })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -221,8 +236,15 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
                 <Button variant="outline" onClick={() => setShowForm(false)}>
                   İptal
                 </Button>
-                <Button onClick={() => createMutation.mutate()} disabled={createMutation.isPending || !formData.consentText}>
-                  {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Kaydet'}
+                <Button
+                  onClick={() => createMutation.mutate()}
+                  disabled={createMutation.isPending || !formData.consentText}
+                >
+                  {createMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Kaydet'
+                  )}
                 </Button>
               </div>
             </div>
@@ -243,14 +265,20 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <FileSignature className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{getConsentTypeLabel(consent.consent_type)}</span>
+                      <span className="font-medium">
+                        {getConsentTypeLabel(consent.consent_type)}
+                      </span>
                       {getStatusBadge(consent.status)}
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{consent.consent_text}</p>
+                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                      {consent.consent_text}
+                    </p>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span>İmza: {new Date(consent.signed_at).toLocaleDateString('tr-TR')}</span>
                       {consent.expires_at && (
-                        <span>Bitiş: {new Date(consent.expires_at).toLocaleDateString('tr-TR')}</span>
+                        <span>
+                          Bitiş: {new Date(consent.expires_at).toLocaleDateString('tr-TR')}
+                        </span>
                       )}
                       {consent.signed_by && <span>İmzalayan: {consent.signed_by}</span>}
                     </div>
@@ -280,4 +308,3 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
     </div>
   );
 }
-

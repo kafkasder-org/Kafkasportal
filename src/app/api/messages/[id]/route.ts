@@ -4,7 +4,10 @@ import logger from '@/lib/logger';
 import { extractParams } from '@/lib/api/route-helpers';
 import { Id } from '@/convex/_generated/dataModel';
 
-function validateMessageUpdate(data: Record<string, unknown>): { isValid: boolean; errors: string[] } {
+function validateMessageUpdate(data: Record<string, unknown>): {
+  isValid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
   if (data.message_type && !['sms', 'email', 'internal'].includes(data.message_type as string)) {
     errors.push('Geçersiz mesaj türü');
@@ -24,13 +27,10 @@ function validateMessageUpdate(data: Record<string, unknown>): { isValid: boolea
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await extractParams(params);
   try {
-    const message = await convexMessages.get(id as Id<"messages">);
-    
+    const message = await convexMessages.get(id as Id<'messages'>);
+
     if (!message) {
-      return NextResponse.json(
-        { success: false, error: 'Mesaj bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Mesaj bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -43,10 +43,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       method: 'GET',
       messageId: id,
     });
-    return NextResponse.json(
-      { success: false, _error: 'Veri alınamadı' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, _error: 'Veri alınamadı' }, { status: 500 });
   }
 }
 
@@ -59,8 +56,8 @@ async function updateMessageHandler(
 ) {
   const { id } = await extractParams(params);
   try {
-    const body = await request.json() as Record<string, unknown>;
-    
+    const body = (await request.json()) as Record<string, unknown>;
+
     const validation = validateMessageUpdate(body);
     if (!validation.isValid) {
       return NextResponse.json(
@@ -76,7 +73,7 @@ async function updateMessageHandler(
       sent_at: body.sent_at as string | undefined,
     };
 
-    const updated = await convexMessages.update(id as Id<"messages">, messageData);
+    const updated = await convexMessages.update(id as Id<'messages'>, messageData);
 
     return NextResponse.json({
       success: true,
@@ -89,13 +86,10 @@ async function updateMessageHandler(
       method: 'PUT',
       messageId: id,
     });
-    
+
     const errorMessage = _error instanceof Error ? _error.message : '';
-    if (errorMessage?.includes('not found')) {
-      return NextResponse.json(
-        { success: false, _error: 'Mesaj bulunamadı' },
-        { status: 404 }
-      );
+    if (errorMessage.includes('not found')) {
+      return NextResponse.json({ success: false, _error: 'Mesaj bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json(
@@ -114,7 +108,7 @@ async function deleteMessageHandler(
 ) {
   const { id } = await extractParams(params);
   try {
-    await convexMessages.remove(id as Id<"messages">);
+    await convexMessages.remove(id as Id<'messages'>);
 
     return NextResponse.json({
       success: true,
@@ -126,19 +120,13 @@ async function deleteMessageHandler(
       method: 'DELETE',
       messageId: id,
     });
-    
+
     const errorMessage = _error instanceof Error ? _error.message : '';
     if (errorMessage?.includes('not found')) {
-      return NextResponse.json(
-        { success: false, _error: 'Mesaj bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, _error: 'Mesaj bulunamadı' }, { status: 404 });
     }
 
-    return NextResponse.json(
-      { success: false, _error: 'Silme işlemi başarısız' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, _error: 'Silme işlemi başarısız' }, { status: 500 });
   }
 }
 
@@ -153,24 +141,19 @@ async function sendMessageHandler(
   const { id } = await extractParams(params);
   try {
     // Get message details
-    const message = await convexMessages.get(id as Id<"messages">);
-    
+    const message = await convexMessages.get(id as Id<'messages'>);
+
     if (!message) {
-      return NextResponse.json(
-        { success: false, error: 'Mesaj bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Mesaj bulunamadı' }, { status: 404 });
     }
 
     // Get recipient user details (phone/email)
     const { getConvexHttp } = await import('@/lib/convex/server');
     const { api } = await import('@/convex/_generated/api');
     const convexHttp = getConvexHttp();
-    
+
     const recipients = await Promise.all(
-      message.recipients.map((userId) =>
-        convexHttp.query(api.users.get, { id: userId })
-      )
+      message.recipients.map((userId) => convexHttp.query(api.users.get, { id: userId }))
     );
 
     let sendResult: { success: boolean; error?: string } = { success: false };
@@ -188,7 +171,7 @@ async function sendMessageHandler(
           return '';
         })
         .filter((phone): phone is string => typeof phone === 'string' && phone.length > 0);
-      
+
       if (phoneNumbers.length === 0) {
         logger.warn('No phone numbers found for SMS recipients', {
           recipients: message.recipients,
@@ -204,10 +187,8 @@ async function sendMessageHandler(
       }
     } else if (message.message_type === 'email') {
       const { sendBulkEmails } = await import('@/lib/services/email');
-      const emails = recipients
-        .map((user) => user?.email)
-        .filter(Boolean) as string[];
-      
+      const emails = recipients.map((user) => user?.email).filter(Boolean) as string[];
+
       if (emails.length === 0) {
         return NextResponse.json(
           { success: false, error: 'Alıcıların email adresi bulunamadı' },
@@ -215,11 +196,7 @@ async function sendMessageHandler(
         );
       }
 
-      const result = await sendBulkEmails(
-        emails,
-        message.subject || 'Mesaj',
-        message.content
-      );
+      const result = await sendBulkEmails(emails, message.subject || 'Mesaj', message.content);
       sendResult = {
         success: result.failed === 0,
         error: result.failed > 0 ? `${result.failed} email gönderilemedi` : undefined,
@@ -230,7 +207,7 @@ async function sendMessageHandler(
     }
 
     // Update message status
-    const updated = await convexMessages.update(id as Id<"messages">, {
+    const updated = await convexMessages.update(id as Id<'messages'>, {
       status: sendResult.success ? 'sent' : 'failed',
       sent_at: sendResult.success ? new Date().toISOString() : undefined,
     });
@@ -267,4 +244,3 @@ async function sendMessageHandler(
 export const PUT = updateMessageHandler;
 export const DELETE = deleteMessageHandler;
 export const POST = sendMessageHandler;
-

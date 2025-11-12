@@ -34,8 +34,8 @@ export function FilterPanel({
   fields,
   onFiltersChange,
   onReset,
-  isOpen = true,
-  onToggle,
+  isOpen: _isOpen = true,
+  onToggle: _onToggle,
 }: FilterPanelProps) {
   const [filters, setFilters] = useState<Record<string, string | string[]>>({});
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
@@ -200,7 +200,9 @@ export function QuickFilters({
       <Button
         variant={!selectedValue ? 'default' : 'outline'}
         size="sm"
-        onClick={() => { onChange(''); }}
+        onClick={() => {
+          onChange('');
+        }}
         className="h-8 text-xs"
       >
         Tümü
@@ -210,7 +212,9 @@ export function QuickFilters({
           key={option.value}
           variant={selectedValue === option.value ? 'default' : 'outline'}
           size="sm"
-          onClick={() => onChange(option.value)}
+          onClick={() => {
+            onChange(option.value);
+          }}
           className="h-8 text-xs"
         >
           {option.label}
@@ -243,7 +247,12 @@ export function ActiveFilters({ filters, filterLabels, onRemove }: ActiveFilters
               className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
             >
               <span>{value}</span>
-              <button onClick={() => onRemove(key, v)} className="hover:text-blue-900">
+              <button
+                onClick={() => {
+                  onRemove(key, v);
+                }}
+                className="hover:text-blue-900"
+              >
                 <X className="h-3 w-3" />
               </button>
             </div>
@@ -257,7 +266,12 @@ export function ActiveFilters({ filters, filterLabels, onRemove }: ActiveFilters
             <span>
               {label}: {value}
             </span>
-            <button onClick={() => onRemove(key)} className="hover:text-blue-900">
+            <button
+              onClick={() => {
+                onRemove(key);
+              }}
+              className="hover:text-blue-900"
+            >
               <X className="h-3 w-3" />
             </button>
           </div>

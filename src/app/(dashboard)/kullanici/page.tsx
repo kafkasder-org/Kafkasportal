@@ -48,10 +48,7 @@ export default function UsersPage() {
     initialStatus === 'true' ? 'active' : initialStatus === 'false' ? 'inactive' : 'all'
   );
 
-  const canManageUsers = useMemo(
-    () => userPermissions.includes('users:manage'),
-    [userPermissions]
-  );
+  const canManageUsers = useMemo(() => userPermissions.includes('users:manage'), [userPermissions]);
 
   const { data, isLoading, isFetching } = useQuery<UsersListResponse>({
     queryKey: ['users', searchTerm, roleFilter, statusFilter],
@@ -100,7 +97,7 @@ export default function UsersPage() {
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      void queryClient.invalidateQueries({ queryKey: ['users'] });
       toast.success('Kullanıcı durumu güncellendi');
     },
     onError: (error: unknown) => {
@@ -118,6 +115,7 @@ export default function UsersPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      void queryClient.invalidateQueries({ queryKey: ['users'] });
       toast.success('Kullanıcı silindi');
     },
     onError: (error: unknown) => {
@@ -204,7 +202,9 @@ export default function UsersPage() {
                   placeholder="Ad, e-posta veya telefon ile ara..."
                   className="pl-10"
                   value={searchTerm}
-                  onChange={(event) => handleSearchChange(event.target.value)}
+                  onChange={(event) => {
+                    handleSearchChange(event.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -214,7 +214,11 @@ export default function UsersPage() {
                 Görev
               </label>
               <Select value={roleFilter} onValueChange={handleRoleChange}>
-                <SelectTrigger id="users-role-filter" data-testid="users-filter-role" className="mt-2">
+                <SelectTrigger
+                  id="users-role-filter"
+                  data-testid="users-filter-role"
+                  className="mt-2"
+                >
                   <SelectValue placeholder="Tümü" />
                 </SelectTrigger>
                 <SelectContent>

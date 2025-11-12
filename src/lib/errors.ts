@@ -259,28 +259,41 @@ export function formatErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  const err = error as any;
-
-  // Handle Convex errors
-  if (err?.code) {
-    const translated = translateError(err.code);
-    if (translated !== ERROR_MESSAGES['general_unknown']) {
-      return translated;
-    }
+  // Handle standard Error objects
+  if (error instanceof Error) {
+    return error.message;
   }
 
-  // Handle HTTP status codes
-  if (err?.status || err?.statusCode) {
-    const status = err.status || err.statusCode;
-    const translated = translateError(status);
-    if (translated !== ERROR_MESSAGES['general_unknown']) {
-      return translated;
-    }
-  }
+  // Handle error-like objects with code
+  if (typeof error === 'object' && error !== null) {
+    const err = error as {
+      code?: string | number;
+      status?: number;
+      statusCode?: number;
+      message?: string;
+    };
 
-  // Handle error message
-  if (err?.message) {
-    return err.message;
+    // Handle Convex errors
+    if (err.code) {
+      const translated = translateError(err.code);
+      if (translated !== ERROR_MESSAGES['general_unknown']) {
+        return translated;
+      }
+    }
+
+    // Handle HTTP status codes
+    if (err.status || err.statusCode) {
+      const status = err.status || err.statusCode;
+      const translated = translateError(status);
+      if (translated !== ERROR_MESSAGES['general_unknown']) {
+        return translated;
+      }
+    }
+
+    // Handle error message
+    if (err.message) {
+      return err.message;
+    }
   }
 
   // Default
@@ -292,13 +305,22 @@ export function formatErrorMessage(error: unknown): string {
  */
 export function logError(error: unknown, context?: string): void {
   const message = `Error${context ? ` in ${context}` : ''}`;
-  const err = error as any;
-  logger.error(message, error, {
-    code: err?.code,
-    status: err?.status || err?.statusCode,
-    details: err?.details,
-    context,
-  });
+
+  const metadata: Record<string, unknown> = { context };
+
+  if (typeof error === 'object' && error !== null) {
+    const err = error as {
+      code?: string | number;
+      status?: number;
+      statusCode?: number;
+      details?: unknown;
+    };
+    metadata.code = err.code;
+    metadata.status = err.status || err.statusCode;
+    metadata.details = err.details;
+  }
+
+  logger.error(message, error, metadata);
 }
 
 /**
@@ -321,11 +343,18 @@ export function createErrorResponse(error: unknown): ErrorResponse {
     };
   }
 
-  const err = error as any;
+  let code = 'UNKNOWN_ERROR';
+  if (typeof error === 'object' && error !== null) {
+    const err = error as { code?: string | number };
+    if (err.code) {
+      code = String(err.code);
+    }
+  }
+
   return {
     success: false,
     error: formatErrorMessage(error),
-    code: err?.code || 'UNKNOWN_ERROR',
+    code,
   };
 }
 

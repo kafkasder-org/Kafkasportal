@@ -95,7 +95,7 @@ export default function ParametersPage() {
       parametersApi.deleteParameter({ category, key, updatedBy: '' }),
     onSuccess: () => {
       toast.success('Parametre silindi');
-      queryClient.invalidateQueries({ queryKey: ['parameters'] });
+      void queryClient.invalidateQueries({ queryKey: ['parameters'] });
     },
     onError: (error: Error) => {
       toast.error(`Silme hatası: ${error.message}`);
@@ -124,7 +124,11 @@ export default function ParametersPage() {
             <DialogHeader>
               <DialogTitle>Yeni Parametre Ekle</DialogTitle>
             </DialogHeader>
-            <ParameterForm onSuccess={() => { setShowCreateDialog(false); }} />
+            <ParameterForm
+              onSuccess={() => {
+                setShowCreateDialog(false);
+              }}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -175,7 +179,9 @@ export default function ParametersPage() {
                   placeholder="Parametre adı..."
                   className="pl-10"
                   value={search}
-                  onChange={(e) => { setSearch(e.target.value); }}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -331,7 +337,9 @@ function ParameterForm({ onSuccess }: { onSuccess?: () => void }) {
         <Label>İsim (Türkçe) *</Label>
         <Input
           value={formData.name_tr}
-          onChange={(e) => { setFormData({ ...formData, name_tr: e.target.value }); }}
+          onChange={(e) => {
+            setFormData({ ...formData, name_tr: e.target.value });
+          }}
           placeholder="Örn: Erkek"
         />
       </div>
@@ -340,7 +348,9 @@ function ParameterForm({ onSuccess }: { onSuccess?: () => void }) {
         <Label>İsim (İngilizce)</Label>
         <Input
           value={formData.name_en}
-          onChange={(e) => { setFormData({ ...formData, name_en: e.target.value }); }}
+          onChange={(e) => {
+            setFormData({ ...formData, name_en: e.target.value });
+          }}
           placeholder="Örn: Male"
         />
       </div>
@@ -349,7 +359,9 @@ function ParameterForm({ onSuccess }: { onSuccess?: () => void }) {
         <Label>Değer *</Label>
         <Input
           value={formData.value}
-          onChange={(e) => { setFormData({ ...formData, value: e.target.value }); }}
+          onChange={(e) => {
+            setFormData({ ...formData, value: e.target.value });
+          }}
           placeholder="Örn: male"
         />
       </div>
@@ -360,7 +372,9 @@ function ParameterForm({ onSuccess }: { onSuccess?: () => void }) {
           type="number"
           min={1}
           value={formData.order}
-          onChange={(e) => { setFormData({ ...formData, order: parseInt(e.target.value) }); }}
+          onChange={(e) => {
+            setFormData({ ...formData, order: parseInt(e.target.value) });
+          }}
         />
       </div>
 

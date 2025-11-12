@@ -44,7 +44,7 @@ import { cn } from '@/lib/utils';
 function formatDate(date: string | undefined) {
   if (!date) return '-';
   try {
-    return format(parseISO(date), "dd MMM yyyy HH:mm", { locale: tr });
+    return format(parseISO(date), 'dd MMM yyyy HH:mm', { locale: tr });
   } catch {
     return date;
   }
@@ -114,8 +114,7 @@ export default function WorkManagementPage() {
     enabled: Boolean(user?.id),
   });
 
-  const notifications =
-    (notificationsResponse?.data ?? []) as WorkflowNotificationDocument[];
+  const notifications = (notificationsResponse?.data ?? []) as WorkflowNotificationDocument[];
 
   const completeRatio = useMemo(() => {
     if (!isAdmin || allActionItems.length === 0) return 0;
@@ -149,9 +148,9 @@ export default function WorkManagementPage() {
         note,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workflow-action-items', user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['workflow-action-items-all'] });
-      queryClient.invalidateQueries({ queryKey: ['workflow-notifications'] });
+      void queryClient.invalidateQueries({ queryKey: ['workflow-action-items', user?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['workflow-action-items-all'] });
+      void queryClient.invalidateQueries({ queryKey: ['workflow-notifications'] });
     },
   });
 
@@ -204,14 +203,14 @@ export default function WorkManagementPage() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Yaklaşan Toplantılar</span>
-                  {isLoadingMeetings && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                  {isLoadingMeetings && (
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {upcomingMeetings.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    Planlanmış toplantı bulunmuyor.
-                  </p>
+                  <p className="text-sm text-muted-foreground">Planlanmış toplantı bulunmuyor.</p>
                 ) : (
                   upcomingMeetings.map((meeting) => (
                     <div
@@ -258,10 +257,16 @@ export default function WorkManagementPage() {
                         variant="secondary"
                         className={cn(
                           'capitalize',
-                          meetingActionItemStatusColors[status as keyof typeof meetingActionItemStatusColors]
+                          meetingActionItemStatusColors[
+                            status as keyof typeof meetingActionItemStatusColors
+                          ]
                         )}
                       >
-                        {meetingActionItemStatusLabels[status as keyof typeof meetingActionItemStatusLabels]}
+                        {
+                          meetingActionItemStatusLabels[
+                            status as keyof typeof meetingActionItemStatusLabels
+                          ]
+                        }
                       </Badge>
                     </div>
                     <span className="font-semibold">{count}</span>
@@ -269,9 +274,7 @@ export default function WorkManagementPage() {
                 ))}
                 {isAdmin && (
                   <div className="pt-4">
-                    <p className="text-xs text-muted-foreground">
-                      Tamamlanan görev oranı
-                    </p>
+                    <p className="text-xs text-muted-foreground">Tamamlanan görev oranı</p>
                     <div className="mt-2 flex items-center gap-2">
                       <Progress value={completeRatio} className="h-2 flex-1" />
                       <span className="w-8 text-right text-xs font-semibold">{completeRatio}%</span>
@@ -295,17 +298,15 @@ export default function WorkManagementPage() {
                   <p className="text-sm text-muted-foreground">Bekleyen bildiriminiz yok.</p>
                 ) : (
                   pendingNotifications.slice(0, 4).map((notification) => (
-                    <div
-                      key={notification._id}
-                      className="rounded-lg border p-3"
-                    >
+                    <div key={notification._id} className="rounded-lg border p-3">
                       <div className="flex items-center justify-between text-sm">
                         <h3 className="font-medium">{notification.title}</h3>
                         <Badge
                           variant="outline"
-                          className={workflowNotificationStatusColors[
-                            notification.status
-                          ] ?? 'border-muted text-muted-foreground'}
+                          className={
+                            workflowNotificationStatusColors[notification.status] ??
+                            'border-muted text-muted-foreground'
+                          }
                         >
                           {workflowNotificationStatusLabels[notification.status]}
                         </Badge>
@@ -352,10 +353,7 @@ export default function WorkManagementPage() {
                         <div className="flex items-center gap-2">
                           <h3 className="text-sm font-semibold">{item.title}</h3>
                           <Badge
-                            className={cn(
-                              'capitalize',
-                              meetingActionItemStatusColors[item.status]
-                            )}
+                            className={cn('capitalize', meetingActionItemStatusColors[item.status])}
                           >
                             {meetingActionItemStatusLabels[item.status]}
                           </Badge>
@@ -365,9 +363,7 @@ export default function WorkManagementPage() {
                         )}
                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                           <span>Toplantı: {item.meeting_id.slice(0, 6)}...</span>
-                          {item.due_date && (
-                            <span>Son Tarih: {formatDate(item.due_date)}</span>
-                          )}
+                          {item.due_date && <span>Son Tarih: {formatDate(item.due_date)}</span>}
                         </div>
                       </div>
 
@@ -413,9 +409,7 @@ export default function WorkManagementPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {recentDecisions.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Henüz karar kaydı bulunmuyor.
-                </p>
+                <p className="text-sm text-muted-foreground">Henüz karar kaydı bulunmuyor.</p>
               ) : (
                 recentDecisions.map((decision) => (
                   <div key={decision._id} className="rounded-lg border p-4">
@@ -431,9 +425,7 @@ export default function WorkManagementPage() {
                           </Badge>
                         </div>
                         {decision.summary && (
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {decision.summary}
-                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">{decision.summary}</p>
                         )}
                       </div>
                       <div className="space-y-1 text-right text-xs text-muted-foreground">
@@ -467,9 +459,7 @@ export default function WorkManagementPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {notifications.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Henüz bildirim oluşturulmadı.
-                </p>
+                <p className="text-sm text-muted-foreground">Henüz bildirim oluşturulmadı.</p>
               ) : (
                 notifications.map((notification) => (
                   <div key={notification._id} className="rounded-lg border p-4">
@@ -485,16 +475,17 @@ export default function WorkManagementPage() {
                           </Badge>
                         </div>
                         {notification.body && (
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {notification.body}
-                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">{notification.body}</p>
                         )}
                       </div>
                       <div className="space-y-1 text-right text-xs text-muted-foreground">
-                        <p>Gönderim: {formatDate(notification.sent_at ?? notification.created_at)}</p>
+                        <p>
+                          Gönderim: {formatDate(notification.sent_at ?? notification.created_at)}
+                        </p>
                         {notification.reference && (
                           <p>
-                            Referans: {notification.reference.type}#{notification.reference.id.slice(0, 6)}...
+                            Referans: {notification.reference.type}#
+                            {notification.reference.id.slice(0, 6)}...
                           </p>
                         )}
                       </div>
@@ -534,4 +525,3 @@ function meetingStatusLabel(status: MeetingDocument['status']) {
       return status;
   }
 }
-

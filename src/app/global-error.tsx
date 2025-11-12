@@ -92,10 +92,8 @@ export default function GlobalError({
   }, [error]);
 
   const isHydrationError =
-    error.message?.toLowerCase().includes('hydration') ||
-    error.message?.toLowerCase().includes('mismatch');
-
-  // Browser check for global scope
+    error.message.toLowerCase().includes('hydration') ||
+    error.message.toLowerCase().includes('mismatch'); // Browser check for global scope
   const isUnsupportedBrowser =
     typeof window !== 'undefined' && /MSIE|Trident/.test(navigator.userAgent);
 
@@ -350,7 +348,9 @@ export default function GlobalError({
               )}
               {isNetworkError && (
                 <button
-                  onClick={() => { window.location.reload(); }}
+                  onClick={() => {
+                    window.location.reload();
+                  }}
                   style={{
                     width: '100%',
                     padding: '0.5rem 1rem',

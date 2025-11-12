@@ -38,12 +38,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const user = await convexUsers.get(id as Id<'users'>);
-    
+
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Kullanıcı bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Kullanıcı bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -56,10 +53,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       method: 'GET',
       userId: id,
     });
-    return NextResponse.json(
-      { success: false, _error: 'Veri alınamadı' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, _error: 'Veri alınamadı' }, { status: 500 });
   }
 }
 
@@ -160,13 +154,10 @@ async function updateUserHandler(
       method: 'PATCH',
       userId: id,
     });
-    
+
     const errorMessage = error instanceof Error ? error.message : '';
-    if (errorMessage?.includes('not found')) {
-      return NextResponse.json(
-        { success: false, _error: 'Kullanıcı bulunamadı' },
-        { status: 404 }
-      );
+    if (errorMessage.includes('not found')) {
+      return NextResponse.json({ success: false, _error: 'Kullanıcı bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json(
@@ -211,22 +202,15 @@ async function deleteUserHandler(
       method: 'DELETE',
       userId: id,
     });
-    
+
     const errorMessage = error instanceof Error ? error.message : '';
     if (errorMessage?.includes('not found')) {
-      return NextResponse.json(
-        { success: false, _error: 'Kullanıcı bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, _error: 'Kullanıcı bulunamadı' }, { status: 404 });
     }
 
-    return NextResponse.json(
-      { success: false, _error: 'Silme işlemi başarısız' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, _error: 'Silme işlemi başarısız' }, { status: 500 });
   }
 }
 
 export const PATCH = updateUserHandler;
 export const DELETE = deleteUserHandler;
-

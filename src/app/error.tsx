@@ -42,7 +42,11 @@ export default function Error({
 
     // Send error to Sentry
     if (typeof window !== 'undefined') {
-      const windowWithSentry = window as Window & { Sentry?: { captureException: (error: Error, options?: { tags?: Record<string, string> }) => void } };
+      const windowWithSentry = window as Window & {
+        Sentry?: {
+          captureException: (error: Error, options?: { tags?: Record<string, string> }) => void;
+        };
+      };
       if (windowWithSentry.Sentry) {
         windowWithSentry.Sentry.captureException(error, {
           tags: { digest: error.digest, type: 'route-error' },
@@ -52,7 +56,9 @@ export default function Error({
 
     // Add error tracking to window (development only)
     if (process.env.NODE_ENV === 'development') {
-      const windowWithError = window as Window & { __LAST_ERROR__?: { error: Error; digest?: string; timestamp: Date } };
+      const windowWithError = window as Window & {
+        __LAST_ERROR__?: { error: Error; digest?: string; timestamp: Date };
+      };
       windowWithError.__LAST_ERROR__ = { error, digest: error.digest, timestamp: new Date() };
     }
   }, [error]);
@@ -63,8 +69,8 @@ export default function Error({
     error.message.toLowerCase().includes('text content does not match');
 
   // Add error type detection
-  const isNetworkError = error.message.includes('fetch') || error.message?.includes('network');
-  const isStoreError = error.message.includes('store') || error.message?.includes('zustand');
+  const isNetworkError = error.message.includes('fetch') || error.message.includes('network');
+  const isStoreError = error.message.includes('store') || error.message.includes('zustand');
 
   // Add test mode indicator
   const isTestError = error.stack?.includes('test-error-boundary');
@@ -158,11 +164,7 @@ export default function Error({
             <RefreshCw className="mr-2 h-4 w-4" />
             Tekrar Dene
           </Button>
-          <Button
-            onClick={() => router.push('/genel')}
-            className="w-full"
-            variant="outline"
-          >
+          <Button onClick={() => router.push('/genel')} className="w-full" variant="outline">
             <Home className="mr-2 h-4 w-4" />
             Ana Sayfaya Dön
           </Button>

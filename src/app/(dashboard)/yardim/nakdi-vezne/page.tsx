@@ -239,7 +239,9 @@ export default function CashVaultPage() {
                     min="0"
                     placeholder="0.00"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      setAmount(e.target.value);
+                    }}
                     required
                   />
                 </div>
@@ -266,7 +268,9 @@ export default function CashVaultPage() {
                     id="receipt"
                     placeholder="FIS-2025-001"
                     value={receiptNumber}
-                    onChange={(e) => setReceiptNumber(e.target.value)}
+                    onChange={(e) => {
+                      setReceiptNumber(e.target.value);
+                    }}
                   />
                 </div>
 

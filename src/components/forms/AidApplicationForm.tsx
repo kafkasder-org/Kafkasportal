@@ -89,7 +89,7 @@ export function AidApplicationForm({ onSuccess, onCancel }: AidApplicationFormPr
       }),
     onSuccess: () => {
       toast.success('Başvuru başarıyla oluşturuldu');
-      queryClient.invalidateQueries({ queryKey: ['aid-applications'] });
+      void queryClient.invalidateQueries({ queryKey: ['aid-applications'] });
       onSuccess?.();
     },
     onError: (err: unknown) => {

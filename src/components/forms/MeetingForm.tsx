@@ -130,8 +130,8 @@ export function MeetingForm({ onSuccess, onCancel, initialData, meetingId }: Mee
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
-      queryClient.invalidateQueries({ queryKey: ['upcoming-meetings-count'] });
+      void queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
+      void queryClient.invalidateQueries({ queryKey: ['upcoming-meetings-count'] });
       onSuccess?.();
     },
   });
@@ -420,7 +420,9 @@ export function MeetingForm({ onSuccess, onCancel, initialData, meetingId }: Mee
           <Button
             type="button"
             variant="outline"
-            onClick={() => { startMeetingMutation.mutate({}); }}
+            onClick={() => {
+              startMeetingMutation.mutate({});
+            }}
             disabled={startMeetingMutation.isPending}
           >
             <Clock className="mr-2 h-4 w-4" />

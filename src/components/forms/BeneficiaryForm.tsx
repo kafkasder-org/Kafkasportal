@@ -174,7 +174,7 @@ export function BeneficiaryForm({ onSuccess, onCancel }: BeneficiaryFormProps) {
       e.target.value = value;
       register('tc_no').onChange(e);
       if (value.length > 0) {
-        validateField('tc_no', value);
+        void validateField('tc_no', value);
       }
     },
     [register, validateField]

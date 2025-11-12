@@ -76,17 +76,14 @@ export async function GET(request: NextRequest) {
  * POST /api/tasks
  */
 export async function POST(request: NextRequest) {
-  let body: unknown = null;
+  const body: unknown = null;
   try {
     await verifyCsrfToken(request);
     await requireModuleAccess('workflow');
 
     const { data: body, error: parseError } = await parseBody(request);
     if (parseError) {
-      return NextResponse.json(
-        { success: false, error: parseError },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: parseError }, { status: 400 });
     }
     const validation = validateTask(body as Record<string, unknown>);
     if (!validation.isValid || !validation.normalizedData) {
@@ -132,7 +129,7 @@ export async function POST(request: NextRequest) {
     logger.error('Create task error', _error, {
       endpoint: '/api/tasks',
       method: 'POST',
-      title: (body as Record<string, unknown>)?.title,
+      title: (body as Record<string, unknown>).title,
     });
     return NextResponse.json(
       { success: false, error: 'Oluşturma işlemi başarısız' },

@@ -108,7 +108,7 @@ async function updateMeetingHandler(
     });
 
     const errorMessage = _error instanceof Error ? _error.message : '';
-    if (errorMessage?.includes('not found')) {
+    if (errorMessage.includes('not found')) {
       return NextResponse.json({ success: false, _error: 'Toplantı bulunamadı' }, { status: 404 });
     }
 

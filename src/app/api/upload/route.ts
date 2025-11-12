@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
     // Get download URL from Convex
     const downloadUrl = await convex.query(api.storage.getFileUrl, {
-      storageId: storageId as Id<"_storage">,
+      storageId: storageId as Id<'_storage'>,
     });
 
     if (!downloadUrl) {
@@ -106,7 +106,7 @@ export async function DELETE(request: NextRequest) {
 
     // Delete file from Convex
     await convex.action(api.storage.deleteFile, {
-      storageId: storageId as unknown as any,
+      storageId: storageId as unknown as unknown,
     });
 
     return NextResponse.json({

@@ -101,6 +101,7 @@ export default function FinancialDashboardPage() {
     // TODO: PDF/Excel export ekle (bkz: docs/TODO.md #3)
     // Öneri: jsPDF + jspdf-autotable kullan (zaten dependency'de var)
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.log('Exporting financial data...');
     }
   };
@@ -151,12 +152,12 @@ export default function FinancialDashboardPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
+                onClick={() => {
                   setDateRange({
                     from: startOfMonth(new Date()),
                     to: endOfMonth(new Date()),
-                  })
-                }
+                  });
+                }}
                 className="w-full"
               >
                 Bu Ay

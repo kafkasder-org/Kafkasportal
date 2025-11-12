@@ -11,20 +11,13 @@ export const kumbaraCreateSchema = z.object({
     .string()
     .min(10, 'Telefon numarası en az 10 karakter olmalıdır')
     .max(20, 'Telefon numarası en fazla 20 karakter olabilir')
-    .regex(
-      /^(\+90|0)?[5][0-9]{9}$/,
-      'Geçerli bir Türkiye telefon numarası giriniz (5XXXXXXXXX)'
-    ),
-  donor_email: z
-    .string()
-    .email('Geçerli bir e-posta adresi giriniz')
-    .optional()
-    .or(z.literal('')),
+    .regex(/^(\+90|0)?[5][0-9]{9}$/, 'Geçerli bir Türkiye telefon numarası giriniz (5XXXXXXXXX)'),
+  donor_email: z.string().email('Geçerli bir e-posta adresi giriniz').optional().or(z.literal('')),
   amount: z
     .number()
     .refine((val) => !isNaN(val), 'Bağış tutarı bir sayı olmalıdır')
-    .min(0.01, 'Bağış tutarı 0\'dan büyük olmalıdır')
-    .max(10000000, 'Bağış tutarı 10.000.000\'den küçük olmalıdır'),
+    .min(0.01, "Bağış tutarı 0'dan büyük olmalıdır")
+    .max(10000000, "Bağış tutarı 10.000.000'den küçük olmalıdır"),
   currency: z.enum(['TRY', 'USD', 'EUR'] as const),
   donation_type: z
     .string()
@@ -41,18 +34,13 @@ export const kumbaraCreateSchema = z.object({
     .min(2, 'Ödeme yöntemi en az 2 karakter olmalıdır')
     .max(50, 'Ödeme yöntemi en fazla 50 karakter olabilir')
     .default('Nakit'),
-  notes: z
-    .string()
-    .max(500, 'Notlar en fazla 500 karakter olabilir')
-    .optional(),
+  notes: z.string().max(500, 'Notlar en fazla 500 karakter olabilir').optional(),
   receipt_number: z
     .string()
     .min(3, 'Makbuz numarası en az 3 karakter olmalıdır')
     .max(50, 'Makbuz numarası en fazla 50 karakter olabilir'),
   receipt_file_id: z.string().optional(),
-  status: z
-    .enum(['pending', 'completed', 'cancelled'])
-    .default('pending'),
+  status: z.enum(['pending', 'completed', 'cancelled']).default('pending'),
   // Kumbara-specific fields
   kumbara_location: z
     .string()
@@ -65,10 +53,7 @@ export const kumbaraCreateSchema = z.object({
   collection_date: z
     .string()
     .min(1, 'Toplama tarihi gereklidir')
-    .refine(
-      (date) => !isNaN(Date.parse(date)),
-      'Geçerli bir tarih giriniz'
-    ),
+    .refine((date) => !isNaN(Date.parse(date)), 'Geçerli bir tarih giriniz'),
   is_kumbara: z.boolean().default(true),
   // Map location data
   location_coordinates: z
@@ -92,19 +77,20 @@ export const kumbaraCreateSchema = z.object({
 });
 
 // Kumbara donation update schema
-export const kumbaraUpdateSchema = kumbaraCreateSchema.partial().omit({
-  donor_name: true,
-  donor_phone: true,
-  donor_email: true,
-  currency: true,
-  donation_type: true,
-  is_kumbara: true,
-}).extend({
-  // Status can only be updated
-  status: z
-    .enum(['pending', 'completed', 'cancelled'])
-    .optional(),
-});
+export const kumbaraUpdateSchema = kumbaraCreateSchema
+  .partial()
+  .omit({
+    donor_name: true,
+    donor_phone: true,
+    donor_email: true,
+    currency: true,
+    donation_type: true,
+    is_kumbara: true,
+  })
+  .extend({
+    // Status can only be updated
+    status: z.enum(['pending', 'completed', 'cancelled']).optional(),
+  });
 
 // Location schema for location management
 export const kumbaraLocationSchema = z.object({
@@ -129,10 +115,7 @@ export const kumbaraLocationSchema = z.object({
     .min(5, 'Adres en az 5 karakter olmalıdır')
     .max(300, 'Adres en fazla 300 karakter olabilir')
     .optional(),
-  contact_person: z
-    .string()
-    .max(100, 'İletişim kişisi en fazla 100 karakter olabilir')
-    .optional(),
+  contact_person: z.string().max(100, 'İletişim kişisi en fazla 100 karakter olabilir').optional(),
   contact_phone: z
     .string()
     .max(20, 'İletişim telefonu en fazla 20 karakter olabilir')
@@ -148,23 +131,17 @@ export const kumbaraFilterSchema = z.object({
   currency: z.enum(['TRY', 'USD', 'EUR']).optional(),
   startDate: z
     .string()
-    .refine(
-      (date) => !isNaN(Date.parse(date)),
-      'Geçerli bir başlangıç tarihi giriniz'
-    )
+    .refine((date) => !isNaN(Date.parse(date)), 'Geçerli bir başlangıç tarihi giriniz')
     .optional(),
   endDate: z
     .string()
-    .refine(
-      (date) => !isNaN(Date.parse(date)),
-      'Geçerli bir bitiş tarihi giriniz'
-    )
+    .refine((date) => !isNaN(Date.parse(date)), 'Geçerli bir bitiş tarihi giriniz')
     .optional(),
   search: z.string().max(100, 'Arama terimi en fazla 100 karakter olabilir').optional(),
   page: z
     .string()
     .transform((val) => parseInt(val, 10))
-    .refine((val) => val > 0, 'Sayfa numarası 0\'dan büyük olmalıdır')
+    .refine((val) => val > 0, "Sayfa numarası 0'dan büyük olmalıdır")
     .optional(),
   limit: z
     .string()
@@ -206,7 +183,7 @@ export function validateKumbaraCreate(data: unknown): {
     return {
       success: false,
       error: 'Doğrulama hatası',
-      errors: result.error.issues.map((err: any) => err.message),
+      errors: result.error.issues.map((err) => err.message),
     };
   }
 
@@ -229,7 +206,7 @@ export function validateKumbaraUpdate(data: unknown): {
     return {
       success: false,
       error: 'Doğrulama hatası',
-      errors: result.error.issues.map((err: any) => err.message),
+      errors: result.error.issues.map((err) => err.message),
     };
   }
 

@@ -66,8 +66,8 @@ export default function EditUserPage({ params }: PageProps) {
     },
     onSuccess: () => {
       toast.success('Kullanıcı bilgileri güncellendi');
-      queryClient.invalidateQueries({ queryKey: ['user', id] });
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      void queryClient.invalidateQueries({ queryKey: ['user', id] });
+      void queryClient.invalidateQueries({ queryKey: ['users'] });
       router.push('/kullanici');
     },
     onError: (error: unknown) => {
@@ -140,4 +140,3 @@ export default function EditUserPage({ params }: PageProps) {
     </div>
   );
 }
-

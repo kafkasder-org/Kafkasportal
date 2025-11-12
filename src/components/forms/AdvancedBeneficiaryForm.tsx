@@ -113,7 +113,7 @@ export function AdvancedBeneficiaryForm({
         district: data.district || '',
         neighborhood: data.neighborhood || '',
         family_size: data.familyMemberCount || 1,
-        
+
         // Optional fields
         email: data.email,
         birth_date: data.birthDate,
@@ -154,12 +154,12 @@ export function AdvancedBeneficiaryForm({
         status: 'AKTIF',
         approval_status: 'pending',
       };
-      
+
       return api.beneficiaries.createBeneficiary(beneficiaryData);
     },
     onSuccess: () => {
       toast.success('İhtiyaç sahibi başarıyla eklendi');
-      queryClient.invalidateQueries({ queryKey: ['beneficiaries'] });
+      void queryClient.invalidateQueries({ queryKey: ['beneficiaries'] });
       onSuccess?.();
     },
     onError: (err: unknown) => {
@@ -191,8 +191,6 @@ export function AdvancedBeneficiaryForm({
       console.error('Update beneficiary error:', error);
     },
   });
-
-
 
   // Sanitization helper function
   const sanitizeFormData = (data: AdvancedBeneficiaryFormData): AdvancedBeneficiaryFormData => {
@@ -265,11 +263,13 @@ export function AdvancedBeneficiaryForm({
 
     // Emergency contacts - sanitize phone numbers
     if (sanitized.emergencyContacts && Array.isArray(sanitized.emergencyContacts)) {
-      sanitized.emergencyContacts = sanitized.emergencyContacts.map((contact: { name?: string; phone?: string; relation?: string }) => ({
-        name: contact.name || '',
-        relationship: contact.relation || '',
-        phone: sanitizePhone(contact.phone || '') || contact.phone || '',
-      }));
+      sanitized.emergencyContacts = sanitized.emergencyContacts.map(
+        (contact: { name?: string; phone?: string; relation?: string }) => ({
+          name: contact.name || '',
+          relationship: contact.relation || '',
+          phone: sanitizePhone(contact.phone || '') || contact.phone || '',
+        })
+      );
     }
 
     // Text fields - sanitize object (recursive)
@@ -289,9 +289,12 @@ export function AdvancedBeneficiaryForm({
     ] as const;
 
     textFields.forEach((field) => {
-      // Type-safe property access to prevent object injection  
-      if (Object.prototype.hasOwnProperty.call(sanitized, field) && 
-          sanitized[field] && typeof sanitized[field] === 'string') {
+      // Type-safe property access to prevent object injection
+      if (
+        Object.prototype.hasOwnProperty.call(sanitized, field) &&
+        sanitized[field] &&
+        typeof sanitized[field] === 'string'
+      ) {
         const fieldValue = sanitized[field] as string;
         const sanitizedObj = sanitizeObject({ [field]: fieldValue }, { allowHtml: false });
         sanitized[field] = sanitizedObj[field];

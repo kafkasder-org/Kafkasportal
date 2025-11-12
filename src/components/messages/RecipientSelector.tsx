@@ -134,7 +134,7 @@ export function RecipientSelector({
 
       case 'users':
         return users
-          .filter((user: UserDocument) => {
+          .filter((_user: UserDocument) => {
             if (messageType === 'internal') return true;
             return false; // Users are only for internal messages
           })
@@ -316,7 +316,9 @@ export function RecipientSelector({
           placeholder="Alıcı ara..."
           className="pl-10"
           value={searchQuery}
-          onChange={(e) => { setSearchQuery(e.target.value); }}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+          }}
         />
       </div>
 
@@ -381,7 +383,9 @@ export function RecipientSelector({
                     <div className="flex items-center gap-3">
                       <Checkbox
                         checked={selectedRecipients.includes(recipient.contact)}
-                        onChange={() => handleRecipientToggle(recipient.contact)}
+                        onChange={() => {
+                          handleRecipientToggle(recipient.contact);
+                        }}
                       />
                       <div className="flex-1">
                         <div className="font-medium">{recipient.name}</div>
@@ -443,7 +447,9 @@ export function RecipientSelector({
                     <div className="flex items-center gap-3">
                       <Checkbox
                         checked={selectedRecipients.includes(recipient.contact)}
-                        onChange={() => handleRecipientToggle(recipient.contact)}
+                        onChange={() => {
+                          handleRecipientToggle(recipient.contact);
+                        }}
                       />
                       <div className="flex-1">
                         <div className="font-medium">{recipient.name}</div>
@@ -506,7 +512,9 @@ export function RecipientSelector({
                     <div className="flex items-center gap-3">
                       <Checkbox
                         checked={selectedRecipients.includes(recipient.contact)}
-                        onChange={() => handleRecipientToggle(recipient.contact)}
+                        onChange={() => {
+                          handleRecipientToggle(recipient.contact);
+                        }}
                       />
                       <div className="flex-1">
                         <div className="font-medium">{recipient.name}</div>

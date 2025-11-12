@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { convex } from '@/lib/convex/client';
 import { api as convexApi } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 import {
   Dialog,
   DialogContent,
@@ -94,7 +95,7 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
     mutationFn: async (accountId: string) => {
       if (!convex) throw new Error('Convex not initialized');
       return await convex.mutation(convexApi.bank_accounts.deleteBankAccount, {
-        accountId: accountId as any,
+        accountId: accountId as Id<'bank_accounts'>,
       });
     },
     onSuccess: () => {
@@ -204,9 +205,15 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
                 </Button>
                 <Button
                   onClick={() => createMutation.mutate()}
-                  disabled={createMutation.isPending || !formData.bankName || !formData.accountHolder}
+                  disabled={
+                    createMutation.isPending || !formData.bankName || !formData.accountHolder
+                  }
                 >
-                  {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Kaydet'}
+                  {createMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Kaydet'
+                  )}
                 </Button>
               </div>
             </div>
@@ -231,8 +238,12 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
                       <Badge variant="secondary">{getStatusLabel(account.status)}</Badge>
                     </div>
                     <div className="space-y-1 text-sm">
-                      <p className="text-muted-foreground">Hesap Sahibi: {account.account_holder}</p>
-                      {account.iban && <p className="text-muted-foreground">IBAN: {account.iban}</p>}
+                      <p className="text-muted-foreground">
+                        Hesap Sahibi: {account.account_holder}
+                      </p>
+                      {account.iban && (
+                        <p className="text-muted-foreground">IBAN: {account.iban}</p>
+                      )}
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <span>{account.currency}</span>
                       </div>
@@ -263,4 +274,3 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
     </div>
   );
 }
-

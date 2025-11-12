@@ -73,8 +73,8 @@ export default function ErrorsPage() {
   };
 
   useEffect(() => {
-    fetchStats();
-    fetchErrors();
+    void fetchStats();
+    void fetchErrors();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, filterSeverity]);
 
@@ -127,10 +127,7 @@ export default function ErrorsPage() {
   };
 
   return (
-    <PageLayout
-      title="Hata Takip Sistemi"
-      description="Uygulama hatalarını izleyin ve yönetin"
-    >
+    <PageLayout title="Hata Takip Sistemi" description="Uygulama hatalarını izleyin ve yönetin">
       <div className="space-y-6">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -164,9 +161,7 @@ export default function ErrorsPage() {
               <AlertTriangle className="h-4 w-4 text-red-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {stats?.criticalErrors || 0}
-              </div>
+              <div className="text-2xl font-bold text-red-600">{stats?.criticalErrors || 0}</div>
               <p className="text-xs text-muted-foreground">Acil müdahale gerekli</p>
             </CardContent>
           </Card>
@@ -285,28 +280,36 @@ export default function ErrorsPage() {
                 <Button
                   variant={filterSeverity === '' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setFilterSeverity('')}
+                  onClick={() => {
+                    setFilterSeverity('');
+                  }}
                 >
                   Tümü
                 </Button>
                 <Button
                   variant={filterSeverity === 'critical' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setFilterSeverity('critical')}
+                  onClick={() => {
+                    setFilterSeverity('critical');
+                  }}
                 >
                   Kritik
                 </Button>
                 <Button
                   variant={filterSeverity === 'high' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setFilterSeverity('high')}
+                  onClick={() => {
+                    setFilterSeverity('high');
+                  }}
                 >
                   Yüksek
                 </Button>
                 <Button
                   variant={filterSeverity === 'medium' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setFilterSeverity('medium')}
+                  onClick={() => {
+                    setFilterSeverity('medium');
+                  }}
                 >
                   Orta
                 </Button>
@@ -352,9 +355,7 @@ export default function ErrorsPage() {
                           <h3 className="font-semibold text-sm mb-1">{error.title}</h3>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             {error.component && (
-                              <span className="flex items-center gap-1">
-                                📦 {error.component}
-                              </span>
+                              <span className="flex items-center gap-1">📦 {error.component}</span>
                             )}
                             <span className="flex items-center gap-1">
                               🔄 {error.occurrence_count} oluşum

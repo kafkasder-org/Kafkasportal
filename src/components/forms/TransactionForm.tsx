@@ -262,7 +262,9 @@ export default function TransactionForm({
               <Label htmlFor="category">Kategori</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) => handleFieldChange('category', value)}
+                onValueChange={(value) => {
+                  handleFieldChange('category', value);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -291,7 +293,9 @@ export default function TransactionForm({
                   step="0.01"
                   min="0"
                   value={formData.amount}
-                  onChange={(e) => handleFieldChange('amount', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => {
+                    handleFieldChange('amount', parseFloat(e.target.value) || 0);
+                  }}
                   className="pl-10"
                   placeholder="0.00"
                 />
@@ -303,7 +307,9 @@ export default function TransactionForm({
               <Label htmlFor="currency">Para Birimi</Label>
               <Select
                 value={formData.currency}
-                onValueChange={(value) => handleFieldChange('currency', value)}
+                onValueChange={(value) => {
+                  handleFieldChange('currency', value);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -376,7 +382,9 @@ export default function TransactionForm({
                 <Input
                   id="tags"
                   value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
+                  onChange={(e) => {
+                    setTagInput(e.target.value);
+                  }}
                   onKeyPress={handleTagKeyPress}
                   placeholder="Etiket ekle..."
                   className="flex-1"
@@ -402,7 +410,9 @@ export default function TransactionForm({
                       <span>{tag}</span>
                       <button
                         type="button"
-                        onClick={() => handleRemoveTag(tag)}
+                        onClick={() => {
+                          handleRemoveTag(tag);
+                        }}
                         className="text-blue-600 hover:text-blue-800"
                       >
                         ×

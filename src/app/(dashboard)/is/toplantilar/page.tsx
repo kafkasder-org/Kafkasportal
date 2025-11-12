@@ -45,10 +45,17 @@ import { convexApiClient as api } from '@/lib/api/convex-api-client';
 import { useAuthStore } from '@/stores/authStore';
 import dynamic from 'next/dynamic';
 
-const MeetingForm = dynamic(() => import('@/components/forms/MeetingForm').then(mod => ({ default: mod.MeetingForm })), {
-  loading: () => <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>,
-  ssr: false,
-});
+const MeetingForm = dynamic(
+  () => import('@/components/forms/MeetingForm').then((mod) => ({ default: mod.MeetingForm })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 import { CalendarView } from '@/components/meetings/CalendarView';
 import type { MeetingDocument } from '@/types/database';
 import { meetingTypeLabels, meetingStatusLabels } from '@/lib/validations/meeting';
@@ -159,8 +166,8 @@ export default function MeetingsPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.meetings.deleteMeeting(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meetings'] });
-      queryClient.invalidateQueries({ queryKey: ['meetings-stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['meetings'] });
+      void queryClient.invalidateQueries({ queryKey: ['meetings-stats'] });
       toast.success('Toplantı başarıyla silindi');
       setMeetingToDelete(null);
     },
@@ -395,7 +402,10 @@ export default function MeetingsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as typeof activeTab)}>
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => setActiveTab(value as typeof activeTab)}
+            >
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="invited">Davet</TabsTrigger>
                 <TabsTrigger value="attended">Katılım</TabsTrigger>
@@ -741,10 +751,10 @@ export default function MeetingsPage() {
               onSuccess={() => {
                 setSelectedMeeting(null);
                 // Refresh meetings list
-                queryClient.invalidateQueries({ queryKey: ['meetings'] });
-                queryClient.invalidateQueries({ queryKey: ['meetings-calendar'] });
-                queryClient.invalidateQueries({ queryKey: ['meetings-stats'] });
-                queryClient.invalidateQueries({ queryKey: ['meetings-tab'] });
+                void queryClient.invalidateQueries({ queryKey: ['meetings'] });
+                void queryClient.invalidateQueries({ queryKey: ['meetings-calendar'] });
+                void queryClient.invalidateQueries({ queryKey: ['meetings-stats'] });
+                void queryClient.invalidateQueries({ queryKey: ['meetings-tab'] });
               }}
               onCancel={() => setSelectedMeeting(null)}
             />

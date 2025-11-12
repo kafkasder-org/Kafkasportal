@@ -105,7 +105,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     const errorMessage = _error instanceof Error ? _error.message : '';
-    if (errorMessage?.includes('not found')) {
+    if (errorMessage.includes('not found')) {
       return NextResponse.json({ success: false, error: 'Görev bulunamadı' }, { status: 404 });
     }
 

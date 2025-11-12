@@ -4,7 +4,10 @@ import logger from '@/lib/logger';
 import { extractParams } from '@/lib/api/route-helpers';
 import { Id } from '@/convex/_generated/dataModel';
 
-function validateApplicationUpdate(data: Record<string, unknown>): { isValid: boolean; errors: string[] } {
+function validateApplicationUpdate(data: Record<string, unknown>): {
+  isValid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
   if (
     data.stage &&
@@ -24,13 +27,10 @@ function validateApplicationUpdate(data: Record<string, unknown>): { isValid: bo
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await extractParams(params);
   try {
-    const application = await convexAidApplications.get(id as Id<"aid_applications">);
-    
+    const application = await convexAidApplications.get(id as Id<'aid_applications'>);
+
     if (!application) {
-      return NextResponse.json(
-        { success: false, error: 'Başvuru bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -43,10 +43,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       method: 'GET',
       applicationId: id,
     });
-    return NextResponse.json(
-      { success: false, _error: 'Veri alınamadı' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, _error: 'Veri alınamadı' }, { status: 500 });
   }
 }
 
@@ -59,8 +56,8 @@ async function _updateApplicationHandler(
 ) {
   const { id } = await extractParams(params);
   try {
-    const body = await request.json() as Record<string, unknown>;
-    
+    const body = (await request.json()) as Record<string, unknown>;
+
     const validation = validateApplicationUpdate(body);
     if (!validation.isValid) {
       return NextResponse.json(
@@ -70,7 +67,13 @@ async function _updateApplicationHandler(
     }
 
     const applicationData = {
-      stage: body.stage as 'draft' | 'under_review' | 'approved' | 'ongoing' | 'completed' | undefined,
+      stage: body.stage as
+        | 'draft'
+        | 'under_review'
+        | 'approved'
+        | 'ongoing'
+        | 'completed'
+        | undefined,
       status: body.status as 'open' | 'closed' | undefined,
       priority: body.priority as 'low' | 'normal' | 'high' | 'urgent' | undefined,
       one_time_aid: body.one_time_aid as number | undefined,
@@ -80,14 +83,17 @@ async function _updateApplicationHandler(
       service_referral: body.service_referral as number | undefined,
       description: body.description as string | undefined,
       notes: body.notes as string | undefined,
-      processed_by: body.processed_by as Id<"users"> | undefined,
+      processed_by: body.processed_by as Id<'users'> | undefined,
       processed_at: body.processed_at as string | undefined,
-      approved_by: body.approved_by as Id<"users"> | undefined,
+      approved_by: body.approved_by as Id<'users'> | undefined,
       approved_at: body.approved_at as string | undefined,
       completed_at: body.completed_at as string | undefined,
     };
 
-    const updated = await convexAidApplications.update(id as Id<"aid_applications">, applicationData);
+    const updated = await convexAidApplications.update(
+      id as Id<'aid_applications'>,
+      applicationData
+    );
 
     return NextResponse.json({
       success: true,
@@ -100,13 +106,10 @@ async function _updateApplicationHandler(
       method: 'PATCH',
       applicationId: id,
     });
-    
+
     const errorMessage = _error instanceof Error ? _error.message : '';
-    if (errorMessage?.includes('not found')) {
-      return NextResponse.json(
-        { success: false, error: 'Başvuru bulunamadı' },
-        { status: 404 }
-      );
+    if (errorMessage.includes('not found')) {
+      return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json(
@@ -125,7 +128,7 @@ async function _deleteApplicationHandler(
 ) {
   const { id } = await extractParams(params);
   try {
-    await convexAidApplications.remove(id as Id<"aid_applications">);
+    await convexAidApplications.remove(id as Id<'aid_applications'>);
 
     return NextResponse.json({
       success: true,
@@ -137,19 +140,12 @@ async function _deleteApplicationHandler(
       method: 'DELETE',
       applicationId: id,
     });
-    
+
     const errorMessage = _error instanceof Error ? _error.message : '';
     if (errorMessage?.includes('not found')) {
-      return NextResponse.json(
-        { success: false, error: 'Başvuru bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
     }
 
-    return NextResponse.json(
-      { success: false, error: 'Silme işlemi başarısız' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Silme işlemi başarısız' }, { status: 500 });
   }
 }
-

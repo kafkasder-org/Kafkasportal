@@ -26,10 +26,17 @@ import {
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const MessageForm = dynamic(() => import('@/components/forms/MessageForm').then(mod => ({ default: mod.MessageForm })), {
-  loading: () => <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>,
-  ssr: false,
-});
+const MessageForm = dynamic(
+  () => import('@/components/forms/MessageForm').then((mod) => ({ default: mod.MessageForm })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 import { getStatusLabel, getStatusColor, getMessageTypeLabel } from '@/lib/validations/message';
 import type { MessageDocument, UserDocument } from '@/types/database';
 
@@ -107,7 +114,7 @@ export default function InternalMessagingPage() {
     },
     onSuccess: () => {
       toast.success('Mesaj silindi.');
-      queryClient.invalidateQueries({ queryKey: ['internal-messages'] });
+      void queryClient.invalidateQueries({ queryKey: ['internal-messages'] });
       setSelectedMessage(null);
       setShowMessageDetail(false);
     },
@@ -398,7 +405,9 @@ export default function InternalMessagingPage() {
                                     <div className="flex items-center gap-1">
                                       <Calendar className="h-3 w-3" />
                                       <span>
-                                        {new Date(message._creationTime).toLocaleDateString('tr-TR')}
+                                        {new Date(message._creationTime).toLocaleDateString(
+                                          'tr-TR'
+                                        )}
                                       </span>
                                     </div>
                                   </div>
@@ -434,7 +443,9 @@ export default function InternalMessagingPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setPage((p) => Math.max(1, p - 1))}
+                          onClick={() => {
+                            setPage((p) => Math.max(1, p - 1));
+                          }}
                           disabled={page === 1}
                         >
                           Önceki
@@ -442,7 +453,9 @@ export default function InternalMessagingPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                          onClick={() => {
+                            setPage((p) => Math.min(totalPages, p + 1));
+                          }}
                           disabled={page === totalPages}
                         >
                           Sonraki

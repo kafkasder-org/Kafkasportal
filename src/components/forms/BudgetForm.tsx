@@ -60,23 +60,24 @@ export default function BudgetForm({
   mode = 'create',
 }: BudgetFormProps) {
   // Initialize form data - use budget data directly if in edit mode
-  const initialFormData: CreateBudgetInput = budget && mode === 'edit'
-    ? {
-        name: budget.name,
-        period: budget.period,
-        year: budget.year,
-        month: budget.month,
-        categories: budget.categories,
-        status: budget.status,
-      }
-    : {
-        name: '',
-        period: 'monthly',
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        categories: {},
-        status: 'draft',
-      };
+  const initialFormData: CreateBudgetInput =
+    budget && mode === 'edit'
+      ? {
+          name: budget.name,
+          period: budget.period,
+          year: budget.year,
+          month: budget.month,
+          categories: budget.categories,
+          status: budget.status,
+        }
+      : {
+          name: '',
+          period: 'monthly',
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+          categories: {},
+          status: 'draft',
+        };
 
   const [formData, setFormData] = useState<CreateBudgetInput>(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -170,17 +171,21 @@ export default function BudgetForm({
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => handleFieldChange('name', e.target.value)}
-                placeholder="Örn: 2024 Kasım Bütçesi"
+                onChange={(e) => {
+                  handleFieldChange('name', e.target.value);
+                }}
+                placeholder="Örn: 2024 Yıllık Bütçe"
               />
-              {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+              {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
             </div>
 
             <div>
               <Label htmlFor="period">Dönem</Label>
               <Select
                 value={formData.period}
-                onValueChange={(value) => handleFieldChange('period', value as BudgetPeriod)}
+                onValueChange={(value) => {
+                  handleFieldChange('period', value as BudgetPeriod);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
