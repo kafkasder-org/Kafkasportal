@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
 
 export async function GET(
   request: NextRequest,
@@ -12,7 +13,7 @@ export async function GET(
 
     // Get file by storageId using existing query
     const file = await convex.query(api.documents.getFileByStorageId, {
-      storageId: fileId as any, // storageId is already an Id type in the query
+      storageId: fileId as Id<"_storage">, // storageId is already an Id type in the query
     });
 
     if (!file) {
@@ -40,7 +41,7 @@ export async function DELETE(
 
     // Delete document
     await convex.mutation(api.documents.deleteDocument, {
-      documentId: fileId as any,
+      documentId: fileId as Id<"files">,
     });
 
     return NextResponse.json({ success: true });

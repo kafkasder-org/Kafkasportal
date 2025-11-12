@@ -132,7 +132,7 @@ export async function GET(request: Request) {
   const recommendations: string[] = [];
 
   if (
-    validationReport?.summary &&
+    validationReport.summary &&
     typeof validationReport.summary === 'object' &&
     'errors' in validationReport.summary &&
     (validationReport.summary as { errors: number }).errors > 0

@@ -56,7 +56,7 @@ export default function PerformanceMonitoringPage() {
       setLastUpdate(new Date());
     }, 2000);
 
-    return () => clearInterval(interval);
+    return () => { clearInterval(interval); };
   }, [isMonitoring, getFPS, getMetrics]);
 
   const toggleMonitoring = () => {

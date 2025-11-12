@@ -137,7 +137,7 @@ export function MeetingForm({ onSuccess, onCancel, initialData, meetingId }: Mee
   });
 
   // Start meeting mutation
-  const startMeetingMutation = useFormMutation<unknown, void>({
+  const startMeetingMutation = useFormMutation<unknown, unknown>({
     queryKey: ['meetings'],
     successMessage: 'Toplantı başlatıldı',
     errorMessage: 'Toplantı başlatılırken hata oluştu',
@@ -420,7 +420,7 @@ export function MeetingForm({ onSuccess, onCancel, initialData, meetingId }: Mee
           <Button
             type="button"
             variant="outline"
-            onClick={() => startMeetingMutation.mutate()}
+            onClick={() => { startMeetingMutation.mutate({}); }}
             disabled={startMeetingMutation.isPending}
           >
             <Clock className="mr-2 h-4 w-4" />

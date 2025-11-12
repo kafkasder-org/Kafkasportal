@@ -7,6 +7,7 @@ import {
   verifyCsrfToken,
   buildErrorResponse,
 } from '@/lib/api/auth-utils';
+import { parseBody, handleApiError } from '@/lib/api/route-helpers';
 import { ALL_PERMISSIONS, type PermissionValue } from '@/types/permissions';
 import { InputSanitizer } from '@/lib/security';
 
@@ -152,7 +153,6 @@ export async function GET(request: NextRequest) {
 }
 
 async function createUserHandler(request: NextRequest) {
-  let body: unknown = null;
   try {
     await verifyCsrfToken(request);
     const { user } = await requireAuthenticatedUser();
@@ -163,7 +163,13 @@ async function createUserHandler(request: NextRequest) {
       );
     }
 
-    body = await request.json();
+    const { data: body, error: parseError } = await parseBody(request);
+    if (parseError) {
+      return NextResponse.json(
+        { success: false, error: parseError },
+        { status: 400 }
+      );
+    }
     const validation = normalizeUserPayload(body as Record<string, unknown>, { requirePassword: true });
     if (!validation.valid || !validation.data) {
       return NextResponse.json(
@@ -204,24 +210,11 @@ async function createUserHandler(request: NextRequest) {
       return NextResponse.json(authError.body, { status: authError.status });
     }
 
-    logger.error('Create user error', error, {
+    return await handleApiError(error, logger, {
       endpoint: '/api/users',
       method: 'POST',
       email: (body as Record<string, unknown>)?.email,
-    });
-
-    const message = error instanceof Error ? error.message : '';
-    if (message.includes('already') || message.includes('kullanılıyor')) {
-      return NextResponse.json(
-        { success: false, error: 'Bu e-posta adresi zaten kayıtlı' },
-        { status: 409 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: 'Kullanıcı oluşturulamadı' },
-      { status: 500 }
-    );
+    }, 'Kullanıcı oluşturulamadı');
   }
 }
 

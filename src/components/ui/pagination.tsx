@@ -31,7 +31,7 @@ export function Pagination({
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          onClick={() => { onPageChange(Math.max(1, currentPage - 1)); }}
           disabled={currentPage === 1}
           className="h-9 w-9"
           title="Önceki sayfa"
@@ -60,7 +60,7 @@ export function Pagination({
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          onClick={() => { onPageChange(Math.min(totalPages, currentPage + 1)); }}
           disabled={currentPage === totalPages}
           className="h-9 w-9"
           title="Sonraki sayfa"
@@ -93,7 +93,7 @@ export function SimplePagination({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => { onPageChange(currentPage - 1); }}
         disabled={currentPage === 1 || isLoading}
         className="h-8"
       >
@@ -107,7 +107,7 @@ export function SimplePagination({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => { onPageChange(currentPage + 1); }}
         disabled={currentPage === totalPages || isLoading}
         className="h-8"
       >

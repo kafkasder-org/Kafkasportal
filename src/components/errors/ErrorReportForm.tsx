@@ -88,7 +88,7 @@ export function ErrorReportForm({ userId, trigger }: ErrorReportFormProps) {
               id="description"
               placeholder="Sorunu detaylı bir şekilde açıklayın..."
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => { setDescription(e.target.value); }}
               rows={6}
               maxLength={2000}
               required

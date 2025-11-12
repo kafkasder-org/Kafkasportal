@@ -58,7 +58,7 @@ export async function PATCH(
     body = (await request.json()) as Record<string, unknown>;
     const { id } = await params;
 
-    const status = body?.status as NotificationStatus | undefined;
+    const status = body.status as NotificationStatus | undefined;
 
     if (!status || !['gonderildi', 'okundu'].includes(status)) {
       return NextResponse.json(
@@ -72,12 +72,12 @@ export async function PATCH(
     if (status === 'gonderildi') {
       response = await convexWorkflowNotifications.markAsSent(
         id as Id<'workflow_notifications'>,
-        (body?.sent_at as string | undefined) ?? undefined
+        (body.sent_at as string | undefined) ?? undefined
       );
     } else if (status === 'okundu') {
       response = await convexWorkflowNotifications.markAsRead(
         id as Id<'workflow_notifications'>,
-        (body?.read_at as string | undefined) ?? undefined
+        (body.read_at as string | undefined) ?? undefined
       );
     }
 

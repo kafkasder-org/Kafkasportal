@@ -133,8 +133,8 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
     mutationFn: (data: DonationFormData) => api.donations.createDonation(data),
     onSuccess: () => {
       toast.success('Bağış başarıyla kaydedildi');
-      queryClient.invalidateQueries({ queryKey: ['donations'] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
+      void queryClient.invalidateQueries({ queryKey: ['donations'] });
+      void queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
       onSuccess?.();
     },
     onError: (err: unknown) => {
@@ -219,7 +219,7 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                   onChange={(e) => {
                     register('donor_name').onChange(e);
                     if (e.target.value.length > 0) {
-                      validateField('donor_name', e.target.value);
+                      void validateField('donor_name', e.target.value);
                     }
                   }}
                   aria-describedby={errors.donor_name ? 'donor_name-error' : undefined}
@@ -258,7 +258,7 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                     e.target.value = value;
                     register('donor_phone').onChange(e);
                     if (value.replace(/\s/g, '').length > 0) {
-                      validateField('donor_phone', value.replace(/\s/g, ''));
+                      void validateField('donor_phone', value.replace(/\s/g, ''));
                     }
                   }}
                   maxLength={14}
@@ -283,7 +283,7 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                 onChange={(e) => {
                   register('donor_email').onChange(e);
                   if (e.target.value.length > 0) {
-                    validateField('donor_email', e.target.value);
+                    void validateField('donor_email', e.target.value);
                   }
                 }}
                 aria-describedby={errors.donor_email ? 'donor_email-error' : undefined}
@@ -330,7 +330,7 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                     // Convert to number for validation
                     const numValue = parseFloat(value.replace(',', '.'));
                     if (!isNaN(numValue) && numValue > 0) {
-                      validateField('amount', numValue);
+                      void validateField('amount', numValue);
                     }
                   }}
                   aria-describedby={errors.amount ? 'amount-error' : undefined}
@@ -350,7 +350,7 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                   value={watch('currency')}
                   onValueChange={(value) => {
                     setValue('currency', value as 'TRY' | 'USD' | 'EUR');
-                    validateField('currency', value);
+                    void validateField('currency', value);
                   }}
                   disabled={isSubmitting}
                 >

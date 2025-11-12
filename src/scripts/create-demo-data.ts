@@ -3,8 +3,8 @@
  * Creates sample beneficiaries and donations for testing
  */
 
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { getConvexHttp } from '../lib/convex/server';
+import { api } from '../../convex/_generated/api';
 
 async function createDemoData() {
   console.log('🎯 Starting demo data creation...\n');
@@ -45,15 +45,15 @@ async function createDemoData() {
       education_level: 'UNIVERSITE',
       occupation: 'Öğretmen',
       employment_status: 'CALISIYOR',
-      status: 'AKTIF',
+      status: 'AKTIF' as const,
       notes: 'Tek başına çocuk büyüten anne, düzenli yardıma ihtiyaç duyuyor',
     };
 
     try {
       const beneficiaryId = await convex.mutation(api.beneficiaries.create, beneficiaryData);
       console.log(`✅ Created beneficiary: ${beneficiaryId}\n`);
-    } catch (_e: any) {
-      if (_e.message.includes('already exists')) {
+    } catch (_e: unknown) {
+      if ((_e as Error).message.includes('already exists')) {
         console.log('⚠️ Beneficiary already exists, skipping...\n');
       } else {
         throw _e;
@@ -67,21 +67,21 @@ async function createDemoData() {
       donor_phone: '+90 534 111 22 33',
       donor_email: 'fatma.kaya@example.com',
       amount: 250.00,
-      currency: 'TRY',
+      currency: 'TRY' as const,
       donation_type: 'BANKA_HAVALESI',
       payment_method: 'BANKA_HAVALESI',
       donation_purpose: 'EĞİTİM_YARDIMI',
       notes: 'Ayşe Hanımın çocuğunun eğitim masrafları için',
       receipt_number: 'REC-2024-002',
       receipt_file_id: undefined,
-      status: 'completed',
+      status: 'completed' as const,
     };
 
     try {
       const donationId = await convex.mutation(api.donations.create, donationData);
       console.log(`✅ Created donation: ${donationId}\n`);
-    } catch (_e: any) {
-      if (_e.message.includes('already exists') || _e.message.includes('duplicate')) {
+    } catch (_e: unknown) {
+      if ((_e as Error).message.includes('already exists') || (_e as Error).message.includes('duplicate')) {
         console.log('⚠️ Donation already exists, skipping...\n');
       } else {
         throw _e;
@@ -94,12 +94,13 @@ async function createDemoData() {
       const taskId = await convex.mutation(api.tasks.create, {
         title: 'Ahmet Yılmaz Ailesine Gıda Yardımı',
         description: 'Aileye 3 aylık gıda paketi hazırla ve teslim et',
-        status: 'IN_PROGRESS',
-        priority: 'HIGH',
-        assigned_to: 'volunteer1',
-        created_by: 'admin',
+        status: 'in_progress' as const,
+        priority: 'high' as const,
+        assigned_to: 'volunteer1' as any, // TODO: Replace with actual user ID
+        created_by: 'admin' as any, // TODO: Replace with actual user ID
         due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         tags: ['gıda', 'acil', 'aile'],
+        is_read: false,
       });
       console.log(`✅ Created task: ${taskId}\n`);
     } catch (_e) {
@@ -112,11 +113,11 @@ async function createDemoData() {
       const messageId = await convex.mutation(api.messages.create, {
         subject: 'Kumbara Bağışı Hakkında Bilgilendirme',
         content: 'Sayın Mehmet Özkan, bağışınız için teşekkür ederiz. Kumbara bağışınız Ahmet Yılmaz ailesine ulaştırılmıştır.',
-        sender_id: 'admin',
-        recipient_ids: ['user123'],
-        message_type: 'INFO',
-        status: 'SENT',
-        priority: 'NORMAL',
+        sender: 'admin' as any, // TODO: Replace with actual user ID
+        recipients: ['user123' as any], // TODO: Replace with actual user IDs
+        is_bulk: false,
+        message_type: 'internal' as const,
+        status: 'sent' as const,
       });
       console.log(`✅ Created message: ${messageId}\n`);
     } catch (_e) {

@@ -5,15 +5,35 @@ import { tr } from 'date-fns/locale';
 import { PDF_STRINGS } from '@/lib/constants/pdf-strings';
 
 // Extend jsPDF type to include autoTable
+interface AutoTableOptions {
+  head?: string[][];
+  body?: (string | number)[][];
+  startY?: number;
+  margin?: { top: number; left: number; right: number };
+  styles?: {
+    font?: string;
+    fontSize?: number;
+    textColor?: number[] | number;
+    fillColor?: number[];
+    cellPadding?: number;
+  };
+  headStyles?: {
+    fillColor?: number[];
+    textColor?: number[] | number;
+    fontSize?: number;
+  };
+  theme?: 'striped' | 'grid' | 'plain';
+}
+
 declare module 'jspdf' {
   interface jsPDF {
-    autoTable: (options: any) => jsPDF;
+    autoTable: (options: AutoTableOptions) => jsPDF;
   }
 }
 
 export interface ExportData {
   title: string;
-  data: any[];
+  data: Record<string, unknown>[];
   columns: { header: string; dataKey: string }[];
   summary?: { label: string; value: string | number }[];
 }

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Id } from '@/convex/_generated/dataModel';
 import { scholarshipApplicationsApi, scholarshipPaymentsApi } from '@/lib/api/scholarships';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -51,7 +52,26 @@ const STATUS_LABELS = {
 export default function OrphansPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedOrphan, setSelectedOrphan] = useState<any>(null);
+  const [selectedOrphan, setSelectedOrphan] = useState<{
+    _id: string;
+    applicant_name: string;
+    status: string;
+    priority_score?: number;
+    applicant_phone?: string;
+    applicant_email?: string;
+    university?: string;
+    department?: string;
+    grade_level?: string;
+    gpa?: number;
+    academic_year?: string;
+    mother_occupation?: string;
+    father_occupation?: string;
+    sibling_count?: number;
+    has_disability?: boolean;
+    monthly_income?: number;
+    family_income?: number;
+    essay?: string;
+  } | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   // Get all applications where is_orphan=true
@@ -80,7 +100,7 @@ export default function OrphansPage() {
     queryKey: ['orphan-payments', selectedOrphan?._id],
     queryFn: () => 
       selectedOrphan
-        ? scholarshipPaymentsApi.list({ application_id: selectedOrphan._id })
+        ? scholarshipPaymentsApi.list({ application_id: selectedOrphan._id as Id<'scholarship_applications'> })
         : Promise.resolve({ success: false, data: [], total: 0, error: null }),
     enabled: !!selectedOrphan,
     initialData: { success: false, data: [], total: 0, error: null },

@@ -135,7 +135,7 @@ export function BeneficiaryForm({ onSuccess, onCancel }: BeneficiaryFormProps) {
     },
     onSuccess: () => {
       toast.success('İhtiyaç sahibi başarıyla eklendi');
-      queryClient.invalidateQueries({ queryKey: ['beneficiaries'] });
+      void queryClient.invalidateQueries({ queryKey: ['beneficiaries'] });
       onSuccess?.();
     },
     onError: (err: unknown) => {
@@ -162,7 +162,7 @@ export function BeneficiaryForm({ onSuccess, onCancel }: BeneficiaryFormProps) {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       register('name').onChange(e);
       if (e.target.value.length > 0) {
-        validateField('name', e.target.value);
+        void validateField('name', e.target.value);
       }
     },
     [register, validateField]

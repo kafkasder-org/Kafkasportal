@@ -56,13 +56,13 @@ export default function Error({
   }, [error]);
 
   const isHydrationError =
-    error.message?.toLowerCase().includes('hydration') ||
-    error.message?.toLowerCase().includes('mismatch') ||
-    error.message?.toLowerCase().includes('text content does not match');
+    error.message.toLowerCase().includes('hydration') ||
+    error.message.toLowerCase().includes('mismatch') ||
+    error.message.toLowerCase().includes('text content does not match');
 
   // Add error type detection
-  const isNetworkError = error.message?.includes('fetch') || error.message?.includes('network');
-  const isStoreError = error.message?.includes('store') || error.message?.includes('zustand');
+  const isNetworkError = error.message.includes('fetch') || error.message?.includes('network');
+  const isStoreError = error.message.includes('store') || error.message?.includes('zustand');
 
   // Add test mode indicator
   const isTestError = error.stack?.includes('test-error-boundary');
@@ -80,7 +80,7 @@ export default function Error({
       null,
       2
     );
-    navigator.clipboard.writeText(details);
+    void navigator.clipboard.writeText(details);
     alert('Hata detayları kopyalandı');
   };
 

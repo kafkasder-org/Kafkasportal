@@ -3,6 +3,7 @@ import { convexTasks, normalizeQueryParams } from '@/lib/convex/api';
 import logger from '@/lib/logger';
 import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
+import { parseBody, handleApiError } from '@/lib/api/route-helpers';
 
 function validateTask(data: Record<string, unknown>): {
   isValid: boolean;
@@ -80,7 +81,13 @@ export async function POST(request: NextRequest) {
     await verifyCsrfToken(request);
     await requireModuleAccess('workflow');
 
-    body = await request.json();
+    const { data: body, error: parseError } = await parseBody(request);
+    if (parseError) {
+      return NextResponse.json(
+        { success: false, error: parseError },
+        { status: 400 }
+      );
+    }
     const validation = validateTask(body as Record<string, unknown>);
     if (!validation.isValid || !validation.normalizedData) {
       return NextResponse.json(

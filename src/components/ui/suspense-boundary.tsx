@@ -51,7 +51,7 @@ const FallbackWrapper: React.FC<{
       if (focusedElementRef.current && focusedElementRef.current instanceof HTMLElement) {
         // Use requestAnimationFrame to restore focus after render
         requestAnimationFrame(() => {
-          (focusedElementRef.current as HTMLElement)?.focus();
+          (focusedElementRef.current as HTMLElement).focus();
         });
       }
       onResumeRef.current?.();

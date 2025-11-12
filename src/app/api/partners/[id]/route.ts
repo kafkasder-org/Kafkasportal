@@ -135,7 +135,7 @@ async function updatePartnerHandler(
     const partnerId = id as Id<"partners">;
 
     // Prepare update data
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (body.name !== undefined) updateData.name = body.name;
     if (body.type !== undefined) updateData.type = body.type as "organization" | "individual" | "sponsor";
     if (body.contact_person !== undefined) updateData.contact_person = body.contact_person;

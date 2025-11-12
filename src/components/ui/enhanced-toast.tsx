@@ -93,7 +93,7 @@ export const enhancedToast = {
           {message.action && (
             <button
               onClick={() => {
-                message.action!.onClick();
+                message.action?.onClick();
                 sonnerToast.dismiss(id);
               }}
               className="text-sm font-medium text-green-600 hover:text-green-700 whitespace-nowrap"

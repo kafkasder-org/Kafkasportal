@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { Id } from "./_generated/dataModel";
 
 const isValidTcNumber = (value: string): boolean => /^\d{11}$/.test(value);
 
@@ -19,7 +20,7 @@ export const list = query({
     if (args.category) {
       scholarships = await ctx.db
         .query("scholarships")
-        .withIndex("by_category", (q) => q.eq("category", args.category as any))
+        .withIndex("by_category", (q) => q.eq("category", args.category as string))
         .collect();
     } else if (args.isActive !== undefined) {
       scholarships = await ctx.db
@@ -69,7 +70,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     return await ctx.db.insert("scholarships", {
       ...args,
-      created_by: "system" as any, // Temporary - should be actual user ID
+      created_by: "system" as Id<"users">, // Temporary - should be actual user ID
       created_at: new Date().toISOString(),
     });
   },
@@ -160,7 +161,7 @@ export const listApplications = query({
     } else if (args.status) {
       applications = await ctx.db
         .query("scholarship_applications")
-        .withIndex("by_status", (q) => q.eq("status", args.status as any))
+        .withIndex("by_status", (q) => q.eq("status", args.status as "approved" | "rejected" | "draft" | "under_review" | "submitted" | "waitlisted"))
         .collect();
     } else {
       applications = await ctx.db.query("scholarship_applications").collect();
@@ -246,7 +247,7 @@ export const updateApplication = mutation({
     }
 
     if (updates.status === "submitted" && !updates.submitted_at) {
-      (updates as any).submitted_at = new Date().toISOString();
+      (updates as { submitted_at?: string }).submitted_at = new Date().toISOString();
     }
 
     await ctx.db.patch(id, updates);
@@ -278,7 +279,13 @@ export const submitApplication = mutation({
 });
 
 // Helper function to calculate priority score
-function calculatePriorityScore(args: any): number {
+function calculatePriorityScore(args: {
+  gpa?: number;
+  family_income?: number;
+  monthly_income?: number;
+  sibling_count?: number;
+  [key: string]: unknown;
+}): number {
   let score = 0;
 
   // GPA factor (30% weight)

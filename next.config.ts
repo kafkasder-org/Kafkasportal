@@ -55,7 +55,7 @@ const baseConfig: NextConfig = {
     cpus: Math.max(1, os.cpus().length - 1), // Use all but one CPU
     // Memory optimization
     serverActions: {
-      bodySizeLimit: '2mb',
+      bodySizeLimit: '15mb', // Increased to accommodate file uploads (default file limit is 10MB)
     },
   },
 
@@ -163,18 +163,16 @@ const baseConfig: NextConfig = {
               "object-src 'none'",
               "frame-ancestors 'none'",
               // Stricter script policy - only allow self and inline
-              "script-src 'self' 'unsafe-inline'",
-              // Restrict eval in production
-              ...(isDevelopment ? ["'unsafe-eval'"] : []),
+              isDevelopment
+                ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" // Dev: Allow eval for HMR
+                : "script-src 'self' 'unsafe-inline'", // Prod: No eval
               "style-src 'self' 'unsafe-inline'",
               // Network access control
               isDevelopment
                 ? "connect-src 'self' ws: wss: http: https:" // Dev: HMR support
                 : "connect-src 'self' https:", // Prod: Only HTTPS
               // Additional security directives (production only)
-              ...(!isDevelopment
-                ? ["upgrade-insecure-requests", "block-all-mixed-content"]
-                : []),
+              ...(!isDevelopment ? ['upgrade-insecure-requests', 'block-all-mixed-content'] : []),
             ].join('; '),
           },
 
@@ -279,7 +277,7 @@ const baseConfig: NextConfig = {
       if (Array.isArray(config.externals)) {
         config.externals.push({
           jsdom: 'commonjs jsdom',
-          'vitest': 'commonjs vitest',
+          vitest: 'commonjs vitest',
           '@vitest/coverage-v8': 'commonjs @vitest/coverage-v8',
           '@testing-library/jest-dom': 'commonjs @testing-library/jest-dom',
           '@testing-library/react': 'commonjs @testing-library/react',
@@ -424,7 +422,7 @@ const baseConfig: NextConfig = {
 
   // Static page generation optimization
   generateEtags: true,
-  
+
   // Logging optimization
   logging: {
     fetches: {

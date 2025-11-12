@@ -130,3 +130,7 @@ Thumbs.db
 .env.production.example
 node_modules
 
+
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md

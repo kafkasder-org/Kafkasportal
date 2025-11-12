@@ -59,7 +59,7 @@ export function useInfiniteScroll({
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasNextPage && !isFetching) {
-        fetchNextPage();
+        void fetchNextPage();
       }
     });
 
@@ -67,7 +67,7 @@ export function useInfiniteScroll({
       observer.observe(observerTarget.current);
     }
 
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); };
   }, [fetchNextPage, hasNextPage, isFetching]);
 
   const flatData = data?.pages.flatMap((page) => page.items) ?? [];

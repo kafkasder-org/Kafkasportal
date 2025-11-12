@@ -303,7 +303,7 @@ export default function TasksPage() {
             {/* Status Filter */}
             <Select
               value={statusFilter}
-              onValueChange={(value) => setStatusFilter(value as StatusFilter)}
+              onValueChange={(value) => { setStatusFilter(value as StatusFilter); }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Durum" />
@@ -320,7 +320,7 @@ export default function TasksPage() {
             {/* Priority Filter */}
             <Select
               value={priorityFilter}
-              onValueChange={(value) => setPriorityFilter(value as PriorityFilter)}
+              onValueChange={(value) => { setPriorityFilter(value as PriorityFilter); }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Öncelik" />
@@ -420,7 +420,7 @@ export default function TasksPage() {
                   <div
                     key={task._id}
                     className="border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() => handleTaskClick(task)}
+                    onClick={() => { handleTaskClick(task); }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 space-y-3">

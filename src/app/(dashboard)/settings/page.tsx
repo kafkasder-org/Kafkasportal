@@ -139,15 +139,15 @@ export default function SettingsPage() {
 
   // Save mutation
   const saveMutation = useMutation({
-    mutationFn: async (category: string, categorySettings: any) => {
-      const response = await settingsApi.updateCategorySettings(category as any, categorySettings);
+    mutationFn: async (category: string, categorySettings: unknown) => {
+      const response = await settingsApi.updateCategorySettings(category as 'organization' | 'email' | 'notifications' | 'system', categorySettings as Record<string, unknown>);
       if (!response.success) {
         throw new Error(response.error || 'Ayarlar kaydedilemedi');
       }
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['system-settings'] });
+      void queryClient.invalidateQueries({ queryKey: ['system-settings'] });
       toast.success('Ayarlar başarıyla kaydedildi');
       setHasChanges(false);
     },
@@ -159,7 +159,7 @@ export default function SettingsPage() {
   const handleSave = async () => {
     try {
       // Validate based on active tab
-      let categorySettings: any;
+      let categorySettings: Record<string, unknown>;
       let category: string;
 
       switch (activeTab) {
@@ -188,9 +188,10 @@ export default function SettingsPage() {
       }
 
       await saveMutation.mutateAsync(category, categorySettings);
-    } catch (error: any) {
-      if (error?.errors && Array.isArray(error.errors)) {
-        const firstError = error.errors[0];
+    } catch (error: unknown) {
+      const errorObj = error as { errors?: Array<{ message?: string }> };
+      if (errorObj?.errors && Array.isArray(errorObj.errors)) {
+        const firstError = errorObj.errors[0];
         toast.error(firstError?.message || 'Form validasyon hatası');
       }
     }
@@ -202,7 +203,7 @@ export default function SettingsPage() {
     }
 
     try {
-      const response = await settingsApi.resetSettings(activeTab as any);
+      const response = await settingsApi.resetSettings(activeTab as 'organization' | 'email' | 'notifications' | 'system');
       if (response.success) {
         queryClient.invalidateQueries({ queryKey: ['system-settings'] });
         toast.success('Ayarlar varsayılan değerlere sıfırlandı');
@@ -263,7 +264,7 @@ export default function SettingsPage() {
                 data-testid="settings-initialize-button"
                 onClick={() => {
                   if (settings.organization.name.trim()) {
-                    handleSave();
+                    void handleSave();
                   } else {
                     toast.error('Organizasyon adı gerekli');
                   }

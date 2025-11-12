@@ -80,33 +80,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       setHydrated(true);
     };
 
-    const persistApi = useAuthStore.persist;
-
-    // Check if already hydrated
-    if (persistApi?.hasHydrated?.()) {
-      markHydrated();
-      return;
-    }
-
-    // Subscribe to hydration completion
-    if (persistApi?.onFinishHydration) {
-      const unsub = persistApi.onFinishHydration(() => {
-        markHydrated();
-      });
-
-      return () => {
-        if (typeof unsub === 'function') {
-          unsub();
-        }
-      };
-    }
-
-    // Fallback: mark as hydrated after a short delay if no persist API
-    const fallbackTimer = setTimeout(() => {
-      markHydrated();
-    }, 100);
-
-    return () => clearTimeout(fallbackTimer);
+    // Always mark as hydrated immediately in development to avoid white screen
+    // The store will handle the actual hydration internally
+    markHydrated();
   }, [setHydrated]);
 
   // Wait for both mounted and hydration complete before initializing auth
@@ -117,17 +93,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     }
   }, [mounted, hasHydrated, initializeAuth]);
 
-  // Show loading spinner until hydration complete (prevents hydration mismatch)
-  if (!hasHydrated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-          <p className="text-sm text-gray-600">Uygulama yükleniyor...</p>
-        </div>
-      </div>
-    );
-  }
+  // Removed hydration check - let the app render immediately
+  // The store will handle hydration internally
 
   // Render with or without Convex depending on availability
   // Type guard: ensure convex is not null before using it

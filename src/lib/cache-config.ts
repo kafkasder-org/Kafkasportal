@@ -86,18 +86,18 @@ export const CACHE_STRATEGIES = {
 
   /** Beneficiaries data */
   BENEFICIARIES: {
-    staleTime: CACHE_TIMES.STANDARD, // Increased from SHORT to STANDARD for better performance
-    gcTime: GC_TIMES.STANDARD, // Increased from SHORT to STANDARD
+    staleTime: CACHE_TIMES.LONG, // Increased to LONG for better navigation performance
+    gcTime: GC_TIMES.LONG,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: true,
+    refetchOnReconnect: false, // Disabled for faster navigation
   },
 
   /** Donations data */
   DONATIONS: {
-    staleTime: CACHE_TIMES.STANDARD, // Increased from SHORT to STANDARD for better performance
-    gcTime: GC_TIMES.STANDARD, // Increased from SHORT to STANDARD
+    staleTime: CACHE_TIMES.LONG, // Increased to LONG for better navigation performance
+    gcTime: GC_TIMES.LONG,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: true,
+    refetchOnReconnect: false, // Disabled for faster navigation
   },
 
   /** Aid requests */
@@ -179,6 +179,30 @@ export const CACHE_STRATEGIES = {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   },
+
+  /** Partners/Sponsors */
+  PARTNERS: {
+    staleTime: CACHE_TIMES.LONG,
+    gcTime: GC_TIMES.LONG,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  },
+
+  /** Analytics data */
+  ANALYTICS: {
+    staleTime: CACHE_TIMES.MEDIUM,
+    gcTime: GC_TIMES.MEDIUM,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  },
+
+  /** System settings */
+  SETTINGS: {
+    staleTime: CACHE_TIMES.VERY_LONG,
+    gcTime: GC_TIMES.VERY_LONG,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  },
 } as const;
 
 /**
@@ -201,6 +225,9 @@ export const CACHE_KEYS = {
   MESSAGES: 'messages',
   STATISTICS: 'statistics',
   REPORTS: 'reports',
+  PARTNERS: 'partners',
+  ANALYTICS: 'analytics',
+  SETTINGS: 'settings',
 } as const;
 
 /**
@@ -297,24 +324,26 @@ export async function prefetchData(
  * Create optimized QueryClient configuration
  */
 export function createOptimizedQueryClient(): QueryClient {
+  const isDev = process.env.NODE_ENV === 'development';
+  
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // Default to standard caching strategy
-        staleTime: CACHE_TIMES.STANDARD,
-        gcTime: GC_TIMES.STANDARD,
+        // Default to longer caching in dev for faster navigation
+        staleTime: isDev ? CACHE_TIMES.LONG : CACHE_TIMES.STANDARD,
+        gcTime: isDev ? GC_TIMES.VERY_LONG : GC_TIMES.STANDARD,
 
-        // Network optimization
+        // Network optimization - reduce refetches in dev
         refetchOnWindowFocus: false,
-        refetchOnReconnect: true,
-        refetchOnMount: true,
+        refetchOnReconnect: !isDev, // Disabled in dev for faster navigation
+        refetchOnMount: !isDev, // Disabled in dev to use cache more aggressively
 
         // Background refetch - critical for performance
         refetchInterval: false, // Disabled by default, enable per-query if needed
         refetchIntervalInBackground: false,
 
         // Retry configuration with exponential backoff
-        retry: 2,
+        retry: isDev ? 1 : 2, // Less retries in dev
         retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 
         // Network mode - 'online' by default, 'always' for critical data
@@ -329,16 +358,10 @@ export function createOptimizedQueryClient(): QueryClient {
         // Enable parallel queries by default
         // React Query automatically deduplicates identical queries
         // and can run multiple queries in parallel
-
-        // Enable query cache persistence in development
-        ...(process.env.NODE_ENV === 'development' && {
-          // Persist cache for faster HMR
-          gcTime: Math.max(GC_TIMES.STANDARD, 1000 * 60 * 60), // At least 1 hour in dev
-        }),
       },
       mutations: {
         // Retry mutations once on network errors
-        retry: 1,
+        retry: isDev ? 0 : 1, // No retries in dev
         retryDelay: 1000,
 
         // Network mode for mutations
@@ -441,6 +464,12 @@ export function getCacheStrategy(
       return CACHE_STRATEGIES.STATISTICS;
     case CACHE_KEYS.REPORTS:
       return CACHE_STRATEGIES.REPORTS;
+    case CACHE_KEYS.PARTNERS:
+      return CACHE_STRATEGIES.PARTNERS;
+    case CACHE_KEYS.ANALYTICS:
+      return CACHE_STRATEGIES.ANALYTICS;
+    case CACHE_KEYS.SETTINGS:
+      return CACHE_STRATEGIES.SETTINGS;
     default:
       // Return standard strategy as default
       return {

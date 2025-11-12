@@ -330,33 +330,33 @@ export async function GET_STATS(request: NextRequest) {
 /**
  * Calculate overview statistics
  */
-function calculateOverviewStats(donations: any[]) {
+function calculateOverviewStats(donations: Array<Record<string, unknown>>) {
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
 
   const total_kumbara = donations.length;
-  const total_amount = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
+  const total_amount = donations.reduce((sum, d) => sum + ((d.amount as number) || 0), 0);
 
   // Active locations (unique locations)
-  const uniqueLocations = new Set(donations.map((d) => d.kumbara_location).filter(Boolean));
+  const uniqueLocations = new Set(donations.map((d) => d.kumbara_location as string).filter(Boolean));
   const active_locations = uniqueLocations.size;
 
   // This month stats
   const thisMonthDonations = donations.filter((d) => {
-    const date = new Date(d.collection_date || '');
+    const date = new Date((d.collection_date as string) || '');
     return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
   });
-  const this_month_amount = thisMonthDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
+  const this_month_amount = thisMonthDonations.reduce((sum, d) => sum + ((d.amount as number) || 0), 0);
 
   // Last month for comparison
   const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
   const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
   const lastMonthDonations = donations.filter((d) => {
-    const date = new Date(d.collection_date || '');
+    const date = new Date((d.collection_date as string) || '');
     return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
   });
-  const last_month_amount = lastMonthDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
+  const last_month_amount = lastMonthDonations.reduce((sum, d) => sum + ((d.amount as number) || 0), 0);
 
   const monthly_growth =
     last_month_amount > 0 ? ((this_month_amount - last_month_amount) / last_month_amount) * 100 : 0;
@@ -379,9 +379,9 @@ function calculateOverviewStats(donations: any[]) {
 /**
  * Calculate monthly statistics for charts
  */
-function calculateMonthlyStats(donations: any[]) {
+function calculateMonthlyStats(donations: Array<Record<string, unknown>>) {
   const now = new Date();
-  const months: { month: string; amount: any; count: number }[] = [];
+  const months: { month: string; amount: number; count: number }[] = [];
 
   // Get last 6 months
   for (let i = 5; i >= 0; i--) {
@@ -389,14 +389,14 @@ function calculateMonthlyStats(donations: any[]) {
     const monthName = date.toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' });
 
     const monthDonations = donations.filter((d) => {
-      const donationDate = new Date(d.collection_date || '');
+      const donationDate = new Date((d.collection_date as string) || '');
       return (
         donationDate.getMonth() === date.getMonth() &&
         donationDate.getFullYear() === date.getFullYear()
       );
     });
 
-    const amount = monthDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
+    const amount = monthDonations.reduce((sum, d) => sum + ((d.amount as number) || 0), 0);
     const count = monthDonations.length;
 
     months.push({
@@ -412,13 +412,13 @@ function calculateMonthlyStats(donations: any[]) {
 /**
  * Calculate location-based statistics
  */
-function calculateLocationStats(donations: any[]) {
+function calculateLocationStats(donations: Array<Record<string, unknown>>) {
   const locationMap = new Map<string, { amount: number; count: number }>();
 
   donations.forEach((d) => {
-    const location = d.kumbara_location || 'Bilinmeyen';
+    const location = (d.kumbara_location as string) || 'Bilinmeyen';
     const current = locationMap.get(location) || { amount: 0, count: 0 };
-    current.amount += d.amount || 0;
+    current.amount += (d.amount as number) || 0;
     current.count += 1;
     locationMap.set(location, current);
   });
@@ -433,13 +433,13 @@ function calculateLocationStats(donations: any[]) {
 /**
  * Calculate payment method statistics
  */
-function calculatePaymentStats(donations: any[]) {
+function calculatePaymentStats(donations: Array<Record<string, unknown>>) {
   const paymentMap = new Map<string, { value: number; count: number }>();
 
   donations.forEach((d) => {
-    const method = d.payment_method || 'Bilinmeyen';
+    const method = (d.payment_method as string) || 'Bilinmeyen';
     const current = paymentMap.get(method) || { value: 0, count: 0 };
-    current.value += d.amount || 0;
+    current.value += (d.amount as number) || 0;
     current.count += 1;
     paymentMap.set(method, current);
   });

@@ -2,28 +2,22 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/stores/authStore';
 
 export default function HomePage() {
   const router = useRouter();
-  const { isAuthenticated, isInitialized, _hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    // Wait for hydration to complete before redirecting
-    if (!_hasHydrated) return;
-
-    if (isInitialized) {
-      if (isAuthenticated) {
-        router.push('/genel');
-      } else {
-        router.push('/login');
-      }
-    }
-  }, [isAuthenticated, isInitialized, _hasHydrated, router]);
+    // Always redirect to login on homepage
+    // Auth check will be done on the login page
+    router.replace('/login');
+  }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      <div className="text-center space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
+        <p className="text-sm text-gray-600">Yönlendiriliyor...</p>
+      </div>
     </div>
   );
 }

@@ -1,11 +1,12 @@
 // Updated Login Page with Corporate Design
 import { CorporateLoginForm } from '@/components/ui/corporate-login-form';
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: { redirect?: string };
+  searchParams?: Promise<{ redirect?: string }>;
 }) {
-  const redirect = searchParams?.redirect || '/genel';
+  const params = await searchParams;
+  const redirect = params?.redirect || '/genel';
   return <CorporateLoginForm showCorporateBranding={true} redirectTo={redirect} />;
 }

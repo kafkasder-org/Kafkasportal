@@ -4,6 +4,8 @@
  * Client-side wrapper that calls Next.js API routes which internally use Convex.
  * This provides a clean interface for components to use while keeping the actual
  * Convex implementation hidden behind API routes.
+ * 
+ * @deprecated Use the new CRUD factory from './crud-factory' for better DRY principle
  */
 
 import type {
@@ -27,27 +29,33 @@ import type {
 } from '@/types/database';
 import type { PermissionValue } from '@/types/permissions';
 
-// Import caching utilities
-import { getCache } from '@/lib/api-cache';
+// Import the new CRUD factory
+import {
+  beneficiaries,
+  donations,
+  tasks,
+  users,
+  meetings,
+  messages,
+  aidApplications,
+  partners,
+  scholarships,
+  createApiClient
+} from './crud-factory';
 
-// Cache configuration
-const CACHE_TTL = {
-  beneficiaries: 5 * 60 * 1000, // 5 minutes
-  donations: 3 * 60 * 1000, // 3 minutes
-  tasks: 2 * 60 * 1000, // 2 minutes
-  default: 2 * 60 * 1000, // 2 minutes
+// Re-export the factory-created clients
+export {
+  beneficiaries,
+  donations,
+  tasks,
+  users,
+  meetings,
+  messages,
+  aidApplications,
+  partners,
+  scholarships,
+  createApiClient
 };
-
-/**
- * Helper function to make API requests with caching
- */
-async function apiRequest<T>(
-  endpoint: string,
-  options?: RequestInit,
-  cacheKey?: string,
-  cacheType?: string
-): Promise<ConvexResponse<T>> {
-  const cache = cacheType ? getCache<ConvexResponse<T>>(cacheType) : null;
 
   // Try to get from cache first (for GET requests)
   if (!options?.method || options.method === 'GET') {

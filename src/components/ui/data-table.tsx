@@ -94,7 +94,7 @@ export function DataTable<T extends Record<string, unknown>>({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 value={effectiveSearchValue}
-                onChange={(e) => handleSearchChange(e.target.value)}
+                onChange={(e) => { handleSearchChange(e.target.value); }}
                 placeholder={searchPlaceholder}
                 className="pl-9"
               />
@@ -162,7 +162,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => window.location.reload()}
+                  onClick={() => { window.location.reload(); }}
                   className="gap-2"
                 >
                   <RefreshCw className="h-4 w-4" />
@@ -289,7 +289,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => pagination.onPageChange(1)}
+              onClick={() => { pagination.onPageChange(1); }}
               disabled={pagination.page === 1}
               aria-label="İlk sayfa"
             >
@@ -298,7 +298,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => pagination.onPageChange(pagination.page - 1)}
+              onClick={() => { pagination.onPageChange(pagination.page - 1); }}
               disabled={pagination.page === 1}
               aria-label="Önceki sayfa"
             >
@@ -322,7 +322,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => pagination.onPageChange(pagination.page + 1)}
+              onClick={() => { pagination.onPageChange(pagination.page + 1); }}
               disabled={pagination.page === pagination.totalPages}
               aria-label="Sonraki sayfa"
             >
@@ -331,7 +331,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => pagination.onPageChange(pagination.totalPages)}
+              onClick={() => { pagination.onPageChange(pagination.totalPages); }}
               disabled={pagination.page === pagination.totalPages}
               aria-label="Son sayfa"
             >

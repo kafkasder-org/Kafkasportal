@@ -50,8 +50,8 @@ export default function GlobalError({
 
     // Check if it's a hydration error
     const isHydrationError =
-      error.message?.toLowerCase().includes('hydration') ||
-      error.message?.toLowerCase().includes('mismatch');
+      error.message.toLowerCase().includes('hydration') ||
+      error.message.toLowerCase().includes('mismatch');
 
     if (isHydrationError) {
       console.error('🚨 This is a hydration error - consider clearing storage');
@@ -69,8 +69,8 @@ export default function GlobalError({
               screen: `${window.screen.width}x${window.screen.height}`,
             },
             memory: {
-              used: window.performance?.memory?.usedJSHeapSize,
-              total: window.performance?.memory?.totalJSHeapSize,
+              used: window.performance.memory?.usedJSHeapSize,
+              total: window.performance.memory?.totalJSHeapSize,
             },
           },
           user: {
@@ -101,13 +101,13 @@ export default function GlobalError({
 
   // Add error type specific recovery
   const isNetworkError =
-    error.message?.toLowerCase().includes('fetch') ||
-    error.message?.toLowerCase().includes('network') ||
-    error.message?.toLowerCase().includes('connection');
+    error.message.toLowerCase().includes('fetch') ||
+    error.message.toLowerCase().includes('network') ||
+    error.message.toLowerCase().includes('connection');
   const isStoreError =
-    error.message?.toLowerCase().includes('store') ||
-    error.message?.toLowerCase().includes('zustand') ||
-    error.message?.toLowerCase().includes('state');
+    error.message.toLowerCase().includes('store') ||
+    error.message.toLowerCase().includes('zustand') ||
+    error.message.toLowerCase().includes('state');
 
   return (
     <html>
@@ -350,7 +350,7 @@ export default function GlobalError({
               )}
               {isNetworkError && (
                 <button
-                  onClick={() => window.location.reload()}
+                  onClick={() => { window.location.reload(); }}
                   style={{
                     width: '100%',
                     padding: '0.5rem 1rem',

@@ -281,7 +281,7 @@ export const searchDocuments = query({
 
     if (args.tags && args.tags.length > 0) {
       documents = documents.filter(
-        (doc) => doc.tags && args.tags!.some((tag) => doc.tags!.includes(tag))
+        (doc) => doc.tags && args.tags?.some((tag) => doc.tags!.includes(tag))
       );
     }
 

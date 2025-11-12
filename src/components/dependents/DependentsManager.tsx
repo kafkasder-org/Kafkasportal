@@ -153,7 +153,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                   <Label>Ad Soyad *</Label>
                   <Input
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, name: e.target.value }); }}
                   />
                 </div>
                 <div className="space-y-2">
@@ -181,14 +181,14 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                   <Input
                     type="date"
                     value={formData.birthDate}
-                    onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, birthDate: e.target.value }); }}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Cinsiyet</Label>
                   <Select
                     value={formData.gender}
-                    onValueChange={(v) => setFormData({ ...formData, gender: v })}
+                    onValueChange={(v) => { setFormData({ ...formData, gender: v }); }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Seçiniz" />
@@ -203,7 +203,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                   <Label>TC Kimlik No</Label>
                   <Input
                     value={formData.tcNo}
-                    onChange={(e) => setFormData({ ...formData, tcNo: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, tcNo: e.target.value }); }}
                     maxLength={11}
                   />
                 </div>
@@ -220,7 +220,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                   <Label>Eğitim Durumu</Label>
                   <Input
                     value={formData.educationLevel}
-                    onChange={(e) => setFormData({ ...formData, educationLevel: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, educationLevel: e.target.value }); }}
                   />
                 </div>
               </div>
@@ -252,7 +252,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                 <Label>Engellilik Detayı</Label>
                 <Textarea
                   value={formData.disabilityDetail}
-                  onChange={(e) => setFormData({ ...formData, disabilityDetail: e.target.value })}
+                  onChange={(e) => { setFormData({ ...formData, disabilityDetail: e.target.value }); }}
                   rows={2}
                   placeholder="Engellilik durumu detayları..."
                 />
@@ -261,7 +261,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                 <Label>Notlar</Label>
                 <Textarea
                   value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  onChange={(e) => { setFormData({ ...formData, notes: e.target.value }); }}
                   rows={2}
                   placeholder="Ek notlar..."
                 />
@@ -270,7 +270,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                 <Button variant="outline" onClick={() => setShowForm(false)}>
                   İptal
                 </Button>
-                <Button onClick={() => createMutation.mutate()} disabled={createMutation.isPending || !formData.name}>
+                <Button onClick={() => { createMutation.mutate(); }} disabled={createMutation.isPending || !formData.name}>
                   {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Kaydet'}
                 </Button>
               </div>

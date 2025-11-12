@@ -52,7 +52,7 @@ export function PermissionCheckboxGroup({
           <Checkbox
             id={`permission-${permission}`}
             checked={value.includes(permission)}
-            onCheckedChange={(checked) => togglePermission(permission, Boolean(checked))}
+            onCheckedChange={(checked) => { togglePermission(permission, Boolean(checked)); }}
             disabled={disabled}
           />
           <div>

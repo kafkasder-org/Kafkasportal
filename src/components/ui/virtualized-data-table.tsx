@@ -36,7 +36,7 @@ interface VirtualizedDataTableProps<T> {
   containerHeight?: number;
 }
 
-function VirtualizedDataTable<T extends Record<string, any>>({
+function VirtualizedDataTable<T extends Record<string, unknown>>({
   data,
   columns,
   isLoading = false,
@@ -128,7 +128,7 @@ function VirtualizedDataTable<T extends Record<string, any>>({
               role="cell"
               aria-colindex={columns.findIndex((col) => col.key === column.key) + 1}
             >
-              {column.render ? column.render(item) : item[column.key] || '-'}
+              {column.render ? column.render(item) : (item[column.key] as string) || '-'}
             </div>
           );
         })}
@@ -310,7 +310,7 @@ function VirtualizedDataTable<T extends Record<string, any>>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => pagination.onPageChange(pagination.page - 1)}
+              onClick={() => { pagination.onPageChange(pagination.page - 1); }}
               disabled={pagination.page <= 1}
             >
               Önceki
@@ -323,7 +323,7 @@ function VirtualizedDataTable<T extends Record<string, any>>({
                     key={page}
                     variant={page === pagination.page ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => pagination.onPageChange(page)}
+                    onClick={() => { pagination.onPageChange(page); }}
                   >
                     {page}
                   </Button>
@@ -333,7 +333,7 @@ function VirtualizedDataTable<T extends Record<string, any>>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => pagination.onPageChange(pagination.page + 1)}
+              onClick={() => { pagination.onPageChange(pagination.page + 1); }}
               disabled={pagination.page >= pagination.totalPages}
             >
               Sonraki

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
 import logger from '@/lib/logger';
 
 /**
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
 
     // Get download URL from Convex
     const downloadUrl = await convex.query(api.storage.getFileUrl, {
-      storageId: storageId as unknown as any,
+      storageId: storageId as Id<"_storage">,
     });
 
     if (!downloadUrl) {

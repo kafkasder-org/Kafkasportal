@@ -91,8 +91,8 @@ export default function AidApplicationsPage() {
           </DialogTrigger>
           <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
             <AidApplicationForm
-              onSuccess={() => setShowCreateForm(false)}
-              onCancel={() => setShowCreateForm(false)}
+              onSuccess={() => { setShowCreateForm(false); }}
+              onCancel={() => { setShowCreateForm(false); }}
             />
           </DialogContent>
         </Dialog>

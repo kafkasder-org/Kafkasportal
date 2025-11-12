@@ -356,7 +356,17 @@ export const useAuthStore = create<AuthStore>()(
         })),
         {
           name: 'auth-store',
-          storage: createJSONStorage(() => localStorage),
+          storage: createJSONStorage(() => {
+            // Safe localStorage wrapper for SSR
+            if (typeof window === 'undefined') {
+              return {
+                getItem: () => null,
+                setItem: () => {},
+                removeItem: () => {},
+              };
+            }
+            return localStorage;
+          }),
           partialize: (state) => ({
             user: state.user,
             session: state.session,
