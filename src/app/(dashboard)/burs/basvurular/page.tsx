@@ -31,14 +31,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import {
-  Search,
-  FileText,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Eye,
-} from 'lucide-react';
+import { Search, FileText, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
 import type { Id } from '@/convex/_generated/dataModel';
 
 const STATUS_LABELS = {
@@ -56,7 +49,7 @@ export default function ScholarshipApplicationsPage() {
   const [scholarshipFilter, setScholarshipFilter] = useState<string>('all');
   const [selectedApplication, setSelectedApplication] = useState<any>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  
+
   const queryClient = useQueryClient();
 
   // Get all scholarships for filter
@@ -73,9 +66,7 @@ export default function ScholarshipApplicationsPage() {
         limit: 100,
         status: statusFilter !== 'all' ? statusFilter : undefined,
         scholarship_id:
-          scholarshipFilter !== 'all'
-            ? (scholarshipFilter as Id<'scholarships'>)
-            : undefined,
+          scholarshipFilter !== 'all' ? (scholarshipFilter as Id<'scholarships'>) : undefined,
       }),
   });
 
@@ -116,7 +107,7 @@ export default function ScholarshipApplicationsPage() {
     const underReview = applications.filter((a: any) => a.status === 'under_review').length;
     const approved = applications.filter((a: any) => a.status === 'approved').length;
     const rejected = applications.filter((a: any) => a.status === 'rejected').length;
-    
+
     return { total, submitted, underReview, approved, rejected };
   }, [applications]);
 
@@ -140,18 +131,14 @@ export default function ScholarshipApplicationsPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Burs Başvuruları</h1>
-        <p className="text-slate-600 mt-1">
-          Burs başvurularını inceleyin ve değerlendirin
-        </p>
+        <p className="text-slate-600 mt-1">Burs başvurularını inceleyin ve değerlendirin</p>
       </div>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">
-              Toplam Başvuru
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">Toplam Başvuru</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900">{stats.total}</div>
@@ -160,9 +147,7 @@ export default function ScholarshipApplicationsPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">
-              Gönderildi
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">Gönderildi</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{stats.submitted}</div>
@@ -171,9 +156,7 @@ export default function ScholarshipApplicationsPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">
-              İncelemede
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">İncelemede</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">{stats.underReview}</div>
@@ -182,9 +165,7 @@ export default function ScholarshipApplicationsPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">
-              Onaylanan
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">Onaylanan</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
@@ -193,9 +174,7 @@ export default function ScholarshipApplicationsPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">
-              Reddedilen
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-600">Reddedilen</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
@@ -281,15 +260,18 @@ export default function ScholarshipApplicationsPage() {
               </TableHeader>
               <TableBody>
                 {filteredApplications.map((application: any) => {
-                  const statusInfo = STATUS_LABELS[application.status as keyof typeof STATUS_LABELS];
+                  const statusInfo =
+                    STATUS_LABELS[application.status as keyof typeof STATUS_LABELS];
                   const StatusIcon = statusInfo.icon;
-                  
+
                   return (
                     <TableRow key={application._id}>
                       <TableCell>
                         <div>
                           <div className="font-medium">{application.applicant_name}</div>
-                          <div className="text-sm text-slate-500">{application.applicant_phone}</div>
+                          <div className="text-sm text-slate-500">
+                            {application.applicant_phone}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -300,7 +282,9 @@ export default function ScholarshipApplicationsPage() {
                       <TableCell>
                         <div>
                           <div className="text-sm">{application.university || '-'}</div>
-                          <div className="text-xs text-slate-500">{application.department || '-'}</div>
+                          <div className="text-xs text-slate-500">
+                            {application.department || '-'}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -359,7 +343,8 @@ export default function ScholarshipApplicationsPage() {
           <DialogHeader>
             <DialogTitle>Başvuru Detayları</DialogTitle>
             <DialogDescription>
-              {selectedApplication?.applicant_name} - {getScholarshipTitle(selectedApplication?.scholarship_id)}
+              {selectedApplication?.applicant_name} -{' '}
+              {getScholarshipTitle(selectedApplication?.scholarship_id)}
             </DialogDescription>
           </DialogHeader>
 

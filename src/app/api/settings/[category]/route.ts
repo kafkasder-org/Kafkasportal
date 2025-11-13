@@ -39,10 +39,7 @@ export async function POST(
     const { settings } = body;
 
     if (!settings || typeof settings !== 'object') {
-      return NextResponse.json(
-        { error: 'Geçersiz ayarlar formatı' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Geçersiz ayarlar formatı' }, { status: 400 });
     }
 
     const convex = getConvexHttp();
@@ -63,4 +60,3 @@ export async function POST(
     );
   }
 }
-

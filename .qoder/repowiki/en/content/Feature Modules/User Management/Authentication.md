@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Authentication Architecture Overview](#authentication-architecture-overview)
 3. [Core Components](#core-components)
@@ -27,6 +28,7 @@
 10. [Common Issues and Solutions](#common-issues-and-solutions)
 
 ## Introduction
+
 The authentication system in this application implements a secure, multi-layered approach to user authentication and session management. It combines Convex backend functions for data storage and retrieval with Zustand for client-side state management. The system handles login, session persistence, and logout workflows while implementing critical security measures including CSRF protection, HttpOnly cookies, and client-side session validation. This documentation details the implementation, flow, and integration points of the authentication system.
 
 ## Authentication Architecture Overview
@@ -51,6 +53,7 @@ Q --> R[Store Reset]
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
@@ -66,6 +69,7 @@ The authentication system consists of several key components that work together 
 - **Security Layer**: Implements CSRF protection and secure cookie policies
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts)
 - [auth.ts](file://convex/auth.ts)
 - [session.ts](file://src/lib/auth/session.ts)
@@ -104,11 +108,13 @@ Client-->>User : Redirect to dashboard
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [authStore.ts](file://src/stores/authStore.ts)
 - [csrf/route.ts](file://src/app/api/csrf/route.ts)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [authStore.ts](file://src/stores/authStore.ts)
 
@@ -140,11 +146,13 @@ J --> K
 ```
 
 **Diagram sources**
+
 - [session/route.ts](file://src/app/api/auth/session/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 - [get-user.ts](file://src/lib/auth/get-user.ts)
 
 **Section sources**
+
 - [session/route.ts](file://src/app/api/auth/session/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
@@ -173,10 +181,12 @@ Client->>Client : Redirect to login
 ```
 
 **Diagram sources**
+
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts)
 - [authStore.ts](file://src/stores/authStore.ts)
 
 **Section sources**
+
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts)
 
 ## Security Measures
@@ -207,11 +217,13 @@ G --> M[bcrypt Hashing]
 ```
 
 **Diagram sources**
+
 - [csrf/route.ts](file://src/app/api/csrf/route.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
 **Section sources**
+
 - [csrf/route.ts](file://src/app/api/csrf/route.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 
@@ -228,6 +240,7 @@ The system implements comprehensive error handling for various scenarios:
 Error states are communicated to the user through the Zustand store, allowing for consistent error display across the application.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [authStore.ts](file://src/stores/authStore.ts)
 
@@ -273,12 +286,14 @@ CSRFService --> AuthStore : "provides token"
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [auth.ts](file://convex/auth.ts)
 - [csrf/route.ts](file://src/app/api/csrf/route.ts)
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [auth.ts](file://convex/auth.ts)
@@ -286,22 +301,28 @@ CSRFService --> AuthStore : "provides token"
 ## Common Issues and Solutions
 
 ### Session Expiration
+
 Session expiration is handled automatically by checking the expiration timestamp in the session cookie. When a session expires, the user is redirected to the login page.
 
 ### Concurrent Login Attempts
+
 The system implements rate limiting and account lockout mechanisms to prevent abuse from concurrent login attempts. After a configured number of failed attempts, accounts are temporarily locked.
 
 ### Authentication State Synchronization
+
 State synchronization between client and server is maintained through:
+
 - Regular session validation
 - Cookie-based session storage
 - Zustand store updates on authentication events
 - Error handling that resets inconsistent states
 
 ### Remember Me Functionality
+
 The "remember me" feature extends session duration from 24 hours to 30 days. This setting is respected both in cookie expiration and session validation logic.
 
 **Section sources**
+
 - [session.ts](file://src/lib/auth/session.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [authStore.ts](file://src/stores/authStore.ts)

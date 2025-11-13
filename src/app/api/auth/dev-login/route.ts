@@ -7,7 +7,7 @@ import logger from '@/lib/logger';
  * GET /api/auth/dev-login
  * Development-only helper to set a mock session cookie and optionally redirect.
  * Usage: /api/auth/dev-login?user=mock-admin-1&redirect=/genel
- * 
+ *
  * IMPORTANT: This endpoint is ONLY available in development.
  * In production, it returns 404 to prevent any security issues.
  */
@@ -17,10 +17,7 @@ export async function GET(request: NextRequest) {
     const isProduction = (process.env.NODE_ENV as string) === 'production';
 
     if (isProduction) {
-      return NextResponse.json(
-        { error: 'Not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
     const url = new URL(request.url);

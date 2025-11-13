@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Root Layout Structure](#root-layout-structure)
 3. [Dashboard Layout and Authentication Guard](#dashboard-layout-and-authentication-guard)
@@ -19,6 +20,7 @@
 7. [Navigation and Client-Side Routing](#navigation-and-client-side-routing)
 
 ## Introduction
+
 The Kafkasder-panel application utilizes the Next.js App Router to implement a sophisticated routing structure with nested layouts, authentication protection, and error handling boundaries. This documentation details the implementation of the routing architecture, focusing on the nested layout system, authentication guard pattern, error handling mechanisms, and data loading patterns. The application features a protected dashboard area with multiple sections including beneficiaries, donations, and scholarships, all accessible through a well-structured routing system that employs dynamic routes with [id] parameters for detailed views.
 
 ## Root Layout Structure
@@ -41,9 +43,11 @@ E --> L[Google Analytics]
 ```
 
 **Diagram sources**
+
 - [layout.tsx](file://src/app/layout.tsx#L1-L88)
 
 **Section sources**
+
 - [layout.tsx](file://src/app/layout.tsx#L1-L88)
 
 ## Dashboard Layout and Authentication Guard
@@ -66,10 +70,12 @@ Router->>User : Redirect to login page
 ```
 
 **Diagram sources**
-- [layout.tsx](file://src/app/(dashboard)/layout.tsx#L37-L515)
+
+- [layout.tsx](<file://src/app/(dashboard)/layout.tsx#L37-L515>)
 
 **Section sources**
-- [layout.tsx](file://src/app/(dashboard)/layout.tsx#L37-L515)
+
+- [layout.tsx](<file://src/app/(dashboard)/layout.tsx#L37-L515>)
 
 ## Authentication and Redirect Logic
 
@@ -89,9 +95,11 @@ B --> |Yes| H[Display requested page]
 ```
 
 **Diagram sources**
+
 - [page.tsx](file://src/app/login/page.tsx#L3-L11)
 
 **Section sources**
+
 - [page.tsx](file://src/app/login/page.tsx#L3-L11)
 
 ## Error Handling Boundaries
@@ -114,10 +122,12 @@ D --> J[Integrate with Sentry]
 ```
 
 **Diagram sources**
+
 - [error.tsx](file://src/app/error.tsx#L11-L205)
 - [global-error.tsx](file://src/app/global-error.tsx#L30-L425)
 
 **Section sources**
+
 - [error.tsx](file://src/app/error.tsx#L1-L207)
 - [global-error.tsx](file://src/app/global-error.tsx#L1-L427)
 
@@ -157,7 +167,8 @@ string responseFormat
 ```
 
 **Section sources**
-- [layout.tsx](file://src/app/(dashboard)/layout.tsx#L208-L304)
+
+- [layout.tsx](<file://src/app/(dashboard)/layout.tsx#L208-L304>)
 
 ## Navigation and Client-Side Routing
 
@@ -179,4 +190,5 @@ H --> I[Page Display]
 ```
 
 **Section sources**
-- [layout.tsx](file://src/app/(dashboard)/layout.tsx#L461-L462)
+
+- [layout.tsx](<file://src/app/(dashboard)/layout.tsx#L461-L462>)

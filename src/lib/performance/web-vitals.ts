@@ -22,7 +22,10 @@ function sendToAnalytics(metric: Metric): void {
       rating,
     };
     if (process.env.NODE_ENV === 'development') {
-      console.log(`📊 Web Vital: ${metricData.name} = ${metricData.value}ms (${metricData.rating})`, metricData);
+      console.log(
+        `📊 Web Vital: ${metricData.name} = ${metricData.value}ms (${metricData.rating})`,
+        metricData
+      );
     }
   }
 

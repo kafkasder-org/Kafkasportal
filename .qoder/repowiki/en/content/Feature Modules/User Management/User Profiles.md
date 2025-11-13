@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Data Structure](#data-structure)
 3. [User Form Component](#user-form-component)
@@ -24,9 +25,11 @@
 9. [Common Issues and Solutions](#common-issues-and-solutions)
 
 ## Introduction
+
 The User Profiles feature enables administrators to create, edit, and manage user accounts within the system. This functionality is centered around a comprehensive user form component that captures essential profile information including name, email, role, permissions, phone, avatar, and status. The implementation integrates with Convex backend functions for data persistence and validation. The system ensures data integrity through email uniqueness checks, proper role assignment, and secure password handling. This document details the implementation of user profile management, covering the data structure, form validation, UI components, and integration between frontend and backend systems.
 
 ## Data Structure
+
 The user profile data structure is defined in the Convex schema and TypeScript interfaces, containing essential fields for user management.
 
 ```mermaid
@@ -48,14 +51,17 @@ boolean two_factor_enabled
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L9-L33)
 - [database.ts](file://src/types/database.ts#L19-L30)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L9-L33)
 - [database.ts](file://src/types/database.ts#L19-L30)
 
 ## User Form Component
+
 The user form component provides a comprehensive interface for creating and editing user profiles with various input fields and controls.
 
 ```mermaid
@@ -76,12 +82,15 @@ G --> O[Active/Inactive Status]
 ```
 
 **Diagram sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L137-L270)
 
 **Section sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L27-L274)
 
 ## Form Validation Rules
+
 The user form implements comprehensive validation rules to ensure data quality and consistency.
 
 ```mermaid
@@ -102,16 +111,19 @@ G --> N["Strong password recommended"]
 ```
 
 **Diagram sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L27-L40)
 - [route.ts](file://src/app/api/users/route.ts#L34-L57)
 - [route.ts](file://src/app/api/users/[id]/route.ts#L87-L96)
 
 **Section sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L27-L40)
 - [route.ts](file://src/app/api/users/route.ts#L34-L57)
 - [route.ts](file://src/app/api/users/[id]/route.ts#L87-L96)
 
 ## Password Generation
+
 The system includes a secure password generation functionality that creates strong passwords for new users.
 
 ```mermaid
@@ -129,14 +141,17 @@ Form->>User : Displays success toast
 ```
 
 **Diagram sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L44-L71)
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L105-L108)
 
 **Section sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L44-L71)
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L105-L108)
 
 ## User Creation Workflow
+
 The user creation process follows a structured workflow from form submission to backend persistence.
 
 ```mermaid
@@ -165,16 +180,19 @@ Form->>UI : Redirects to user list
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/kullanici/yeni/page.tsx#L67-L73)
+
+- [page.tsx](<file://src/app/(dashboard)/kullanici/yeni/page.tsx#L67-L73>)
 - [route.ts](file://src/app/api/users/route.ts#L154-L218)
 - [users.ts](file://convex/users.ts#L84-L121)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/kullanici/yeni/page.tsx#L67-L73)
+
+- [page.tsx](<file://src/app/(dashboard)/kullanici/yeni/page.tsx#L67-L73>)
 - [route.ts](file://src/app/api/users/route.ts#L154-L218)
 - [users.ts](file://convex/users.ts#L84-L121)
 
 ## User Editing Workflow
+
 The user editing process allows administrators to modify existing user profiles with proper validation and persistence.
 
 ```mermaid
@@ -206,16 +224,19 @@ Form->>UI : Redirects to user list
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/kullanici/[id]/duzenle/page.tsx#L131-L134)
+
+- [page.tsx](<file://src/app/(dashboard)/kullanici/[id]/duzenle/page.tsx#L131-L134>)
 - [route.ts](file://src/app/api/users/[id]/route.ts#L62-L167)
 - [users.ts](file://convex/users.ts#L124-L206)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/kullanici/[id]/duzenle/page.tsx#L131-L134)
+
+- [page.tsx](<file://src/app/(dashboard)/kullanici/[id]/duzenle/page.tsx#L131-L134>)
 - [route.ts](file://src/app/api/users/[id]/route.ts#L62-L167)
 - [users.ts](file://convex/users.ts#L124-L206)
 
 ## Backend Integration
+
 The frontend user form integrates with Convex backend functions through API routes to handle user creation and updates.
 
 ```mermaid
@@ -263,6 +284,7 @@ D4 --> C4
 ```
 
 **Diagram sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L27-L274)
 - [route.ts](file://src/app/api/users/route.ts)
 - [route.ts](file://src/app/api/users/[id]/route.ts)
@@ -270,6 +292,7 @@ D4 --> C4
 - [schema.ts](file://convex/schema.ts#L9-L38)
 
 **Section sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L27-L274)
 - [route.ts](file://src/app/api/users/route.ts)
 - [route.ts](file://src/app/api/users/[id]/route.ts)
@@ -277,9 +300,11 @@ D4 --> C4
 - [schema.ts](file://convex/schema.ts#L9-L38)
 
 ## Common Issues and Solutions
+
 This section addresses common issues encountered during user profile management and their solutions.
 
 ### Email Uniqueness Validation
+
 When creating or updating a user, the system validates email uniqueness to prevent duplicate accounts.
 
 ```mermaid
@@ -298,14 +323,17 @@ K --> L[Throw error: "Email already in use"]
 ```
 
 **Diagram sources**
+
 - [users.ts](file://convex/users.ts#L97-L105)
 - [users.ts](file://convex/users.ts#L161-L171)
 
 **Section sources**
+
 - [users.ts](file://convex/users.ts#L97-L105)
 - [users.ts](file://convex/users.ts#L161-L171)
 
 ### Role Assignment and Permissions
+
 The system handles role assignment and permission management to ensure proper access control.
 
 ```mermaid
@@ -321,6 +349,7 @@ H --> I[Store in database]
 ```
 
 **Diagram sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L36-L37)
 - [route.ts](file://src/app/api/users/route.ts#L44-L47)
 - [route.ts](file://src/app/api/users/[id]/route.ts#L93-L97)
@@ -328,6 +357,7 @@ H --> I[Store in database]
 - [route.ts](file://src/app/api/users/[id]/route.ts#L100-L107)
 
 **Section sources**
+
 - [user-form.tsx](file://src/components/forms/user-form.tsx#L36-L37)
 - [route.ts](file://src/app/api/users/route.ts#L44-L47)
 - [route.ts](file://src/app/api/users/[id]/route.ts#L93-L97)

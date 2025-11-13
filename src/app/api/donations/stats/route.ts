@@ -100,9 +100,8 @@ function calculateOverviewStats(donations: DonationDocument[]) {
   });
   const last_month_amount = lastMonthDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
 
-  const monthly_growth = last_month_amount > 0
-    ? ((this_month_amount - last_month_amount) / last_month_amount) * 100
-    : 0;
+  const monthly_growth =
+    last_month_amount > 0 ? ((this_month_amount - last_month_amount) / last_month_amount) * 100 : 0;
 
   // Status breakdown
   const pending_donations = donations.filter((d) => d.status === 'pending').length;
@@ -194,4 +193,3 @@ function calculatePaymentStats(donations: DonationDocument[]) {
     count: data.count,
   }));
 }
-

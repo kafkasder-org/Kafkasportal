@@ -18,9 +18,7 @@ export default function KumbaraPage() {
             <PiggyBank className="h-6 w-6 text-blue-600" />
             <h2 className="text-3xl font-bold tracking-tight">Kumbara Takibi</h2>
           </div>
-          <p className="text-muted-foreground">
-            Kumbara bağışlarını takip edin ve yönetin
-          </p>
+          <p className="text-muted-foreground">Kumbara bağışlarını takip edin ve yönetin</p>
         </div>
       </div>
 

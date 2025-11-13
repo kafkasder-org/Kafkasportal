@@ -15,4 +15,3 @@ export function WebVitalsTracker() {
 
   return null; // This component doesn't render anything
 }
-

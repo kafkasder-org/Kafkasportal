@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Recipient Selection and Management](#recipient-selection-and-management)
 3. [Bulk Messaging Workflow](#bulk-messaging-workflow)
@@ -19,6 +20,7 @@
 7. [Rate Limiting and Audit Integration](#rate-limiting-and-audit-integration)
 
 ## Introduction
+
 The Bulk Messaging feature enables users to send messages to multiple recipients simultaneously through SMS, email, or internal messaging channels. The system implements comprehensive validation, recipient management, and confirmation workflows to ensure reliable bulk communication. This documentation details the implementation of recipient selection limits, automatic flagging of bulk messages, confirmation dialogs, backend processing through Convex mutations, and integration with rate limiting and audit logging systems.
 
 ## Recipient Selection and Management
@@ -41,9 +43,11 @@ I --> J[Proceed to Next Step]
 ```
 
 **Diagram sources**
+
 - [RecipientSelector.tsx](file://src/components/messages/RecipientSelector.tsx#L48-L603)
 
 **Section sources**
+
 - [RecipientSelector.tsx](file://src/components/messages/RecipientSelector.tsx#L48-L603)
 
 ## Bulk Messaging Workflow
@@ -72,11 +76,13 @@ UI->>User : Display Success/Failure Summary
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/mesaj/toplu/page.tsx#L59-L787)
+
+- [page.tsx](<file://src/app/(dashboard)/mesaj/toplu/page.tsx#L59-L787>)
 - [MessageForm.tsx](file://src/components/forms/MessageForm.tsx#L235-L294)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/mesaj/toplu/page.tsx#L59-L787)
+
+- [page.tsx](<file://src/app/(dashboard)/mesaj/toplu/page.tsx#L59-L787>)
 - [MessageForm.tsx](file://src/components/forms/MessageForm.tsx#L235-L294)
 
 ## Validation and Limits
@@ -84,6 +90,7 @@ UI->>User : Display Success/Failure Summary
 The system enforces strict validation rules to maintain data integrity and prevent abuse. The maximum recipient limit is set to 100 recipients per message, with real-time feedback on selection count.
 
 Validation rules vary by message type:
+
 - SMS messages require valid Turkish phone numbers (10 digits, starting with 5)
 - Email messages require valid email addresses and a subject line
 - Internal messages require valid user IDs and a subject
@@ -120,9 +127,11 @@ R --> |No| T[Show Errors]
 ```
 
 **Diagram sources**
+
 - [message.ts](file://src/lib/validations/message.ts#L1-L271)
 
 **Section sources**
+
 - [message.ts](file://src/lib/validations/message.ts#L1-L271)
 
 ## Backend Processing
@@ -154,12 +163,14 @@ P --> Q[Update UI]
 ```
 
 **Diagram sources**
+
 - [sms.ts](file://src/lib/services/sms.ts#L1-L219)
-- [page.tsx](file://src/app/(dashboard)/mesaj/toplu/page.tsx#L156-L231)
+- [page.tsx](<file://src/app/(dashboard)/mesaj/toplu/page.tsx#L156-L231>)
 
 **Section sources**
+
 - [sms.ts](file://src/lib/services/sms.ts#L1-L219)
-- [page.tsx](file://src/app/(dashboard)/mesaj/toplu/page.tsx#L156-L231)
+- [page.tsx](<file://src/app/(dashboard)/mesaj/toplu/page.tsx#L156-L231>)
 
 ## Performance Considerations
 
@@ -189,10 +200,12 @@ K --> L[Enable Retry for Failed]
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/mesaj/toplu/page.tsx#L182-L215)
+
+- [page.tsx](<file://src/app/(dashboard)/mesaj/toplu/page.tsx#L182-L215>)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/mesaj/toplu/page.tsx#L182-L215)
+
+- [page.tsx](<file://src/app/(dashboard)/mesaj/toplu/page.tsx#L182-L215>)
 
 ## Rate Limiting and Audit Integration
 
@@ -204,6 +217,7 @@ The system integrates comprehensive rate limiting and audit logging to prevent a
 - Success/failure status
 
 Rate limiting is implemented at multiple levels:
+
 - Per-user limits to prevent individual abuse
 - Per-IP limits to prevent distributed attacks
 - Service-level limits to protect external providers
@@ -229,9 +243,11 @@ M --> O[Complete]
 ```
 
 **Diagram sources**
+
 - [sms.ts](file://src/lib/services/sms.ts#L108-L161)
 - [security.ts](file://src/lib/security.ts#L81-L121)
 
 **Section sources**
+
 - [sms.ts](file://src/lib/services/sms.ts#L108-L161)
 - [security.ts](file://src/lib/security.ts#L81-L121)

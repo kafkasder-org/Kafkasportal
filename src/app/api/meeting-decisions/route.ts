@@ -19,10 +19,7 @@ function validateDecision(data: Record<string, unknown>) {
     errors.push('Oluşturan kullanıcı zorunludur');
   }
 
-  if (
-    data.status &&
-    !['acik', 'devam', 'kapatildi'].includes(data.status as string)
-  ) {
+  if (data.status && !['acik', 'devam', 'kapatildi'].includes(data.status as string)) {
     errors.push('Geçersiz karar durumu');
   }
 
@@ -65,10 +62,7 @@ export async function GET(request: NextRequest) {
       method: 'GET',
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Karar listesi alınamadı' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Karar listesi alınamadı' }, { status: 500 });
   }
 }
 
@@ -129,4 +123,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

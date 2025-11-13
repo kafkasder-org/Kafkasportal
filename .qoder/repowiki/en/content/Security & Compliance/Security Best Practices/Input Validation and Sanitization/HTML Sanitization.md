@@ -8,6 +8,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Sanitization Functions](#core-sanitization-functions)
 3. [DOMPurify Configuration](#dompurify-configuration)
@@ -23,6 +24,7 @@
 HTML sanitization in Kafkasder-panel is a critical security measure designed to prevent cross-site scripting (XSS) attacks while allowing controlled HTML formatting in user-generated content. The system implements a dual approach using both asynchronous and synchronous sanitization methods, with DOMPurify as the primary sanitization library. This documentation details the implementation, configuration, and proper usage of the HTML sanitization system, focusing on the allowed HTML tags (p, br, strong, em, u, h1-h6) and attributes, as well as the security mechanisms in place to protect against malicious content injection.
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L1-L10)
 
 ## Core Sanitization Functions
@@ -43,9 +45,11 @@ G --> H[Return Cleaned HTML]
 ```
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L53-L63)
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L20-L63)
 
 ## DOMPurify Configuration
@@ -67,9 +71,11 @@ DOMPurifyConfig : ALLOW_DATA_ATTR = false
 ```
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L25-L45)
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L25-L45)
 
 ## Async vs Synchronous Sanitization
@@ -100,9 +106,11 @@ Sync->>Client : Return cleaned HTML
 ```
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L20-L63)
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L20-L63)
 
 ## Lazy Loading Mechanism
@@ -122,9 +130,11 @@ E --> F[Return Cleaned HTML]
 ```
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L7-L13)
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L7-L13)
 
 ## Security Implications
@@ -136,6 +146,7 @@ The security model prevents script execution by removing `script` tags and inlin
 The dual sanitization approach ensures protection across different execution contexts, with the async method providing comprehensive security during runtime and the sync method offering essential protection during build-time operations. This layered defense strategy enhances the overall security posture of the application.
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L59-L63)
 - [sanitization.test.ts](file://src/__tests__/lib/sanitization.test.ts#L27-L38)
 
@@ -144,15 +155,20 @@ The dual sanitization approach ensures protection across different execution con
 The HTML sanitization functions are used throughout the application to process user-generated content before display or storage. Concrete examples from the codebase demonstrate how dangerous content is stripped while preserving permitted HTML structure.
 
 When processing user input containing script tags, the sanitization functions remove the malicious elements while preserving safe content:
+
 ```html
 <!-- Input -->
-<script>alert("xss")</script><p>Safe content</p>
+<script>
+  alert('xss');
+</script>
+<p>Safe content</p>
 
 <!-- Output -->
 <p>Safe content</p>
 ```
 
 Similarly, event handlers and dangerous attributes are removed:
+
 ```html
 <!-- Input -->
 <a href="#" onclick="maliciousCode()">Click me</a>
@@ -162,6 +178,7 @@ Similarly, event handlers and dangerous attributes are removed:
 ```
 
 The system also handles JavaScript URLs in href attributes:
+
 ```html
 <!-- Input -->
 <a href="javascript:maliciousCode()">Link</a>
@@ -171,6 +188,7 @@ The system also handles JavaScript URLs in href attributes:
 ```
 
 **Section sources**
+
 - [sanitization.test.ts](file://src/__tests__/lib/sanitization.test.ts#L27-L38)
 
 ## Testing and Validation
@@ -192,9 +210,11 @@ E --> |Yes| G[Test Fails]
 ```
 
 **Diagram sources**
+
 - [sanitization.test.ts](file://src/__tests__/lib/sanitization.test.ts#L19-L39)
 
 **Section sources**
+
 - [sanitization.test.ts](file://src/__tests__/lib/sanitization.test.ts#L19-L39)
 
 ## Best Practices
@@ -214,5 +234,6 @@ When implementing HTML sanitization in Kafkasder-panel, developers should follow
 6. **Combine with other security measures**: Use HTML sanitization as part of a comprehensive security strategy that includes input validation, output encoding, and other protective measures.
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L20-L63)
 - [sanitization.test.ts](file://src/__tests__/lib/sanitization.test.ts#L19-L39)

@@ -40,4 +40,3 @@ export interface AuthResponse {
   user?: User;
   error?: string;
 }
-

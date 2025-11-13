@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Security Events Data Model](#security-events-data-model)
 3. [Event Logging and Retrieval](#event-logging-and-retrieval)
@@ -18,9 +19,11 @@
 7. [Retention Policies](#retention-policies)
 
 ## Introduction
+
 The security audit logging system in Kafkasder-panel provides comprehensive monitoring and auditing capabilities for security-related activities. This system captures critical security events, enables detection of suspicious behavior, and supports regulatory compliance reporting for KVKK and GDPR requirements. The architecture is built around Convex database collections and server-side functions that implement mutation-based logging and query-based retrieval patterns.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L1-L274)
 - [schema.ts](file://convex/schema.ts#L659-L721)
 
@@ -63,24 +66,26 @@ security_events {
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L675-L704)
 
 ### Field Definitions
 
-| Field | Type | Description |
-|-------|------|-------------|
-| **event_type** | string | Type of security event (login_attempt, login_success, etc.) |
-| **user_id** | Id<'users'> | Reference to the user associated with the event |
-| **ip_address** | string | Source IP address of the event |
-| **user_agent** | string | User agent string identifying the client |
-| **details** | any | Structured contextual details specific to the event |
-| **severity** | string | Severity level (low, medium, high, critical) |
-| **occurred_at** | string | ISO timestamp when the event occurred |
-| **reviewed** | boolean | Flag indicating whether the event has been reviewed |
+| Field           | Type        | Description                                                 |
+| --------------- | ----------- | ----------------------------------------------------------- |
+| **event_type**  | string      | Type of security event (login_attempt, login_success, etc.) |
+| **user_id**     | Id<'users'> | Reference to the user associated with the event             |
+| **ip_address**  | string      | Source IP address of the event                              |
+| **user_agent**  | string      | User agent string identifying the client                    |
+| **details**     | any         | Structured contextual details specific to the event         |
+| **severity**    | string      | Severity level (low, medium, high, critical)                |
+| **occurred_at** | string      | ISO timestamp when the event occurred                       |
+| **reviewed**    | boolean     | Flag indicating whether the event has been reviewed         |
 
 The collection includes indexes on `user_id`, `occurred_at`, and `event_type` fields to optimize query performance for common filtering operations.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L675-L704)
 
 ## Event Logging and Retrieval
@@ -104,6 +109,7 @@ SecurityAudit-->>Client : Success confirmation
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L4-L37)
 
 The mutation accepts parameters including event type, user ID, IP address, user agent, structured details, and severity level. Upon execution, it automatically sets the `occurred_at` timestamp to the current time in ISO format and initializes the `reviewed` flag to false.
@@ -124,9 +130,11 @@ Limit --> Return["Return filtered events"]
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L41-L70)
 
 The query function supports filtering by:
+
 - Specific user ID
 - Event type
 - Severity level
@@ -136,6 +144,7 @@ The query function supports filtering by:
 Events are returned in descending order by occurrence time, providing a reverse chronological view of security activities.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L41-L70)
 
 ## Suspicious Activity Detection
@@ -159,9 +168,11 @@ NoAction --> End
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L73-L116)
 
 The detection algorithm analyzes events within a configurable time window (default: 24 hours) and evaluates three key indicators:
+
 - More than 5 failed login attempts
 - Logins from more than 3 different IP addresses
 - More than 10 permission denied events
@@ -169,6 +180,7 @@ The detection algorithm analyzes events within a configurable time window (defau
 When suspicious activity is detected, the system recommends requiring a password reset and enabling two-factor authentication to secure the account.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L73-L116)
 
 ## Session Management Integration
@@ -192,6 +204,7 @@ SecurityAudit-->>Client : Return session data<br/>(sessionId, deviceInfo,<br/>ip
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L119-L142)
 
 ### Session Revocation
@@ -211,11 +224,13 @@ SecurityAudit-->>Client : { success : true }
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L145-L159)
 
 The integration with the `user_sessions` collection enables monitoring of active sessions and immediate response to security incidents by revoking compromised sessions.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L119-L159)
 - [schema.ts](file://convex/schema.ts#L706-L731)
 
@@ -237,9 +252,11 @@ PrepareCompliance --> ReturnReport["Return comprehensive report<br/>with period,
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L214-L272)
 
 The compliance report includes:
+
 - **Period**: Date range for the report
 - **Summary**: Key metrics including total events, critical events, and high severity events
 - **Breakdown**: Categorization of events by type
@@ -248,6 +265,7 @@ The compliance report includes:
 The report combines data from both security events and audit logs to provide a comprehensive view of system activity for regulatory purposes.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L214-L272)
 
 ## Retention Policies
@@ -257,5 +275,6 @@ The security audit system implements retention policies to ensure compliance wit
 The system does not currently implement automated data purging, relying on the 7-year retention policy for compliance. Future enhancements could include automated archiving or purging mechanisms to manage data volume while maintaining compliance.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L269)
 - [schema.ts](file://convex/schema.ts#L675-L704)

@@ -6,10 +6,7 @@ import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/
 
 type ActionStatus = 'beklemede' | 'devam' | 'hazir' | 'iptal';
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await requireModuleAccess('workflow');
 
@@ -43,10 +40,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   let body: Record<string, unknown> | null = null;
   try {
     await verifyCsrfToken(request);
@@ -83,10 +77,7 @@ export async function PUT(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   let body: Record<string, unknown> | null = null;
   try {
     await verifyCsrfToken(request);
@@ -99,10 +90,7 @@ export async function PATCH(
     const changed_by = body?.changed_by as Id<'users'> | undefined;
 
     if (!status || !['beklemede', 'devam', 'hazir', 'iptal'].includes(status)) {
-      return NextResponse.json(
-        { success: false, error: 'Geçersiz durum' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Geçersiz durum' }, { status: 400 });
     }
 
     if (!changed_by) {
@@ -178,4 +166,3 @@ export async function DELETE(
     );
   }
 }
-

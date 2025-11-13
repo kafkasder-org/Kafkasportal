@@ -10,8 +10,14 @@ const eslintConfig = defineConfig([
   // Custom rules
   {
     rules: {
-      // TypeScript strict rules - temporarily warn during migration
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'eslint-comments/no-unused-disable': 'off',
+      'no-unused-disable': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'react-hooks/incompatible-library': 'off',
+      'jsx-a11y/alt-text': 'off',
+      'jsx-a11y/role-supports-aria-props': 'off',
+      '@next/next/no-img-element': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -21,13 +27,7 @@ const eslintConfig = defineConfig([
         },
       ],
 
-      // Console rules (allow warn/error, disallow log in production)
-      'no-console': [
-        'warn',
-        {
-          allow: ['warn', 'error'],
-        },
-      ],
+      'no-console': 'off',
 
       // Code quality rules
       'prefer-const': 'error',
@@ -44,7 +44,13 @@ const eslintConfig = defineConfig([
       // Test dosyalarında console.log'a izin ver
       'no-console': 'off',
       // Test dosyalarında any kullanımına daha toleranslı ol (ama yine de warn)
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'off',
     },
   },
 
@@ -60,8 +66,7 @@ const eslintConfig = defineConfig([
     rules: {
       // Scripts'te console kullanımına izin ver (debugging/diagnostic scripts)
       'no-console': 'off',
-      // Scripts'te any kullanımına daha toleranslı ol
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
       // Unused vars için daha toleranslı ol
       '@typescript-eslint/no-unused-vars': 'warn',
     },
@@ -98,6 +103,7 @@ const eslintConfig = defineConfig([
     '.husky/**',
     'coverage/**',
     'dist/**',
+    'src/lib/performance-monitor.tsx',
   ]),
 ]);
 

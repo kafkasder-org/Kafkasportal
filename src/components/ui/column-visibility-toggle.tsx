@@ -3,11 +3,7 @@
 import { useState, useCallback } from 'react';
 import { Settings2, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 
@@ -42,13 +38,16 @@ export function ColumnVisibilityToggle({
   const visibleCount = Object.values(visibility).filter(Boolean).length;
   const totalCount = columns.length;
 
-  const handleToggleColumn = useCallback((key: string) => {
-    setVisibility((prev) => {
-      const newVisibility = { ...prev, [key]: !prev[key] };
-      onVisibilityChange(newVisibility);
-      return newVisibility;
-    });
-  }, [onVisibilityChange]);
+  const handleToggleColumn = useCallback(
+    (key: string) => {
+      setVisibility((prev) => {
+        const newVisibility = { ...prev, [key]: !prev[key] };
+        onVisibilityChange(newVisibility);
+        return newVisibility;
+      });
+    },
+    [onVisibilityChange]
+  );
 
   const handleToggleAll = useCallback(() => {
     const allVisible = visibleCount === totalCount;
@@ -69,10 +68,7 @@ export function ColumnVisibilityToggle({
         <Button
           variant="outline"
           size="sm"
-          className={cn(
-            'gap-2 h-9',
-            className
-          )}
+          className={cn('gap-2 h-9', className)}
           aria-label="Toggle column visibility"
         >
           <Settings2 className="h-4 w-4" />
@@ -111,7 +107,7 @@ export function ColumnVisibilityToggle({
                   className="flex-1 text-sm text-slate-700 cursor-pointer hover:text-slate-900 transition-colors"
                 >
                   <div className="flex items-center gap-2">
-                    {visibility[column.key] ?? true ? (
+                    {(visibility[column.key] ?? true) ? (
                       <Eye className="h-3.5 w-3.5 text-slate-400" />
                     ) : (
                       <EyeOff className="h-3.5 w-3.5 text-slate-400 opacity-50" />

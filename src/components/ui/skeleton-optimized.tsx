@@ -80,7 +80,9 @@ export const TableSkeleton = memo(function TableSkeleton({
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
       {/* Header */}
-      <div className={cn('flex items-center px-4 border-b border-slate-200 bg-slate-50/80', rowHeight)}>
+      <div
+        className={cn('flex items-center px-4 border-b border-slate-200 bg-slate-50/80', rowHeight)}
+      >
         {Array.from({ length: columns }).map((_, i) => (
           <Skeleton
             key={i}
@@ -91,7 +93,7 @@ export const TableSkeleton = memo(function TableSkeleton({
           />
         ))}
       </div>
-      
+
       {/* Rows */}
       <div className="divide-y divide-slate-100">
         {Array.from({ length: rows }).map((_, rowIndex) => (
@@ -132,17 +134,12 @@ export const CardSkeleton = memo(function CardSkeleton({
   return (
     <div className="border border-slate-200 rounded-lg p-6 bg-white space-y-4">
       {showImage && (
-        <Skeleton
-          height={imageHeight}
-          width="w-full"
-          rounded
-          className="bg-slate-200"
-        />
+        <Skeleton height={imageHeight} width="w-full" rounded className="bg-slate-200" />
       )}
-      
+
       <Skeleton height="h-6" width="w-3/4" className="bg-slate-200" />
       <Skeleton lines={lines} height="h-4" className="bg-slate-200" />
-      
+
       <div className="flex items-center gap-3 pt-2">
         <Skeleton height="h-8" width="w-20" rounded className="bg-slate-200" />
         <Skeleton height="h-8" width="w-24" rounded className="bg-slate-200" />

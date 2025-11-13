@@ -71,7 +71,6 @@ interface ReportData {
   topDonors: { donor: string; amount: number; count: number }[];
 }
 
-
 export default function DonationReportsPage() {
   const [dateRange, setDateRange] = useState('all');
   const [reportType, setReportType] = useState('summary');
@@ -97,17 +96,19 @@ export default function DonationReportsPage() {
 
     if (dateRange === 'last7days') {
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      filteredDonations = donations.filter(d => new Date(d._creationTime) >= sevenDaysAgo);
+      filteredDonations = donations.filter((d) => new Date(d._creationTime) >= sevenDaysAgo);
     } else if (dateRange === 'last30days') {
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      filteredDonations = donations.filter(d => new Date(d._creationTime) >= thirtyDaysAgo);
+      filteredDonations = donations.filter((d) => new Date(d._creationTime) >= thirtyDaysAgo);
     } else if (dateRange === 'thisYear') {
       const thisYear = now.getFullYear();
-      filteredDonations = donations.filter(d => new Date(d._creationTime).getFullYear() === thisYear);
+      filteredDonations = donations.filter(
+        (d) => new Date(d._creationTime).getFullYear() === thisYear
+      );
     } else if (dateRange === 'custom' && customStartDate && customEndDate) {
       const start = new Date(customStartDate);
       const end = new Date(customEndDate);
-      filteredDonations = donations.filter(d => {
+      filteredDonations = donations.filter((d) => {
         const donationDate = new Date(d._creationTime);
         return donationDate >= start && donationDate <= end;
       });
@@ -117,15 +118,14 @@ export default function DonationReportsPage() {
     const totalAmount = filteredDonations.reduce((sum, d) => sum + d.amount, 0);
     const totalDonations = filteredDonations.length;
     const averageDonation = totalDonations > 0 ? totalAmount / totalDonations : 0;
-    const completedDonations = filteredDonations.filter(d => d.status === 'completed').length;
-    const pendingDonations = filteredDonations.filter(d => d.status === 'pending').length;
+    const completedDonations = filteredDonations.filter((d) => d.status === 'completed').length;
+    const pendingDonations = filteredDonations.filter((d) => d.status === 'pending').length;
 
     // Monthly data
     const monthlyMap = new Map<string, { amount: number; count: number }>();
-    filteredDonations.forEach(d => {
+    filteredDonations.forEach((d) => {
       const date = new Date(d._creationTime);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
 
       if (!monthlyMap.has(monthKey)) {
         monthlyMap.set(monthKey, { amount: 0, count: 0 });
@@ -146,7 +146,7 @@ export default function DonationReportsPage() {
 
     // Type data
     const typeMap = new Map<string, { amount: number; count: number }>();
-    filteredDonations.forEach(d => {
+    filteredDonations.forEach((d) => {
       const type = d.donation_type;
       if (!typeMap.has(type)) {
         typeMap.set(type, { amount: 0, count: 0 });
@@ -164,7 +164,7 @@ export default function DonationReportsPage() {
 
     // Payment method data
     const paymentMap = new Map<string, { amount: number; count: number }>();
-    filteredDonations.forEach(d => {
+    filteredDonations.forEach((d) => {
       const method = d.payment_method;
       if (!paymentMap.has(method)) {
         paymentMap.set(method, { amount: 0, count: 0 });
@@ -182,7 +182,7 @@ export default function DonationReportsPage() {
 
     // Top donors
     const donorMap = new Map<string, { amount: number; count: number }>();
-    filteredDonations.forEach(d => {
+    filteredDonations.forEach((d) => {
       const donor = d.donor_name;
       if (!donorMap.has(donor)) {
         donorMap.set(donor, { amount: 0, count: 0 });
@@ -229,15 +229,19 @@ export default function DonationReportsPage() {
       // Top donors
       ['EN ÇOK BAĞIŞ YAPANLAR'],
       ['Bağışçı', 'Toplam Tutar', 'Bağış Sayısı'],
-      ...reportData.topDonors.map(d => [d.donor, `${d.amount.toLocaleString('tr-TR')} ₺`, d.count]),
+      ...reportData.topDonors.map((d) => [
+        d.donor,
+        `${d.amount.toLocaleString('tr-TR')} ₺`,
+        d.count,
+      ]),
       [''],
       // Type breakdown
       ['BAĞIŞ TÜRLERİ'],
       ['Tür', 'Tutar', 'Adet'],
-      ...reportData.typeData.map(t => [t.type, `${t.amount.toLocaleString('tr-TR')} ₺`, t.count]),
+      ...reportData.typeData.map((t) => [t.type, `${t.amount.toLocaleString('tr-TR')} ₺`, t.count]),
     ];
 
-    const csv = csvContent.map(row => row.join(',')).join('\n');
+    const csv = csvContent.map((row) => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -263,7 +267,9 @@ export default function DonationReportsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Bağış Raporları</h1>
-          <p className="text-muted-foreground mt-2">Bağış verilerini analiz edin ve raporlar oluşturun</p>
+          <p className="text-muted-foreground mt-2">
+            Bağış verilerini analiz edin ve raporlar oluşturun
+          </p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -286,7 +292,9 @@ export default function DonationReportsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Bağış Raporları</h1>
-          <p className="text-muted-foreground mt-2">Bağış verilerini analiz edin ve raporlar oluşturun</p>
+          <p className="text-muted-foreground mt-2">
+            Bağış verilerini analiz edin ve raporlar oluşturun
+          </p>
         </div>
         <Card>
           <CardContent className="text-center py-12">
@@ -307,7 +315,9 @@ export default function DonationReportsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Bağış Raporları</h1>
-          <p className="text-muted-foreground mt-2">Bağış verilerini analiz edin ve raporlar oluşturun</p>
+          <p className="text-muted-foreground mt-2">
+            Bağış verilerini analiz edin ve raporlar oluşturun
+          </p>
         </div>
 
         <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
@@ -320,12 +330,14 @@ export default function DonationReportsPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Raporu Dışa Aktar</DialogTitle>
-              <DialogDescription>
-                Raporu istediğiniz formatta indirin
-              </DialogDescription>
+              <DialogDescription>Raporu istediğiniz formatta indirin</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <Button onClick={handleExportExcel} className="w-full justify-start" variant="outline">
+              <Button
+                onClick={handleExportExcel}
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <FileSpreadsheet className="h-4 w-4 mr-2" />
                 Excel (CSV) Olarak İndir
               </Button>
@@ -414,9 +426,7 @@ export default function DonationReportsPage() {
             <div className="text-2xl font-bold">
               {reportData.totalAmount.toLocaleString('tr-TR')} ₺
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {reportData.totalDonations} bağış
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">{reportData.totalDonations} bağış</p>
           </CardContent>
         </Card>
 
@@ -480,7 +490,7 @@ export default function DonationReportsPage() {
                 <div key={item.month}>
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span className="font-medium">
-                      {new Date(`${item.month  }-01`).toLocaleDateString('tr-TR', {
+                      {new Date(`${item.month}-01`).toLocaleDateString('tr-TR', {
                         year: 'numeric',
                         month: 'short',
                       })}
@@ -497,9 +507,7 @@ export default function DonationReportsPage() {
                       }}
                     />
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {item.count} bağış
-                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">{item.count} bağış</div>
                 </div>
               ))}
             </div>
@@ -533,9 +541,7 @@ export default function DonationReportsPage() {
                       }}
                     />
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {item.count} bağış
-                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">{item.count} bağış</div>
                 </div>
               ))}
             </div>
@@ -596,9 +602,7 @@ export default function DonationReportsPage() {
                   <h3 className="font-semibold">{method.method}</h3>
                   <Badge variant="secondary">{method.count}</Badge>
                 </div>
-                <div className="text-2xl font-bold">
-                  {method.amount.toLocaleString('tr-TR')} ₺
-                </div>
+                <div className="text-2xl font-bold">{method.amount.toLocaleString('tr-TR')} ₺</div>
                 <p className="text-sm text-muted-foreground mt-1">
                   {((method.amount / reportData.totalAmount) * 100).toFixed(1)}% toplam
                 </p>

@@ -1,17 +1,17 @@
-import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { v } from 'convex/values';
+import { query, mutation } from './_generated/server';
 
 const isValidTcNumber = (value: string): boolean => /^\d{11}$/.test(value);
 
 // Get all dependents for a beneficiary
 export const getBeneficiaryDependents = query({
   args: {
-    beneficiaryId: v.id("beneficiaries"),
+    beneficiaryId: v.id('beneficiaries'),
   },
   handler: async (ctx, args) => {
     const dependents = await ctx.db
-      .query("dependents")
-      .withIndex("by_beneficiary", (q) => q.eq("beneficiary_id", args.beneficiaryId))
+      .query('dependents')
+      .withIndex('by_beneficiary', (q) => q.eq('beneficiary_id', args.beneficiaryId))
       .collect();
 
     return dependents;
@@ -21,7 +21,7 @@ export const getBeneficiaryDependents = query({
 // Create dependent
 export const createDependent = mutation({
   args: {
-    beneficiaryId: v.id("beneficiaries"),
+    beneficiaryId: v.id('beneficiaries'),
     name: v.string(),
     relationship: v.string(),
     birthDate: v.optional(v.string()),
@@ -38,11 +38,11 @@ export const createDependent = mutation({
   },
   handler: async (ctx, args) => {
     if (args.tcNo && !isValidTcNumber(args.tcNo)) {
-      throw new Error("Invalid TC number format");
+      throw new Error('Invalid TC number format');
     }
 
     const { beneficiaryId, ...data } = args;
-    const dependentId = await ctx.db.insert("dependents", {
+    const dependentId = await ctx.db.insert('dependents', {
       beneficiary_id: beneficiaryId,
       name: data.name,
       relationship: data.relationship,
@@ -66,7 +66,7 @@ export const createDependent = mutation({
 // Update dependent
 export const updateDependent = mutation({
   args: {
-    dependentId: v.id("dependents"),
+    dependentId: v.id('dependents'),
     name: v.optional(v.string()),
     relationship: v.optional(v.string()),
     birthDate: v.optional(v.string()),
@@ -82,9 +82,9 @@ export const updateDependent = mutation({
     notes: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    if (args.tcNo !== undefined && args.tcNo !== "") {
+    if (args.tcNo !== undefined && args.tcNo !== '') {
       if (!isValidTcNumber(args.tcNo)) {
-        throw new Error("Invalid TC number format");
+        throw new Error('Invalid TC number format');
       }
     }
 
@@ -104,7 +104,7 @@ export const updateDependent = mutation({
       monthly_income?: number;
       notes?: string;
     } = {};
-    
+
     if (updates.name !== undefined) patch.name = updates.name;
     if (updates.relationship !== undefined) patch.relationship = updates.relationship;
     if (updates.birthDate !== undefined) patch.birth_date = updates.birthDate;
@@ -129,11 +129,10 @@ export const updateDependent = mutation({
 // Delete dependent
 export const deleteDependent = mutation({
   args: {
-    dependentId: v.id("dependents"),
+    dependentId: v.id('dependents'),
   },
   handler: async (ctx, args) => {
     await ctx.db.delete(args.dependentId);
     return { success: true };
   },
 });
-

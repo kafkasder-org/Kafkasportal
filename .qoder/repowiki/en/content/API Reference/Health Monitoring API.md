@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Health Check Endpoint](#health-check-endpoint)
 3. [Rate Limit Monitoring Endpoint](#rate-limit-monitoring-endpoint)
@@ -20,6 +21,7 @@
 8. [Monitoring Data Interpretation](#monitoring-data-interpretation)
 
 ## Introduction
+
 The Health Monitoring API provides endpoints for system health checks and rate limiting statistics. The API enables monitoring of system components including database connectivity, storage availability, and service status. It also provides comprehensive rate limiting monitoring capabilities to detect potential abuse or performance issues. The endpoints are designed to support both operational monitoring and diagnostic troubleshooting.
 
 ## Health Check Endpoint
@@ -27,6 +29,7 @@ The Health Monitoring API provides endpoints for system health checks and rate l
 The GET /api/health endpoint performs comprehensive system health checks, validating configuration, connectivity, and service status. The endpoint supports both basic and detailed health checks through the 'detailed' query parameter.
 
 The health check evaluates:
+
 - Backend provider configuration (Convex)
 - Convex URL configuration
 - Database connectivity through user query test
@@ -49,9 +52,11 @@ CacheResults --> ReturnDetailed["Return detailed health response"]
 ```
 
 **Diagram sources**
+
 - [health\route.ts](file://src/app/api/health/route.ts#L1-L188)
 
 **Section sources**
+
 - [health\route.ts](file://src/app/api/health/rate.ts#L1-L188)
 
 ## Rate Limit Monitoring Endpoint
@@ -59,6 +64,7 @@ CacheResults --> ReturnDetailed["Return detailed health response"]
 The GET /api/monitoring/rate-limit endpoint provides access to rate limiting statistics and configuration. The endpoint supports multiple actions through the 'action' query parameter, enabling retrieval of different types of monitoring data.
 
 Available actions include:
+
 - stats: Get overall rate limiting statistics for specified time range (1h, 24h, 7d, 30d)
 - violations: Get recent rate limit violations with configurable limit
 - ip-stats: Get IP-specific statistics with IP address parameter
@@ -87,9 +93,11 @@ API-->>Client : 200 OK with success message
 ```
 
 **Diagram sources**
+
 - [monitoring\rate-limit\route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L1-L196)
 
 **Section sources**
+
 - [monitoring\rate-limit\route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L1-L196)
 
 ## System Monitoring Integration
@@ -97,6 +105,7 @@ API-->>Client : 200 OK with success message
 The system integrates with monitoring tools through the Convex backend and alerting mechanisms. Health checks are coordinated between frontend and backend components, with the frontend health endpoint calling the backend healthCheck query.
 
 The monitoring system includes:
+
 - Active alert management with createAlert, getActiveAlerts, and acknowledgeAlert mutations
 - Error logging and tracking with logError and getErrorLogs functions
 - Performance metric collection and analysis
@@ -146,9 +155,11 @@ error_logs }|--|| users : "reported_by"
 ```
 
 **Diagram sources**
+
 - [monitoring.ts](file://convex/monitoring.ts#L1-L354)
 
 **Section sources**
+
 - [monitoring.ts](file://convex/monitoring.ts#L1-L354)
 
 ## Response Examples
@@ -156,6 +167,7 @@ error_logs }|--|| users : "reported_by"
 ### Health Check Responses
 
 **Operational State Response (200 OK):**
+
 ```json
 {
   "ok": true,
@@ -195,6 +207,7 @@ error_logs }|--|| users : "reported_by"
 ```
 
 **Degraded State Response (503 Service Unavailable):**
+
 ```json
 {
   "ok": true,
@@ -236,6 +249,7 @@ error_logs }|--|| users : "reported_by"
 ### Rate Limit Monitoring Responses
 
 **Statistics Response:**
+
 ```json
 {
   "success": true,
@@ -267,6 +281,7 @@ error_logs }|--|| users : "reported_by"
 ```
 
 **IP Statistics Response:**
+
 ```json
 {
   "success": true,
@@ -298,6 +313,7 @@ error_logs }|--|| users : "reported_by"
 ```
 
 **Section sources**
+
 - [health\route.ts](file://src/app/api/health/route.ts#L1-L188)
 - [monitoring\rate-limit\route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L1-L196)
 
@@ -308,12 +324,14 @@ The health check endpoint has expected response times of under 1 second for oper
 For service dependencies, the health check evaluates Convex connectivity by querying the users collection. If the connection fails or response time exceeds 3 seconds, the system is considered degraded. The endpoint returns a 503 Service Unavailable status code for degraded systems.
 
 Error handling includes:
+
 - Comprehensive error logging with context
 - Graceful degradation when dependencies fail
 - Detailed error messages in validation reports
 - Status code mapping (200 for healthy, 503 for degraded)
 
 The rate limit monitoring endpoint handles errors by returning appropriate HTTP status codes:
+
 - 400 Bad Request for invalid parameters
 - 401 Unauthorized for missing or invalid admin tokens
 - 500 Internal Server Error for processing failures
@@ -339,9 +357,11 @@ K --> L
 ```
 
 **Diagram sources**
+
 - [health\route.ts](file://src/app/api/health/route.ts#L1-L188)
 
 **Section sources**
+
 - [health\route.ts](file://src/app/api/health/route.ts#L1-L188)
 
 ## Rate Limiting Implementation
@@ -354,6 +374,7 @@ The rate limiting system is implemented using a token bucket algorithm with conf
 - **rate-limit.ts**: Middleware for applying rate limits to API routes
 
 Key features of the implementation:
+
 - Whitelist and blacklist support via environment variables
 - Configurable default limits (100 requests per 15 minutes)
 - Premium multiplier for authenticated users (2.0x by default)
@@ -406,10 +427,12 @@ RateLimitMonitor ..> RateLimitStats : "returns"
 ```
 
 **Diagram sources**
+
 - [security.ts](file://src/lib/security.ts#L78-L280)
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L42-L303)
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L78-L280)
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L1-L303)
 
@@ -418,18 +441,21 @@ RateLimitMonitor ..> RateLimitStats : "returns"
 Rate limit monitoring data provides insights into system usage patterns and potential abuse. The data can be interpreted to detect various conditions:
 
 **Normal Operation Indicators:**
+
 - Low violation rate (< 1%)
 - Consistent request patterns
 - Few unique violating IPs
 - Even distribution across endpoints
 
 **Potential Abuse Indicators:**
+
 - High violation rate (> 5%)
 - Single IP generating multiple violations
 - Concentrated violations on specific endpoints
 - Rapid succession of violation attempts
 
 The monitoring system tracks several key metrics:
+
 - Total requests and blocked requests
 - Violation rate (percentage of blocked requests)
 - Top violators by identifier
@@ -437,11 +463,13 @@ The monitoring system tracks several key metrics:
 - Active rate limits and IP lists
 
 Alert thresholds are configured to detect:
+
 - High violation rates (> 10% in 1 hour)
 - Excessive number of violating IPs (> 100 per hour)
 - High violation counts on specific endpoints (> 50)
 
 The data can be used to identify:
+
 - Malicious bots or scrapers
 - Misconfigured clients
 - Performance bottlenecks
@@ -463,5 +491,6 @@ H --> K[Monitor Continuously]
 ```
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L1-L303)
 - [security.ts](file://src/lib/security.ts#L78-L280)

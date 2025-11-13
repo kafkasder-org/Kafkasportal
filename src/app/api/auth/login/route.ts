@@ -154,8 +154,7 @@ export const POST = authRateLimit(async (request: NextRequest) => {
     const csrfToken = generateCsrfToken();
 
     // Set session cookies
-    
-    
+
     // Create session
     const expireTime = new Date(
       Date.now() + (rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000)

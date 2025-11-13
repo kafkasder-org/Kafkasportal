@@ -35,4 +35,3 @@ export const PERMISSION_LABELS: Record<PermissionValue, string> = {
   [MODULE_PERMISSIONS.PARTNERS]: 'Ortak Yönetimi',
   [SPECIAL_PERMISSIONS.USERS_MANAGE]: 'Kullanıcı Yönetimi',
 };
-

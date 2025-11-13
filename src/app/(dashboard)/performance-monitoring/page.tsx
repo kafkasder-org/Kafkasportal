@@ -8,18 +8,18 @@ import {
   PerformanceMonitor,
   usePerformanceMonitor,
   useFPSMonitor,
-  perfLog
+  perfLog,
 } from '@/lib/performance-monitor';
-import { 
-  Activity, 
-  TrendingUp, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Activity,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle2,
   RefreshCw,
   Zap,
   Clock,
   Cpu,
-  HardDrive
+  HardDrive,
 } from 'lucide-react';
 
 export default function PerformanceMonitoringPage() {
@@ -56,7 +56,9 @@ export default function PerformanceMonitoringPage() {
       setLastUpdate(new Date());
     }, 2000);
 
-    return () => { clearInterval(interval); };
+    return () => {
+      clearInterval(interval);
+    };
   }, [isMonitoring, getFPS, getMetrics]);
 
   const toggleMonitoring = () => {
@@ -67,7 +69,7 @@ export default function PerformanceMonitoringPage() {
   const getPerformanceStatus = () => {
     const fps = routeMetrics.fps || 60;
     const memory = routeMetrics.memory;
-    
+
     if (fps >= 55 && (!memory || memory < 50 * 1024 * 1024)) {
       return { status: 'good', color: 'bg-green-500', label: 'İyi' };
     } else if (fps >= 30) {
@@ -135,9 +137,7 @@ export default function PerformanceMonitoringPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">
-                {routeMetrics.fps || 60}
-              </div>
+              <div className="text-2xl font-bold">{routeMetrics.fps || 60}</div>
               <div className="flex items-center gap-1">
                 {isGoodPerformance() ? (
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -162,14 +162,9 @@ export default function PerformanceMonitoringPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {routeMetrics.memory 
-                ? `${Math.round(routeMetrics.memory / 1024 / 1024)}MB`
-                : 'N/A'
-              }
+              {routeMetrics.memory ? `${Math.round(routeMetrics.memory / 1024 / 1024)}MB` : 'N/A'}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Kullanılan JS Heap
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Kullanılan JS Heap</p>
           </CardContent>
         </Card>
 
@@ -183,14 +178,11 @@ export default function PerformanceMonitoringPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {routeMetrics.performance?.routeTransitionTime 
+              {routeMetrics.performance?.routeTransitionTime
                 ? `${Math.round(routeMetrics.performance.routeTransitionTime)}ms`
-                : '0ms'
-              }
+                : '0ms'}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Sayfa geçiş süresi
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Sayfa geçiş süresi</p>
           </CardContent>
         </Card>
 
@@ -204,14 +196,11 @@ export default function PerformanceMonitoringPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {routeMetrics.performance?.modalOpenTime 
+              {routeMetrics.performance?.modalOpenTime
                 ? `${Math.round(routeMetrics.performance.modalOpenTime)}ms`
-                : '0ms'
-              }
+                : '0ms'}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Modal açılış süresi
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Modal açılış süresi</p>
           </CardContent>
         </Card>
       </div>
@@ -225,21 +214,23 @@ export default function PerformanceMonitoringPage() {
               <TrendingUp className="h-5 w-5" />
               Web Vitals
             </CardTitle>
-            <CardDescription>
-              Core Web Vitals metrikleri
-            </CardDescription>
+            <CardDescription>Core Web Vitals metrikleri</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">LCP (Largest Contentful Paint)</span>
               <Badge variant="outline">
-                {routeMetrics.performance?.lcp ? `${Math.round(routeMetrics.performance.lcp)}ms` : 'N/A'}
+                {routeMetrics.performance?.lcp
+                  ? `${Math.round(routeMetrics.performance.lcp)}ms`
+                  : 'N/A'}
               </Badge>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">FID (First Input Delay)</span>
               <Badge variant="outline">
-                {routeMetrics.performance?.fid ? `${Math.round(routeMetrics.performance.fid)}ms` : 'N/A'}
+                {routeMetrics.performance?.fid
+                  ? `${Math.round(routeMetrics.performance.fid)}ms`
+                  : 'N/A'}
               </Badge>
             </div>
             <div className="flex justify-between items-center">
@@ -258,9 +249,7 @@ export default function PerformanceMonitoringPage() {
               <Activity className="h-5 w-5" />
               Sistem Bilgileri
             </CardTitle>
-            <CardDescription>
-              Çalışma zamanı sistem bilgileri
-            </CardDescription>
+            <CardDescription>Çalışma zamanı sistem bilgileri</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
@@ -277,9 +266,7 @@ export default function PerformanceMonitoringPage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Environment</span>
-              <Badge variant="outline">
-                {process.env.NODE_ENV || 'development'}
-              </Badge>
+              <Badge variant="outline">{process.env.NODE_ENV || 'development'}</Badge>
             </div>
           </CardContent>
         </Card>
@@ -289,9 +276,7 @@ export default function PerformanceMonitoringPage() {
       <Card>
         <CardHeader>
           <CardTitle>Performance İpuçları</CardTitle>
-          <CardDescription>
-            Uygulama performansını optimize etmek için öneriler
-          </CardDescription>
+          <CardDescription>Uygulama performansını optimize etmek için öneriler</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

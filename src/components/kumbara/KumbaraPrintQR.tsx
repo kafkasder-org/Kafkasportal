@@ -21,7 +21,6 @@ interface KumbaraPrintQRProps {
 }
 
 export function KumbaraPrintQR({ kumbara, qrDataUrl }: KumbaraPrintQRProps) {
-
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('tr-TR', {
       style: 'currency',
@@ -38,17 +37,10 @@ export function KumbaraPrintQR({ kumbara, qrDataUrl }: KumbaraPrintQRProps) {
     toast.success('Yazdırma işlemi başlatıldı');
   };
 
-  
-
   return (
     <>
       {/* Print Button */}
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handlePrint}
-        className="gap-2"
-      >
+      <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
         <Printer className="h-4 w-4" />
         Yazdır
       </Button>
@@ -120,9 +112,7 @@ export function KumbaraPrintQR({ kumbara, qrDataUrl }: KumbaraPrintQRProps) {
       `}</style>
 
       <div className="print-layout hidden">
-        <div className="print-header">
-          KUMBA BA BAĞIŞI
-        </div>
+        <div className="print-header">KUMBA BA BAĞIŞI</div>
 
         {qrDataUrl && (
           <div className="print-qr">
@@ -131,17 +121,27 @@ export function KumbaraPrintQR({ kumbara, qrDataUrl }: KumbaraPrintQRProps) {
         )}
 
         <div className="print-info">
-          <div><strong>Bağışçı:</strong> {kumbara.donor_name}</div>
-          <div><strong>Lokasyon:</strong> {kumbara.kumbara_location}</div>
-          <div><strong>Kurum:</strong> {kumbara.kumbara_institution}</div>
-          <div><strong>Tutar:</strong> {formatCurrency(kumbara.amount, kumbara.currency)}</div>
-          <div><strong>Toplama:</strong> {formatDate(kumbara.collection_date)}</div>
-          <div><strong>Makbuz:</strong> {kumbara.receipt_number}</div>
+          <div>
+            <strong>Bağışçı:</strong> {kumbara.donor_name}
+          </div>
+          <div>
+            <strong>Lokasyon:</strong> {kumbara.kumbara_location}
+          </div>
+          <div>
+            <strong>Kurum:</strong> {kumbara.kumbara_institution}
+          </div>
+          <div>
+            <strong>Tutar:</strong> {formatCurrency(kumbara.amount, kumbara.currency)}
+          </div>
+          <div>
+            <strong>Toplama:</strong> {formatDate(kumbara.collection_date)}
+          </div>
+          <div>
+            <strong>Makbuz:</strong> {kumbara.receipt_number}
+          </div>
         </div>
 
-        <div className="print-footer">
-          Kumbara bağışınız için teşekkürler
-        </div>
+        <div className="print-footer">Kumbara bağışınız için teşekkürler</div>
       </div>
     </>
   );

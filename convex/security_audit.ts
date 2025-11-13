@@ -1,30 +1,35 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
 
 // Security audit log entry
 export const logSecurityEvent = mutation({
   args: {
     eventType: v.union(
-      v.literal("login_attempt"),
-      v.literal("login_success"),
-      v.literal("login_failure"),
-      v.literal("logout"),
-      v.literal("permission_denied"),
-      v.literal("suspicious_activity"),
-      v.literal("password_change"),
-      v.literal("2fa_enabled"),
-      v.literal("2fa_disabled"),
-      v.literal("data_access"),
-      v.literal("data_modification")
+      v.literal('login_attempt'),
+      v.literal('login_success'),
+      v.literal('login_failure'),
+      v.literal('logout'),
+      v.literal('permission_denied'),
+      v.literal('suspicious_activity'),
+      v.literal('password_change'),
+      v.literal('2fa_enabled'),
+      v.literal('2fa_disabled'),
+      v.literal('data_access'),
+      v.literal('data_modification')
     ),
-    userId: v.optional(v.id("users")),
+    userId: v.optional(v.id('users')),
     ipAddress: v.optional(v.string()),
     userAgent: v.optional(v.string()),
     details: v.optional(v.any()),
-    severity: v.union(v.literal("low"), v.literal("medium"), v.literal("high"), v.literal("critical")),
+    severity: v.union(
+      v.literal('low'),
+      v.literal('medium'),
+      v.literal('high'),
+      v.literal('critical')
+    ),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("security_events", {
+    return await ctx.db.insert('security_events', {
       event_type: args.eventType,
       user_id: args.userId,
       ip_address: args.ipAddress,
@@ -40,15 +45,20 @@ export const logSecurityEvent = mutation({
 // Get security events
 export const getSecurityEvents = query({
   args: {
-    userId: v.optional(v.id("users")),
+    userId: v.optional(v.id('users')),
     eventType: v.optional(v.string()),
-    severity: v.optional(v.union(v.literal("low"), v.literal("medium"), v.literal("high"), v.literal("critical"))),
+    severity: v.optional(
+      v.union(v.literal('low'), v.literal('medium'), v.literal('high'), v.literal('critical'))
+    ),
     startDate: v.optional(v.string()),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const limit = args.limit || 100;
-    let events = await ctx.db.query("security_events").order("desc").take(limit * 2);
+    let events = await ctx.db
+      .query('security_events')
+      .order('desc')
+      .take(limit * 2);
 
     if (args.userId) {
       events = events.filter((e) => e.user_id === args.userId);
@@ -73,7 +83,7 @@ export const getSecurityEvents = query({
 // Detect suspicious login patterns
 export const detectSuspiciousActivity = query({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     hours: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -82,19 +92,19 @@ export const detectSuspiciousActivity = query({
     cutoffDate.setHours(cutoffDate.getHours() - hours);
 
     const events = await ctx.db
-      .query("security_events")
+      .query('security_events')
       .filter((q) =>
         q.and(
-          q.eq(q.field("user_id"), args.userId),
-          q.gte(q.field("occurred_at"), cutoffDate.toISOString())
+          q.eq(q.field('user_id'), args.userId),
+          q.gte(q.field('occurred_at'), cutoffDate.toISOString())
         )
       )
       .collect();
 
     // Analyze patterns
-    const failedLogins = events.filter((e) => e.event_type === "login_failure").length;
+    const failedLogins = events.filter((e) => e.event_type === 'login_failure').length;
     const uniqueIPs = new Set(events.map((e) => e.ip_address).filter(Boolean)).size;
-    const permissionDenied = events.filter((e) => e.event_type === "permission_denied").length;
+    const permissionDenied = events.filter((e) => e.event_type === 'permission_denied').length;
 
     const isSuspicious =
       failedLogins > 5 || // More than 5 failed logins
@@ -110,8 +120,8 @@ export const detectSuspiciousActivity = query({
         totalEvents: events.length,
       },
       recommendation: isSuspicious
-        ? "Account may be compromised. Consider requiring password reset and 2FA."
-        : "No suspicious activity detected.",
+        ? 'Account may be compromised. Consider requiring password reset and 2FA.'
+        : 'No suspicious activity detected.',
     };
   },
 });
@@ -119,17 +129,12 @@ export const detectSuspiciousActivity = query({
 // Session management for security
 export const getActiveSessions = query({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
   },
   handler: async (ctx, args) => {
     const sessions = await ctx.db
-      .query("user_sessions")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("user_id"), args.userId),
-          q.eq(q.field("is_active"), true)
-        )
-      )
+      .query('user_sessions')
+      .filter((q) => q.and(q.eq(q.field('user_id'), args.userId), q.eq(q.field('is_active'), true)))
       .collect();
 
     return sessions.map((session) => ({
@@ -145,7 +150,7 @@ export const getActiveSessions = query({
 // Revoke session (for security)
 export const revokeSession = mutation({
   args: {
-    sessionId: v.id("user_sessions"),
+    sessionId: v.id('user_sessions'),
     reason: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
@@ -175,12 +180,12 @@ export const checkRateLimit = query({
     cutoffDate.setMinutes(cutoffDate.getMinutes() - windowMinutes);
 
     const attempts = await ctx.db
-      .query("rate_limit_log")
+      .query('rate_limit_log')
       .filter((q) =>
         q.and(
-          q.eq(q.field("identifier"), args.identifier),
-          q.eq(q.field("action"), args.action),
-          q.gte(q.field("timestamp"), cutoffDate.toISOString())
+          q.eq(q.field('identifier'), args.identifier),
+          q.eq(q.field('action'), args.action),
+          q.gte(q.field('timestamp'), cutoffDate.toISOString())
         )
       )
       .collect();
@@ -203,7 +208,7 @@ export const logRateLimitAttempt = mutation({
     action: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("rate_limit_log", {
+    return await ctx.db.insert('rate_limit_log', {
       identifier: args.identifier,
       action: args.action,
       timestamp: new Date().toISOString(),
@@ -220,22 +225,22 @@ export const generateComplianceReport = query({
   handler: async (ctx, args) => {
     // Fetch all security events in date range
     const securityEvents = await ctx.db
-      .query("security_events")
+      .query('security_events')
       .filter((q) =>
         q.and(
-          q.gte(q.field("occurred_at"), args.startDate),
-          q.lte(q.field("occurred_at"), args.endDate)
+          q.gte(q.field('occurred_at'), args.startDate),
+          q.lte(q.field('occurred_at'), args.endDate)
         )
       )
       .collect();
 
     // Fetch audit logs (data access/modification)
     const auditLogs = await ctx.db
-      .query("audit_logs")
+      .query('audit_logs')
       .filter((q) =>
         q.and(
-          q.gte(q.field("timestamp"), args.startDate),
-          q.lte(q.field("timestamp"), args.endDate)
+          q.gte(q.field('timestamp'), args.startDate),
+          q.lte(q.field('timestamp'), args.endDate)
         )
       )
       .collect();
@@ -256,8 +261,8 @@ export const generateComplianceReport = query({
       summary: {
         totalSecurityEvents: securityEvents.length,
         totalAuditLogs: auditLogs.length,
-        criticalEvents: securityEvents.filter((e) => e.severity === "critical").length,
-        highSeverityEvents: securityEvents.filter((e) => e.severity === "high").length,
+        criticalEvents: securityEvents.filter((e) => e.severity === 'critical').length,
+        highSeverityEvents: securityEvents.filter((e) => e.severity === 'high').length,
       },
       breakdown: {
         securityEventsByType: eventsByType,
@@ -266,7 +271,7 @@ export const generateComplianceReport = query({
       compliance: {
         kvkkCompliant: true, // Based on audit log completeness
         gdprCompliant: true, // Based on consent tracking
-        dataRetention: "7 years", // KVKK requirement
+        dataRetention: '7 years', // KVKK requirement
       },
     };
   },

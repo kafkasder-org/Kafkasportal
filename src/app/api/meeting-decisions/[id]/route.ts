@@ -4,10 +4,7 @@ import logger from '@/lib/logger';
 import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     await requireModuleAccess('workflow');
@@ -41,10 +38,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   let body: Record<string, unknown> | null = null;
   try {
     await verifyCsrfToken(request);
@@ -115,4 +109,3 @@ export async function DELETE(
     );
   }
 }
-

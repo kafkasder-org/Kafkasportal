@@ -17,6 +17,7 @@ Bu dokümantasyon, Dernek Yönetim Sistemi'ni production ortamına deploy etme s
 ### 2. Environment Variables
 
 Production için gerekli tüm değişkenleri hazırlayın:
+
 - Convex deployment URL
 - NEXTAUTH_SECRET (güçlü, 32+ karakter)
 - CSRF_SECRET
@@ -31,6 +32,7 @@ Detaylı bilgi için [ENVIRONMENT.md](ENVIRONMENT.md) dosyasına bakın.
 ## 🚀 Vercel Deployment (Önerilen)
 
 ### Neden Vercel?
+
 - Next.js ile native entegrasyon
 - Otomatik CI/CD
 - Edge fonksiyonları
@@ -52,6 +54,7 @@ vercel
 ```
 
 Veya Vercel Dashboard üzerinden:
+
 1. "Add New Project"
 2. GitHub repository'nizi seçin
 3. Framework preset: **Next.js**
@@ -98,6 +101,7 @@ git push origin main  # main branch'e push = otomatik deploy
 ### Adım 6: Domain Bağlama
 
 Vercel Dashboard > Project > Settings > Domains:
+
 1. Custom domain ekleyin (örn: `dernek.example.com`)
 2. DNS kayıtlarını güncelleyin (Vercel otomatik SSL sağlar)
 
@@ -110,6 +114,7 @@ npm run deploy:vercel
 ```
 
 Bu script:
+
 1. Lint + typecheck yapar
 2. Build alır
 3. Convex deploy eder
@@ -183,12 +188,12 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - .env.production
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -203,6 +208,7 @@ docker-compose up -d
 ## 🌐 VPS Deployment (Ubuntu)
 
 ### Gereksinimler
+
 - Ubuntu 22.04+
 - Node.js 20+
 - Nginx
@@ -327,6 +333,7 @@ curl https://yourdomain.com/api/health?detailed=true
 ### Performance Monitoring
 
 Vercel Analytics otomatik aktif. Alternatif:
+
 - Google Analytics
 - Plausible Analytics
 
@@ -350,27 +357,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Lint
         run: npm run lint:check
-      
+
       - name: Type check
         run: npm run typecheck
-      
+
       - name: Test
         run: npm run test:run
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -422,6 +429,7 @@ pm2 restart dernek-app
 ## 🆘 Troubleshooting
 
 ### "Build failed"
+
 ```bash
 # Cache temizle
 rm -rf .next node_modules
@@ -430,17 +438,22 @@ npm run build
 ```
 
 ### "NEXTAUTH_URL not set"
+
 Environment variables'ı kontrol edin:
+
 ```bash
 vercel env ls
 ```
 
 ### "Convex connection failed"
+
 - Convex deployment URL'i doğru mu?
 - CORS ayarları yapıldı mı?
 
 ### "500 Internal Server Error"
+
 Sentry'de error loglarını kontrol edin veya:
+
 ```bash
 # Vercel logs
 vercel logs

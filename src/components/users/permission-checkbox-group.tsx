@@ -2,7 +2,12 @@
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { MODULE_PERMISSIONS, PERMISSION_LABELS, SPECIAL_PERMISSIONS, type PermissionValue } from '@/types/permissions';
+import {
+  MODULE_PERMISSIONS,
+  PERMISSION_LABELS,
+  SPECIAL_PERMISSIONS,
+  type PermissionValue,
+} from '@/types/permissions';
 import { cn } from '@/lib/utils';
 
 const DEFAULT_ORDER: PermissionValue[] = [
@@ -48,11 +53,16 @@ export function PermissionCheckboxGroup({
   return (
     <div className={cn('space-y-3', className)}>
       {modulesToRender.map((permission) => (
-        <div key={permission} className="flex items-center gap-2 rounded-md border border-border/50 p-3">
+        <div
+          key={permission}
+          className="flex items-center gap-2 rounded-md border border-border/50 p-3"
+        >
           <Checkbox
             id={`permission-${permission}`}
             checked={value.includes(permission)}
-            onCheckedChange={(checked) => { togglePermission(permission, Boolean(checked)); }}
+            onCheckedChange={(checked) => {
+              togglePermission(permission, Boolean(checked));
+            }}
             disabled={disabled}
           />
           <div>
@@ -70,4 +80,3 @@ export function PermissionCheckboxGroup({
     </div>
   );
 }
-

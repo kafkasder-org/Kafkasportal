@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Data Model for Roles and Permissions](#data-model-for-roles-and-permissions)
 3. [User Authentication and Permission Loading](#user-authentication-and-permission-loading)
@@ -20,9 +21,11 @@
 7. [Conclusion](#conclusion)
 
 ## Introduction
+
 The Role-Based Access Control (RBAC) system in Kafkasder-panel governs user access to application features based on assigned roles and permissions. This document details how user roles and permissions are defined, stored, and enforced throughout the application. The implementation leverages a Convex backend for data storage, a Zustand-based authStore for client-side state management, and a structured permissions model that supports both module-level access and special administrative capabilities.
 
 **Section sources**
+
 - [auth.ts](file://src/types/auth.ts)
 - [authStore.ts](file://src/stores/authStore.ts)
 
@@ -48,11 +51,13 @@ boolean two_factor_enabled
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L9-L37)
 
 The `permissions` array in the `users` collection contains specific permission values that determine what actions a user can perform. These values are defined in the `permissions.ts` file using TypeScript constants. The system distinguishes between module-level permissions (e.g., `beneficiaries:access`) and special permissions (e.g., `users:manage`). The `ALL_PERMISSIONS` constant aggregates all possible permissions, providing a comprehensive list for UI rendering and validation.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L9-L37)
 - [permissions.ts](file://src/types/permissions.ts#L1-L39)
 - [users.ts](file://convex/users.ts#L84-L121)
@@ -89,6 +94,7 @@ AuthStore->>Client : Login successful
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L108-L142)
 - [authStore.ts](file://src/stores/authStore.ts#L145-L222)
 
@@ -138,6 +144,7 @@ User --> PermissionValue : "has array of"
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L22-L60)
 - [auth.ts](file://src/types/auth.ts#L3-L16)
 
@@ -150,6 +157,7 @@ The `PermissionCheckboxGroup` component demonstrates how permissions are managed
 When rendering protected content, components typically use patterns like `useAuthStore().hasPermission('beneficiaries:access')` to determine visibility. This approach ensures that unauthorized users cannot access restricted functionality, even if they attempt to navigate directly to protected routes.
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L278-L305)
 - [permission-checkbox-group.tsx](file://src/components/users/permission-checkbox-group.tsx#L1-L74)
 
@@ -164,8 +172,10 @@ Administrative interfaces that manage user roles and permissions, such as the `P
 When creating new application features that require permission control, developers should use the existing permission checking methods in `authStore` to protect routes, API endpoints, and UI elements. This ensures consistency with the established RBAC pattern throughout the application.
 
 **Section sources**
+
 - [permissions.ts](file://src/types/permissions.ts#L1-L39)
 - [permission-checkbox-group.tsx](file://src/components/users/permission-checkbox-group.tsx#L8-L19)
 
 ## Conclusion
+
 The RBAC implementation in Kafkasder-panel provides a flexible and secure system for managing user access. By combining a well-structured data model in Convex with a robust client-side authentication store, the application can effectively enforce permission policies across all features. The system's design allows for both role-based access control and granular permission management, supporting the needs of an organization with diverse user roles and responsibilities. The use of TypeScript constants and type safety ensures that permissions are consistently defined and used throughout the codebase, reducing the risk of authorization errors.

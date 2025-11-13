@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Environment Setup](#environment-setup)
 3. [Coding Standards](#coding-standards)
@@ -28,6 +29,7 @@ This Developer Guide provides comprehensive information for developers working w
 The system is designed for Turkish nonprofit organizations and includes modules for beneficiary management, donation tracking, scholarship programs, financial management, and communication tools. This documentation will help new developers get started quickly and contribute effectively to the project.
 
 **Section sources**
+
 - [README.md](file://README.md#L1-L179)
 
 ## Environment Setup
@@ -71,6 +73,7 @@ The application will be available at [http://localhost:3000](http://localhost:30
 The application uses environment variables for configuration, validated through Zod schemas in `src/lib/env-validation.ts`. There are two types of environment variables:
 
 **Client-side variables** (prefixed with `NEXT_PUBLIC_`):
+
 - `NEXT_PUBLIC_CONVEX_URL`: Convex backend URL
 - `NEXT_PUBLIC_APP_NAME`: Application name (default: "Dernek Yönetim Sistemi")
 - `NEXT_PUBLIC_APP_VERSION`: Application version (default: "1.0.0")
@@ -79,6 +82,7 @@ The application uses environment variables for configuration, validated through 
 - `NEXT_PUBLIC_SENTRY_DSN`: Sentry DSN for client-side error tracking
 
 **Server-side variables**:
+
 - `NODE_ENV`: Environment mode (development, production, test)
 - `CSRF_SECRET`: CSRF protection secret (required in production)
 - `SESSION_SECRET`: Session encryption secret (required in production)
@@ -91,6 +95,7 @@ The application uses environment variables for configuration, validated through 
 The environment validation system provides helpful error messages when required variables are missing or invalid, making it easier to troubleshoot configuration issues.
 
 **Section sources**
+
 - [README.md](file://README.md#L46-L76)
 - [CONTRIBUTING.md](file://CONTRIBUTING.md#L34-L52)
 - [src/lib/env-validation.ts](file://src/lib/env-validation.ts#L1-L213)
@@ -102,6 +107,7 @@ The environment validation system provides helpful error messages when required 
 The project follows strict TypeScript and React coding conventions to ensure code quality and maintainability:
 
 **Interface and Type Definitions:**
+
 - Use `interface` for object shapes rather than `type` aliases
 - Avoid the `any` type; use specific types or `unknown` with proper type guards
 - Use union types for finite sets of values (e.g., `variant?: 'primary' | 'secondary'`)
@@ -118,10 +124,11 @@ interface User {
 type User = {
   id: any; // 'any' should be avoided
   name: string;
-}
+};
 ```
 
 **React Components:**
+
 - Use functional components with TypeScript interfaces for props
 - Destructure props in function parameters
 - Provide default values for optional props
@@ -134,10 +141,10 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary';
 }
 
-export function Button({ 
-  children, 
-  onClick, 
-  variant = 'primary' 
+export function Button({
+  children,
+  onClick,
+  variant = 'primary'
 }: ButtonProps) {
   return (
     <button className={`btn btn-${variant}`} onClick={onClick}>
@@ -176,6 +183,7 @@ The project uses ESLint and Prettier for code formatting and quality checks. Key
 Pre-commit hooks (Husky + lint-staged) automatically run formatting and linting checks before commits, ensuring code quality is maintained.
 
 Available scripts:
+
 ```bash
 # Lint check
 npm run lint:check
@@ -191,6 +199,7 @@ npm run typecheck
 ```
 
 **Section sources**
+
 - [CONTRIBUTING.md](file://CONTRIBUTING.md#L91-L149)
 - [eslint.config.mjs](file://eslint.config.mjs#L1-L105)
 
@@ -216,6 +225,7 @@ The project uses Conventional Commits for commit message formatting:
 ```
 
 **Commit types:**
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation
@@ -225,6 +235,7 @@ The project uses Conventional Commits for commit message formatting:
 - `chore:` - Build or dependency updates
 
 **Examples:**
+
 ```bash
 feat(auth): add two-factor authentication
 fix(api): resolve user creation bug
@@ -245,35 +256,42 @@ Pull requests should follow the provided template:
 
 ```markdown
 ## Description
+
 Brief description of changes made...
 
 ## Change Type
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] E2E tests added/updated
 - [ ] Manual testing performed
 
 ## Screenshots (if applicable)
+
 ...
 
 ## Checklist
+
 - [ ] Code review completed
 - [ ] Tests passing
 - [ ] Documentation updated
 ```
 
 The review process includes:
+
 1. Automated checks (CI/CD pipeline for lint, test, build)
 2. Code review by at least one maintainer
 3. All tests must pass
 4. Merge using squash merge
 
 **Section sources**
+
 - [CONTRIBUTING.md](file://CONTRIBUTING.md#L56-L250)
 
 ## Debugging and Troubleshooting
@@ -283,6 +301,7 @@ The review process includes:
 The application includes a comprehensive error tracking system that captures errors with context and sends them to monitoring services. Key components include:
 
 **Error Categories:**
+
 - runtime: Application runtime errors
 - ui_ux: User interface and experience issues
 - design_bug: Design implementation bugs
@@ -293,6 +312,7 @@ The application includes a comprehensive error tracking system that captures err
 - integration: Third-party integration problems
 
 **Error Severity Levels:**
+
 - critical: System-breaking issues
 - high: Major functionality affected
 - medium: Minor functionality affected
@@ -306,12 +326,14 @@ The project provides several tools for debugging:
 
 **Development Error Boundaries:**
 In development mode, error boundaries provide detailed error information including:
+
 - Error message and stack trace
 - Component hierarchy
 - Local storage contents
 - Option to download error reports as JSON files
 
 **Console Commands:**
+
 ```bash
 # Run unit tests
 npm test
@@ -332,6 +354,7 @@ The environment validation system provides clear error messages when required en
 ### Common Issues and Solutions
 
 **Convex Development Server Not Working:**
+
 ```bash
 # Ensure Convex CLI is installed globally
 npm install -g convex
@@ -340,12 +363,14 @@ npx convex dev
 ```
 
 **Linting Errors:**
+
 ```bash
 # Automatically fix linting issues
 npm run lint:fix
 ```
 
 **Test Failures:**
+
 ```bash
 # Clean cache and reinstall dependencies
 npm run clean
@@ -354,11 +379,13 @@ npm test
 ```
 
 **PR Not Merging:**
+
 - Ensure CI/CD checks are passing
 - Obtain code review approval
 - Resolve any merge conflicts
 
 **Section sources**
+
 - [src/lib/error-tracker.ts](file://src/lib/error-tracker.ts#L1-L360)
 - [src/lib/sanitization.ts](file://src/lib/sanitization.ts#L1-L412)
 - [src/components/ui/file-upload.tsx](file://src/components/ui/file-upload.tsx#L1-L426)
@@ -381,7 +408,7 @@ Custom validation rules can be applied by passing options to the validation func
 const validation = validateFile(file, {
   maxSize: 5 * 1024 * 1024, // 5MB limit
   allowedTypes: ['image/jpeg', 'image/png'],
-  allowedExtensions: ['.jpg', '.jpeg', '.png']
+  allowedExtensions: ['.jpg', '.jpeg', '.png'],
 });
 ```
 
@@ -390,6 +417,7 @@ const validation = validateFile(file, {
 The input sanitization library provides functions to safely handle user input and prevent security vulnerabilities:
 
 **Available sanitization functions:**
+
 - `sanitizeHtml`: Clean HTML content to prevent XSS attacks
 - `sanitizeText`: Remove HTML tags and special characters from text
 - `sanitizeEmail`: Validate and normalize email addresses
@@ -421,6 +449,7 @@ The UI components are designed to be extensible and customizable:
 The component library follows a modular architecture that allows for easy customization while maintaining consistency across the application.
 
 **Section sources**
+
 - [src/lib/sanitization.ts](file://src/lib/sanitization.ts#L1-L412)
 - [src/components/ui/file-upload.tsx](file://src/components/ui/file-upload.tsx#L1-L426)
 
@@ -431,6 +460,7 @@ This Developer Guide provides a comprehensive overview of the Kafkasder-panel de
 The project's focus on code quality, security, and maintainability ensures a robust foundation for nonprofit organizations to manage their operations efficiently. The combination of modern technologies like Next.js, TypeScript, and Convex with thoughtful architecture and development practices creates a powerful platform for social impact organizations.
 
 For additional information, refer to the related documentation:
+
 - [README.md](README.md) - Project overview
 - [TODO.md](docs/TODO.md) - Planned features
 - [DEPLOYMENT.md](docs/DEPLOYMENT.md) - Deployment guide

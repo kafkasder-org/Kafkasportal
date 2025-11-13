@@ -39,6 +39,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Authentication](#authentication)
 3. [Error Handling](#error-handling)
@@ -77,16 +78,20 @@
    - [Reports](#reports)
 
 ## Introduction
+
 The Kafkasder-panel API provides comprehensive access to the application's data and functionality. All endpoints follow a consistent pattern using standard HTTP methods and return JSON responses. The API is organized around resources with predictable URL patterns and standardized response formats.
 
 **Section sources**
+
 - [route-helpers.ts](file://src/lib/api/route-helpers.ts#L1-L73)
 - [schema.ts](file://convex/schema.ts#L1-L50)
 
 ## Authentication
+
 The API uses session-based authentication with CSRF protection. Users must authenticate through the login endpoint to establish a session.
 
 ### Authentication Endpoints
+
 - **POST /api/auth/login**: Authenticate with email and password
 - **POST /api/auth/logout**: Terminate current session
 - **GET /api/auth/session**: Check current session status
@@ -95,14 +100,17 @@ The API uses session-based authentication with CSRF protection. Users must authe
 All authenticated requests must include session cookies. The CSRF token must be included in the `x-csrf-token` header for POST, PUT, PATCH, and DELETE requests.
 
 **Section sources**
+
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L81-L123)
 - [csrf.ts](file://src/lib/csrf.ts#L1-L57)
 - [auth.ts](file://convex/auth.ts#L1-L100)
 
 ## Error Handling
+
 The API uses a standardized error response format across all endpoints.
 
 ### Standard Error Format
+
 ```json
 {
   "success": false,
@@ -113,18 +121,21 @@ The API uses a standardized error response format across all endpoints.
 ```
 
 ### Common Status Codes
-| Status Code | Meaning | Error Code |
-|-----------|-------|-----------|
-| 400 | Bad Request | BAD_REQUEST |
-| 401 | Unauthorized | UNAUTHORIZED |
-| 403 | Forbidden | FORBIDDEN |
-| 404 | Not Found | NOT_FOUND |
-| 409 | Conflict | CONFLICT |
-| 429 | Too Many Requests | RATE_LIMIT |
-| 500 | Internal Server Error | INTERNAL_SERVER_ERROR |
+
+| Status Code | Meaning               | Error Code            |
+| ----------- | --------------------- | --------------------- |
+| 400         | Bad Request           | BAD_REQUEST           |
+| 401         | Unauthorized          | UNAUTHORIZED          |
+| 403         | Forbidden             | FORBIDDEN             |
+| 404         | Not Found             | NOT_FOUND             |
+| 409         | Conflict              | CONFLICT              |
+| 429         | Too Many Requests     | RATE_LIMIT            |
+| 500         | Internal Server Error | INTERNAL_SERVER_ERROR |
 
 ### Error Response Examples
+
 **404 Not Found**
+
 ```json
 {
   "success": false,
@@ -134,6 +145,7 @@ The API uses a standardized error response format across all endpoints.
 ```
 
 **409 Conflict**
+
 ```json
 {
   "success": false,
@@ -143,6 +155,7 @@ The API uses a standardized error response format across all endpoints.
 ```
 
 **429 Rate Limit**
+
 ```json
 {
   "success": false,
@@ -152,21 +165,27 @@ The API uses a standardized error response format across all endpoints.
 ```
 
 **Section sources**
+
 - [errors.ts](file://src/lib/errors.ts#L1-L377)
 - [route-helpers.ts](file://src/lib/api/route-helpers.ts#L58-L71)
 
 ## Security Considerations
+
 The API implements multiple security measures to protect data and prevent abuse.
 
 ### CSRF Protection
+
 All state-changing operations (POST, PUT, PATCH, DELETE) require CSRF token validation:
+
 1. Client retrieves CSRF token from `/api/csrf`
 2. Client includes token in `x-csrf-token` header
 3. Server validates token against cookie value
 4. Constant-time comparison prevents timing attacks
 
 ### Input Validation
+
 All inputs are validated server-side:
+
 - Email format validation
 - Phone number validation (Turkish format)
 - Turkish ID number (TC Kimlik No) validation
@@ -174,43 +193,52 @@ All inputs are validated server-side:
 - XSS protection
 
 ### Authentication Requirements
+
 - All endpoints require authentication except health check and CSRF token
 - Role-based access control enforces permissions
 - Session expiration after inactivity
 - Secure cookies in production (HTTPS only)
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L1-L90)
 - [security.ts](file://src/lib/security.ts#L37-L83)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L81-L123)
 
 ## Rate Limiting
+
 The API implements rate limiting to prevent abuse and ensure service availability.
 
 ### Rate Limit Policies
-| Endpoint Pattern | Limit | Window | Description |
-|----------------|------|-------|------------|
-| `/api/auth/*` | 5 requests | 5 minutes | Authentication endpoints |
-| `/api/storage/upload` | 10 uploads | 1 minute | File upload endpoints |
-| Data modification (POST/PUT/DELETE) | 50 requests | 15 minutes | Data modification endpoints |
-| Read-only (GET) | 200 requests | 15 minutes | Read-only endpoints |
-| Search endpoints | 30 searches | 1 minute | Search endpoints |
-| `/api/health` | Unlimited | - | Health check endpoints |
+
+| Endpoint Pattern                    | Limit        | Window     | Description                 |
+| ----------------------------------- | ------------ | ---------- | --------------------------- |
+| `/api/auth/*`                       | 5 requests   | 5 minutes  | Authentication endpoints    |
+| `/api/storage/upload`               | 10 uploads   | 1 minute   | File upload endpoints       |
+| Data modification (POST/PUT/DELETE) | 50 requests  | 15 minutes | Data modification endpoints |
+| Read-only (GET)                     | 200 requests | 15 minutes | Read-only endpoints         |
+| Search endpoints                    | 30 searches  | 1 minute   | Search endpoints            |
+| `/api/health`                       | Unlimited    | -          | Health check endpoints      |
 
 ### Rate Limit Headers
+
 Rate-limited responses include:
+
 - `X-RateLimit-Limit`: Maximum number of requests
 - `X-RateLimit-Remaining`: Remaining requests in current window
 - `Retry-After`: Seconds to wait before retrying
 
 ### Rate Limit Bypass
+
 Health check endpoints (`/api/health`) are not rate-limited to allow monitoring systems to function properly.
 
 **Section sources**
+
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L1-L195)
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L1-L41)
 
 ## API Versioning
+
 The API uses URL-based versioning with the following scheme:
 
 ```
@@ -222,25 +250,31 @@ Currently, the API is at version 1.0.0, which is stable and production-ready. Ba
 Version information is also available in the application's changelog, with the current stable version being v1.0.0.
 
 **Section sources**
+
 - [CHANGELOG.md](file://CHANGELOG.md#L101-L110)
 
 ## Client Implementation Guidelines
+
 Follow these guidelines when implementing API clients.
 
 ### Authentication Flow
+
 1. Retrieve CSRF token from `/api/csrf`
 2. Submit login credentials to `/api/auth/login`
 3. Store session cookies for subsequent requests
 4. Include CSRF token in state-changing requests
 
 ### Error Handling
+
 Implement robust error handling:
+
 - Check `success` field in all responses
 - Handle specific error codes appropriately
 - Display user-friendly error messages
 - Implement retry logic for rate-limited requests
 
 ### Request Best Practices
+
 - Use appropriate HTTP methods
 - Include proper content type headers
 - Validate request data before submission
@@ -248,14 +282,18 @@ Implement robust error handling:
 - Implement proper timeout handling
 
 **Section sources**
+
 - [convex-api-client.ts](file://src/lib/api/convex-api-client.ts#L56-L112)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L81-L123)
 
 ## Performance Optimization
+
 Optimize API usage with these performance tips.
 
 ### Caching Strategy
+
 The API supports client-side caching with different durations:
+
 - **REAL_TIME (30s)**: Frequently changing data
 - **SHORT (2m)**: Frequently changing data
 - **STANDARD (5m)**: Moderate data
@@ -265,12 +303,15 @@ The API supports client-side caching with different durations:
 - **SESSION (Infinity)**: Auth session data
 
 ### Cache Headers
+
 The API includes cache control headers:
+
 - `Cache-Control`: Specifies cache duration
 - `ETag`: Enables conditional requests
 - `Last-Modified`: Timestamp for cache validation
 
 ### Optimized Requests
+
 - Use query parameters to filter results
 - Request only needed fields when possible
 - Use pagination for large datasets
@@ -278,26 +319,30 @@ The API includes cache control headers:
 - Implement lazy loading for large resources
 
 **Section sources**
+
 - [cache-config.ts](file://src/lib/cache-config.ts#L1-L48)
 - [persistent-cache.ts](file://src/lib/persistent-cache.ts#L1-L30)
 
 ## Resource Endpoints
+
 This section documents all public API endpoints organized by resource type.
 
 ### Aid Applications
+
 Endpoints for managing aid applications.
 
 **Base URL**: `/api/aid-applications`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all aid applications |
-| POST | / | Create new aid application |
-| GET | /[id] | Get specific aid application |
-| PUT | /[id] | Update aid application |
-| DELETE | /[id] | Delete aid application |
+| Method | Endpoint | Description                  |
+| ------ | -------- | ---------------------------- |
+| GET    | /        | List all aid applications    |
+| POST   | /        | Create new aid application   |
+| GET    | /[id]    | Get specific aid application |
+| PUT    | /[id]    | Update aid application       |
+| DELETE | /[id]    | Delete aid application       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "beneficiaryId": "string",
@@ -310,6 +355,7 @@ Endpoints for managing aid applications.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -325,23 +371,26 @@ Endpoints for managing aid applications.
 ```
 
 **Section sources**
+
 - [aid_applications.ts](file://convex/aid_applications.ts#L1-L50)
 - [aid-applications/route.ts](file://src/app/api/aid-applications/route.ts#L1-L100)
 
 ### Beneficiaries
+
 Endpoints for managing beneficiaries.
 
 **Base URL**: `/api/beneficiaries`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all beneficiaries |
-| POST | / | Create new beneficiary |
-| GET | /[id] | Get specific beneficiary |
-| PUT | /[id] | Update beneficiary |
-| DELETE | /[id] | Delete beneficiary |
+| Method | Endpoint | Description              |
+| ------ | -------- | ------------------------ |
+| GET    | /        | List all beneficiaries   |
+| POST   | /        | Create new beneficiary   |
+| GET    | /[id]    | Get specific beneficiary |
+| PUT    | /[id]    | Update beneficiary       |
+| DELETE | /[id]    | Delete beneficiary       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "name": "string",
@@ -360,6 +409,7 @@ Endpoints for managing beneficiaries.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -382,24 +432,27 @@ Endpoints for managing beneficiaries.
 ```
 
 **Section sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L1-L50)
 - [beneficiaries/route.ts](file://src/app/api/beneficiaries/route.ts#L1-L100)
 
 ### Donations
+
 Endpoints for managing donations.
 
 **Base URL**: `/api/donations`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all donations |
-| POST | / | Create new donation |
-| GET | /[id] | Get specific donation |
-| PUT | /[id] | Update donation |
-| DELETE | /[id] | Delete donation |
-| GET | /stats | Get donation statistics |
+| Method | Endpoint | Description             |
+| ------ | -------- | ----------------------- |
+| GET    | /        | List all donations      |
+| POST   | /        | Create new donation     |
+| GET    | /[id]    | Get specific donation   |
+| PUT    | /[id]    | Update donation         |
+| DELETE | /[id]    | Delete donation         |
+| GET    | /stats   | Get donation statistics |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "donorName": "string",
@@ -414,6 +467,7 @@ Endpoints for managing donations.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -431,23 +485,26 @@ Endpoints for managing donations.
 ```
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L1-L50)
 - [donations/route.ts](file://src/app/api/donations/route.ts#L1-L100)
 
 ### Meetings
+
 Endpoints for managing meetings.
 
 **Base URL**: `/api/meetings`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all meetings |
-| POST | / | Create new meeting |
-| GET | /[id] | Get specific meeting |
-| PUT | /[id] | Update meeting |
-| DELETE | /[id] | Delete meeting |
+| Method | Endpoint | Description          |
+| ------ | -------- | -------------------- |
+| GET    | /        | List all meetings    |
+| POST   | /        | Create new meeting   |
+| GET    | /[id]    | Get specific meeting |
+| PUT    | /[id]    | Update meeting       |
+| DELETE | /[id]    | Delete meeting       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "title": "string",
@@ -464,6 +521,7 @@ Endpoints for managing meetings.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -483,23 +541,26 @@ Endpoints for managing meetings.
 ```
 
 **Section sources**
+
 - [meetings.ts](file://convex/meetings.ts#L1-L50)
 - [meetings/route.ts](file://src/app/api/meetings/route.ts#L1-L100)
 
 ### Messages
+
 Endpoints for managing messages.
 
 **Base URL**: `/api/messages`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all messages |
-| POST | / | Send new message |
-| GET | /[id] | Get specific message |
-| PUT | /[id] | Update message |
-| DELETE | /[id] | Delete message |
+| Method | Endpoint | Description          |
+| ------ | -------- | -------------------- |
+| GET    | /        | List all messages    |
+| POST   | /        | Send new message     |
+| GET    | /[id]    | Get specific message |
+| PUT    | /[id]    | Update message       |
+| DELETE | /[id]    | Delete message       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "senderId": "string",
@@ -513,6 +574,7 @@ Endpoints for managing messages.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -530,23 +592,26 @@ Endpoints for managing messages.
 ```
 
 **Section sources**
+
 - [messages.ts](file://convex/messages.ts#L1-L50)
 - [messages/route.ts](file://src/app/api/messages/route.ts#L1-L100)
 
 ### Partners
+
 Endpoints for managing partners.
 
 **Base URL**: `/api/partners`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all partners |
-| POST | / | Create new partner |
-| GET | /[id] | Get specific partner |
-| PUT | /[id] | Update partner |
-| DELETE | /[id] | Delete partner |
+| Method | Endpoint | Description          |
+| ------ | -------- | -------------------- |
+| GET    | /        | List all partners    |
+| POST   | /        | Create new partner   |
+| GET    | /[id]    | Get specific partner |
+| PUT    | /[id]    | Update partner       |
+| DELETE | /[id]    | Delete partner       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "name": "string",
@@ -562,6 +627,7 @@ Endpoints for managing partners.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -580,23 +646,26 @@ Endpoints for managing partners.
 ```
 
 **Section sources**
+
 - [partners.ts](file://convex/partners.ts#L1-L50)
 - [partners/route.ts](file://src/app/api/partners/route.ts#L1-L100)
 
 ### Tasks
+
 Endpoints for managing tasks.
 
 **Base URL**: `/api/tasks`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all tasks |
-| POST | / | Create new task |
-| GET | /[id] | Get specific task |
-| PUT | /[id] | Update task |
-| DELETE | /[id] | Delete task |
+| Method | Endpoint | Description       |
+| ------ | -------- | ----------------- |
+| GET    | /        | List all tasks    |
+| POST   | /        | Create new task   |
+| GET    | /[id]    | Get specific task |
+| PUT    | /[id]    | Update task       |
+| DELETE | /[id]    | Delete task       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "title": "string",
@@ -611,6 +680,7 @@ Endpoints for managing tasks.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -629,23 +699,26 @@ Endpoints for managing tasks.
 ```
 
 **Section sources**
+
 - [tasks.ts](file://convex/tasks.ts#L1-L50)
 - [tasks/route.ts](file://src/app/api/tasks/route.ts#L1-L100)
 
 ### Users
+
 Endpoints for managing users.
 
 **Base URL**: `/api/users`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all users |
-| POST | / | Create new user |
-| GET | /[id] | Get specific user |
-| PUT | /[id] | Update user |
-| DELETE | /[id] | Delete user |
+| Method | Endpoint | Description       |
+| ------ | -------- | ----------------- |
+| GET    | /        | List all users    |
+| POST   | /        | Create new user   |
+| GET    | /[id]    | Get specific user |
+| PUT    | /[id]    | Update user       |
+| DELETE | /[id]    | Delete user       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "name": "string",
@@ -660,6 +733,7 @@ Endpoints for managing users.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -678,23 +752,26 @@ Endpoints for managing users.
 ```
 
 **Section sources**
+
 - [users.ts](file://convex/users.ts#L1-L50)
 - [users/route.ts](file://src/app/api/users/route.ts#L1-L100)
 
 ### Workflow Notifications
+
 Endpoints for managing workflow notifications.
 
 **Base URL**: `/api/workflow-notifications`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all workflow notifications |
-| POST | / | Create new workflow notification |
-| GET | /[id] | Get specific workflow notification |
-| PUT | /[id] | Update workflow notification |
-| DELETE | /[id] | Delete workflow notification |
+| Method | Endpoint | Description                        |
+| ------ | -------- | ---------------------------------- |
+| GET    | /        | List all workflow notifications    |
+| POST   | /        | Create new workflow notification   |
+| GET    | /[id]    | Get specific workflow notification |
+| PUT    | /[id]    | Update workflow notification       |
+| DELETE | /[id]    | Delete workflow notification       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "workflowId": "string",
@@ -708,6 +785,7 @@ Endpoints for managing workflow notifications.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -724,20 +802,23 @@ Endpoints for managing workflow notifications.
 ```
 
 **Section sources**
+
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts#L1-L50)
 - [workflow-notifications/route.ts](file://src/app/api/workflow-notifications/route.ts#L1-L100)
 
 ### Audit Logs
+
 Endpoints for accessing audit logs.
 
 **Base URL**: `/api/audit-logs`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List audit logs |
-| GET | /[id] | Get specific audit log |
+| Method | Endpoint | Description            |
+| ------ | -------- | ---------------------- |
+| GET    | /        | List audit logs        |
+| GET    | /[id]    | Get specific audit log |
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -753,24 +834,27 @@ Endpoints for accessing audit logs.
 ```
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L1-L50)
 - [audit-logs/route.ts](file://src/app/api/audit-logs/route.ts#L1-L100)
 
 ### Errors
+
 Endpoints for error reporting and management.
 
 **Base URL**: `/api/errors`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List errors |
-| POST | / | Report new error |
-| GET | /[id] | Get specific error |
-| PUT | /[id] | Update error |
-| POST | /[id]/assign | Assign error to user |
-| GET | /stats | Get error statistics |
+| Method | Endpoint     | Description          |
+| ------ | ------------ | -------------------- |
+| GET    | /            | List errors          |
+| POST   | /            | Report new error     |
+| GET    | /[id]        | Get specific error   |
+| PUT    | /[id]        | Update error         |
+| POST   | /[id]/assign | Assign error to user |
+| GET    | /stats       | Get error statistics |
 
 **Request Schema (POST)**
+
 ```json
 {
   "title": "string",
@@ -785,6 +869,7 @@ Endpoints for error reporting and management.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -805,21 +890,24 @@ Endpoints for error reporting and management.
 ```
 
 **Section sources**
+
 - [errors.ts](file://convex/errors.ts#L1-L50)
 - [errors/route.ts](file://src/app/api/errors/route.ts#L1-L100)
 
 ### Storage
+
 Endpoints for file storage operations.
 
 **Base URL**: `/api/storage`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| POST | /upload | Upload file |
-| GET | /[fileId] | Get file metadata |
-| DELETE | /[fileId] | Delete file |
+| Method | Endpoint  | Description       |
+| ------ | --------- | ----------------- |
+| POST   | /upload   | Upload file       |
+| GET    | /[fileId] | Get file metadata |
+| DELETE | /[fileId] | Delete file       |
 
 **Request Schema (POST /upload)**
+
 ```json
 {
   "file": "binary",
@@ -830,6 +918,7 @@ Endpoints for file storage operations.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -843,22 +932,25 @@ Endpoints for file storage operations.
 ```
 
 **Section sources**
+
 - [storage.ts](file://convex/storage.ts#L1-L50)
 - [storage/upload/route.ts](file://src/app/api/storage/upload/route.ts#L1-L100)
 
 ### System Settings
+
 Endpoints for managing system settings.
 
 **Base URL**: `/api/settings`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List all settings |
-| GET | /[category] | Get settings by category |
-| GET | /[category]/[key] | Get specific setting |
-| POST | /[category]/[key] | Create or update setting |
+| Method | Endpoint          | Description              |
+| ------ | ----------------- | ------------------------ |
+| GET    | /                 | List all settings        |
+| GET    | /[category]       | Get settings by category |
+| GET    | /[category]/[key] | Get specific setting     |
+| POST   | /[category]/[key] | Create or update setting |
 
 **Response Schema**
+
 ```json
 {
   "category": "string",
@@ -871,19 +963,22 @@ Endpoints for managing system settings.
 ```
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L50)
 - [settings/route.ts](file://src/app/api/settings/route.ts#L1-L100)
 
 ### Analytics
+
 Endpoints for accessing analytics data.
 
 **Base URL**: `/api/analytics`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | Get analytics overview |
+| Method | Endpoint | Description            |
+| ------ | -------- | ---------------------- |
+| GET    | /        | Get analytics overview |
 
 **Response Schema**
+
 ```json
 {
   "beneficiaries": {
@@ -915,19 +1010,22 @@ Endpoints for accessing analytics data.
 ```
 
 **Section sources**
+
 - [analytics.ts](file://convex/analytics.ts#L1-L50)
 - [analytics/route.ts](file://src/app/api/analytics/route.ts#L1-L100)
 
 ### Communication Logs
+
 Endpoints for accessing communication logs.
 
 **Base URL**: `/api/communication-logs`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List communication logs |
+| Method | Endpoint | Description             |
+| ------ | -------- | ----------------------- |
+| GET    | /        | List communication logs |
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -946,22 +1044,25 @@ Endpoints for accessing communication logs.
 ```
 
 **Section sources**
+
 - [communication_logs.ts](file://convex/communication_logs.ts#L1-L50)
 - [communication-logs/route.ts](file://src/app/api/communication-logs/route.ts#L1-L100)
 
 ### Consents
+
 Endpoints for managing consents.
 
 **Base URL**: `/api/consents`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List consents |
-| POST | / | Create consent |
-| GET | /[id] | Get specific consent |
-| PUT | /[id] | Update consent |
+| Method | Endpoint | Description          |
+| ------ | -------- | -------------------- |
+| GET    | /        | List consents        |
+| POST   | /        | Create consent       |
+| GET    | /[id]    | Get specific consent |
+| PUT    | /[id]    | Update consent       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "beneficiaryId": "string",
@@ -975,6 +1076,7 @@ Endpoints for managing consents.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -992,19 +1094,22 @@ Endpoints for managing consents.
 ```
 
 **Section sources**
+
 - [consents.ts](file://convex/consents.ts#L1-L50)
 
 ### Data Import/Export
+
 Endpoints for data import and export operations.
 
 **Base URL**: `/api/data-import-export`
 
 | Method | Endpoint | Description |
-|--------|---------|-------------|
-| POST | /import | Import data |
-| GET | /export | Export data |
+| ------ | -------- | ----------- |
+| POST   | /import  | Import data |
+| GET    | /export  | Export data |
 
 **Request Schema (POST /import)**
+
 ```json
 {
   "importType": "string",
@@ -1014,6 +1119,7 @@ Endpoints for data import and export operations.
 ```
 
 **Response Schema (GET /export)**
+
 ```json
 {
   "exportId": "string",
@@ -1028,22 +1134,25 @@ Endpoints for data import and export operations.
 ```
 
 **Section sources**
+
 - [data_import_export.ts](file://convex/data_import_export.ts#L1-L50)
 
 ### Dependents
+
 Endpoints for managing dependents.
 
 **Base URL**: `/api/dependents`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List dependents |
-| POST | / | Create dependent |
-| GET | /[id] | Get specific dependent |
-| PUT | /[id] | Update dependent |
-| DELETE | /[id] | Delete dependent |
+| Method | Endpoint | Description            |
+| ------ | -------- | ---------------------- |
+| GET    | /        | List dependents        |
+| POST   | /        | Create dependent       |
+| GET    | /[id]    | Get specific dependent |
+| PUT    | /[id]    | Update dependent       |
+| DELETE | /[id]    | Delete dependent       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "beneficiaryId": "string",
@@ -1058,6 +1167,7 @@ Endpoints for managing dependents.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1076,22 +1186,25 @@ Endpoints for managing dependents.
 ```
 
 **Section sources**
+
 - [dependents.ts](file://convex/dependents.ts#L1-L50)
 
 ### Documents
+
 Endpoints for managing documents.
 
 **Base URL**: `/api/documents`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List documents |
-| POST | / | Create document |
-| GET | /[id] | Get specific document |
-| PUT | /[id] | Update document |
-| DELETE | /[id] | Delete document |
+| Method | Endpoint | Description           |
+| ------ | -------- | --------------------- |
+| GET    | /        | List documents        |
+| POST   | /        | Create document       |
+| GET    | /[id]    | Get specific document |
+| PUT    | /[id]    | Update document       |
+| DELETE | /[id]    | Delete document       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "beneficiaryId": "string",
@@ -1105,6 +1218,7 @@ Endpoints for managing documents.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1123,22 +1237,25 @@ Endpoints for managing documents.
 ```
 
 **Section sources**
+
 - [documents.ts](file://convex/documents.ts#L1-L50)
 
 ### Finance Records
+
 Endpoints for managing finance records.
 
 **Base URL**: `/api/finance-records`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List finance records |
-| POST | / | Create finance record |
-| GET | /[id] | Get specific finance record |
-| PUT | /[id] | Update finance record |
-| DELETE | /[id] | Delete finance record |
+| Method | Endpoint | Description                 |
+| ------ | -------- | --------------------------- |
+| GET    | /        | List finance records        |
+| POST   | /        | Create finance record       |
+| GET    | /[id]    | Get specific finance record |
+| PUT    | /[id]    | Update finance record       |
+| DELETE | /[id]    | Delete finance record       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "transactionType": "string",
@@ -1154,6 +1271,7 @@ Endpoints for managing finance records.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1172,22 +1290,25 @@ Endpoints for managing finance records.
 ```
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L1-L50)
 
 ### Meeting Action Items
+
 Endpoints for managing meeting action items.
 
 **Base URL**: `/api/meeting-action-items`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List action items |
-| POST | / | Create action item |
-| GET | /[id] | Get specific action item |
-| PUT | /[id] | Update action item |
-| DELETE | /[id] | Delete action item |
+| Method | Endpoint | Description              |
+| ------ | -------- | ------------------------ |
+| GET    | /        | List action items        |
+| POST   | /        | Create action item       |
+| GET    | /[id]    | Get specific action item |
+| PUT    | /[id]    | Update action item       |
+| DELETE | /[id]    | Delete action item       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "meetingId": "string",
@@ -1201,6 +1322,7 @@ Endpoints for managing meeting action items.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1218,22 +1340,25 @@ Endpoints for managing meeting action items.
 ```
 
 **Section sources**
+
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts#L1-L50)
 
 ### Meeting Decisions
+
 Endpoints for managing meeting decisions.
 
 **Base URL**: `/api/meeting-decisions`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List decisions |
-| POST | / | Create decision |
-| GET | /[id] | Get specific decision |
-| PUT | /[id] | Update decision |
-| DELETE | /[id] | Delete decision |
+| Method | Endpoint | Description           |
+| ------ | -------- | --------------------- |
+| GET    | /        | List decisions        |
+| POST   | /        | Create decision       |
+| GET    | /[id]    | Get specific decision |
+| PUT    | /[id]    | Update decision       |
+| DELETE | /[id]    | Delete decision       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "meetingId": "string",
@@ -1248,6 +1373,7 @@ Endpoints for managing meeting decisions.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1266,22 +1392,25 @@ Endpoints for managing meeting decisions.
 ```
 
 **Section sources**
+
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts#L1-L50)
 
 ### Scholarships
+
 Endpoints for managing scholarships.
 
 **Base URL**: `/api/scholarships`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List scholarships |
-| POST | / | Create scholarship |
-| GET | /[id] | Get specific scholarship |
-| PUT | /[id] | Update scholarship |
-| DELETE | /[id] | Delete scholarship |
+| Method | Endpoint | Description              |
+| ------ | -------- | ------------------------ |
+| GET    | /        | List scholarships        |
+| POST   | /        | Create scholarship       |
+| GET    | /[id]    | Get specific scholarship |
+| PUT    | /[id]    | Update scholarship       |
+| DELETE | /[id]    | Delete scholarship       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "studentId": "string",
@@ -1297,6 +1426,7 @@ Endpoints for managing scholarships.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1316,18 +1446,21 @@ Endpoints for managing scholarships.
 ```
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L1-L50)
 
 ### Security Audit
+
 Endpoints for security audit operations.
 
 **Base URL**: `/api/security-audit`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List security audit events |
+| Method | Endpoint | Description                |
+| ------ | -------- | -------------------------- |
+| GET    | /        | List security audit events |
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1342,21 +1475,24 @@ Endpoints for security audit operations.
 ```
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L1-L50)
 
 ### Two-Factor Authentication
+
 Endpoints for two-factor authentication management.
 
 **Base URL**: `/api/two-factor-auth`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| POST | /enable | Enable 2FA |
-| POST | /disable | Disable 2FA |
-| POST | /verify | Verify 2FA code |
-| GET | /status | Get 2FA status |
+| Method | Endpoint | Description     |
+| ------ | -------- | --------------- |
+| POST   | /enable  | Enable 2FA      |
+| POST   | /disable | Disable 2FA     |
+| POST   | /verify  | Verify 2FA code |
+| GET    | /status  | Get 2FA status  |
 
 **Request Schema (POST /verify)**
+
 ```json
 {
   "code": "string",
@@ -1365,6 +1501,7 @@ Endpoints for two-factor authentication management.
 ```
 
 **Response Schema (GET /status)**
+
 ```json
 {
   "enabled": "boolean",
@@ -1375,22 +1512,25 @@ Endpoints for two-factor authentication management.
 ```
 
 **Section sources**
+
 - [two_factor_auth.ts](file://convex/two_factor_auth.ts#L1-L50)
 
 ### Bank Accounts
+
 Endpoints for managing bank accounts.
 
 **Base URL**: `/api/bank-accounts`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List bank accounts |
-| POST | / | Create bank account |
-| GET | /[id] | Get specific bank account |
-| PUT | /[id] | Update bank account |
-| DELETE | /[id] | Delete bank account |
+| Method | Endpoint | Description               |
+| ------ | -------- | ------------------------- |
+| GET    | /        | List bank accounts        |
+| POST   | /        | Create bank account       |
+| GET    | /[id]    | Get specific bank account |
+| PUT    | /[id]    | Update bank account       |
+| DELETE | /[id]    | Delete bank account       |
 
 **Request Schema (POST/PUT)**
+
 ```json
 {
   "accountName": "string",
@@ -1405,6 +1545,7 @@ Endpoints for managing bank accounts.
 ```
 
 **Response Schema**
+
 ```json
 {
   "id": "string",
@@ -1422,20 +1563,23 @@ Endpoints for managing bank accounts.
 ```
 
 **Section sources**
+
 - [bank_accounts.ts](file://convex/bank_accounts.ts#L1-L50)
 
 ### Reports
+
 Endpoints for generating reports.
 
 **Base URL**: `/api/reports`
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | / | List available reports |
-| GET | /[reportId]/generate | Generate report |
-| GET | /[reportId]/download | Download report |
+| Method | Endpoint             | Description            |
+| ------ | -------------------- | ---------------------- |
+| GET    | /                    | List available reports |
+| GET    | /[reportId]/generate | Generate report        |
+| GET    | /[reportId]/download | Download report        |
 
 **Response Schema (GET /)**
+
 ```json
 {
   "id": "string",
@@ -1450,4 +1594,5 @@ Endpoints for generating reports.
 ```
 
 **Section sources**
+
 - [reports.ts](file://convex/reports.ts#L1-L50)

@@ -2,11 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { convexDonations, normalizeQueryParams } from '@/lib/convex/api';
 import logger from '@/lib/logger';
 import type { DonationDocument, Document } from '@/types/database';
-import {
-  verifyCsrfToken,
-  buildErrorResponse,
-  requireModuleAccess,
-} from '@/lib/api/auth-utils';
+import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 /**
  * Validate donation payload

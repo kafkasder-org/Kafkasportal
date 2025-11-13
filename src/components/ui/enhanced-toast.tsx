@@ -126,9 +126,7 @@ export const enhancedToast = {
           {getIcon('error')}
           <div className="flex-1 min-w-0">
             {message.title && (
-              <h3 className={`font-semibold text-sm ${getTextColor('error')}`}>
-                {message.title}
-              </h3>
+              <h3 className={`font-semibold text-sm ${getTextColor('error')}`}>{message.title}</h3>
             )}
             {message.description && (
               <p className={`text-sm ${getTextColor('error')} mt-1 opacity-90`}>
@@ -218,9 +216,7 @@ export const enhancedToast = {
           {getIcon('info')}
           <div className="flex-1 min-w-0">
             {message.title && (
-              <h3 className={`font-semibold text-sm ${getTextColor('info')}`}>
-                {message.title}
-              </h3>
+              <h3 className={`font-semibold text-sm ${getTextColor('info')}`}>{message.title}</h3>
             )}
             {message.description && (
               <p className={`text-sm ${getTextColor('info')} mt-1 opacity-90`}>

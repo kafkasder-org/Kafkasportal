@@ -47,9 +47,7 @@ export const aidApplicationDocumentSchema = z.object({
 /**
  * Type guard function to validate if data is a valid AidApplicationDocument
  */
-export function isValidAidApplicationDocument(
-  data: unknown
-): data is AidApplicationDocument {
+export function isValidAidApplicationDocument(data: unknown): data is AidApplicationDocument {
   return aidApplicationDocumentSchema.safeParse(data).success;
 }
 
@@ -57,13 +55,10 @@ export function isValidAidApplicationDocument(
  * Validates and parses an AidApplicationDocument from unknown data
  * Returns the validated document or null if validation fails
  */
-export function validateAidApplicationDocument(
-  data: unknown
-): AidApplicationDocument | null {
+export function validateAidApplicationDocument(data: unknown): AidApplicationDocument | null {
   const result = aidApplicationDocumentSchema.safeParse(data);
   if (result.success) {
     return result.data;
   }
   return null;
 }
-

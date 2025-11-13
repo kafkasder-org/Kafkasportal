@@ -158,8 +158,6 @@ export default function InternalMessagingPage() {
     }
   };
 
-  
-
   const handleMessageSelect = (messageId: string) => {
     if (selectedMessages.includes(messageId)) {
       setSelectedMessages(selectedMessages.filter((id) => id !== messageId));
@@ -172,8 +170,6 @@ export default function InternalMessagingPage() {
     const user = users.find((u: UserDocument) => u._id === userId);
     return user?.name || 'Bilinmeyen Kullanıcı';
   };
-
-  
 
   const clearFilters = () => {
     setSearch('');

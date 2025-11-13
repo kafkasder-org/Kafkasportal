@@ -16,10 +16,7 @@ interface ExportOptions {
 /**
  * Export data to CSV
  */
-export function exportToCSV(
-  data: DataRow[],
-  options: ExportOptions = {}
-) {
+export function exportToCSV(data: DataRow[], options: ExportOptions = {}) {
   if (!data || data.length === 0) {
     logger.warn('Export: No data to export');
     return;
@@ -29,23 +26,23 @@ export function exportToCSV(
 
   try {
     // Get all keys from data
-    const keys = Array.from(
-      new Set(data.flatMap((row) => Object.keys(row)))
-    );
+    const keys = Array.from(new Set(data.flatMap((row) => Object.keys(row))));
 
     // Create CSV header
     const header = keys.map(escapeCSV).join(',');
 
     // Create CSV rows
     const rows = data.map((row) =>
-      keys.map((key) => {
-        const value = row[key];
-        return escapeCSV(formatValue(value, options.dateFormat));
-      }).join(',')
+      keys
+        .map((key) => {
+          const value = row[key];
+          return escapeCSV(formatValue(value, options.dateFormat));
+        })
+        .join(',')
     );
 
     // Combine and add BOM for UTF-8
-    const csv = `\uFEFF${  [header, ...rows].join('\n')}`;
+    const csv = `\uFEFF${[header, ...rows].join('\n')}`;
 
     // Download
     downloadFile(csv, filename, 'text/csv;charset=utf-8;');
@@ -60,10 +57,7 @@ export function exportToCSV(
 /**
  * Export data to JSON
  */
-export function exportToJSON(
-  data: DataRow[],
-  options: ExportOptions = {}
-) {
+export function exportToJSON(data: DataRow[], options: ExportOptions = {}) {
   if (!data || data.length === 0) {
     logger.warn('Export: No data to export');
     return;
@@ -75,10 +69,7 @@ export function exportToJSON(
     // Format data
     const formattedData = data.map((row) =>
       Object.fromEntries(
-        Object.entries(row).map(([key, value]) => [
-          key,
-          formatValue(value, options.dateFormat),
-        ])
+        Object.entries(row).map(([key, value]) => [key, formatValue(value, options.dateFormat)])
       )
     );
 
@@ -94,11 +85,7 @@ export function exportToJSON(
     );
 
     // Add BOM for UTF-8
-    downloadFile(
-      `\uFEFF${  json}`,
-      filename,
-      'application/json;charset=utf-8;'
-    );
+    downloadFile(`\uFEFF${json}`, filename, 'application/json;charset=utf-8;');
 
     logger.debug('JSON export successful', { filename, rowCount: data.length });
   } catch (error) {
@@ -110,10 +97,7 @@ export function exportToJSON(
 /**
  * Export data to TSV (Tab-Separated Values)
  */
-export function exportToTSV(
-  data: DataRow[],
-  options: ExportOptions = {}
-) {
+export function exportToTSV(data: DataRow[], options: ExportOptions = {}) {
   if (!data || data.length === 0) {
     logger.warn('Export: No data to export');
     return;
@@ -123,9 +107,7 @@ export function exportToTSV(
 
   try {
     // Get all keys from data
-    const keys = Array.from(
-      new Set(data.flatMap((row) => Object.keys(row)))
-    );
+    const keys = Array.from(new Set(data.flatMap((row) => Object.keys(row))));
 
     // Create TSV header
     const header = keys.join('\t');
@@ -143,7 +125,7 @@ export function exportToTSV(
     );
 
     // Combine and add BOM for UTF-8
-    const tsv = `\uFEFF${  [header, ...rows].join('\n')}`;
+    const tsv = `\uFEFF${[header, ...rows].join('\n')}`;
 
     downloadFile(tsv, filename, 'text/tab-separated-values;charset=utf-8;');
 
@@ -158,11 +140,7 @@ export function exportToTSV(
  * Export data as PDF
  * Note: Requires html2pdf or similar library in production
  */
-export async function exportToPDF(
-  data: DataRow[],
-  title: string,
-  options: ExportOptions = {}
-) {
+export async function exportToPDF(data: DataRow[], title: string, options: ExportOptions = {}) {
   if (!data || data.length === 0) {
     logger.warn('Export: No data to export');
     return;
@@ -172,9 +150,7 @@ export async function exportToPDF(
 
   try {
     // Create HTML table
-    const keys = Array.from(
-      new Set(data.flatMap((row) => Object.keys(row)))
-    );
+    const keys = Array.from(new Set(data.flatMap((row) => Object.keys(row))));
 
     const html = `
       <html>
@@ -225,11 +201,7 @@ export async function exportToPDF(
 
     // Note: This is a basic HTML-to-text approach
     // For real PDF, use html2pdf or similar library
-    downloadFile(
-      html,
-      filename.replace('.pdf', '.html'),
-      'text/html;charset=utf-8;'
-    );
+    downloadFile(html, filename.replace('.pdf', '.html'), 'text/html;charset=utf-8;');
 
     logger.debug('PDF export created as HTML', { filename, rowCount: data.length });
   } catch (error) {
@@ -251,29 +223,19 @@ export function exportToMultiSheet(
   try {
     const content = sheets
       .map((sheet) => {
-        const keys = Array.from(
-          new Set(sheet.data.flatMap((row) => Object.keys(row)))
-        );
+        const keys = Array.from(new Set(sheet.data.flatMap((row) => Object.keys(row))));
 
-        const header = `# ${sheet.name}\n${keys
-          .map(escapeCSV)
-          .join(',')}`;
+        const header = `# ${sheet.name}\n${keys.map(escapeCSV).join(',')}`;
 
         const rows = sheet.data.map((row) =>
-          keys
-            .map((key) => escapeCSV(formatValue(row[key])))
-            .join(',')
+          keys.map((key) => escapeCSV(formatValue(row[key]))).join(',')
         );
 
         return [header, ...rows].join('\n');
       })
       .join('\n\n');
 
-    downloadFile(
-      `\uFEFF${  content}`,
-      filename,
-      'text/csv;charset=utf-8;'
-    );
+    downloadFile(`\uFEFF${content}`, filename, 'text/csv;charset=utf-8;');
 
     logger.debug('Multi-sheet export successful', { filename });
   } catch (error) {
@@ -285,18 +247,13 @@ export function exportToMultiSheet(
 /**
  * Helper: Format value for export
  */
-function formatValue(
-  value: unknown,
-  dateFormat: 'ISO' | 'TR' = 'ISO'
-): string {
+function formatValue(value: unknown, dateFormat: 'ISO' | 'TR' = 'ISO'): string {
   if (value === null || value === undefined) {
     return '';
   }
 
   if (value instanceof Date) {
-    return dateFormat === 'TR'
-      ? value.toLocaleDateString('tr-TR')
-      : value.toISOString();
+    return dateFormat === 'TR' ? value.toLocaleDateString('tr-TR') : value.toISOString();
   }
 
   if (typeof value === 'boolean') {
@@ -341,11 +298,7 @@ function escapeHTML(text: string): string {
 /**
  * Helper: Download file
  */
-function downloadFile(
-  content: string,
-  filename: string,
-  type: string
-): void {
+function downloadFile(content: string, filename: string, type: string): void {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -364,9 +317,7 @@ function downloadFile(
 /**
  * Get export format from filename
  */
-export function getExportFormat(
-  filename: string
-): 'csv' | 'json' | 'tsv' | 'pdf' {
+export function getExportFormat(filename: string): 'csv' | 'json' | 'tsv' | 'pdf' {
   const ext = filename.split('.').pop()?.toLowerCase();
 
   switch (ext) {

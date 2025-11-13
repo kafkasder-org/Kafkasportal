@@ -58,4 +58,3 @@ export const workflowNotificationCategoryLabels: Record<
   rapor: 'Rapor',
   hatirlatma: 'Hatırlatma',
 };
-

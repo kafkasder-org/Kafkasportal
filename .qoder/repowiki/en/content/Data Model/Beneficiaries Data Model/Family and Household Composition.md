@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Household Fields](#core-household-fields)
 3. [Emergency Contacts Structure](#emergency-contacts-structure)
@@ -23,6 +24,7 @@
 The Family and Household Composition data model is a critical component of the beneficiary management system, designed to capture comprehensive information about family units and household dynamics. This documentation details the key fields used to understand household composition, including familyMemberCount, emergencyContacts, linkedOrphan, and children_count. These fields enable the organization to assess family needs, coordinate support for dependents, and implement a family-centered approach to aid delivery. The data model supports both individual and household-level analysis, allowing for targeted interventions based on family size, composition, and specific vulnerabilities.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L156)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)
 
@@ -35,7 +37,7 @@ The household composition fields are designed to capture essential demographic a
 The `familyMemberCount` field represents the total number of individuals in the beneficiary's household. This numeric field is essential for understanding household size and resource requirements.
 
 - **Data Type**: number
-- **Constraints**: 
+- **Constraints**:
   - Minimum value: 1 (household must contain at least one member)
   - Maximum value: 20 (practical limit for household size)
   - Required field in beneficiary records
@@ -108,10 +110,12 @@ string beneficiary_id FK
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L156)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L74-L83)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L179-L182)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L304-L307)
@@ -169,11 +173,13 @@ G --> H[Emergency Access]
 ```
 
 **Diagram sources**
+
 - [beneficiary.ts](file://src/types/beneficiary.ts#L385-L389)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L276-L291)
 - [AdvancedBeneficiaryForm.tsx](file://src/components/forms/AdvancedBeneficiaryForm.tsx#L264-L272)
 
 **Section sources**
+
 - [beneficiary.ts](file://src/types/beneficiary.ts#L385-L389)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L276-L291)
 - [AdvancedBeneficiaryForm.tsx](file://src/components/forms/AdvancedBeneficiaryForm.tsx#L264-L272)
@@ -187,18 +193,21 @@ The household composition data is protected by comprehensive validation rules to
 Each household composition field has specific validation rules:
 
 #### familyMemberCount Validation
+
 - Must be a positive integer
 - Range: 1-20 members
 - Required field in all beneficiary records
 - Server-side validation in Convex mutation functions
 
 #### children_count Validation
+
 - Non-negative integer
 - Range: 0-50 children
 - Must not exceed familyMemberCount
 - Default value of 0 if not specified
 
 #### linkedOrphan Validation
+
 - Alphanumeric format matching pattern: ORP-[0-9]{3}
 - Must reference an existing orphan record in the system
 - Format validation using regular expressions
@@ -234,11 +243,13 @@ F --> |Invalid| H[Error Response]
 ```
 
 **Diagram sources**
+
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts)
 - [beneficiaries.ts](file://convex/beneficiaries.ts)
 - [schema.ts](file://convex/schema.ts)
 
 **Section sources**
+
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L179-L182)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L304-L307)
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L105-L110)
@@ -293,10 +304,12 @@ Beneficiary "1" *-- "0..2" EmergencyContact : contains
 ```
 
 **Diagram sources**
+
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L385-L389)
 
 **Section sources**
+
 - [beneficiary.ts](file://src/types/beneficiary.ts#L416-L419)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L488-L489)
 - [schema.ts](file://convex/schema.ts#L74-L83)
@@ -333,6 +346,7 @@ Social workers use household composition data to:
 The system's comprehensive household data model supports a holistic approach to aid delivery, recognizing that supporting individuals often requires addressing the needs of their entire family unit.
 
 **Section sources**
+
 - [beneficiaries-extended.json](file://src/data/mock/beneficiaries-extended.json)
 - [schema.ts](file://convex/schema.ts#L47-L156)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)

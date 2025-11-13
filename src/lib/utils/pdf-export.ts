@@ -63,25 +63,25 @@ const sanitizeFilename = (title: string, maxLength: number = 50): string => {
   // Step 1: Normalize to NFKD and remove combining diacritical marks
   // Also handle Turkish characters that don't normalize correctly (ı, İ)
   let sanitized = title
-    .replace(/[ıİ]/g, (char) => char === 'ı' ? 'i' : 'I') // Turkish dotless i
+    .replace(/[ıİ]/g, (char) => (char === 'ı' ? 'i' : 'I')) // Turkish dotless i
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, ''); // Remove combining marks (converts é→e, ü→u, etc.)
-  
+
   // Step 2: Convert to lowercase
   sanitized = sanitized.toLowerCase();
-  
+
   // Step 3: Replace non-alphanumeric characters (except hyphen) and whitespace with hyphens
   // Step 4: Collapse multiple consecutive hyphens into a single hyphen
   sanitized = sanitized.replace(/[^a-z0-9-]+/g, '-').replace(/-+/g, '-');
-  
+
   // Step 5: Trim leading and trailing hyphens
   sanitized = sanitized.replace(/^-+|-+$/g, '');
-  
+
   // Step 6: Truncate to safe length
   if (sanitized.length > maxLength) {
     sanitized = sanitized.substring(0, maxLength).replace(/-+$/, ''); // Remove trailing hyphen after truncation
   }
-  
+
   return sanitized;
 };
 
@@ -132,7 +132,11 @@ export const generatePDFReport = (exportData: ExportData): void => {
   // Date
   doc.setFontSize(12);
   doc.setTextColor(100);
-  doc.text(`${PDF_STRINGS.CREATED_DATE} ${format(new Date(), 'dd MMMM yyyy', { locale: tr })}`, 20, 30);
+  doc.text(
+    `${PDF_STRINGS.CREATED_DATE} ${format(new Date(), 'dd MMMM yyyy', { locale: tr })}`,
+    20,
+    30
+  );
 
   // Summary section if provided
   if (exportData.summary && exportData.summary.length > 0) {
@@ -140,23 +144,23 @@ export const generatePDFReport = (exportData: ExportData): void => {
     doc.setFontSize(14);
     doc.setTextColor(40);
     doc.text(PDF_STRINGS.SUMMARY_INFO, 20, yPos);
-    
+
     yPos += 10;
     doc.setFontSize(10);
     doc.setTextColor(60);
-    
+
     exportData.summary.forEach((item) => {
       doc.text(`${item.label}: ${item.value}`, 25, yPos);
       yPos += 7;
     });
-    
+
     yPos += 10;
   }
 
   // Table
   if (exportData.data.length > 0) {
-    const tableData = exportData.data.map(row => 
-      exportData.columns.map(col => {
+    const tableData = exportData.data.map((row) =>
+      exportData.columns.map((col) => {
         const value = row[col.dataKey];
         if (value === null || value === undefined) return '';
         if (typeof value === 'number') {
@@ -167,9 +171,9 @@ export const generatePDFReport = (exportData: ExportData): void => {
     );
 
     doc.autoTable({
-      head: [exportData.columns.map(col => col.header)],
+      head: [exportData.columns.map((col) => col.header)],
       body: tableData,
-      startY: exportData.summary ? (exportData.summary.length * 7) + 65 : 45,
+      startY: exportData.summary ? exportData.summary.length * 7 + 65 : 45,
       styles: {
         fontSize: 9,
         cellPadding: 2,
@@ -192,11 +196,7 @@ export const generatePDFReport = (exportData: ExportData): void => {
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(150);
-    doc.text(
-      `${PDF_STRINGS.PAGE} ${i} / ${pageCount}`,
-      pageWidth - 30,
-      pageHeight - 10
-    );
+    doc.text(`${PDF_STRINGS.PAGE} ${i} / ${pageCount}`, pageWidth - 30, pageHeight - 10);
   }
 
   // Save the PDF
@@ -218,8 +218,14 @@ export const generateDonationPDF = (reportData: any): void => {
     ],
     summary: [
       { label: PDF_STRINGS.TOTAL_DONATIONS, value: reportData.totalDonations || 0 },
-      { label: PDF_STRINGS.TOTAL_AMOUNT_LABEL, value: `${(reportData.totalAmount || 0).toLocaleString('tr-TR')} ₺` },
-      { label: PDF_STRINGS.AVERAGE_DONATION, value: `${(reportData.averageDonation || 0).toLocaleString('tr-TR')} ₺` },
+      {
+        label: PDF_STRINGS.TOTAL_AMOUNT_LABEL,
+        value: `${(reportData.totalAmount || 0).toLocaleString('tr-TR')} ₺`,
+      },
+      {
+        label: PDF_STRINGS.AVERAGE_DONATION,
+        value: `${(reportData.averageDonation || 0).toLocaleString('tr-TR')} ₺`,
+      },
       { label: PDF_STRINGS.COMPLETED, value: reportData.completedDonations || 0 },
       { label: PDF_STRINGS.PENDING, value: reportData.pendingDonations || 0 },
     ],
@@ -250,10 +256,25 @@ export const generateFinancialReportPDF = (reportData: any): void => {
       { header: PDF_STRINGS.TRANSACTION_COUNT, dataKey: 'count' },
     ],
     summary: [
-      { label: PDF_STRINGS.TOTAL_INCOME, value: `${(reportData.totalIncome || 0).toLocaleString('tr-TR')} ₺` },
-      { label: PDF_STRINGS.TOTAL_EXPENSE, value: `${(reportData.totalExpense || 0).toLocaleString('tr-TR')} ₺` },
-      { label: PDF_STRINGS.NET_INCOME, value: `${(reportData.netIncome || 0).toLocaleString('tr-TR')} ₺` },
-      { label: PDF_STRINGS.TOTAL_TRANSACTIONS, value: (reportData.categoryBreakdown || []).reduce((sum: number, item: CategoryBreakdownItem) => sum + item.count, 0) },
+      {
+        label: PDF_STRINGS.TOTAL_INCOME,
+        value: `${(reportData.totalIncome || 0).toLocaleString('tr-TR')} ₺`,
+      },
+      {
+        label: PDF_STRINGS.TOTAL_EXPENSE,
+        value: `${(reportData.totalExpense || 0).toLocaleString('tr-TR')} ₺`,
+      },
+      {
+        label: PDF_STRINGS.NET_INCOME,
+        value: `${(reportData.netIncome || 0).toLocaleString('tr-TR')} ₺`,
+      },
+      {
+        label: PDF_STRINGS.TOTAL_TRANSACTIONS,
+        value: (reportData.categoryBreakdown || []).reduce(
+          (sum: number, item: CategoryBreakdownItem) => sum + item.count,
+          0
+        ),
+      },
     ],
   };
 
@@ -272,19 +293,29 @@ export const generateFinancialReportPDF = (reportData: any): void => {
 export const generateAidListPDF = (applications: any[]): void => {
   const exportData: ExportData = {
     title: PDF_STRINGS.AID_LIST_TITLE,
-    data: applications.map(app => ({
+    data: applications.map((app) => ({
       application_id: app._id,
       applicant_name: app.applicant_name,
-      applicant_type: app.applicant_type === 'person' ? PDF_STRINGS.PERSON : 
-                      app.applicant_type === 'organization' ? PDF_STRINGS.ORGANIZATION : PDF_STRINGS.PARTNER,
+      applicant_type:
+        app.applicant_type === 'person'
+          ? PDF_STRINGS.PERSON
+          : app.applicant_type === 'organization'
+            ? PDF_STRINGS.ORGANIZATION
+            : PDF_STRINGS.PARTNER,
       one_time_aid: app.one_time_aid || 0,
       regular_financial_aid: app.regular_financial_aid || 0,
       regular_food_aid: app.regular_food_aid || 0,
       in_kind_aid: app.in_kind_aid || 0,
-      stage: app.stage === 'draft' ? PDF_STRINGS.DRAFT :
-             app.stage === 'under_review' ? PDF_STRINGS.UNDER_REVIEW :
-             app.stage === 'approved' ? PDF_STRINGS.APPROVED :
-             app.stage === 'ongoing' ? PDF_STRINGS.ONGOING : PDF_STRINGS.COMPLETED_STAGE,
+      stage:
+        app.stage === 'draft'
+          ? PDF_STRINGS.DRAFT
+          : app.stage === 'under_review'
+            ? PDF_STRINGS.UNDER_REVIEW
+            : app.stage === 'approved'
+              ? PDF_STRINGS.APPROVED
+              : app.stage === 'ongoing'
+                ? PDF_STRINGS.ONGOING
+                : PDF_STRINGS.COMPLETED_STAGE,
       status: app.status === 'open' ? PDF_STRINGS.OPEN : PDF_STRINGS.CLOSED,
       application_date: safeFormatDate(app.application_date, 'dd.MM.yyyy', '-'),
     })),

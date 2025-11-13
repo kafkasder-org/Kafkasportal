@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [RateLimiter Class Implementation](#ratelimiter-class-implementation)
 3. [Rate Limit Profiles and Middleware](#rate-limit-profiles-and-middleware)
@@ -20,9 +21,11 @@
 8. [Tuning and Monitoring Guidance](#tuning-and-monitoring-guidance)
 
 ## Introduction
+
 The rate limiting system in Kafkasder-panel provides comprehensive protection against abuse and denial-of-service attacks by controlling the number of requests clients can make to the API. The implementation tracks request counts by client IP address, HTTP method, and endpoint path, applying different limits based on the sensitivity and resource requirements of various endpoints. This document details the RateLimiter class, its configuration profiles, and the complete ecosystem of rate limiting functionality including monitoring, violation tracking, and configurable limits through environment variables.
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L77-L279)
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L1-L148)
 
@@ -31,6 +34,7 @@ The rate limiting system in Kafkasder-panel provides comprehensive protection ag
 The RateLimiter class is a static utility that manages rate limiting across the application. It uses in-memory storage to track request attempts and violations, with the `checkLimit` method serving as the core functionality for determining whether a request should be allowed.
 
 The `checkLimit` method accepts several parameters:
+
 - `identifier`: A string combining IP address, HTTP method, and endpoint path
 - `maxAttempts`: Optional override for the maximum number of requests
 - `windowMs`: Optional override for the time window in milliseconds
@@ -60,9 +64,11 @@ AllowRequest --> Return200["Return allowed response"]
 ```
 
 **Diagram sources**
+
 - [security.ts](file://src/lib/security.ts#L98-L176)
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L77-L279)
 
 ## Rate Limit Profiles and Middleware
@@ -70,6 +76,7 @@ AllowRequest --> Return200["Return allowed response"]
 The system implements different rate limit profiles for various types of endpoints, each with appropriate thresholds based on the endpoint's purpose and resource requirements. These profiles are implemented as middleware functions that wrap API handlers.
 
 The primary rate limit profiles include:
+
 - **authRateLimit**: Strict limits for authentication endpoints (10 attempts per 10 minutes)
 - **dataModificationRateLimit**: Moderate limits for data modification endpoints (50 requests per 15 minutes)
 - **readOnlyRateLimit**: Higher limits for read-only endpoints (200 requests per 15 minutes)
@@ -102,10 +109,12 @@ end
 ```
 
 **Diagram sources**
+
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L10-L88)
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L22-L108)
 
 **Section sources**
+
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L91-L147)
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L22-L108)
 
@@ -114,6 +123,7 @@ end
 Rate limiting parameters are highly configurable through environment variables, allowing administrators to adjust limits without code changes. The system uses sensible defaults but can be customized for different deployment environments.
 
 Key environment variables include:
+
 - `RATE_LIMIT_DEFAULT_MAX`: Default maximum requests (default: 100)
 - `RATE_LIMIT_DEFAULT_WINDOW`: Default time window in milliseconds (default: 900000 = 15 minutes)
 - `RATE_LIMIT_PREMIUM_MULTIPLIER`: Multiplier for authenticated users (default: 2.0)
@@ -174,11 +184,13 @@ R --> S
 ```
 
 **Diagram sources**
+
 - [security.ts](file://src/lib/security.ts#L90-L97)
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L91-L147)
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L22-L108)
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L90-L97)
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L22-L194)
 - [ENVIRONMENT.md](file://docs/ENVIRONMENT.md#L75-L90)
@@ -206,10 +218,12 @@ style G fill:#fff3cd,stroke:#ffeaa7
 ```
 
 **Diagram sources**
+
 - [security.ts](file://src/lib/security.ts#L82-L87)
 - [security.ts](file://src/lib/security.ts#L110-L127)
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L82-L87)
 - [security.ts](file://src/lib/security.ts#L110-L127)
 
@@ -218,6 +232,7 @@ style G fill:#fff3cd,stroke:#ffeaa7
 The system includes comprehensive violation tracking and monitoring capabilities through the RateLimitMonitor class. This component records detailed information about rate limit violations, enabling administrators to analyze abuse patterns and adjust configurations accordingly.
 
 Each violation record includes:
+
 - Timestamp of the violation
 - Identifier (IP-method-path)
 - IP address
@@ -272,10 +287,12 @@ RateLimitMonitor --> RateLimitStats
 ```
 
 **Diagram sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L5-L39)
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L42-L303)
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L5-L303)
 
 ## Rate Limit Headers
@@ -283,6 +300,7 @@ RateLimitMonitor --> RateLimitStats
 When rate limiting is applied, the system includes standard rate limit headers in API responses to provide clients with information about their current rate limit status. These headers follow common conventions used by major APIs and allow clients to implement appropriate retry logic.
 
 The headers included are:
+
 - `X-RateLimit-Remaining`: The number of requests remaining in the current window
 - `X-RateLimit-Reset`: The timestamp when the rate limit window resets (in ISO format)
 - `Retry-After`: The number of seconds until the rate limit resets (when rate limited)
@@ -290,6 +308,7 @@ The headers included are:
 For successful responses, these headers are added to inform clients of their remaining quota. When a client exceeds their rate limit, the 429 response includes these headers along with a JSON payload containing error details and the retry-after duration. This enables client applications to implement exponential backoff strategies and provide meaningful feedback to end users.
 
 **Section sources**
+
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L53-L57)
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L75-L77)
 
@@ -304,6 +323,7 @@ To effectively tune rate limiting parameters, administrators should consider the
 5. **Use the monitoring endpoint** (`/api/monitoring/rate-limit`) to analyze abuse patterns and adjust configurations
 
 The system provides a monitoring API that exposes rate limit statistics and violation data. This endpoint supports various actions:
+
 - `stats`: Get overall rate limit statistics
 - `violations`: List recent violations
 - `ip-stats`: Get statistics for a specific IP address
@@ -311,6 +331,7 @@ The system provides a monitoring API that exposes rate limit statistics and viol
 - `reset`: Reset monitoring data
 
 When monitoring abuse patterns, pay attention to:
+
 - Sudden spikes in violation rates
 - Multiple endpoints being targeted from the same IP
 - Patterns of failed authentication attempts
@@ -319,6 +340,7 @@ When monitoring abuse patterns, pay attention to:
 Regularly review the rate limit configuration and adjust thresholds based on observed traffic patterns and business requirements.
 
 **Section sources**
+
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L110-L127)
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L82-L160)
 - [src/app/api/monitoring/rate-limit/route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L1-L39)

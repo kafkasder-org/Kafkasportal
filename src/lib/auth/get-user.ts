@@ -54,7 +54,7 @@ export async function getCurrentUserId(request?: NextRequest): Promise<Id<'users
  */
 export async function getCurrentUser(request?: NextRequest) {
   const userId = await getCurrentUserId(request);
-  
+
   if (!userId) {
     return null;
   }
@@ -67,4 +67,3 @@ export async function getCurrentUser(request?: NextRequest) {
     return null;
   }
 }
-

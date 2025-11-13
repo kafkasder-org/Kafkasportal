@@ -132,10 +132,22 @@ export function PlaceholderPage({
         transition={{ duration: 0.3, delay: 0.4 }}
         className="flex items-center justify-center gap-3"
       >
-        <Button variant="outline" onClick={() => { router.push('/genel'); }} className="gap-2">
+        <Button
+          variant="outline"
+          onClick={() => {
+            router.push('/genel');
+          }}
+          className="gap-2"
+        >
           Ana Sayfaya Dön
         </Button>
-        <Button variant="outline" onClick={() => { router.back(); }} className="gap-2">
+        <Button
+          variant="outline"
+          onClick={() => {
+            router.back();
+          }}
+          className="gap-2"
+        >
           <ArrowLeft className="h-4 w-4" />
           Geri
         </Button>

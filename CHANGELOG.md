@@ -8,6 +8,7 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 ## [1.0.0] - 2025-11-12
 
 ### Eklendi
+
 - **Demo Mode Göstergesi** - Mock data kullanan sayfalarda belirgin uyarı banner'ı
 - **Production-Safe Logging** - Tüm console.log kullanımları development guard'ı ile korundu
 - **Kapsamlı Error Tracking** - Sentry entegrasyonu tam çalışır durumda
@@ -19,6 +20,7 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 - **docs/DEPLOYMENT.md** - Vercel, Docker ve VPS deployment rehberleri
 
 ### Değişti
+
 - **README.md** - Production-ready hale getirildi, demo mode bilgisi eklendi
 - **package.json** - Deployment scripts basitleştirildi (shell scriptler kaldırıldı)
 - **TODO yorumları** - Daha açıklayıcı ve docs/TODO.md'ye referans veriyor
@@ -26,6 +28,7 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 - **Test coverage** - Kritik akışlar stabilize edildi
 
 ### Kaldırıldı
+
 - **Kullanılmayan UI componentleri** (4 dosya)
   - `src/components/ui/sparkles.tsx`
   - `src/components/ui/text-hover-effect.tsx`
@@ -39,12 +42,14 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 - **Shell script referansları** - package.json'dan kaldırıldı
 
 ### Güvenlik
+
 - npm audit temizlendi (0 high/critical vulnerabilities)
 - Development endpoints production'da korunuyor
 - CSRF ve rate limiting aktif
 - Sentry error tracking ile güvenlik ihlalleri izleniyor
 
 ### Bilinen Kısıtlamalar
+
 - **Demo Mode Sayfaları** - Aşağıdaki sayfalar demo data kullanıyor (v1.1.0'da güncellenecek):
   - Analitik dashboard (tüm chart'lar)
   - Genel dashboard (stats widget'ları ve chart'lar)
@@ -54,6 +59,7 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 - **Export functionality** - PDF/Excel export henüz implement edilmedi (v1.1.0 roadmap)
 
 ### Dokümante Edildi
+
 - Mock data kullanımı her sayfada belirgin banner ile işaretlendi
 - v1.1.0 roadmap ve öncelikler belirlendi
 - Production deployment rehberi tamamlandı
@@ -64,6 +70,7 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 ## [0.1.0] - 2024-01-XX (Önceki Sürümler)
 
 ### Eklendi
+
 - Proje başlatıldı
 - Temel proje yapısı oluşturuldu
 - Next.js + TypeScript + Tailwind CSS + Convex kurulumu
@@ -81,6 +88,7 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 - Test altyapısı (birim ve E2E testler)
 
 ### Güvenlik
+
 - CSRF koruması eklendi
 - Rate limiting implemente edildi
 - Veri maskeleme sistemi oluşturuldu
@@ -99,6 +107,7 @@ ve bu proje [Semantic Versioning](https://semver.org/spec/v2.0.0.html) kullanır
 ## 🏷️ Etiketleme
 
 Git etiketleri şu formatta:
+
 ```bash
 git tag -a v1.0.0 -m "Version 1.0.0 - First stable release"
 git push origin v1.0.0

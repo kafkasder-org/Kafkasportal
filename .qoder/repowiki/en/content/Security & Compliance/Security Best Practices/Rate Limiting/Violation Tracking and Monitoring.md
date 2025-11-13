@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [RateLimitViolation Interface Structure](#ratelimitviolation-interface-structure)
 3. [RateLimitMonitor Class Implementation](#ratelimitmonitor-class-implementation)
@@ -24,6 +25,7 @@
 The Kafkasder-panel system implements a comprehensive rate limit violation tracking and monitoring framework to detect, analyze, and respond to abusive API usage patterns. This documentation details the RateLimitMonitor class and associated components that record and analyze rate limit violations across the system. The monitoring infrastructure captures detailed violation data including timestamp, IP address, endpoint, HTTP method, and violation type, providing security teams with actionable insights into potential abuse patterns. The system is designed to maintain real-time statistics on violation rates, identify top violators, and detect endpoint-specific abuse patterns while implementing automated alerting when predefined thresholds are exceeded.
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L1-L40)
 
 ## RateLimitViolation Interface Structure
@@ -50,6 +52,7 @@ The RateLimitViolation interface defines the structure of violation records capt
 This comprehensive structure enables security analysts to distinguish between different types of abuse patterns and implement targeted mitigation strategies.
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L5-L19)
 
 ## RateLimitMonitor Class Implementation
@@ -103,9 +106,11 @@ RateLimitMonitor --> RateLimitStats : "generates"
 ```
 
 **Diagram sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L41-L301)
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L41-L80)
 
 ## Data Storage and Retention
@@ -117,6 +122,7 @@ When a new violation is recorded, it is appended to the end of the violations ar
 The retention strategy prioritizes recency over completeness, as recent abuse patterns are typically more relevant for security analysis and incident response. The system does not implement persistent storage of violation records, relying instead on the ability to export data on demand. This design choice balances the need for detailed monitoring with performance considerations and storage efficiency.
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L60-L64)
 
 ## Real-time Statistics Generation
@@ -124,6 +130,7 @@ The retention strategy prioritizes recency over completeness, as recent abuse pa
 The monitoring system generates real-time statistics on violation rates, top violators, and endpoint-specific abuse patterns through the `getStats` method. This method analyzes violations within a specified time range (1 hour, 24 hours, 7 days, or 30 days) and returns a comprehensive statistical summary.
 
 The statistics include several key metrics:
+
 - **Total requests**: Estimated total number of requests during the time period
 - **Blocked requests**: Number of requests that triggered rate limit violations
 - **Violation rate**: Percentage of requests that were blocked
@@ -145,9 +152,11 @@ SortEndpoints --> ReturnStats["Return statistical summary"]
 ```
 
 **Diagram sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L82-L159)
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L82-L159)
 
 ## Alerting System
@@ -177,9 +186,11 @@ CheckEndpoint --> |No| End([No alert needed])
 ```
 
 **Diagram sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L208-L255)
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L208-L255)
 
 ## Monitoring API Endpoints
@@ -187,6 +198,7 @@ CheckEndpoint --> |No| End([No alert needed])
 The system exposes a dedicated monitoring API at `/api/monitoring/rate-limit` that provides access to violation data and monitoring functions. The API supports both GET and POST methods with different actions controlled by query parameters and request body.
 
 The GET endpoint supports the following actions:
+
 - **stats**: Retrieve overall statistics with optional time range filtering
 - **violations**: Get recent violations with configurable limit
 - **ip-stats**: Get IP-specific statistics with time range filtering
@@ -194,6 +206,7 @@ The GET endpoint supports the following actions:
 - **reset**: Reset monitoring data (admin only with Bearer token authentication)
 
 The POST endpoint supports additional actions:
+
 - **record-violation**: Manually record a violation (for testing purposes)
 - **bulk-export**: Perform bulk export of monitoring data
 
@@ -220,10 +233,12 @@ API-->>Client : {success : true, message : "Violation recorded"}
 ```
 
 **Diagram sources**
+
 - [route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L26-L138)
 - [route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L144-L194)
 
 **Section sources**
+
 - [route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L26-L194)
 
 ## Data Export and Security Analysis
@@ -239,6 +254,7 @@ The export functionality is accessible through both the `export` action on the G
 The system also supports manual violation recording through the POST API, which can be used for testing alerting configurations or simulating abuse scenarios during security exercises. This feature allows security teams to validate monitoring and alerting workflows without requiring actual abuse events.
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L290-L301)
 - [route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L80-L86)
 - [route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L162-L170)
@@ -248,12 +264,14 @@ The system also supports manual violation recording through the POST API, which 
 The rate limit monitoring system is designed to integrate with monitoring dashboards and incident response workflows. The comprehensive statistics and real-time alerts provide the foundation for effective security monitoring. Monitoring dashboards can consume data from the monitoring API to visualize violation trends, display top violators, and highlight abused endpoints.
 
 For incident response, the system provides several key capabilities:
+
 - Real-time alerts for emerging abuse patterns
 - Detailed violation records for forensic analysis
 - IP-specific statistics to identify compromised hosts
 - Endpoint abuse patterns to prioritize mitigation efforts
 
 When responding to abuse incidents, security teams can use the monitoring data to:
+
 1. Identify the scope and scale of the abuse
 2. Determine the targeted endpoints and attack patterns
 3. Assess the effectiveness of current rate limiting rules
@@ -263,6 +281,7 @@ When responding to abuse incidents, security teams can use the monitoring data t
 The system's design supports both automated responses (through alert integration) and manual investigation (through data export and API access), providing a comprehensive toolkit for maintaining system security and availability.
 
 **Section sources**
+
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L1-L301)
 - [route.ts](file://src/app/api/monitoring/rate-limit/route.ts#L1-L196)
 - [security.ts](file://src/lib/security.ts#L78-L280)

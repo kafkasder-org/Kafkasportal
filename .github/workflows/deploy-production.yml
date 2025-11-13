@@ -23,7 +23,7 @@ jobs:
   pre-deployment-checks:
     name: Pre-Deployment Checks
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
     needs: pre-deployment-checks
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -87,13 +87,13 @@ jobs:
 
       # Platform-specific deployment steps would go here
       # Examples for Vercel, Railway, etc.
-      
+
   post-deployment-verification:
     name: Post-Deployment Verification
     needs: deploy
     runs-on: ubuntu-latest
     if: always()
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -107,4 +107,3 @@ jobs:
         run: |
           chmod +x scripts/post-deploy-check.sh
           ./scripts/post-deploy-check.sh ${{ secrets.PRODUCTION_URL }}
-

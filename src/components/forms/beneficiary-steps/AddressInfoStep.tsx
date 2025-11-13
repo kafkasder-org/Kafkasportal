@@ -19,7 +19,7 @@ export function AddressInfoStep() {
     register,
     formState: { errors },
     watch,
-    setValue
+    setValue,
   } = useFormContext<BeneficiaryFormData>();
 
   return (
@@ -29,9 +29,7 @@ export function AddressInfoStep() {
           <MapPin className="h-5 w-5" />
           Adres Bilgileri
         </CardTitle>
-        <CardDescription>
-          İhtiyaç sahibinin yaşadığı adres bilgileri
-        </CardDescription>
+        <CardDescription>İhtiyaç sahibinin yaşadığı adres bilgileri</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Location */}
@@ -45,9 +43,7 @@ export function AddressInfoStep() {
               placeholder="İl seçin"
               className={errors.city ? 'border-red-500' : ''}
             />
-            {errors.city && (
-              <p className="text-sm text-red-500">{errors.city.message}</p>
-            )}
+            {errors.city && <p className="text-sm text-red-500">{errors.city.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -58,9 +54,7 @@ export function AddressInfoStep() {
               placeholder="İlçe"
               className={errors.district ? 'border-red-500' : ''}
             />
-            {errors.district && (
-              <p className="text-sm text-red-500">{errors.district.message}</p>
-            )}
+            {errors.district && <p className="text-sm text-red-500">{errors.district.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -87,9 +81,7 @@ export function AddressInfoStep() {
             rows={3}
             className={errors.address ? 'border-red-500' : ''}
           />
-          {errors.address && (
-            <p className="text-sm text-red-500">{errors.address.message}</p>
-          )}
+          {errors.address && <p className="text-sm text-red-500">{errors.address.message}</p>}
         </div>
 
         {/* Housing Information */}

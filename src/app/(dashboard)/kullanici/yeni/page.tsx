@@ -66,8 +66,12 @@ export default function CreateUserPage() {
       <Card>
         <CardContent className="pt-6">
           <UserForm
-            onSubmit={(values) => { createMutation.mutate(values); }}
-            onCancel={() => { router.back(); }}
+            onSubmit={(values) => {
+              createMutation.mutate(values);
+            }}
+            onCancel={() => {
+              router.back();
+            }}
             loading={createMutation.isPending}
             requirePassword
             includeManageOption
@@ -77,4 +81,3 @@ export default function CreateUserPage() {
     </div>
   );
 }
-

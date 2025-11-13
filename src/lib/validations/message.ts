@@ -259,7 +259,7 @@ export const replaceTemplateVariables = (content: string, variables: Record<stri
     // Escape special regex characters in the key to prevent regex injection
     const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const placeholder = `{${escapedKey}}`;
-    
+
     // Use simple string replacement with escaped placeholder
     while (result.includes(placeholder)) {
       result = result.replace(placeholder, value);

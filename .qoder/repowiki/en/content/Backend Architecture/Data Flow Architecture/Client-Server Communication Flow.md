@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Request Lifecycle from UI to API](#request-lifecycle-from-ui-to-api)
 3. [Authentication and Security Mechanisms](#authentication-and-security-mechanisms)
@@ -22,9 +23,11 @@
 6. [Common Issues and Solutions](#common-issues-and-solutions)
 
 ## Introduction
+
 This document details the client-server communication flow in Kafkasder-panel, focusing on how React components initiate API requests through Next.js API routes. The analysis covers the complete request lifecycle from user interface interaction to server-side processing, including authentication mechanisms, security features like CSRF protection, error handling patterns, and rate limiting strategies. Special attention is given to the login flow as a concrete example of the communication pattern.
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L1-L403)
 - [corporate-login-form.tsx](file://src/components/ui/corporate-login-form.tsx#L1-L540)
 
@@ -56,10 +59,12 @@ LoginForm->>User : Shows success message and redirects
 ```
 
 **Diagram sources**
+
 - [corporate-login-form.tsx](file://src/components/ui/corporate-login-form.tsx#L18-L538)
 - [authStore.ts](file://src/stores/authStore.ts#L38-L246)
 
 **Section sources**
+
 - [corporate-login-form.tsx](file://src/components/ui/corporate-login-form.tsx#L18-L538)
 - [authStore.ts](file://src/stores/authStore.ts#L38-L246)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
@@ -89,10 +94,12 @@ Server->>Client : Set csrf-token cookie
 ```
 
 **Diagram sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L1-L90)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L1-L90)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [authStore.ts](file://src/stores/authStore.ts#L145-L246)
@@ -108,6 +115,7 @@ Validation errors are handled at multiple levels. Client-side validation occurs 
 Authentication-specific errors have dedicated handling. Invalid credentials result in a 401 status code with the message "Invalid email or password." Rate limiting violations return a 429 status code with information about the remaining time before further attempts can be made. These error responses are standardized and include both a user-friendly message and a machine-readable error code.
 
 The error handling process follows a consistent pattern:
+
 1. Catch the error in the appropriate scope
 2. Determine the error type (network, validation, authentication, etc.)
 3. Convert technical error messages to user-friendly messages
@@ -135,11 +143,13 @@ HandleOther --> End
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L222-L245)
 - [errors.ts](file://src/lib/errors.ts#L1-L377)
 - [error-boundary.tsx](file://src/components/ui/error-boundary.tsx#L1-L259)
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L222-L245)
 - [errors.ts](file://src/lib/errors.ts#L1-L377)
 - [error-boundary.tsx](file://src/components/ui/error-boundary.tsx#L1-L259)
@@ -153,11 +163,13 @@ Authentication endpoints have the strictest rate limiting, allowing only 10 atte
 The rate limiting system uses a sliding window algorithm to track requests. Each request is identified by a combination of client IP address, HTTP method, and request path. The system checks if the client has exceeded the allowed number of requests within the specified time window. If the limit is exceeded, a 429 status code is returned with Retry-After and rate limit headers.
 
 Rate limiting headers are included in all responses to inform clients of their current rate limit status:
+
 - X-RateLimit-Remaining: Number of requests remaining in the current window
 - X-RateLimit-Reset: Timestamp when the rate limit window resets
 - Retry-After: Number of seconds to wait before making another request
 
 Different endpoint categories have different rate limits:
+
 - Authentication: 10 requests per 10 minutes
 - Data modification: 50 requests per 15 minutes
 - Read-only operations: 200 requests per 15 minutes
@@ -182,10 +194,12 @@ J --> K[Client]
 ```
 
 **Diagram sources**
+
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L1-L148)
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L1-L195)
 
 **Section sources**
+
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L1-L148)
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts#L1-L195)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
@@ -205,6 +219,7 @@ CSRF token management includes automatic renewal when tokens expire. The applica
 Error recovery mechanisms include automatic retry of failed requests in certain scenarios and clear user guidance for resolving issues. Network errors prompt users to check their connection, while authentication errors guide users to verify their credentials. The error boundary components provide fallback UIs and recovery options when React components fail to render.
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L145-L246)
 - [csrf.ts](file://src/lib/csrf.ts#L1-L90)
 - [proxy.ts](file://src/proxy.ts#L1-L47)

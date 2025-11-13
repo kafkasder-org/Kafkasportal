@@ -47,9 +47,14 @@ const normalizeUserPayload = (
   }
 
   const permissions =
-    Array.isArray(payload.permissions) && payload.permissions.every((item) => typeof item === 'string')
+    Array.isArray(payload.permissions) &&
+    payload.permissions.every((item) => typeof item === 'string')
       ? (Array.from(
-          new Set(payload.permissions.filter((permission) => PERMISSION_SET.has(permission as PermissionValue)))
+          new Set(
+            payload.permissions.filter((permission) =>
+              PERMISSION_SET.has(permission as PermissionValue)
+            )
+          )
         ) as PermissionValue[])
       : [];
 
@@ -61,8 +66,8 @@ const normalizeUserPayload = (
     typeof payload.isActive === 'boolean'
       ? payload.isActive
       : payload.isActive === 'false'
-      ? false
-      : true;
+        ? false
+        : true;
 
   const phone =
     typeof payload.phone === 'string' && payload.phone.trim().length > 0
@@ -122,7 +127,13 @@ export async function GET(request: NextRequest) {
 
     const limit = limitParam ? Math.min(parseInt(limitParam, 10), 100) : 50;
     const isActive =
-      isActiveParam === null ? undefined : isActiveParam === 'true' ? true : isActiveParam === 'false' ? false : undefined;
+      isActiveParam === null
+        ? undefined
+        : isActiveParam === 'true'
+          ? true
+          : isActiveParam === 'false'
+            ? false
+            : undefined;
 
     const response = await convexUsers.list({
       search,
@@ -167,12 +178,11 @@ async function createUserHandler(request: NextRequest) {
     const { data: body, error: parseError } = await parseBody(request);
     _bodyForLog = body as Record<string, unknown>;
     if (parseError) {
-      return NextResponse.json(
-        { success: false, error: parseError },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: parseError }, { status: 400 });
     }
-    const validation = normalizeUserPayload(body as Record<string, unknown>, { requirePassword: true });
+    const validation = normalizeUserPayload(body as Record<string, unknown>, {
+      requirePassword: true,
+    });
     if (!validation.valid || !validation.data) {
       return NextResponse.json(
         { success: false, error: 'Doğrulama hatası', details: validation.errors },
@@ -212,13 +222,17 @@ async function createUserHandler(request: NextRequest) {
       return NextResponse.json(authError.body, { status: authError.status });
     }
 
-    return await handleApiError(error, logger, {
-      endpoint: '/api/users',
-      method: 'POST',
-      email: _bodyForLog?.email as string | undefined,
-    }, 'Kullanıcı oluşturulamadı');
+    return await handleApiError(
+      error,
+      logger,
+      {
+        endpoint: '/api/users',
+        method: 'POST',
+        email: _bodyForLog?.email as string | undefined,
+      },
+      'Kullanıcı oluşturulamadı'
+    );
   }
 }
 
 export const POST = createUserHandler;
-

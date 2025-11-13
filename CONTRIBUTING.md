@@ -16,6 +16,7 @@ Dernek Yönetim Sistemi projesine katkıda bulunmak için teşekkür ederiz!
 ### 🐛 Bug Raporları
 
 **Issues** sekmesinden "Bug report" şablonunu kullanarak bildirin. Şunları ekleyin:
+
 - Hatanın açıklaması ve tekrar üretme adımları
 - Beklenen vs gerçek davranış
 - Ekran görüntüleri
@@ -24,6 +25,7 @@ Dernek Yönetim Sistemi projesine katkıda bulunmak için teşekkür ederiz!
 ### 💡 Feature Önerileri
 
 **Issues** sekmesinden "Feature request" şablonunu kullanın:
+
 - Özelliğin amacı ve kullanım senaryoları
 - Önerilen implementasyon
 - Alternatif çözümler
@@ -71,6 +73,7 @@ Detaylı kurulum için [README.md](README.md) ve [docs/ENVIRONMENT.md](docs/ENVI
 ```
 
 **Tipler:**
+
 - `feat:` - Yeni özellik
 - `fix:` - Hata düzeltme
 - `docs:` - Dokümantasyon
@@ -80,6 +83,7 @@ Detaylı kurulum için [README.md](README.md) ve [docs/ENVIRONMENT.md](docs/ENVI
 - `chore:` - Build, dependency güncellemeleri
 
 **Örnekler:**
+
 ```bash
 feat(auth): add two-factor authentication
 fix(api): resolve user creation bug
@@ -105,9 +109,9 @@ function getUser(id: string): Promise<User> {
 
 // ❌ Kötü
 type User = {
-  id: any;  // 'any' kullanmayın
+  id: any; // 'any' kullanmayın
   name: string;
-}
+};
 ```
 
 ### React Components
@@ -120,10 +124,10 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary';
 }
 
-export function Button({ 
-  children, 
-  onClick, 
-  variant = 'primary' 
+export function Button({
+  children,
+  onClick,
+  variant = 'primary'
 }: ButtonProps) {
   return (
     <button className={`btn btn-${variant}`} onClick={onClick}>
@@ -215,23 +219,28 @@ describe('Button', () => {
 
 ```markdown
 ## Açıklama
+
 Bu PR'da yapılan değişikliklerin kısa açıklaması...
 
 ## Değişiklik Türü
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Test
+
 - [ ] Unit testler eklendi/güncellendi
 - [ ] E2E testler eklendi/güncellendi
 - [ ] Manuel test yapıldı
 
 ## Screenshots (varsa)
+
 ...
 
 ## Checklist
+
 - [ ] Kod review yapıldı
 - [ ] Testler geçiyor
 - [ ] Dokümantasyon güncellendi
@@ -264,6 +273,7 @@ Bu PR'da yapılan değişikliklerin kısa açıklaması...
 ## 🌍 Çeviri
 
 Multi-language desteği için katkı:
+
 - UI metinlerinin İngilizce çevirisi
 - Dokümantasyon çevirileri
 - i18n altyapısı geliştirme
@@ -271,17 +281,20 @@ Multi-language desteği için katkı:
 ## ❓ Sık Sorulan Sorular
 
 ### "Convex dev çalışmıyor"
+
 ```bash
 npm install -g convex
 npx convex dev
 ```
 
 ### "Lint hataları alıyorum"
+
 ```bash
 npm run lint:fix
 ```
 
 ### "Testler başarısız"
+
 ```bash
 # Cache temizle
 npm run clean
@@ -290,6 +303,7 @@ npm test
 ```
 
 ### "PR'ım merge olmadı"
+
 - CI/CD geçiyor mu?
 - Kod review onayı var mı?
 - Conflicts çözüldü mü?

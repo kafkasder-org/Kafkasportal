@@ -67,7 +67,9 @@ export function useInfiniteScroll({
       observer.observe(observerTarget.current);
     }
 
-    return () => { observer.disconnect(); };
+    return () => {
+      observer.disconnect();
+    };
   }, [fetchNextPage, hasNextPage, isFetching]);
 
   const flatData = data?.pages.flatMap((page) => page.items) ?? [];
@@ -106,7 +108,6 @@ export function usePaginatedQuery(
       return totalFetched < lastPage.total ? (lastPageParam as number) + 1 : undefined;
     },
   });
-
 
   const total = data?.pages[0]?.total ?? 0;
   const totalPages = Math.ceil(total / limit);

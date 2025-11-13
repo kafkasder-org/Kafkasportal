@@ -40,10 +40,7 @@ export async function PUT(
     const { value } = body;
 
     if (value === undefined) {
-      return NextResponse.json(
-        { error: 'Değer gerekli' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Değer gerekli' }, { status: 400 });
     }
 
     const convex = getConvexHttp();
@@ -65,4 +62,3 @@ export async function PUT(
     );
   }
 }
-

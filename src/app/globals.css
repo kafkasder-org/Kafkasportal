@@ -1,12 +1,12 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   /* Typography - Font Families */
-  --font-heading: "Inter", system-ui, sans-serif;
-  --font-heading-alt: "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-heading-alt: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 
   /* Typography - Font Sizes */
   --font-size-xs: 0.75rem;
@@ -133,8 +133,9 @@
      ======================================== */
 
   /* Font Variables - Missing Definitions */
-  --font-geist-sans: "Inter", system-ui, sans-serif;
-  --font-geist-mono: "JetBrains Mono", "Fira Code", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  --font-geist-sans: 'Inter', system-ui, sans-serif;
+  --font-geist-mono:
+    'JetBrains Mono', 'Fira Code', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 
   /* Ring Offset Background */
   --ring-offset-background: var(--background);
@@ -333,7 +334,9 @@
 
   /* Remove aggressive ring-2 application - causes conflicts */
   /* All elements now use natural box-sizing */
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -833,12 +836,12 @@
 
   /* Scrollbar Hide - Premium Design */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
+    display: none; /* Chrome, Safari and Opera */
   }
 
   /* Accessibility - Reduced Motion */

@@ -9,7 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { settingsApi, type OrganizationSettings, type EmailSettings, type NotificationSettings, type SystemSettings, type SecuritySettings } from '@/lib/api/settings';
+import {
+  settingsApi,
+  type OrganizationSettings,
+  type EmailSettings,
+  type NotificationSettings,
+  type SystemSettings,
+  type SecuritySettings,
+} from '@/lib/api/settings';
 import { Loader2, Save, RotateCcw } from 'lucide-react';
 import { z } from 'zod';
 
@@ -118,9 +125,12 @@ export default function SettingsPage() {
           fromEmail: allSettings.email?.fromEmail || prev.email.fromEmail,
         },
         notifications: {
-          emailNotifications: allSettings.notifications?.emailNotifications ?? prev.notifications.emailNotifications,
-          pushNotifications: allSettings.notifications?.pushNotifications ?? prev.notifications.pushNotifications,
-          smsNotifications: allSettings.notifications?.smsNotifications ?? prev.notifications.smsNotifications,
+          emailNotifications:
+            allSettings.notifications?.emailNotifications ?? prev.notifications.emailNotifications,
+          pushNotifications:
+            allSettings.notifications?.pushNotifications ?? prev.notifications.pushNotifications,
+          smsNotifications:
+            allSettings.notifications?.smsNotifications ?? prev.notifications.smsNotifications,
         },
         system: {
           sessionTimeout: allSettings.system?.sessionTimeout ?? prev.system.sessionTimeout,
@@ -128,8 +138,10 @@ export default function SettingsPage() {
           maintenanceMode: allSettings.system?.maintenanceMode ?? prev.system.maintenanceMode,
         },
         security: {
-          requireTwoFactor: allSettings.security?.requireTwoFactor ?? prev.security.requireTwoFactor,
-          passwordMinLength: allSettings.security?.passwordMinLength ?? prev.security.passwordMinLength,
+          requireTwoFactor:
+            allSettings.security?.requireTwoFactor ?? prev.security.requireTwoFactor,
+          passwordMinLength:
+            allSettings.security?.passwordMinLength ?? prev.security.passwordMinLength,
           sessionTimeout: allSettings.security?.sessionTimeout ?? prev.security.sessionTimeout,
         },
       }));
@@ -140,7 +152,10 @@ export default function SettingsPage() {
   // Save mutation
   const saveMutation = useMutation({
     mutationFn: async (category: string, categorySettings: unknown) => {
-      const response = await settingsApi.updateCategorySettings(category as 'organization' | 'email' | 'notifications' | 'system', categorySettings as Record<string, unknown>);
+      const response = await settingsApi.updateCategorySettings(
+        category as 'organization' | 'email' | 'notifications' | 'system',
+        categorySettings as Record<string, unknown>
+      );
       if (!response.success) {
         throw new Error(response.error || 'Ayarlar kaydedilemedi');
       }
@@ -198,12 +213,18 @@ export default function SettingsPage() {
   };
 
   const handleReset = async () => {
-    if (!confirm('Bu kategori ayarlarını varsayılan değerlere sıfırlamak istediğinizden emin misiniz?')) {
+    if (
+      !confirm(
+        'Bu kategori ayarlarını varsayılan değerlere sıfırlamak istediğinizden emin misiniz?'
+      )
+    ) {
       return;
     }
 
     try {
-      const response = await settingsApi.resetSettings(activeTab as 'organization' | 'email' | 'notifications' | 'system');
+      const response = await settingsApi.resetSettings(
+        activeTab as 'organization' | 'email' | 'notifications' | 'system'
+      );
       if (response.success) {
         queryClient.invalidateQueries({ queryKey: ['system-settings'] });
         toast.success('Ayarlar varsayılan değerlere sıfırlandı');
@@ -633,7 +654,10 @@ export default function SettingsPage() {
                     onChange={(e) => {
                       setSettings((prev) => ({
                         ...prev,
-                        security: { ...prev.security, passwordMinLength: parseInt(e.target.value) || 8 },
+                        security: {
+                          ...prev.security,
+                          passwordMinLength: parseInt(e.target.value) || 8,
+                        },
                       }));
                       setHasChanges(true);
                     }}
@@ -653,7 +677,10 @@ export default function SettingsPage() {
                     onChange={(e) => {
                       setSettings((prev) => ({
                         ...prev,
-                        security: { ...prev.security, sessionTimeout: parseInt(e.target.value) || 30 },
+                        security: {
+                          ...prev.security,
+                          sessionTimeout: parseInt(e.target.value) || 30,
+                        },
                       }));
                       setHasChanges(true);
                     }}

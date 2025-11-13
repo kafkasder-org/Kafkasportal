@@ -12,6 +12,7 @@ NEXT_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
 ```
 
 **Nasıl Alınır:**
+
 1. [Convex Dashboard](https://dashboard.convex.dev/) üzerinden proje oluşturun
 2. Settings > Deployment URL kısmından alın
 3. `npx convex dev` komutu otomatik olarak `.env.local` dosyasını oluşturur
@@ -26,6 +27,7 @@ NEXTAUTH_URL=http://localhost:3000
 ```
 
 **NEXTAUTH_SECRET Oluşturma:**
+
 ```bash
 # Linux/Mac
 openssl rand -base64 32
@@ -38,6 +40,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 **Production için:**
+
 ```env
 NEXTAUTH_URL=https://yourdomain.com
 ```
@@ -65,6 +68,7 @@ SENTRY_AUTH_TOKEN=your-auth-token
 ```
 
 **Nasıl Alınır:**
+
 1. [Sentry.io](https://sentry.io/) hesabı oluşturun
 2. Yeni proje oluşturun (Next.js)
 3. Settings > Client Keys (DSN) bölümünden DSN'i alın
@@ -80,10 +84,12 @@ RATE_LIMIT_WINDOW_MS=60000
 ```
 
 **Varsayılan Değerler:**
+
 - `MAX_REQUESTS`: 100 (1 dakikada maksimum istek)
 - `WINDOW_MS`: 60000 (1 dakika = 60000ms)
 
 **Production Önerisi:**
+
 ```env
 RATE_LIMIT_MAX_REQUESTS=50
 RATE_LIMIT_WINDOW_MS=60000
@@ -94,6 +100,7 @@ RATE_LIMIT_WINDOW_MS=60000
 ### SMS/Email Servisleri
 
 #### Twilio (SMS)
+
 ```env
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=your-auth-token
@@ -101,11 +108,13 @@ TWILIO_PHONE_NUMBER=+1234567890
 ```
 
 **Nasıl Alınır:**
+
 1. [Twilio Console](https://console.twilio.com/)
 2. Account Info'dan SID ve Token alın
 3. Phone Numbers'dan bir numara satın alın
 
 #### Nodemailer (Email)
+
 ```env
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
@@ -115,6 +124,7 @@ EMAIL_FROM=noreply@yourapp.com
 ```
 
 **Gmail için App Password:**
+
 1. Google Account > Security
 2. 2-Step Verification'ı aktifleştirin
 3. App passwords bölümünden yeni şifre oluşturun
@@ -128,6 +138,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 **Nasıl Alınır:**
+
 1. [Google Cloud Console](https://console.cloud.google.com/)
 2. APIs & Services > Credentials
 3. Create credentials > API key
@@ -240,18 +251,21 @@ NEXTAUTH_URL=http://localhost:3000
 ## ❓ Sorun Giderme
 
 ### "CONVEX_DEPLOYMENT is not defined"
+
 ```bash
 # Convex'i yeniden initialize edin
 npx convex dev
 ```
 
 ### "Invalid NEXTAUTH_SECRET"
+
 ```bash
 # Yeni secret oluşturun
 openssl rand -base64 32
 ```
 
 ### "Rate limit errors in development"
+
 ```env
 # Limitleri artırın
 RATE_LIMIT_MAX_REQUESTS=1000

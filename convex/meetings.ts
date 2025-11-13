@@ -1,5 +1,5 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
 
 // List meetings with filters
 export const list = query({
@@ -7,26 +7,25 @@ export const list = query({
     limit: v.optional(v.number()),
     skip: v.optional(v.number()),
     status: v.optional(v.string()),
-    organizer: v.optional(v.id("users")),
+    organizer: v.optional(v.id('users')),
   },
   handler: async (ctx, args) => {
     let meetings;
-    
+
     if (args.status) {
       meetings = await ctx.db
-        .query("meetings")
-        .withIndex("by_status", (q) => q.eq("status", args.status as "scheduled" | "ongoing" | "completed" | "cancelled"))
+        .query('meetings')
+        .withIndex('by_status', (q) =>
+          q.eq('status', args.status as 'scheduled' | 'ongoing' | 'completed' | 'cancelled')
+        )
         .collect();
     } else if (args.organizer) {
       meetings = await ctx.db
-        .query("meetings")
-        .withIndex("by_organizer", (q) => q.eq("organizer", args.organizer!))
+        .query('meetings')
+        .withIndex('by_organizer', (q) => q.eq('organizer', args.organizer!))
         .collect();
     } else {
-      meetings = await ctx.db
-        .query("meetings")
-        .withIndex("by_meeting_date")
-        .collect();
+      meetings = await ctx.db.query('meetings').withIndex('by_meeting_date').collect();
     }
 
     const skip = args.skip || 0;
@@ -42,7 +41,7 @@ export const list = query({
 
 // Get meeting by ID
 export const get = query({
-  args: { id: v.id("meetings") },
+  args: { id: v.id('meetings') },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -55,43 +54,43 @@ export const create = mutation({
     description: v.optional(v.string()),
     meeting_date: v.string(),
     location: v.optional(v.string()),
-    organizer: v.id("users"),
-    participants: v.array(v.id("users")),
+    organizer: v.id('users'),
+    participants: v.array(v.id('users')),
     status: v.union(
-      v.literal("scheduled"),
-      v.literal("ongoing"),
-      v.literal("completed"),
-      v.literal("cancelled")
+      v.literal('scheduled'),
+      v.literal('ongoing'),
+      v.literal('completed'),
+      v.literal('cancelled')
     ),
     meeting_type: v.union(
-      v.literal("general"),
-      v.literal("committee"),
-      v.literal("board"),
-      v.literal("other")
+      v.literal('general'),
+      v.literal('committee'),
+      v.literal('board'),
+      v.literal('other')
     ),
     agenda: v.optional(v.string()),
     notes: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("meetings", args);
+    return await ctx.db.insert('meetings', args);
   },
 });
 
 // Update meeting
 export const update = mutation({
   args: {
-    id: v.id("meetings"),
+    id: v.id('meetings'),
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     meeting_date: v.optional(v.string()),
     location: v.optional(v.string()),
-    participants: v.optional(v.array(v.id("users"))),
+    participants: v.optional(v.array(v.id('users'))),
     status: v.optional(
       v.union(
-        v.literal("scheduled"),
-        v.literal("ongoing"),
-        v.literal("completed"),
-        v.literal("cancelled")
+        v.literal('scheduled'),
+        v.literal('ongoing'),
+        v.literal('completed'),
+        v.literal('cancelled')
       )
     ),
     agenda: v.optional(v.string()),
@@ -101,7 +100,7 @@ export const update = mutation({
     const { id, ...updates } = args;
     const meeting = await ctx.db.get(id);
     if (!meeting) {
-      throw new Error("Meeting not found");
+      throw new Error('Meeting not found');
     }
     await ctx.db.patch(id, updates);
     return await ctx.db.get(id);
@@ -110,14 +109,13 @@ export const update = mutation({
 
 // Delete meeting
 export const remove = mutation({
-  args: { id: v.id("meetings") },
+  args: { id: v.id('meetings') },
   handler: async (ctx, args) => {
     const meeting = await ctx.db.get(args.id);
     if (!meeting) {
-      throw new Error("Meeting not found");
+      throw new Error('Meeting not found');
     }
     await ctx.db.delete(args.id);
     return { success: true };
   },
 });
-

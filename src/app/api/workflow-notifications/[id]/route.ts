@@ -6,20 +6,14 @@ import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/
 
 type NotificationStatus = 'beklemede' | 'gonderildi' | 'okundu';
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await requireModuleAccess('workflow');
 
     const { id } = await params;
     const notification = await convexWorkflowNotifications.get(id as Id<'workflow_notifications'>);
     if (!notification) {
-      return NextResponse.json(
-        { success: false, error: 'Bildirim bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Bildirim bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -39,17 +33,11 @@ export async function GET(
       id,
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Bildirim getirilemedi' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Bildirim getirilemedi' }, { status: 500 });
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   let body: Record<string, unknown> | null = null;
   try {
     await verifyCsrfToken(request);
@@ -100,10 +88,7 @@ export async function PATCH(
       payload: body,
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Bildirim güncellenemedi' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Bildirim güncellenemedi' }, { status: 500 });
   }
 }
 
@@ -135,10 +120,6 @@ export async function DELETE(
       id,
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Bildirim silinemedi' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Bildirim silinemedi' }, { status: 500 });
   }
 }
-

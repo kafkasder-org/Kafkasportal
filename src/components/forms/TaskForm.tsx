@@ -233,8 +233,14 @@ export function TaskForm({ onSuccess, onCancel, initialData, taskId }: TaskFormP
           <div className="space-y-2">
             <Label htmlFor="assigned_to">Atanan Kişi</Label>
             <Select
-              value={(watch('assigned_to') ?? '') === '' ? 'unassigned' : (watch('assigned_to') as string)}
-              onValueChange={(value) => setValue('assigned_to', value === 'unassigned' ? '' : value)}
+              value={
+                (watch('assigned_to') ?? '') === ''
+                  ? 'unassigned'
+                  : (watch('assigned_to') as string)
+              }
+              onValueChange={(value) =>
+                setValue('assigned_to', value === 'unassigned' ? '' : value)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Kişi seçin veya boş bırakın" />

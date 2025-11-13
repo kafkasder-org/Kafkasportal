@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Task Management](#task-management)
 2. [Core Components](#core-components)
 3. [Architecture Overview](#architecture-overview)
@@ -28,9 +29,10 @@ The Task Management sub-module provides a comprehensive solution for managing ta
 The implementation follows a layered architecture with Convex handling data persistence and business logic, API routes providing secure endpoints, and React components rendering the user interface. The KanbanBoard component enables visual task management through drag-and-drop interactions, while the underlying system ensures data consistency and proper state management.
 
 **Section sources**
+
 - [tasks.ts](file://convex/tasks.ts#L1-L140)
 - [KanbanBoard.tsx](file://src/components/tasks/KanbanBoard.tsx#L1-L246)
-- [page.tsx](file://src/app/(dashboard)/is/gorevler/page.tsx#L1-L602)
+- [page.tsx](<file://src/app/(dashboard)/is/gorevler/page.tsx#L1-L602>)
 
 ## Architecture Overview
 
@@ -62,8 +64,9 @@ style H fill:#ff9,stroke:#333
 ```
 
 **Diagram sources**
+
 - [KanbanBoard.tsx](file://src/components/tasks/KanbanBoard.tsx#L1-L246)
-- [page.tsx](file://src/app/(dashboard)/is/gorevler/page.tsx#L1-L602)
+- [page.tsx](<file://src/app/(dashboard)/is/gorevler/page.tsx#L1-L602>)
 - [route.ts](file://src/app/api/tasks/route.ts#L1-L140)
 - [tasks.ts](file://convex/tasks.ts#L1-L140)
 
@@ -98,6 +101,7 @@ TaskCard --> TaskDocument : "displays"
 ```
 
 **Diagram sources**
+
 - [KanbanBoard.tsx](file://src/components/tasks/KanbanBoard.tsx#L1-L246)
 
 ### Task CRUD Operations
@@ -132,6 +136,7 @@ Client-->>UI : Status Updated
 ```
 
 **Diagram sources**
+
 - [tasks.ts](file://convex/tasks.ts#L54-L137)
 - [route.ts](file://src/app/api/tasks/route.ts#L78-L140)
 - [convex-api-client.ts](file://src/lib/api/convex-api-client.ts#L219-L264)
@@ -160,7 +165,8 @@ style K fill:#6f9,stroke:#333
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/is/gorevler/page.tsx#L72-L85)
+
+- [page.tsx](<file://src/app/(dashboard)/is/gorevler/page.tsx#L72-L85>)
 - [tasks.ts](file://convex/tasks.ts#L5-L43)
 
 ## Dependency Analysis
@@ -190,6 +196,7 @@ style L fill:#cf9,stroke:#333
 ```
 
 **Diagram sources**
+
 - [database.ts](file://src/types/database.ts#L231-L243)
 - [task.ts](file://src/lib/validations/task.ts#L40-L124)
 - [tasks.ts](file://convex/tasks.ts#L1-L140)
@@ -206,7 +213,8 @@ The system implements several performance optimizations to handle large task set
 The system also implements real-time updates through Convex subscriptions, ensuring that all users see the most current task status without requiring manual refresh.
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/is/gorevler/page.tsx#L69-L70)
+
+- [page.tsx](<file://src/app/(dashboard)/is/gorevler/page.tsx#L69-L70>)
 - [tasks.ts](file://convex/tasks.ts#L16-L33)
 
 ## Troubleshooting Guide
@@ -222,6 +230,7 @@ Common issues in the Task Management system and their solutions:
 The system includes comprehensive error handling with user-friendly messages and logging for debugging purposes.
 
 **Section sources**
+
 - [route.ts](file://src/app/api/tasks/route.ts#L40-L94)
 - [task.ts](file://src/lib/validations/task.ts#L40-L124)
 
@@ -230,6 +239,7 @@ The system includes comprehensive error handling with user-friendly messages and
 The Task Management sub-module provides a robust solution for managing tasks within the application. The integration of the KanbanBoard component with Convex backend services enables efficient task tracking and collaboration. The system supports all essential task management features including creation, assignment, prioritization, and status tracking with real-time updates.
 
 Key strengths of the implementation include:
+
 - Intuitive Kanban interface for visual task management
 - Comprehensive filtering and search capabilities
 - Real-time updates through Convex subscriptions

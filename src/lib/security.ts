@@ -19,7 +19,7 @@ export class InputSanitizer {
       ALLOWED_ATTR: [],
     });
   }
-  
+
   // Synchronous version for backward compatibility (uses sync import)
   static sanitizeHtmlSync(input: string): string {
     // This is a fallback - in production, prefer async version
@@ -481,12 +481,12 @@ export class PasswordSecurity {
       upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
       lower: 'abcdefghijklmnopqrstuvwxyz',
       numbers: '0123456789',
-      symbols: '!@#$%^&*'
+      symbols: '!@#$%^&*',
     };
-    
+
     const allChars = Object.values(charTypes).join('');
     const array = new Uint8Array(length);
-    
+
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
       crypto.getRandomValues(array);
     } else {
@@ -495,12 +495,12 @@ export class PasswordSecurity {
         array[i] = Math.floor(Math.random() * 256);
       }
     }
-    
+
     let password = '';
     for (let i = 0; i < length; i++) {
       password += allChars[array[i] % allChars.length];
     }
-    
+
     return password;
   }
 }

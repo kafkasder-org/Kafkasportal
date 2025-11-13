@@ -34,14 +34,16 @@ export function AidHistoryChart({ beneficiaryId }: AidHistoryChartProps) {
     );
   }
 
-  const totalAid = aidHistory?.reduce((sum: number, aid: { amount?: number }) => sum + (aid.amount || 0), 0) || 0;
+  const totalAid =
+    aidHistory?.reduce((sum: number, aid: { amount?: number }) => sum + (aid.amount || 0), 0) || 0;
   const averageAid = aidHistory && aidHistory.length > 0 ? totalAid / aidHistory.length : 0;
   const lastAid = aidHistory?.[0] as { amount?: number } | undefined;
   const previousAid = aidHistory?.[1] as { amount?: number } | undefined;
 
-  const trend = lastAid?.amount && previousAid?.amount
-    ? ((lastAid.amount - previousAid.amount) / previousAid.amount) * 100
-    : 0;
+  const trend =
+    lastAid?.amount && previousAid?.amount
+      ? ((lastAid.amount - previousAid.amount) / previousAid.amount) * 100
+      : 0;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('tr-TR', {
@@ -62,9 +64,7 @@ export function AidHistoryChart({ beneficiaryId }: AidHistoryChartProps) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Toplam Yardım</p>
-                <p className="text-xl font-bold text-green-600">
-                  {formatCurrency(totalAid)}
-                </p>
+                <p className="text-xl font-bold text-green-600">{formatCurrency(totalAid)}</p>
               </div>
             </div>
           </CardContent>
@@ -78,9 +78,7 @@ export function AidHistoryChart({ beneficiaryId }: AidHistoryChartProps) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Yardım Sayısı</p>
-                <p className="text-xl font-bold text-blue-600">
-                  {aidHistory?.length || 0}
-                </p>
+                <p className="text-xl font-bold text-blue-600">{aidHistory?.length || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -94,9 +92,7 @@ export function AidHistoryChart({ beneficiaryId }: AidHistoryChartProps) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Ortalama</p>
-                <p className="text-xl font-bold text-purple-600">
-                  {formatCurrency(averageAid)}
-                </p>
+                <p className="text-xl font-bold text-purple-600">{formatCurrency(averageAid)}</p>
               </div>
             </div>
           </CardContent>
@@ -114,8 +110,11 @@ export function AidHistoryChart({ beneficiaryId }: AidHistoryChartProps) {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Trend</p>
-                <p className={`text-xl font-bold ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {trend >= 0 ? '+' : ''}{trend.toFixed(1)}%
+                <p
+                  className={`text-xl font-bold ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                >
+                  {trend >= 0 ? '+' : ''}
+                  {trend.toFixed(1)}%
                 </p>
               </div>
             </div>
@@ -131,36 +130,46 @@ export function AidHistoryChart({ beneficiaryId }: AidHistoryChartProps) {
         <CardContent>
           {aidHistory && Array.isArray(aidHistory) && aidHistory.length > 0 ? (
             <div className="space-y-3">
-              {aidHistory.slice(0, 5).map((aid: { id?: string; type?: string; date?: string; amount?: number; status?: string }, index: number) => (
-                <div key={aid.id || index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-blue-600">
-                        {index + 1}
-                      </span>
+              {aidHistory.slice(0, 5).map(
+                (
+                  aid: {
+                    id?: string;
+                    type?: string;
+                    date?: string;
+                    amount?: number;
+                    status?: string;
+                  },
+                  index: number
+                ) => (
+                  <div
+                    key={aid.id || index}
+                    className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-medium text-blue-600">{index + 1}</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">{aid.type || 'Yardım'}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {aid.date ? new Date(aid.date).toLocaleDateString('tr-TR') : 'Tarih yok'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-slate-900">
-                        {aid.type || 'Yardım'}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {aid.date ? new Date(aid.date).toLocaleDateString('tr-TR') : 'Tarih yok'}
-                      </p>
-                    </div>
-                  </div>
 
-                  <div className="text-right">
-                    <p className="font-semibold text-green-600">
-                      {formatCurrency(aid.amount || 0)}
-                    </p>
-                    {aid.status && (
-                      <Badge variant="secondary" className="text-xs">
-                        {aid.status}
-                      </Badge>
-                    )}
+                    <div className="text-right">
+                      <p className="font-semibold text-green-600">
+                        {formatCurrency(aid.amount || 0)}
+                      </p>
+                      {aid.status && (
+                        <Badge variant="secondary" className="text-xs">
+                          {aid.status}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           ) : (
             <div className="text-center py-8">

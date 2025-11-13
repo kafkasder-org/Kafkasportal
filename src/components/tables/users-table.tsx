@@ -114,7 +114,9 @@ function UsersTableComponent({
                   size="icon"
                   variant="outline"
                   className={cn('h-8 w-8', !user.isActive && 'opacity-70')}
-                  onClick={() => { onToggleActive?.(user); }}
+                  onClick={() => {
+                    onToggleActive?.(user);
+                  }}
                 >
                   {user.isActive ? (
                     <UserMinus className="h-4 w-4" />
@@ -126,7 +128,14 @@ function UsersTableComponent({
               ) : null}
 
               {onEdit ? (
-                <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => { onEdit(user); }}>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-8 w-8"
+                  onClick={() => {
+                    onEdit(user);
+                  }}
+                >
                   <Edit2 className="h-4 w-4" />
                   <span className="sr-only">Düzenle</span>
                 </Button>
@@ -137,7 +146,9 @@ function UsersTableComponent({
                   size="icon"
                   variant="outline"
                   className="h-8 w-8"
-                  onClick={() => { onDelete(user); }}
+                  onClick={() => {
+                    onDelete(user);
+                  }}
                 >
                   <Trash2 className="h-4 w-4" />
                   <span className="sr-only">Sil</span>
@@ -152,4 +163,3 @@ function UsersTableComponent({
 }
 
 export const UsersTable = memo(UsersTableComponent);
-

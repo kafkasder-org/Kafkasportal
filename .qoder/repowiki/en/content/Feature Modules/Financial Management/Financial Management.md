@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Income and Expense Tracking](#income-and-expense-tracking)
 3. [Bank Account Integration](#bank-account-integration)
@@ -31,6 +32,7 @@
 The Financial Management module provides comprehensive tools for tracking income and expenses, managing bank accounts, generating financial reports, and ensuring audit compliance. The system is designed to support nonprofit organizations in maintaining accurate financial records while providing intuitive interfaces for data entry and analysis. This documentation covers the implementation details of financial records, transaction categorization, reconciliation workflows, and integration with other modules such as donations and scholarships.
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L1-L323)
 - [financial.ts](file://src/types/financial.ts#L1-L303)
 
@@ -71,9 +73,11 @@ FinanceRecordsAPI --> FinanceRecord : "manages"
 ```
 
 **Diagram sources **
+
 - [finance_records.ts](file://convex/finance_records.ts#L5-L323)
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L5-L323)
 - [financial.ts](file://src/types/financial.ts#L34-L48)
 
@@ -112,9 +116,11 @@ BankAccount --> Beneficiary : "belongs to"
 ```
 
 **Diagram sources **
+
 - [bank_accounts.ts](file://convex/bank_accounts.ts#L1-L132)
 
 **Section sources**
+
 - [bank_accounts.ts](file://convex/bank_accounts.ts#L1-L132)
 - [financial.ts](file://src/types/financial.ts#L34-L48)
 
@@ -145,9 +151,11 @@ Frontend-->>User : Display financial report
 ```
 
 **Diagram sources **
+
 - [reports.ts](file://convex/reports.ts#L1-L293)
 
 **Section sources**
+
 - [reports.ts](file://convex/reports.ts#L1-L293)
 - [financial.ts](file://src/types/financial.ts#L93-L140)
 
@@ -193,10 +201,12 @@ TransactionForm --> TransactionType : "uses"
 ```
 
 **Diagram sources **
+
 - [financial.ts](file://src/types/financial.ts#L10-L29)
 - [TransactionForm.tsx](file://src/components/forms/TransactionForm.tsx#L19-L38)
 
 **Section sources**
+
 - [financial.ts](file://src/types/financial.ts#L10-L29)
 - [TransactionForm.tsx](file://src/components/forms/TransactionForm.tsx#L19-L38)
 
@@ -211,9 +221,10 @@ The reconciliation process is supported by various dashboard metrics and reporti
 The system also supports vault transactions (cash payments) through a specialized workflow. Vault transactions are automatically approved upon creation, with appropriate authorization requirements for the creating user. This streamlines cash handling while maintaining security controls.
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L68-L72)
 - [finance_records.ts](file://convex/finance_records.ts#L108-L112)
-- [financial-dashboard/page.tsx](file://src/app/(dashboard)/financial-dashboard/page.tsx#L212-L215)
+- [financial-dashboard/page.tsx](<file://src/app/(dashboard)/financial-dashboard/page.tsx#L212-L215>)
 
 ## Financial Dashboard Components
 
@@ -222,6 +233,7 @@ The financial dashboard provides a comprehensive overview of the organization's 
 The dashboard displays four key metrics: total income, total expenses, net balance, and transaction count. These metrics are color-coded for quick interpretation, with green indicating positive values (income) and red indicating negative values (expenses). The net balance is displayed in green when positive and red when negative, providing immediate visual feedback on financial performance.
 
 The dashboard includes multiple chart types for different analytical perspectives:
+
 - Monthly trend charts showing income and expenses over time
 - Cumulative cash flow charts displaying kümülatif balances
 - Pie charts illustrating income and expense breakdowns by category
@@ -247,10 +259,12 @@ J --> K
 ```
 
 **Diagram sources **
-- [page.tsx](file://src/app/(dashboard)/financial-dashboard/page.tsx#L51-L415)
+
+- [page.tsx](<file://src/app/(dashboard)/financial-dashboard/page.tsx#L51-L415>)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/financial-dashboard/page.tsx#L51-L415)
+
+- [page.tsx](<file://src/app/(dashboard)/financial-dashboard/page.tsx#L51-L415>)
 - [finance_records.ts](file://convex/finance_records.ts#L133-L176)
 
 ## Export Functionality
@@ -291,11 +305,13 @@ ExportFunctions --> ExportColumns : "uses"
 ```
 
 **Diagram sources **
+
 - [index.ts](file://src/lib/export/index.ts#L1-L329)
 
 **Section sources**
+
 - [index.ts](file://src/lib/export/index.ts#L1-L329)
-- [gelir-gider/page.tsx](file://src/app/(dashboard)/fon/gelir-gider/page.tsx#L264-L297)
+- [gelir-gider/page.tsx](<file://src/app/(dashboard)/fon/gelir-gider/page.tsx#L264-L297>)
 
 ## Integration with Donation and Scholarship Modules
 
@@ -308,6 +324,7 @@ The system supports scholarship payments as a specific expense category ("schola
 The transaction categorization system includes specific categories for donation-related income and scholarship-related expenses, ensuring consistent classification across the system. The frontend interfaces guide users to select appropriate categories when recording transactions related to donations or scholarships.
 
 **Section sources**
+
 - [reports.ts](file://convex/reports.ts#L39-L41)
 - [reports.ts](file://convex/reports.ts#L62-L65)
 - [financial.ts](file://src/types/financial.ts#L22-L23)
@@ -323,6 +340,7 @@ Data accuracy is maintained through comprehensive validation at multiple levels.
 The reporting system includes data export functionality, allowing auditors to access raw data for independent verification. The system maintains consistent date formatting and currency handling, reducing the risk of calculation errors. Financial calculations are performed server-side to ensure consistency and accuracy.
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L67-L72)
 - [finance_records.ts](file://convex/finance_records.ts#L99-L100)
 - [reports.ts](file://convex/reports.ts#L55-L56)
@@ -341,10 +359,11 @@ For large dataset processing, the system implements server-side filtering and ag
 Currency conversion is handled through standardized currency codes (TRY, USD, EUR), with formatting applied client-side using the Intl.NumberFormat API. This approach ensures consistent currency display while minimizing computational overhead.
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L13-L37)
 - [finance_records.ts](file://convex/finance_records.ts#L186-L188)
-- [gelir-gider/page.tsx](file://src/app/(dashboard)/fon/gelir-gider/page.tsx#L127-L227)
-- [financial-dashboard/page.tsx](file://src/app/(dashboard)/financial-dashboard/page.tsx#L84-L98)
+- [gelir-gider/page.tsx](<file://src/app/(dashboard)/fon/gelir-gider/page.tsx#L127-L227>)
+- [financial-dashboard/page.tsx](<file://src/app/(dashboard)/financial-dashboard/page.tsx#L84-L98>)
 
 ## Conclusion
 

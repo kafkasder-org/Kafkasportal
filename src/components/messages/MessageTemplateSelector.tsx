@@ -16,16 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import {
-  FileText,
-  Plus,
-  Star,
-  StarOff,
-  MessageSquare,
-  Mail,
-  Users,
-  Phone,
-} from 'lucide-react';
+import { FileText, Plus, Star, StarOff, MessageSquare, Mail, Users, Phone } from 'lucide-react';
 import {
   getMessageTypeLabel,
   extractTemplateVariables,

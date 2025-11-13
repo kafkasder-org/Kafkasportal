@@ -19,6 +19,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Task Management](#task-management)
 2. [Meeting Management](#meeting-management)
 3. [Action Items and Decisions](#action-items-and-decisions)
@@ -80,16 +81,18 @@ TaskCard --> TaskDocument : "displays"
 ```
 
 **Diagram sources**
+
 - [tasks.ts](file://convex/tasks.ts#L54-L137)
 - [TaskForm.tsx](file://src/components/forms/TaskForm.tsx#L41-L448)
 - [KanbanBoard.tsx](file://src/components/tasks/KanbanBoard.tsx#L1-L246)
 - [database.ts](file://src/types/database.ts#L231-L244)
 
 **Section sources**
+
 - [tasks.ts](file://convex/tasks.ts#L54-L137)
 - [TaskForm.tsx](file://src/components/forms/TaskForm.tsx#L41-L448)
 - [KanbanBoard.tsx](file://src/components/tasks/KanbanBoard.tsx#L1-L246)
-- [gorevler/page.tsx](file://src/app/(dashboard)/is/gorevler/page.tsx#L56-L602)
+- [gorevler/page.tsx](<file://src/app/(dashboard)/is/gorevler/page.tsx#L56-L602>)
 
 ## Meeting Management
 
@@ -130,16 +133,18 @@ CalendarView --> MeetingDocument : "displays"
 ```
 
 **Diagram sources**
+
 - [meetings.ts](file://convex/meetings.ts#L51-L124)
 - [MeetingForm.tsx](file://src/components/forms/MeetingForm.tsx#L45-L442)
 - [CalendarView.tsx](file://src/components/meetings/CalendarView.tsx#L1-L284)
 - [database.ts](file://src/types/database.ts#L246-L258)
 
 **Section sources**
+
 - [meetings.ts](file://convex/meetings.ts#L51-L124)
 - [MeetingForm.tsx](file://src/components/forms/MeetingForm.tsx#L45-L442)
 - [CalendarView.tsx](file://src/components/meetings/CalendarView.tsx#L1-L284)
-- [toplantilar/page.tsx](file://src/app/(dashboard)/is/toplantilar/page.tsx#L63-L788)
+- [toplantilar/page.tsx](<file://src/app/(dashboard)/is/toplantilar/page.tsx#L63-L788>)
 
 ## Action Items and Decisions
 
@@ -198,12 +203,14 @@ MeetingActionItemDocument --> StatusHistory : "has history"
 ```
 
 **Diagram sources**
+
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts#L51-L114)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts#L54-L273)
 - [schema.ts](file://convex/schema.ts#L283-L342)
 - [database.ts](file://src/types/database.ts#L260-L291)
 
 **Section sources**
+
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts#L51-L114)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts#L54-L273)
 - [schema.ts](file://convex/schema.ts#L283-L342)
@@ -253,11 +260,13 @@ ActionItemService --> NotificationService : "triggers"
 ```
 
 **Diagram sources**
+
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts#L76-L281)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts#L197-L259)
 - [database.ts](file://src/types/database.ts#L292-L308)
 
 **Section sources**
+
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts#L76-L281)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts#L197-L259)
 
@@ -349,10 +358,12 @@ string? read_at
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L253-L342)
 - [database.ts](file://src/types/database.ts#L231-L308)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L253-L342)
 - [tasks.ts](file://convex/tasks.ts#L4-L140)
 - [meetings.ts](file://convex/meetings.ts#L4-L124)
@@ -361,23 +372,29 @@ string? read_at
 ## Common Issues and Best Practices
 
 ### Timezone Handling
+
 The system stores all dates and times in ISO format (UTC) to ensure consistency across different timezones. When displaying dates to users, the frontend converts UTC timestamps to the user's local timezone using the `date-fns` library. This approach prevents timezone-related inconsistencies when users in different regions view or create tasks and meetings.
 
 ### Notification Delays
+
 Notification delays can occur due to background processing or network latency. The system implements a status tracking mechanism with "pending", "sent", and "read" states to provide visibility into notification delivery. Administrators can monitor notification delivery through the system's audit capabilities and investigate any delays in the notification pipeline.
 
 ### Permission-Based Visibility
+
 Access to tasks and meetings is controlled through role-based permissions. Users can only view and interact with content based on their assigned permissions. The system checks module access through the `requireModuleAccess('workflow')` function before allowing operations on tasks and meetings. This ensures that sensitive information is only accessible to authorized personnel.
 
 ### Recurring Tasks and Meetings
+
 While the current implementation does not explicitly support recurring tasks and meetings, this functionality can be achieved through manual creation or by implementing a scheduling service that creates individual instances based on recurrence rules. For recurring meetings, users are advised to create a template meeting and duplicate it as needed, updating the date and time for each occurrence.
 
 ### Performance Optimization
+
 To maintain optimal performance with large datasets, the system implements pagination with a default limit of 20 items per page. Queries are optimized through proper indexing on frequently filtered fields. The Kanban board and calendar views load data efficiently by only retrieving necessary information for the current view, reducing network overhead and improving responsiveness.
 
 **Section sources**
+
 - [auth.ts](file://convex/auth.ts)
 - [tasks.ts](file://convex/tasks.ts#L14-L43)
 - [meetings.ts](file://convex/meetings.ts#L13-L40)
-- [gorevler/page.tsx](file://src/app/(dashboard)/is/gorevler/page.tsx#L73-L86)
-- [toplantilar/page.tsx](file://src/app/(dashboard)/is/toplantilar/page.tsx#L90-L104)
+- [gorevler/page.tsx](<file://src/app/(dashboard)/is/gorevler/page.tsx#L73-L86>)
+- [toplantilar/page.tsx](<file://src/app/(dashboard)/is/toplantilar/page.tsx#L90-L104>)

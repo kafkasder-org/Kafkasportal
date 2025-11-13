@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Error Handling Architecture](#error-handling-architecture)
 3. [Structured Logging Strategy](#structured-logging-strategy)
@@ -29,6 +30,7 @@
 The Kafkasder-panel application implements a comprehensive error handling and logging strategy designed to ensure system reliability, security, and maintainability. This document details the multi-layered approach to error management across the application's data flow architecture, from client-side API calls to server-side Convex operations. The system employs structured logging with the logger module to capture authentication events, system errors, and user activities, while maintaining strict privacy controls for sensitive information. The error handling framework provides standardized responses across API routes with consistent success/error flags and HTTP status codes, enabling reliable client-side error management.
 
 **Section sources**
+
 - [logger.ts](file://src/lib/logger.ts#L1-L213)
 - [errors.ts](file://src/lib/errors.ts#L1-L377)
 
@@ -58,10 +60,12 @@ Response --> Client
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [errors.ts](file://src/lib/errors.ts#L1-L377)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [errors.ts](file://src/lib/errors.ts#L1-L377)
 
@@ -99,9 +103,11 @@ LoggerImpl --> LogContext
 ```
 
 **Diagram sources**
+
 - [logger.ts](file://src/lib/logger.ts#L1-L213)
 
 **Section sources**
+
 - [logger.ts](file://src/lib/logger.ts#L1-L213)
 
 ## API Error Response Format
@@ -130,10 +136,12 @@ end
 ```
 
 **Diagram sources**
+
 - [errors.ts](file://src/lib/errors.ts#L326-L359)
 - [route-helpers.ts](file://src/lib/api/route-helpers.ts#L1-L73)
 
 **Section sources**
+
 - [errors.ts](file://src/lib/errors.ts#L326-L359)
 - [route-helpers.ts](file://src/lib/api/route-helpers.ts#L1-L73)
 
@@ -183,10 +191,12 @@ LoginRoute->>Logger : Log successful login
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [account-lockout.ts](file://src/lib/auth/account-lockout.ts#L1-L100)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [account-lockout.ts](file://src/lib/auth/account-lockout.ts#L1-L100)
 
@@ -239,10 +249,12 @@ AppError --> Severity : severity
 ```
 
 **Diagram sources**
+
 - [errors.ts](file://src/lib/errors.ts#L8-L184)
 - [errors.ts](file://convex/errors.ts#L18-L27)
 
 **Section sources**
+
 - [errors.ts](file://src/lib/errors.ts#L8-L184)
 - [errors.ts](file://convex/errors.ts#L18-L27)
 
@@ -274,10 +286,12 @@ LogOnly --> Complete
 ```
 
 **Diagram sources**
+
 - [error-notifications.ts](file://src/lib/error-notifications.ts#L45-L86)
 - [errors.ts](file://convex/errors.ts#L13-L48)
 
 **Section sources**
+
 - [error-notifications.ts](file://src/lib/error-notifications.ts#L45-L86)
 - [errors.ts](file://convex/errors.ts#L13-L48)
 
@@ -285,7 +299,7 @@ LogOnly --> Complete
 
 The sensitive data protection system in Kafkasder-panel ensures that personally identifiable information and other sensitive data are not exposed in logs or error messages. The logger module implements automatic redaction of sensitive fields, including passwords, tokens, API keys, and TC identification numbers. When logging context data, the system recursively traverses objects and arrays, identifying and masking sensitive fields based on their names.
 
-TC identification numbers are specifically masked to show only the first three and last two digits (e.g., 123******89), while password fields, tokens, and API keys are completely masked with "***MASKED***". This protection extends to error stack traces, which are truncated in production environments to prevent sensitive information disclosure. The system also masks sensitive data in audit logs and error notifications, ensuring that privacy is maintained across all logging and monitoring systems.
+TC identification numbers are specifically masked to show only the first three and last two digits (e.g., 123**\*\***89), while password fields, tokens, and API keys are completely masked with "**_MASKED_**". This protection extends to error stack traces, which are truncated in production environments to prevent sensitive information disclosure. The system also masks sensitive data in audit logs and error notifications, ensuring that privacy is maintained across all logging and monitoring systems.
 
 ```mermaid
 flowchart TD
@@ -315,10 +329,12 @@ Shorten --> Output
 ```
 
 **Diagram sources**
+
 - [logger.ts](file://src/lib/logger.ts#L66-L95)
 - [export-service.ts](file://src/lib/export/export-service.ts#L55)
 
 **Section sources**
+
 - [logger.ts](file://src/lib/logger.ts#L66-L95)
 - [export-service.ts](file://src/lib/export/export-service.ts#L55)
 
@@ -354,10 +370,12 @@ end
 ```
 
 **Diagram sources**
+
 - [errors.ts](file://convex/errors.ts#L51-L128)
 - [monitoring.ts](file://convex/monitoring.ts#L1-L50)
 
 **Section sources**
+
 - [errors.ts](file://convex/errors.ts#L51-L128)
 - [monitoring.ts](file://convex/monitoring.ts#L1-L50)
 
@@ -398,10 +416,12 @@ end
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L217-L259)
 - [account-lockout.ts](file://src/lib/auth/account-lockout.ts#L1-L100)
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L217-L259)
 - [account-lockout.ts](file://src/lib/auth/account-lockout.ts#L1-L100)
 

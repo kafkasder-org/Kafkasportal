@@ -47,8 +47,8 @@ export async function GET(request: NextRequest) {
     const tab = searchParams.get('tab');
     const canViewAllMessages = user.permissions.includes('users:manage');
 
-    const parseUserIdParam = (value: string | null): Id<"users"> | undefined =>
-      value && value.length > 0 ? (value as Id<"users">) : undefined;
+    const parseUserIdParam = (value: string | null): Id<'users'> | undefined =>
+      value && value.length > 0 ? (value as Id<'users'>) : undefined;
 
     const requestedSender = parseUserIdParam(searchParams.get('sender'));
     const requestedRecipient = parseUserIdParam(searchParams.get('recipient'));
@@ -90,9 +90,7 @@ export async function GET(request: NextRequest) {
       });
     } else {
       // Default: use provided filters
-      const senderFilter = canViewAllMessages
-        ? requestedSender
-        : authenticatedUserId;
+      const senderFilter = canViewAllMessages ? requestedSender : authenticatedUserId;
       const recipientFilter = canViewAllMessages ? requestedRecipient : undefined;
 
       response = await convexMessages.list({
@@ -147,8 +145,8 @@ async function createMessageHandler(request: NextRequest) {
 
     const messageData = {
       message_type: validation.normalizedData.message_type as 'sms' | 'email' | 'internal',
-      sender: user.id as Id<"users">,
-      recipients: validation.normalizedData.recipients as Id<"users">[],
+      sender: user.id as Id<'users'>,
+      recipients: validation.normalizedData.recipients as Id<'users'>[],
       subject: validation.normalizedData.subject as string | undefined,
       content: validation.normalizedData.content as string,
       status: (validation.normalizedData.status || 'draft') as 'draft' | 'sent' | 'failed',
@@ -156,10 +154,7 @@ async function createMessageHandler(request: NextRequest) {
       template_id: validation.normalizedData.template_id as string | undefined,
     };
 
-    if (
-      messageData.is_bulk &&
-      !user.permissions.includes('users:manage')
-    ) {
+    if (messageData.is_bulk && !user.permissions.includes('users:manage')) {
       return NextResponse.json(
         { success: false, error: 'Toplu mesaj göndermek için yetkiniz bulunmuyor' },
         { status: 403 }
@@ -195,4 +190,3 @@ async function createMessageHandler(request: NextRequest) {
 }
 
 export const POST = createMessageHandler;
-

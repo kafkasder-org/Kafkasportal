@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Session Creation Flow](#session-creation-flow)
 3. [Client-Side Session Management](#client-side-session-management)
@@ -34,6 +35,7 @@ The session management system in Kafkasder-panel implements a secure authenticat
 The session creation process begins when a user submits their credentials through the login interface. The client first retrieves a CSRF token from the `/api/csrf` endpoint to prevent cross-site request forgery attacks. This token is then included in the authorization header of the subsequent login request to `/api/auth/login`. The server validates the credentials against the Convex database, verifying the password hash before proceeding. Upon successful authentication, the server generates a session object containing the user ID and expiration timestamp, which is stored in an HttpOnly cookie named `auth-session`. This cookie configuration includes the Secure flag (when in production), SameSite=strict, and appropriate maxAge values based on the user's rememberMe preference. Simultaneously, a separate CSRF token cookie is set with httpOnly=false to allow client-side access for subsequent authenticated requests.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [csrf.ts](file://src/lib/csrf.ts#L1-L57)
 
@@ -60,6 +62,7 @@ AuthStore-->>Client : Authentication complete
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L90-L389)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 
@@ -68,17 +71,19 @@ AuthStore-->>Client : Authentication complete
 Server-side session validation occurs through multiple mechanisms that verify the authenticity and validity of user sessions. The primary validation function, `getCurrentUserId`, extracts the auth-session cookie from either the request object or the cookies helper, parses the JSON content, and validates that a userId is present. It also checks the expiration timestamp to ensure the session has not expired, returning null if the session is invalid or expired. This function is used throughout the application in API routes to authenticate requests and retrieve the current user's ID. Additionally, the `/api/auth/session` endpoint provides client-side applications with a way to validate their current session by returning basic session information (userId and expiration) without exposing sensitive data. The system also implements account lockout mechanisms after multiple failed login attempts, temporarily preventing further login attempts to protect against brute force attacks. These server-side validations ensure that only authenticated users with valid, non-expired sessions can access protected resources.
 
 **Section sources**
+
 - [get-user.ts](file://src/lib/auth/get-user.ts#L12-L47)
 - [session.ts](file://src/lib/auth/session.ts#L27-L53)
 - [session/route.ts](file://src/app/api/auth/session/route.ts#L1-L65)
 
 ## Session Expiration and Timeout
 
-Session expiration and timeout settings in Kafkasder-panel are configurable based on user preferences and system policies. When a user logs in, the session duration is determined by the rememberMe flag: if true, the session lasts for 30 days; otherwise, it expires after 24 hours. This is implemented through the maxAge parameter in the auth-session cookie, which is set to either 30*24*60*60 seconds or 24*60*60 seconds accordingly. The session object itself contains an expire field with an ISO timestamp that is validated on each request to determine if the session has expired. Administrators can configure system-wide session timeout values through the settings interface, with options to set timeouts between 5 and 1440 minutes. The system also implements automatic cleanup of expired sessions by checking the expiration timestamp during session validation and removing expired cookies when detected. This multi-layered approach to session expiration ensures both security and flexibility, allowing organizations to balance convenience with security requirements.
+Session expiration and timeout settings in Kafkasder-panel are configurable based on user preferences and system policies. When a user logs in, the session duration is determined by the rememberMe flag: if true, the session lasts for 30 days; otherwise, it expires after 24 hours. This is implemented through the maxAge parameter in the auth-session cookie, which is set to either 30*24*60*60 seconds or 24*60\*60 seconds accordingly. The session object itself contains an expire field with an ISO timestamp that is validated on each request to determine if the session has expired. Administrators can configure system-wide session timeout values through the settings interface, with options to set timeouts between 5 and 1440 minutes. The system also implements automatic cleanup of expired sessions by checking the expiration timestamp during session validation and removing expired cookies when detected. This multi-layered approach to session expiration ensures both security and flexibility, allowing organizations to balance convenience with security requirements.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L152-L168)
-- [settings/page.tsx](file://src/app/(dashboard)/settings/page.tsx#L545-L576)
+- [settings/page.tsx](<file://src/app/(dashboard)/settings/page.tsx#L545-L576>)
 
 ## Logout Process
 
@@ -101,6 +106,7 @@ AuthStore->>Client : Redirect to login page
 ```
 
 **Diagram sources**
+
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts#L1-L73)
 - [authStore.ts](file://src/stores/authStore.ts#L248-L274)
 
@@ -109,13 +115,14 @@ AuthStore->>Client : Redirect to login page
 The session management system in Kafkasder-panel incorporates multiple security measures to protect user authentication and prevent common web vulnerabilities. The primary security feature is the use of HttpOnly cookies for storing the auth-session, which prevents client-side JavaScript from accessing the session token and mitigates cross-site scripting (XSS) attacks. The cookies are marked with the Secure flag in production environments, ensuring they are only transmitted over HTTPS connections. The SameSite=strict attribute prevents cross-site request forgery (CSRF) attacks by restricting cookie sending to same-site requests only. The system implements CSRF protection through a separate csrf-token cookie that is required for state-changing operations and validated using constant-time comparison to prevent timing attacks. Account lockout mechanisms after multiple failed login attempts protect against brute force attacks, while session expiration based on rememberMe preferences balances security and user convenience. Additionally, the system avoids storing actual authentication tokens on the client side, using a placeholder value in the Zustand store instead, which prevents token leakage through client-side storage.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L156-L169)
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts#L14-L27)
 - [csrf.ts](file://src/lib/csrf.ts#L40-L50)
 
 ## Session Object Structure
 
-The session object structure in Kafkasder-panel consists of both server-side and client-side components that work together to maintain authentication state. On the server side, the auth-session cookie contains a JSON object with three properties: sessionId (a unique identifier prefixed with "session_"), userId (the Convex ID of the authenticated user), and expire (an ISO timestamp indicating when the session expires). This data is transmitted only through secure HTTP cookies and is never exposed directly to client-side JavaScript. On the client side, the authStore maintains a Session interface with userId, accessToken (set to a placeholder value), and expire properties. The actual user data is stored separately in the authStore's user property, which contains a User object with id, email, name, role, permissions, and other profile information. This separation of concerns ensures that sensitive authentication tokens remain protected while still allowing the application to access necessary user information for UI rendering and permission checks. The localStorage persistence layer stores a subset of this data, including userId, email, name, role, permissions, and avatar, enabling session restoration after page refreshes.
+The session object structure in Kafkasder-panel consists of both server-side and client-side components that work together to maintain authentication state. On the server side, the auth-session cookie contains a JSON object with three properties: sessionId (a unique identifier prefixed with "session\_"), userId (the Convex ID of the authenticated user), and expire (an ISO timestamp indicating when the session expires). This data is transmitted only through secure HTTP cookies and is never exposed directly to client-side JavaScript. On the client side, the authStore maintains a Session interface with userId, accessToken (set to a placeholder value), and expire properties. The actual user data is stored separately in the authStore's user property, which contains a User object with id, email, name, role, permissions, and other profile information. This separation of concerns ensures that sensitive authentication tokens remain protected while still allowing the application to access necessary user information for UI rendering and permission checks. The localStorage persistence layer stores a subset of this data, including userId, email, name, role, permissions, and avatar, enabling session restoration after page refreshes.
 
 ```mermaid
 classDiagram
@@ -149,6 +156,7 @@ AuthState --> Session : "contains"
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L16-L20)
 - [auth.ts](file://src/types/auth.ts#L3-L15)
 
@@ -183,6 +191,7 @@ V --> W[Redirect to Login Page]
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L90-L389)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts#L1-L73)

@@ -37,7 +37,6 @@ const BeneficiaryQuickAddModal = lazy(() =>
 );
 
 export default function BeneficiariesPage() {
-
   // Performance monitoring
   const { getFPS, isGoodPerformance } = useFPSMonitor();
 
@@ -265,7 +264,6 @@ export default function BeneficiariesPage() {
           setSearch(value);
         }}
         searchPlaceholder="İsim/TC/Telefon ara..."
-        
         refetch={() => {
           refetch();
           fallbackQuery.refetch();

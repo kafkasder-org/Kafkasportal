@@ -29,6 +29,7 @@ Content-Type: application/json
 ```
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -47,6 +48,7 @@ Content-Type: application/json
 ```
 
 **Hata Yanıtı:**
+
 ```json
 {
   "success": false,
@@ -65,6 +67,7 @@ Authorization: Bearer {token}
 ```
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -93,12 +96,14 @@ Authorization: Bearer {token}
 ```
 
 **Query Parametreleri:**
+
 - `page` (number): Sayfa numarası (varsayılan: 1)
 - `limit` (number): Sayfa başına sonuç (varsayılan: 10)
 - `role` (string): Rol filtresi (admin, user, volunteer)
 - `search` (string): Arama terimi
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -171,6 +176,7 @@ Authorization: Bearer {token}
 ```
 
 **Query Parametreleri:**
+
 - `page` (number): Sayfa numarası
 - `limit` (number): Sayfa başına sonuç
 - `status` (string): Durum filtresi (active, inactive, pending)
@@ -179,6 +185,7 @@ Authorization: Bearer {token}
 - `helpType` (string): Yardım türü filtresi
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -301,6 +308,7 @@ Authorization: Bearer {token}
 ```
 
 **Query Parametreleri:**
+
 - `page` (number): Sayfa numarası
 - `limit` (number): Sayfa başına sonuç
 - `type` (string): Bağış türü (standard, kumbara)
@@ -310,6 +318,7 @@ Authorization: Bearer {token}
 - `donorId` (string): Bağışçı ID'si
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -421,6 +430,7 @@ Authorization: Bearer {token}
 ```
 
 **Query Parametreleri:**
+
 - `page` (number): Sayfa numarası
 - `limit` (number): Sayfa başına sonuç
 - `type` (string): Burs türü (orphan, student, general)
@@ -428,6 +438,7 @@ Authorization: Bearer {token}
 - `studentId` (string): Öğrenci ID'si
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -546,6 +557,7 @@ Authorization: Bearer {token}
 ```
 
 **Query Parametreleri:**
+
 - `page` (number): Sayfa numarası
 - `limit` (number): Sayfa başına sonuç
 - `type` (string): İşlem türü (income, expense)
@@ -554,6 +566,7 @@ Authorization: Bearer {token}
 - `dateTo` (string): Bitiş tarihi
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -652,6 +665,7 @@ Authorization: Bearer {token}
 ```
 
 **Query Parametreleri:**
+
 - `page` (number): Sayfa numarası
 - `limit` (number): Sayfa başına sonuç
 - `status` (string): Durum (scheduled, completed, cancelled)
@@ -659,6 +673,7 @@ Authorization: Bearer {token}
 - `dateTo` (string): Bitiş tarihi
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -778,6 +793,7 @@ Authorization: Bearer {token}
 ```
 
 **Query Parametreleri:**
+
 - `page` (number): Sayfa numarası
 - `limit` (number): Sayfa başına sonuç
 - `status` (string): Durum (pending, in_progress, completed, cancelled)
@@ -787,6 +803,7 @@ Authorization: Bearer {token}
 - `dueDateTo` (string): Bitiş tarihi
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -890,6 +907,7 @@ Authorization: Bearer {token}
 ```
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -936,6 +954,7 @@ Authorization: Bearer {token}
 ```
 
 **Başarılı Yanıt:**
+
 ```json
 {
   "success": true,
@@ -1027,40 +1046,40 @@ Content-Type: application/json
 
 ### Hata Kodları
 
-| Kod | Açıklama | HTTP Durumu |
-|-----|----------|-------------|
-| `UNAUTHORIZED` | Kimlik doğrulama gerekli | 401 |
-| `FORBIDDEN` | Yetkisiz erişim | 403 |
-| `NOT_FOUND` | Kaynak bulunamadı | 404 |
-| `VALIDATION_ERROR` | Doğrulama hatası | 400 |
-| `RATE_LIMIT_EXCEEDED` | Hız sınırı aşıldı | 429 |
-| `INTERNAL_ERROR` | Sunucu hatası | 500 |
-| `SERVICE_UNAVAILABLE` | Servis kullanılamıyor | 503 |
+| Kod                   | Açıklama                 | HTTP Durumu |
+| --------------------- | ------------------------ | ----------- |
+| `UNAUTHORIZED`        | Kimlik doğrulama gerekli | 401         |
+| `FORBIDDEN`           | Yetkisiz erişim          | 403         |
+| `NOT_FOUND`           | Kaynak bulunamadı        | 404         |
+| `VALIDATION_ERROR`    | Doğrulama hatası         | 400         |
+| `RATE_LIMIT_EXCEEDED` | Hız sınırı aşıldı        | 429         |
+| `INTERNAL_ERROR`      | Sunucu hatası            | 500         |
+| `SERVICE_UNAVAILABLE` | Servis kullanılamıyor    | 503         |
 
 ## 📚 Veri Türleri
 
 ### Para Birimi
 
 ```typescript
-type Currency = 'TRY' | 'USD' | 'EUR'
+type Currency = 'TRY' | 'USD' | 'EUR';
 ```
 
 ### Kullanıcı Rolleri
 
 ```typescript
-type UserRole = 'admin' | 'user' | 'volunteer' | 'accountant'
+type UserRole = 'admin' | 'user' | 'volunteer' | 'accountant';
 ```
 
 ### Burs Türleri
 
 ```typescript
-type ScholarshipType = 'orphan' | 'student' | 'general'
+type ScholarshipType = 'orphan' | 'student' | 'general';
 ```
 
 ### Yardım Türleri
 
 ```typescript
-type HelpType = 'food' | 'education' | 'medical' | 'housing' | 'clothing' | 'financial'
+type HelpType = 'food' | 'education' | 'medical' | 'housing' | 'clothing' | 'financial';
 ```
 
 ## 🔐 Güvenlik

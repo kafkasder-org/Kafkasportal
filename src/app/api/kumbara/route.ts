@@ -339,7 +339,9 @@ function calculateOverviewStats(donations: Array<Record<string, unknown>>) {
   const total_amount = donations.reduce((sum, d) => sum + ((d.amount as number) || 0), 0);
 
   // Active locations (unique locations)
-  const uniqueLocations = new Set(donations.map((d) => d.kumbara_location as string).filter(Boolean));
+  const uniqueLocations = new Set(
+    donations.map((d) => d.kumbara_location as string).filter(Boolean)
+  );
   const active_locations = uniqueLocations.size;
 
   // This month stats
@@ -347,7 +349,10 @@ function calculateOverviewStats(donations: Array<Record<string, unknown>>) {
     const date = new Date((d.collection_date as string) || '');
     return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
   });
-  const this_month_amount = thisMonthDonations.reduce((sum, d) => sum + ((d.amount as number) || 0), 0);
+  const this_month_amount = thisMonthDonations.reduce(
+    (sum, d) => sum + ((d.amount as number) || 0),
+    0
+  );
 
   // Last month for comparison
   const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
@@ -356,7 +361,10 @@ function calculateOverviewStats(donations: Array<Record<string, unknown>>) {
     const date = new Date((d.collection_date as string) || '');
     return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
   });
-  const last_month_amount = lastMonthDonations.reduce((sum, d) => sum + ((d.amount as number) || 0), 0);
+  const last_month_amount = lastMonthDonations.reduce(
+    (sum, d) => sum + ((d.amount as number) || 0),
+    0
+  );
 
   const monthly_growth =
     last_month_amount > 0 ? ((this_month_amount - last_month_amount) / last_month_amount) * 100 : 0;

@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Financial and Employment Fields](#core-financial-and-employment-fields)
 3. [Data Types and Validation Rules](#data-types-and-validation-rules)
@@ -24,6 +25,7 @@
 This document provides comprehensive documentation for the financial and employment status fields within the beneficiaries collection of the Kafkasder aid management system. The data model captures critical socioeconomic information used to assess beneficiary need, determine eligibility for various forms of aid, and monitor economic conditions over time. Key fields include monthly income and expenses, income sources, social security status, work status, sector, job group, and living place. These fields are supported by a robust set of enumerated types (enums) that standardize data entry and ensure consistency across the system. The financial data is integrated with the finance_records and donations collections to enable comprehensive financial analysis, reporting, and decision-making.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L43-L155)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L6-L147)
 
@@ -40,6 +42,7 @@ The `socialSecurity` field indicates whether the beneficiary has access to socia
 Additional fields provide further context about employment: `sector` identifies the industry or economic sector in which the beneficiary works, `jobGroup` categorizes their occupation type, and `livingPlace` describes their housing situation, which serves as an indicator of economic stability.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L84-L113)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L461-L470)
 
@@ -56,6 +59,7 @@ The `socialSecurity`, `workStatus`, `sector`, `jobGroup`, and `livingPlace` fiel
 All string-based fields that reference enums are validated against their respective enum definitions to prevent invalid or misspelled entries. The system also enforces data integrity through Convex database indexes and search capabilities, particularly on fields like `income_level` and `employment_status` that are frequently used in filtering and reporting.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L84-L113)
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L110-L124)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L99-L147)
@@ -65,6 +69,7 @@ All string-based fields that reference enums are validated against their respect
 The financial and employment data model relies on a set of standardized enums to ensure consistent data entry and facilitate reporting and analysis. These enums provide controlled vocabularies for key fields.
 
 The `IncomeSource` enum defines the possible sources of income:
+
 - `IS` (Employment)
 - `SOSYAL_YARDIM` (Social Assistance)
 - `AILE_DESTEGI` (Family Support)
@@ -72,16 +77,19 @@ The `IncomeSource` enum defines the possible sources of income:
 - `DIGER` (Other)
 
 The `SocialSecurityStatus` enum indicates access to social security:
+
 - `VAR` (Has Social Security)
 - `YOK` (No Social Security)
 
 The `WorkStatus` enum captures employment status:
+
 - `CALISMIYOR` (Not Working)
 - `CALISIYOR` (Working)
 - `EMEKLI` (Retired)
 - `OGRENCI` (Student)
 
 The `Sector` enum identifies the economic sector:
+
 - `TARIM` (Agriculture)
 - `SANAYI` (Industry)
 - `HIZMET` (Services)
@@ -92,6 +100,7 @@ The `Sector` enum identifies the economic sector:
 - `DIGER` (Other)
 
 The `JobGroup` enum categorizes occupation types:
+
 - `YONETICI` (Manager)
 - `MEMUR` (Civil Servant)
 - `ISCI` (Worker)
@@ -101,6 +110,7 @@ The `JobGroup` enum categorizes occupation types:
 - `DIGER` (Other)
 
 The `LivingPlace` enum describes housing arrangements:
+
 - `EV` (Owned Home)
 - `KIRALIK` (Rented)
 - `YURT` (Dormitory)
@@ -110,6 +120,7 @@ The `LivingPlace` enum describes housing arrangements:
 These enums are implemented as TypeScript enums in the frontend and validated against in the backend to maintain data consistency.
 
 **Section sources**
+
 - [beneficiary.ts](file://src/types/beneficiary.ts#L99-L147)
 - [schema.ts](file://convex/schema.ts#L84-L113)
 
@@ -126,6 +137,7 @@ The combination of `sector` and `jobGroup` provides insight into employment qual
 These fields are used in combination with other demographic and health data to create a holistic view of beneficiary need, enabling the organization to allocate resources effectively and prioritize the most vulnerable individuals and families.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L84-L113)
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L110-L124)
 
@@ -142,6 +154,7 @@ Financial dashboards visualize key metrics such as average monthly income by reg
 The data is also used to generate compliance reports that demonstrate adherence to funding requirements and eligibility criteria for various aid programs. These reports are essential for maintaining transparency with donors and regulatory bodies.
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L132-L224)
 - [schema.ts](file://convex/schema.ts#L544-L577)
 
@@ -207,11 +220,13 @@ USERS ||--o{ DONATIONS : "processes"
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L43-L155)
 - [finance_records.ts](file://convex/finance_records.ts#L4-L323)
 - [donations.ts](file://convex/donations.ts#L4-L149)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L43-L155)
 - [finance_records.ts](file://convex/finance_records.ts#L4-L323)
 - [donations.ts](file://convex/donations.ts#L4-L149)

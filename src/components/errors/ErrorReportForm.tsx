@@ -88,20 +88,20 @@ export function ErrorReportForm({ userId, trigger }: ErrorReportFormProps) {
               id="description"
               placeholder="Sorunu detaylı bir şekilde açıklayın..."
               value={description}
-              onChange={(e) => { setDescription(e.target.value); }}
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
               rows={6}
               maxLength={2000}
               required
             />
-            <p className="text-xs text-muted-foreground">
-              {description.length}/2000 karakter
-            </p>
+            <p className="text-xs text-muted-foreground">{description.length}/2000 karakter</p>
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
             <p className="text-xs text-blue-800">
-              <strong>Not:</strong> Tarayıcı ve sistem bilgileriniz otomatik olarak
-              eklenecektir. Kişisel verileriniz güvende tutulmaktadır.
+              <strong>Not:</strong> Tarayıcı ve sistem bilgileriniz otomatik olarak eklenecektir.
+              Kişisel verileriniz güvende tutulmaktadır.
             </p>
           </div>
 

@@ -22,6 +22,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Frontend Technologies](#frontend-technologies)
 2. [Backend Technologies](#backend-technologies)
 3. [State Management](#state-management)
@@ -42,6 +43,7 @@ The application also implements comprehensive security headers through the `head
 Image optimization is configured to support modern formats like AVIF and WebP, with aggressive caching strategies that set a one-year cache TTL for static assets. The configuration also includes webpack optimizations for production builds, such as code splitting with cache groups for framework, Radix UI components, and other vendor libraries, ensuring optimal loading performance.
 
 **Section sources**
+
 - [next.config.ts](file://next.config.ts#L1-L441)
 
 ### React 19
@@ -53,6 +55,7 @@ The application leverages React's component-based architecture extensively, with
 React's context API is used in conjunction with Zustand for state management, providing a clean separation between global application state and component-specific state. The application also takes advantage of React's concurrent rendering features, enabling smoother user experiences during data loading and state transitions.
 
 **Section sources**
+
 - [package.json](file://package.json#L93-L95)
 
 ### TypeScript
@@ -66,6 +69,7 @@ TypeScript's utility types are used extensively, such as `CreateDocumentData<T>`
 The application also uses TypeScript's const assertions and literal types to define permission values and status enums, ensuring that only valid values can be used in the code. For example, the `PermissionValue` type is a union of string literals defined in `permissions.ts`, preventing typos and ensuring consistency across the application.
 
 **Section sources**
+
 - [src/types/auth.ts](file://src/types/auth.ts#L1-L44)
 - [src/types/permissions.ts](file://src/types/permissions.ts#L1-L39)
 - [src/types/database.ts](file://src/types/database.ts#L1-L552)
@@ -79,6 +83,7 @@ The application follows a utility-first approach, with most styling done directl
 The application also uses several Tailwind-compatible libraries such as `class-variance-authority` and `clsx` for conditional class composition, and `tailwind-merge` for safely merging Tailwind classes. These utilities help manage complex class compositions while avoiding conflicts and ensuring that the most specific classes take precedence.
 
 **Section sources**
+
 - [tailwind.config.js](file://tailwind.config.js#L1-L13)
 
 ### Framer Motion
@@ -90,6 +95,7 @@ Framer Motion is used in several key components, including the `DataTable` compo
 The application also uses Framer Motion for page transitions, modal animations, and interactive feedback. The integration with React is seamless, allowing for declarative animation definitions that respond to state changes. For example, the loading state in the `DataTable` component uses a `Loader2` icon with the `animate-spin` class, while error states use motion components to animate the appearance of error messages.
 
 **Section sources**
+
 - [next.config.ts](file://next.config.ts#L36)
 - [src/components/ui/data-table.tsx](file://src/components/ui/data-table.tsx#L4)
 
@@ -104,6 +110,7 @@ Convex serves as the primary database for the application, providing a serverles
 The schema includes a comprehensive set of collections for managing the organization's operations, including `users`, `beneficiaries`, `donations`, `tasks`, `meetings`, and many others. Each collection is defined with specific field types and validation rules, ensuring data integrity. For example, the `beneficiaries` collection includes fields for personal information, family size, income level, health status, and aid history, with appropriate data types for each field.
 
 Convex provides several key advantages for this application:
+
 - **Real-time updates**: Clients automatically receive updates when data changes, enabling collaborative features like shared task management and meeting coordination.
 - **Serverless functions**: Database operations are performed through serverless functions, eliminating the need for traditional API endpoints for basic CRUD operations.
 - **Type safety**: The schema definition generates TypeScript types that are used throughout the application, ensuring consistency between the database and frontend code.
@@ -112,6 +119,7 @@ Convex provides several key advantages for this application:
 The schema also includes search indexes on key collections like `users`, `beneficiaries`, and `messages`, enabling efficient full-text search capabilities. These indexes are configured to search specific fields and support filtering, making it easy to implement search functionality in the UI.
 
 **Section sources**
+
 - [convex/schema.ts](file://convex/schema.ts#L1-L800)
 
 ### Next.js API Routes
@@ -121,6 +129,7 @@ Next.js API Routes provide the server-side endpoint layer for the application, a
 The API routes follow a RESTful pattern, with routes for each major entity in the system, such as `/api/beneficiaries`, `/api/donations`, and `/api/tasks`. Each route directory contains a `route.ts` file that defines the HTTP methods supported by that endpoint. For example, the `/api/beneficiaries/route.ts` file implements GET, POST, PUT, and DELETE methods for managing beneficiary records.
 
 The API routes serve several important purposes:
+
 - **Security layer**: They implement security measures like CSRF protection and rate limiting before forwarding requests to Convex.
 - **Authentication**: They handle session management and authentication, verifying user credentials and managing session cookies.
 - **Data transformation**: They transform data between the format expected by the frontend and the format stored in Convex.
@@ -129,6 +138,7 @@ The API routes serve several important purposes:
 The routes are organized hierarchically, with nested routes for related operations. For example, `/api/beneficiaries/[id]/route.ts` handles operations on a specific beneficiary, while `/api/meeting-action-items/[id]/route.ts` handles operations on specific meeting action items. This organization makes the API intuitive and easy to navigate.
 
 **Section sources**
+
 - [src/app/api](file://src/app/api)
 
 ## State Management
@@ -140,11 +150,13 @@ The application uses a combination of Zustand and TanStack Query for state manag
 Zustand is used for managing global client state, particularly authentication state and user preferences. The primary state store is defined in `src/stores/authStore.ts`, which uses Zustand's `create` function to define a store with actions and state.
 
 The auth store manages several key pieces of state:
+
 - **Authentication state**: Whether the user is authenticated, their user information, and session details.
 - **UI state**: Modal visibility, loading states, and error messages.
 - **Permissions**: The user's role and permissions, used for access control.
 
 The store uses several Zustand middleware:
+
 - **persist**: Persists the authentication state to localStorage, allowing users to remain logged in between sessions.
 - **devtools**: Integrates with Redux DevTools for debugging state changes.
 - **immer**: Allows for mutable-style updates to state while maintaining immutability.
@@ -153,6 +165,7 @@ The store uses several Zustand middleware:
 The store is designed with a clear separation between state and actions, with actions like `login`, `logout`, and `initializeAuth` that encapsulate the logic for authentication operations. The store also includes permission helper functions like `hasPermission` and `hasRole` that make it easy to implement access control in components.
 
 **Section sources**
+
 - [src/stores/authStore.ts](file://src/stores/authStore.ts#L1-L403)
 
 ### TanStack Query
@@ -162,6 +175,7 @@ TanStack Query (formerly React Query) is used for managing server state, providi
 The application uses TanStack Query extensively for data fetching, particularly through the `useInfiniteQuery` hook in the `useInfiniteScroll` custom hook defined in `src/hooks/useInfiniteScroll.ts`. This hook implements infinite scrolling for large datasets, automatically fetching additional pages of data as the user scrolls.
 
 Key features of the TanStack Query implementation include:
+
 - **Caching**: Responses are cached automatically, reducing unnecessary network requests.
 - **Background refetching**: Data is refreshed in the background to ensure it stays up-to-date.
 - **Error handling**: Built-in error handling and retry mechanisms.
@@ -170,6 +184,7 @@ Key features of the TanStack Query implementation include:
 The `useInfiniteScroll` hook provides a clean API for implementing infinite scrolling in components, handling the complexity of page management and intersection observation. It returns data, loading states, and a ref to attach to the scroll sentinel element, making it easy to implement in any component.
 
 **Section sources**
+
 - [next.config.ts](file://next.config.ts#L41)
 - [src/hooks/useInfiniteScroll.ts](file://src/hooks/useInfiniteScroll.ts#L1-L124)
 
@@ -182,6 +197,7 @@ The application implements a comprehensive security strategy with multiple layer
 CSRF (Cross-Site Request Forgery) protection is implemented to prevent unauthorized actions on behalf of authenticated users. The implementation is defined in `src/lib/csrf.ts`, which provides utilities for generating and validating CSRF tokens.
 
 The CSRF protection works as follows:
+
 1. When a user visits the site, a CSRF token is generated and stored in a cookie.
 2. For state-changing requests (POST, PUT, PATCH, DELETE), the client includes the CSRF token in the `x-csrf-token` header.
 3. The server validates that the token in the header matches the token in the cookie.
@@ -193,6 +209,7 @@ The client-side `fetchWithCsrf` function wraps the native `fetch` API, automatic
 The authentication flow in the `authStore` uses CSRF protection when logging in, ensuring that login requests cannot be forged by malicious sites.
 
 **Section sources**
+
 - [src/lib/csrf.ts](file://src/lib/csrf.ts#L1-L90)
 - [src/stores/authStore.ts](file://src/stores/authStore.ts#L153-L164)
 
@@ -203,6 +220,7 @@ Rate limiting is implemented to prevent abuse of the API and protect against bru
 The rate limiting system uses a token bucket algorithm, tracking the number of requests from each client within a specified time window. The `RateLimiter` class in `security.ts` manages the rate limit records in memory, with configurable limits for different types of requests.
 
 The application defines several pre-configured rate limiters for different endpoints:
+
 - **authRateLimit**: Limits authentication attempts to 10 per 10 minutes, with successful and failed attempts not counted to prevent denial of service.
 - **dataModificationRateLimit**: Limits data modification requests to 50 per 15 minutes.
 - **readOnlyRateLimit**: Allows up to 200 read-only requests per 15 minutes.
@@ -215,6 +233,7 @@ The rate limiting middleware in `rate-limit.ts` extracts the client's IP address
 The system also includes configurable whitelists and blacklists for IP addresses, allowing trusted clients to bypass rate limits or blocking known malicious clients. Violations are logged for monitoring and analysis.
 
 **Section sources**
+
 - [src/lib/rate-limit.ts](file://src/lib/rate-limit.ts#L1-L148)
 - [src/lib/security.ts](file://src/lib/security.ts#L78-L280)
 
@@ -223,6 +242,7 @@ The system also includes configurable whitelists and blacklists for IP addresses
 Sentry is integrated for error monitoring and performance tracking, providing visibility into client-side and server-side errors. The configuration is defined in `sentry.client.config.ts` and `sentry.server.config.ts`, with separate configurations for browser and server environments.
 
 The Sentry integration captures:
+
 - **Errors**: Unhandled exceptions and promise rejections.
 - **Performance**: Page load times and API request durations.
 - **User context**: Information about the user and their environment.
@@ -235,6 +255,7 @@ Sentry is configured to include release tracking, allowing errors to be correlat
 The integration also includes environment-specific settings, with additional filtering in production to avoid sending development errors to the production Sentry project.
 
 **Section sources**
+
 - [sentry.client.config.ts](file://sentry.client.config.ts#L1-L25)
 - [sentry.server.config.ts](file://sentry.server.config.ts#L1-L23)
 
@@ -247,6 +268,7 @@ The technologies in Kafkasder-panel work together to create a cohesive and effic
 The application uses a clean separation between frontend and backend, with API routes acting as the interface between the two. The `convex-api-client.ts` file provides a client-side wrapper that calls Next.js API routes, which in turn use Convex for data operations.
 
 This architecture provides several benefits:
+
 - **Security**: Sensitive operations are performed on the server, preventing direct client access to the database.
 - **Consistency**: All data operations go through a standardized API, ensuring consistent behavior.
 - **Flexibility**: Business logic can be implemented in the API routes without requiring changes to the frontend.
@@ -256,6 +278,7 @@ The API client uses a CRUD factory pattern defined in `crud-factory.ts` to gener
 ### Data Flow
 
 The data flow in the application follows a predictable pattern:
+
 1. Components initiate data operations through the API client.
 2. The API client makes HTTP requests to Next.js API routes.
 3. API routes validate requests, apply security measures, and call Convex functions.

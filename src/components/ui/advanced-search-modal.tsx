@@ -161,38 +161,41 @@ export function AdvancedSearchModal({
   }, [isOpen]);
 
   // Handle search
-  const handleSearch = useCallback(async (q: string) => {
-    setQuery(q);
-    setSelectedIndex(0);
+  const handleSearch = useCallback(
+    async (q: string) => {
+      setQuery(q);
+      setSelectedIndex(0);
 
-    if (!q.trim()) {
-      setFilteredResults(results);
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      let searchResults = results;
-
-      if (onSearch) {
-        searchResults = await onSearch(q);
-      } else {
-        // Default filtering
-        const lowerQ = q.toLowerCase();
-        searchResults = results.filter(
-          (item) =>
-            item.title.toLowerCase().includes(lowerQ) ||
-            item.description?.toLowerCase().includes(lowerQ) ||
-            item.category.toLowerCase().includes(lowerQ)
-        );
+      if (!q.trim()) {
+        setFilteredResults(results);
+        return;
       }
 
-      setFilteredResults(searchResults);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [results, onSearch]);
+      setIsLoading(true);
+
+      try {
+        let searchResults = results;
+
+        if (onSearch) {
+          searchResults = await onSearch(q);
+        } else {
+          // Default filtering
+          const lowerQ = q.toLowerCase();
+          searchResults = results.filter(
+            (item) =>
+              item.title.toLowerCase().includes(lowerQ) ||
+              item.description?.toLowerCase().includes(lowerQ) ||
+              item.category.toLowerCase().includes(lowerQ)
+          );
+        }
+
+        setFilteredResults(searchResults);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [results, onSearch]
+  );
 
   const handleSelectResult = (result: SearchResult) => {
     // Save to recent searches
@@ -213,9 +216,7 @@ export function AdvancedSearchModal({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < filteredResults.length - 1 ? prev + 1 : prev
-        );
+        setSelectedIndex((prev) => (prev < filteredResults.length - 1 ? prev + 1 : prev));
         break;
       case 'ArrowUp':
         e.preventDefault();
@@ -296,13 +297,9 @@ export function AdvancedSearchModal({
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900">
-                          {result.title}
-                        </p>
+                        <p className="text-sm font-medium text-slate-900">{result.title}</p>
                         {result.description && (
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            {result.description}
-                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">{result.description}</p>
                         )}
                       </div>
                       <span className="text-xs text-slate-400 ml-2 flex-shrink-0">
@@ -317,7 +314,7 @@ export function AdvancedSearchModal({
                 <Search className="h-12 w-12 text-slate-300 mx-auto mb-3" />
                 <p className="text-slate-600 font-medium">Sonuç bulunamadı</p>
                 <p className="text-sm text-slate-500 mt-1">
-                  "{query}" ile ilgili bir sayfa yok
+                  &quot;{query}&quot; ile ilgili bir sayfa yok
                 </p>
               </div>
             ) : (
@@ -412,7 +409,11 @@ export function useAdvancedSearch() {
 
   return {
     isOpen,
-    onOpen: () => { setIsOpen(true); },
-    onClose: () => { setIsOpen(false); },
+    onOpen: () => {
+      setIsOpen(true);
+    },
+    onClose: () => {
+      setIsOpen(false);
+    },
   };
 }

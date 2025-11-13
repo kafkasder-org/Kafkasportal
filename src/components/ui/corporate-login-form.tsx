@@ -466,7 +466,9 @@ export function CorporateLoginForm({
                 <Checkbox
                   id="remember"
                   checked={rememberMe}
-                  onCheckedChange={(checked) => { setRememberMe(checked === true); }}
+                  onCheckedChange={(checked) => {
+                    setRememberMe(checked === true);
+                  }}
                   disabled={isLoading}
                   data-testid="login-remember"
                 />

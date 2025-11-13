@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Scholarship Entity Structure](#scholarship-entity-structure)
 3. [Related Collections](#related-collections)
@@ -18,13 +19,16 @@
 7. [Search Capabilities](#search-capabilities)
 
 ## Introduction
+
 The scholarships collection in the Kafkasder-panel application manages scholarship programs, applications, and related financial transactions. This document provides comprehensive documentation of the data model, including entity structure, relationships, validation rules, business logic, and search capabilities. The system is built on Convex, a backend-as-a-service platform that provides a unified API for data access and manipulation.
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L1-L51)
 - [schema.ts](file://convex/schema.ts#L1007-L1030)
 
 ## Scholarship Entity Structure
+
 The scholarship entity represents a scholarship program with various attributes that define its characteristics, eligibility criteria, and operational parameters.
 
 ```mermaid
@@ -61,10 +65,12 @@ Scholarship --> ScholarshipType : "has type"
 ```
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L61-L79)
 - [scholarship.ts](file://src/types/scholarship.ts#L5-L13)
 
 ### Field Definitions
+
 - **id**: Unique identifier for the scholarship program
 - **name**: Title of the scholarship program
 - **description**: Detailed description of the scholarship program
@@ -84,10 +90,12 @@ Scholarship --> ScholarshipType : "has type"
 - **updatedBy**: ID of the user who last updated the scholarship
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L61-L79)
 - [scholarships.ts](file://convex/scholarships.ts#L53-L77)
 
 ## Related Collections
+
 The scholarships collection has relationships with several other collections in the system, forming a comprehensive scholarship management ecosystem.
 
 ```mermaid
@@ -166,15 +174,18 @@ SCHOLARSHIP_APPLICATION }|--|| STUDENT : "belongs to"
 ```
 
 **Diagram sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L201-L240)
 - [scholarships.ts](file://convex/scholarships.ts#L382-L400)
 - [schema.ts](file://convex/schema.ts#L1070-L1096)
 - [schema.ts](file://convex/schema.ts#L1094-L1119)
 
 ### Scholarship Applications
+
 The scholarship_applications collection stores applications submitted by students for scholarships. Each application contains detailed information about the applicant, their academic and financial situation, and their application status.
 
 Key fields in the scholarship_applications collection:
+
 - **scholarship_id**: Reference to the scholarship program being applied for
 - **student_id**: Reference to the student beneficiary (if already registered)
 - **applicant_name**: Full name of the applicant
@@ -204,13 +215,16 @@ Key fields in the scholarship_applications collection:
 - **created_at**: Timestamp when the application record was created
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L201-L240)
 - [scholarship.ts](file://src/types/scholarship.ts#L127-L154)
 
 ### Scholarship Payments
+
 The scholarship_payments collection logs payment transactions for approved scholarships. Each payment record is linked to an approved scholarship application and contains details about the payment transaction.
 
 Key fields in the scholarship_payments collection:
+
 - **application_id**: Reference to the approved scholarship application
 - **payment_date**: Date the payment was made
 - **amount**: Amount of the payment
@@ -225,13 +239,16 @@ Key fields in the scholarship_payments collection:
 - **created_at**: Timestamp when the payment record was created
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L382-L400)
 - [scholarship.ts](file://src/types/scholarship.ts#L181-L198)
 
 ### Students
+
 The students collection (linked through beneficiaries) contains detailed information about students who may apply for scholarships. This collection is connected to the main beneficiaries collection and includes academic and personal information relevant to scholarship applications.
 
 Key fields in the student data model:
+
 - **id**: Unique identifier for the student
 - **beneficiaryId**: Link to the main beneficiary record
 - **firstName**: First name of the student
@@ -266,12 +283,15 @@ Key fields in the student data model:
 - **updatedBy**: ID of the user who last updated the record
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L82-L115)
 
 ## Data Validation Rules
+
 The system implements several data validation rules to ensure data integrity and consistency across the scholarship management system.
 
 ### Scholarship Validation
+
 - **TC Number Format**: Turkish National Identity Numbers must be exactly 11 digits
 - **Amount**: Scholarship amount must be a positive number
 - **Currency**: Currency must be one of TRY, USD, or EUR
@@ -280,6 +300,7 @@ The system implements several data validation rules to ensure data integrity and
 - **Required Fields**: Title, amount, currency, category, application start date, application end date, and is_active are required fields
 
 ### Application Validation
+
 - **TC Number Format**: Applicant TC numbers must be validated to ensure they are 11 digits
 - **GPA**: Grade Point Average must be between 0 and 4.0
 - **Income Values**: Monthly and family income values must be non-negative
@@ -287,20 +308,24 @@ The system implements several data validation rules to ensure data integrity and
 - **Required Fields**: Scholarship ID, applicant name, applicant TC number, and applicant phone are required fields
 
 ### Payment Validation
+
 - **Amount**: Payment amount must be positive
 - **Currency**: Payment currency must match the scholarship currency
 - **Status**: Payment status must be one of pending, paid, failed, or cancelled
 - **Required Fields**: Application ID, payment date, amount, and currency are required fields
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L5-L6)
 - [scholarships.ts](file://convex/scholarships.ts#L226-L228)
 - [scholarships.ts](file://convex/scholarships.ts#L288-L290)
 
 ## Business Logic
+
 The scholarship management system implements several business rules and logic to automate processes and ensure consistent behavior.
 
 ### Priority Score Calculation
+
 The system automatically calculates a priority score for each scholarship application based on multiple factors:
 
 ```mermaid
@@ -347,9 +372,11 @@ end
 ```
 
 **Diagram sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L302-L339)
 
 The priority score calculation algorithm assigns weights to different factors:
+
 - GPA contributes 30% to the total score
 - Income factors (family and monthly income) contribute 40% to the total score
 - Special circumstances (orphan status, disability, large family) contribute 30% to the total score
@@ -357,6 +384,7 @@ The priority score calculation algorithm assigns weights to different factors:
 The final score is rounded to the nearest integer and stored in the application record to assist in the review and selection process.
 
 ### Application Status Workflow
+
 The system enforces a specific workflow for application status transitions:
 
 ```mermaid
@@ -398,10 +426,12 @@ end note
 ```
 
 **Diagram sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L279-L298)
 - [scholarship.ts](file://src/types/scholarship.ts#L16-L25)
 
 Key business rules for the application workflow:
+
 - Only applications in 'draft' status can be submitted
 - Once submitted, an application cannot be reverted to 'draft' status
 - The system automatically records the submission timestamp when an application is submitted
@@ -409,46 +439,56 @@ Key business rules for the application workflow:
 - The system tracks which user reviewed the application and when
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L279-L298)
 
 ## Indexing Strategy
+
 The system implements a comprehensive indexing strategy to optimize query performance for common operations.
 
 ### Scholarships Collection Indexes
+
 - **by_category**: Index on the 'category' field to enable fast filtering by scholarship type
 - **by_is_active**: Index on the 'is_active' field to quickly retrieve active or inactive scholarships
 - **by_application_dates**: Composite index on 'application_start_date' and 'application_end_date' fields to optimize date range queries
 
 ### Scholarship Applications Collection Indexes
+
 - **by_scholarship**: Index on the 'scholarship_id' field to efficiently retrieve all applications for a specific scholarship
 - **by_status**: Index on the 'status' field to quickly filter applications by their current status
 - **by_tc_no**: Index on the 'applicant_tc_no' field to enable fast lookups by Turkish National Identity Number
 - **by_submitted_at**: Index on the 'submitted_at' field to optimize date-based queries and sorting
 
 ### Scholarship Payments Collection Indexes
+
 - **by_application**: Index on the 'application_id' field to quickly retrieve all payments for a specific application
 - **by_status**: Index on the 'status' field to efficiently filter payments by their current status
 
 These indexes ensure that common queries, such as listing all active scholarships, retrieving applications for a specific scholarship program, or finding all pending payments, can be executed efficiently even as the dataset grows.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L1007-L1030)
 - [schema.ts](file://convex/schema.ts#L1070-L1096)
 - [schema.ts](file://convex/schema.ts#L1094-L1119)
 
 ## Search Capabilities
+
 The scholarship management system provides robust search capabilities through both direct field filtering and API endpoints.
 
 ### Query Parameters
+
 The system supports several query parameters for filtering and pagination:
 
 **Scholarships API:**
+
 - **limit**: Number of records to return (default: 50)
 - **skip**: Number of records to skip (for pagination)
 - **category**: Filter by scholarship category
 - **isActive**: Filter by active/inactive status
 
 **Scholarship Applications API:**
+
 - **limit**: Number of records to return (default: 50)
 - **skip**: Number of records to skip (for pagination)
 - **scholarship_id**: Filter by specific scholarship program
@@ -456,12 +496,14 @@ The system supports several query parameters for filtering and pagination:
 - **tc_no**: Search by applicant's Turkish National Identity Number (requires authentication and ADMIN/MANAGER role)
 
 **Scholarship Payments API:**
+
 - **limit**: Number of records to return (default: 50)
 - **skip**: Number of records to skip (for pagination)
 - **application_id**: Filter by specific application
 - **status**: Filter by payment status
 
 ### Statistics and Reporting
+
 The system provides a statistics endpoint that aggregates key metrics for scholarship programs:
 
 ```mermaid
@@ -482,9 +524,11 @@ L --> M[Response]
 ```
 
 **Diagram sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L429-L467)
 
 The statistics endpoint returns:
+
 - **totalApplications**: Total number of applications
 - **statusCounts**: Count of applications by status
 - **totalPaid**: Total amount paid across all scholarships
@@ -494,5 +538,6 @@ The statistics endpoint returns:
 These search and reporting capabilities enable administrators to monitor scholarship program performance, track application volumes, and analyze payment trends.
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L429-L467)
 - [scholarships.ts](file://src/lib/api/scholarships.ts#L145-L165)

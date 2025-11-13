@@ -50,4 +50,3 @@ export function validatePasswordStrength(password: string): { valid: boolean; er
 
   return { valid: true };
 }
-

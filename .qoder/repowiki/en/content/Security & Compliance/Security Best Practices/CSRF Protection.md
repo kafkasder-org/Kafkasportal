@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Token Generation Mechanism](#token-generation-mechanism)
 3. [Token Validation Process](#token-validation-process)
@@ -20,6 +21,7 @@
 9. [Best Practices](#best-practices)
 
 ## Introduction
+
 The Kafkasder-panel implements a robust Cross-Site Request Forgery (CSRF) protection mechanism to safeguard state-changing operations from unauthorized requests. This documentation details the implementation of the CSRF protection system, focusing on the token generation and validation processes, endpoint configuration, and client-side integration patterns. The system employs cryptographically secure random bytes for token generation and implements constant-time comparison to prevent timing attacks, ensuring a high level of security for all authenticated operations.
 
 ## Token Generation Mechanism
@@ -29,6 +31,7 @@ The CSRF token generation process utilizes Node.js's built-in `crypto` module to
 The token generation process is designed to be both secure and efficient, leveraging the operating system's cryptographically secure pseudorandom number generator (CSPRNG) to ensure unpredictability. The hexadecimal encoding maintains readability while preserving the full entropy of the original random bytes. This implementation follows security best practices by avoiding predictable patterns or insufficient randomness that could be exploited by attackers attempting to guess valid tokens.
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L13-L15)
 
 ## Token Validation Process
@@ -60,9 +63,11 @@ ReturnFalse --> End
 ```
 
 **Diagram sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L27-L44)
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L27-L44)
 
 ## CSRF Endpoint Implementation
@@ -93,9 +98,11 @@ CSRFEndpoint->>Client : Return JSON response<br/>{success : true, token : "value
 ```
 
 **Diagram sources**
+
 - [route.ts](file://src/app/api/csrf/route.ts#L9-L42)
 
 **Section sources**
+
 - [route.ts](file://src/app/api/csrf/route.ts#L9-L42)
 
 ## Client-Side Token Management
@@ -107,6 +114,7 @@ For seamless integration with API requests, the `fetchWithCsrf` utility function
 The client-side implementation also defines the standard header name (`x-csrf-token`) used for transmitting the token, ensuring consistency between client and server expectations. This standardized approach simplifies integration and reduces the likelihood of configuration errors that could compromise security.
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L49-L88)
 
 ## Security Configuration
@@ -118,6 +126,7 @@ In production environments, the cookie is marked as `secure`, instructing the br
 The token has a maximum age of 24 hours, providing a reasonable balance between security and user experience. This expiration period limits the window of opportunity for attackers to exploit a compromised token while avoiding excessive token regeneration that could disrupt user sessions. The cookie's path is set to the root (`/`), making it available across all application routes while maintaining the security benefits of the other attributes.
 
 **Section sources**
+
 - [route.ts](file://src/app/api/csrf/route.ts#L21-L27)
 
 ## Integration with API Requests
@@ -129,6 +138,7 @@ When a request fails CSRF validation, the system throws an `ApiAuthError` with a
 The integration is designed to be non-intrusive to the main application logic, with CSRF validation typically performed early in the request processing pipeline. This allows invalid requests to be rejected quickly, conserving server resources and reducing the attack surface. The validation function is asynchronous to accommodate the cookie retrieval operations in the Next.js environment, ensuring compatibility with the server-side rendering architecture.
 
 **Section sources**
+
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L78-L87)
 
 ## Testing Considerations
@@ -140,6 +150,7 @@ The testing implementation includes comprehensive error handling for various fai
 Authentication-related tests, such as login and logout flows, explicitly include CSRF token handling in their request headers, mirroring the production implementation. This ensures that the CSRF protection mechanism is thoroughly tested under realistic conditions and that any issues with token generation, transmission, or validation are identified during the testing phase rather than in production.
 
 **Section sources**
+
 - [test-utils.ts](file://e2e/test-utils.ts#L421-L451)
 
 ## Best Practices

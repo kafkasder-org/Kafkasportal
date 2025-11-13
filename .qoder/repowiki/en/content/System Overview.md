@@ -24,6 +24,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Project Structure](#project-structure)
 3. [Core Components](#core-components)
@@ -35,12 +36,15 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The Kafkasder-panel is a professional non-profit association management system designed for aid associations, foundations, and NGOs. It provides a comprehensive platform for managing beneficiaries, tracking donations, administering scholarships, generating financial reports, and streamlining organizational workflows. Built as a full-stack Next.js 16 and Convex application, the system offers real-time capabilities for efficient and collaborative management of non-profit operations.
 
 **Section sources**
+
 - [README.md](file://README.md#L1-L179)
 
 ## Project Structure
+
 The Kafkasder-panel project follows a standard Next.js 16 App Router structure with a clear separation of concerns. The core application logic resides in the `src/app` directory, which contains the dashboard pages organized by functional modules such as beneficiary management, donation tracking, scholarship administration, and financial reporting. The `convex` directory houses the backend logic, including data models, queries, and mutations that interact with the Convex real-time database. The `src/lib` directory contains utility functions, API clients, and configuration files, while the `src/components` directory holds reusable UI components.
 
 ```mermaid
@@ -63,25 +67,30 @@ F --> |Serves| A
 ```
 
 **Diagram sources**
+
 - [src/app](file://src/app)
 - [convex](file://convex)
 - [src/lib](file://src/lib)
 - [src/components](file://src/components)
 
 **Section sources**
+
 - [src/app](file://src/app)
 - [convex](file://convex)
 - [src/lib](file://src/lib)
 - [src/components](file://src/components)
 
 ## Core Components
+
 The Kafkasder-panel system is built around several core components that handle the primary functions of a non-profit organization. These include beneficiary management, donation tracking, scholarship administration, financial reporting, and organizational workflows. Each component is implemented as a collection in the Convex database and is accessible through dedicated API routes in the Next.js application. The frontend components are designed to provide a user-friendly interface for interacting with these core functionalities.
 
 **Section sources**
+
 - [README.md](file://README.md#L15-L23)
 - [schema.ts](file://convex/schema.ts#L43-L800)
 
 ## Architecture Overview
+
 The Kafkasder-panel application follows a full-stack Next.js 16 and Convex architecture. The frontend is built using React 19 and TypeScript, with Tailwind CSS for styling. The backend is powered by Convex, which provides a real-time database and serverless functions. The application uses a modular architecture with clear separation between the frontend, backend, and data layers. The frontend components communicate with the backend through API routes, which in turn interact with the Convex database using queries and mutations.
 
 ```mermaid
@@ -108,6 +117,7 @@ D --> |Styling| B
 ```
 
 **Diagram sources**
+
 - [README.md](file://README.md#L32-L35)
 - [schema.ts](file://convex/schema.ts)
 - [client.ts](file://src/lib/convex/client.ts)
@@ -116,6 +126,7 @@ D --> |Styling| B
 ## Detailed Component Analysis
 
 ### Beneficiary Management
+
 The beneficiary management module is a core component of the Kafkasder-panel system. It allows organizations to manage detailed information about aid recipients, including personal details, family size, income level, and health status. The module supports various operations such as creating, updating, and deleting beneficiary records, as well as searching and filtering beneficiaries based on different criteria. The data model for beneficiaries is defined in the `beneficiaries` collection in the Convex schema, and the API routes for managing beneficiaries are implemented in the `src/app/api/beneficiaries` directory.
 
 ```mermaid
@@ -155,16 +166,19 @@ class BeneficiaryIndex {
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L43-L162)
 - [beneficiaries/route.ts](file://src/app/api/beneficiaries/route.ts)
-- [beneficiaries/page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx)
+- [beneficiaries/page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx>)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L43-L162)
 - [beneficiaries/route.ts](file://src/app/api/beneficiaries/route.ts)
-- [beneficiaries/page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx)
+- [beneficiaries/page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx>)
 
 ### Donation Tracking
+
 The donation tracking module enables organizations to record and manage incoming donations from various sources. It supports both standard donations and Kumbara (money box) donations, with detailed information about the donor, donation amount, currency, payment method, and donation purpose. The module also includes features for generating donation reports and tracking the status of donations. The data model for donations is defined in the `donations` collection in the Convex schema, and the API routes for managing donations are implemented in the `src/app/api/donations` directory.
 
 ```mermaid
@@ -203,16 +217,19 @@ class DonationIndex {
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L163-L216)
 - [donations/route.ts](file://src/app/api/donations/route.ts)
-- [donations/page.tsx](file://src/app/(dashboard)/bagis/liste/page.tsx)
+- [donations/page.tsx](<file://src/app/(dashboard)/bagis/liste/page.tsx>)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L163-L216)
 - [donations/route.ts](file://src/app/api/donations/route.ts)
-- [donations/page.tsx](file://src/app/(dashboard)/bagis/liste/page.tsx)
+- [donations/page.tsx](<file://src/app/(dashboard)/bagis/liste/page.tsx>)
 
 ### Scholarship Administration
+
 The scholarship administration module is designed to manage scholarship programs and applications. It allows organizations to create and manage scholarship programs, track applications from students, and monitor the status of scholarships. The module supports various types of scholarships, including academic, need-based, orphan, and special needs scholarships. The data model for scholarships is defined in the `scholarships` and `scholarship_applications` collections in the Convex schema, and the API routes for managing scholarships are implemented in the `src/app/api/scholarships` directory.
 
 ```mermaid
@@ -285,16 +302,19 @@ class ScholarshipApplicationIndex {
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L1007-L1096)
 - [scholarships/route.ts](file://src/app/api/scholarships/route.ts)
-- [scholarships/page.tsx](file://src/app/(dashboard)/burs/ogrenciler/page.tsx)
+- [scholarships/page.tsx](<file://src/app/(dashboard)/burs/ogrenciler/page.tsx>)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L1007-L1096)
 - [scholarships/route.ts](file://src/app/api/scholarships/route.ts)
-- [scholarships/page.tsx](file://src/app/(dashboard)/burs/ogrenciler/page.tsx)
+- [scholarships/page.tsx](<file://src/app/(dashboard)/burs/ogrenciler/page.tsx>)
 
 ### Financial Reporting
+
 The financial reporting module provides tools for generating detailed financial reports and analyzing financial data. It supports various types of reports, including income and expense reports, donation reports, and operational reports. The module allows users to filter and aggregate financial data based on different criteria, such as date range, category, and status. The data model for financial records is defined in the `finance_records` collection in the Convex schema, and the API routes for generating reports are implemented in the `src/app/api/reports` directory.
 
 ```mermaid
@@ -323,14 +343,17 @@ class FinanceRecordIndex {
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L543-L577)
-- [reports/page.tsx](file://src/app/(dashboard)/fon/raporlar/page.tsx)
+- [reports/page.tsx](<file://src/app/(dashboard)/fon/raporlar/page.tsx>)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L543-L577)
-- [reports/page.tsx](file://src/app/(dashboard)/fon/raporlar/page.tsx)
+- [reports/page.tsx](<file://src/app/(dashboard)/fon/raporlar/page.tsx>)
 
 ## Dependency Analysis
+
 The Kafkasder-panel system has a well-defined dependency structure that ensures modularity and maintainability. The frontend components depend on the API routes for data, which in turn depend on the Convex backend for data storage and retrieval. The Convex backend is responsible for defining the data models and implementing the business logic through queries and mutations. The system also uses various third-party libraries and tools, such as Next.js for the frontend framework, Convex for the backend, and Tailwind CSS for styling.
 
 ```mermaid
@@ -344,36 +367,44 @@ E --> C
 ```
 
 **Diagram sources**
+
 - [package.json](file://package.json)
 - [next.config.ts](file://next.config.ts)
 - [tailwind.config.js](file://tailwind.config.js)
 
 **Section sources**
+
 - [package.json](file://package.json)
 - [next.config.ts](file://next.config.ts)
 - [tailwind.config.js](file://tailwind.config.js)
 
 ## Performance Considerations
+
 The Kafkasder-panel system is designed with performance in mind. The use of Convex as a real-time database ensures that data is synchronized across clients efficiently. The frontend components are optimized for performance using React's built-in optimization techniques, such as memoization and lazy loading. The API routes are designed to minimize the number of database queries and to cache responses when appropriate. The system also includes features for monitoring performance, such as Web Vitals tracking and rate limiting.
 
 **Section sources**
+
 - [README.md](file://README.md#L27-L28)
 - [web-vitals.ts](file://src/lib/performance/web-vitals.ts)
 - [rate-limit.ts](file://src/lib/rate-limit.ts)
 
 ## Troubleshooting Guide
+
 The Kafkasder-panel system includes various features for troubleshooting and debugging issues. The system logs errors and security events to the `security_events` collection in the Convex database, which can be accessed through the admin interface. The system also includes a rate limiting mechanism to prevent abuse and a CSRF protection mechanism to prevent cross-site request forgery attacks. In case of issues with the Convex client, the system provides a fallback mechanism to handle build-time errors.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts)
 - [rate-limit.ts](file://src/lib/rate-limit.ts)
 - [csrf.ts](file://src/lib/csrf.ts)
 - [client.ts](file://src/lib/convex/client.ts)
 
 ## Conclusion
+
 The Kafkasder-panel system is a comprehensive and professional platform for managing non-profit organizations. Its modular architecture, real-time capabilities, and user-friendly interface make it an ideal solution for aid associations, foundations, and NGOs. The system's robust backend, powered by Convex, ensures data integrity and scalability, while the frontend, built with Next.js 16, provides a seamless user experience. With its focus on performance, security, and maintainability, the Kafkasder-panel system is well-suited for organizations looking to streamline their operations and improve their impact.
 
 **Section sources**
+
 - [README.md](file://README.md#L1-L179)
 - [schema.ts](file://convex/schema.ts)
 - [client.ts](file://src/lib/convex/client.ts)

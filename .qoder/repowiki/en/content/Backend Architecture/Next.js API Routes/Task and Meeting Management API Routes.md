@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Project Structure](#project-structure)
 3. [Core Components](#core-components)
@@ -24,9 +25,11 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 This document provides comprehensive API documentation for the Task and Meeting Management system. It details the endpoints for managing meetings, meeting decisions, action items, and tasks. The system supports workflow automation where meeting decisions generate action items, enables task assignment and status tracking, and integrates with user management and notification systems. The API supports recurrence patterns, reminders, and calendar integrations through the workflow_notifications module.
 
 ## Project Structure
+
 The project is structured with a clear separation of concerns between backend logic in the `convex` directory and frontend components in the `src` directory. The API routes are defined in the `convex` directory as server-side functions, while validation schemas and client-side logic are located in the `src/lib/validations` directory.
 
 ```mermaid
@@ -53,6 +56,7 @@ H --> D
 ```
 
 **Diagram sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
@@ -63,6 +67,7 @@ H --> D
 - [task.ts](file://src/lib/validations/task.ts)
 
 **Section sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
@@ -70,9 +75,11 @@ H --> D
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 ## Core Components
+
 The core components of the Task and Meeting Management system include meetings, meeting decisions, action items, tasks, and workflow notifications. Meetings serve as the primary organizational unit, containing decisions that generate action items. Action items are automatically converted to tasks and assigned to users. The system tracks status changes and sends notifications through the workflow_notifications system.
 
 **Section sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
@@ -80,6 +87,7 @@ The core components of the Task and Meeting Management system include meetings, 
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 ## Architecture Overview
+
 The system follows a serverless architecture with Convex as the backend platform. API endpoints are exposed through server-side functions that handle CRUD operations for meetings, decisions, action items, and tasks. The architecture supports workflow automation where meeting decisions trigger the creation of action items, which are then tracked through their lifecycle with status updates and notifications.
 
 ```mermaid
@@ -98,6 +106,7 @@ G --> H[User Interface]
 ```
 
 **Diagram sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
@@ -107,6 +116,7 @@ G --> H[User Interface]
 ## Detailed Component Analysis
 
 ### Meeting Management
+
 The meeting management system provides CRUD operations for meetings with support for agendas, minutes, and participant tracking. Meetings can be filtered by status, organizer, or date, and support pagination for large datasets.
 
 ```mermaid
@@ -131,14 +141,17 @@ class Meetings {
 ```
 
 **Diagram sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting.ts](file://src/lib/validations/meeting.ts)
 
 **Section sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting.ts](file://src/lib/validations/meeting.ts)
 
 ### Meeting Decisions
+
 Meeting decisions are created during or after meetings to document key outcomes. Each decision is linked to a specific meeting and can be assigned to an owner for follow-up. Decisions have a status lifecycle and can be filtered by meeting, owner, or status.
 
 ```mermaid
@@ -162,12 +175,15 @@ class MeetingDecisions {
 ```
 
 **Diagram sources**
+
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 
 **Section sources**
+
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 
 ### Action Items and Task Workflow
+
 The system implements an automated workflow where meeting decisions generate action items that are tracked to completion. Action items can be created directly or generated from decisions, and they automatically create tasks for assigned users. The system tracks status changes and notifies administrators when tasks are completed.
 
 ```mermaid
@@ -186,14 +202,17 @@ N->>Admins : Notify administrators of completion
 ```
 
 **Diagram sources**
+
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 **Section sources**
+
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 ### Task Management
+
 The task management system provides comprehensive CRUD operations for tasks with support for assignment, priority, status tracking, and deadline management. Tasks can be filtered by status, assignee, or creator, and support pagination for large datasets.
 
 ```mermaid
@@ -218,14 +237,17 @@ class Tasks {
 ```
 
 **Diagram sources**
+
 - [tasks.ts](file://convex/tasks.ts)
 - [task.ts](file://src/lib/validations/task.ts)
 
 **Section sources**
+
 - [tasks.ts](file://convex/tasks.ts)
 - [task.ts](file://src/lib/validations/task.ts)
 
 ### Workflow Notifications
+
 The workflow notification system manages notifications for task completions, meeting updates, and other system events. Notifications are sent to recipients based on their role and are tracked through their lifecycle from creation to reading.
 
 ```mermaid
@@ -257,12 +279,15 @@ class WorkflowNotifications {
 ```
 
 **Diagram sources**
+
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 **Section sources**
+
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 ## Dependency Analysis
+
 The Task and Meeting Management system has a well-defined dependency structure where higher-level entities depend on lower-level ones. Meetings are the root entity, with decisions depending on meetings, action items depending on decisions, and tasks depending on action items. The notification system depends on all other components to send status updates.
 
 ```mermaid
@@ -276,6 +301,7 @@ A --> E
 ```
 
 **Diagram sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
@@ -283,6 +309,7 @@ A --> E
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 **Section sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
@@ -290,12 +317,15 @@ A --> E
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 ## Performance Considerations
+
 The system is designed with performance in mind, using indexed queries for efficient data retrieval. All list operations support pagination to prevent performance issues with large datasets. The system uses efficient data structures and minimizes database queries through batch operations where possible.
 
 ## Troubleshooting Guide
+
 Common issues in the Task and Meeting Management system include validation errors during creation, permission issues during updates, and notification delivery problems. Ensure that all required fields are provided and that users have appropriate permissions for the operations they are attempting.
 
 **Section sources**
+
 - [meetings.ts](file://convex/meetings.ts)
 - [meeting_decisions.ts](file://convex/meeting_decisions.ts)
 - [meeting_action_items.ts](file://convex/meeting_action_items.ts)
@@ -303,4 +333,5 @@ Common issues in the Task and Meeting Management system include validation error
 - [workflow_notifications.ts](file://convex/workflow_notifications.ts)
 
 ## Conclusion
+
 The Task and Meeting Management API provides a comprehensive system for managing meetings, decisions, action items, and tasks. The system supports workflow automation, status tracking, and notification integration, making it suitable for complex organizational workflows. The API is well-structured with clear endpoints and validation rules, ensuring reliable and predictable behavior.

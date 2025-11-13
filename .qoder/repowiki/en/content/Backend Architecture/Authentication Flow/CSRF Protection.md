@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [CSRF Token Generation](#csrf-token-generation)
 3. [Token Storage and Client-Side Access](#token-storage-and-client-side-access)
@@ -19,9 +20,11 @@
 8. [Conclusion](#conclusion)
 
 ## Introduction
+
 The Kafkasder-panel implements a robust Cross-Site Request Forgery (CSRF) protection mechanism to safeguard state-changing operations, particularly the authentication process. This documentation details the comprehensive CSRF protection system that combines cryptographically secure token generation, the double-submit cookie pattern, and strict server-side validation. The mechanism ensures that only legitimate requests originating from the application's frontend can perform sensitive operations like user login, preventing malicious third-party sites from forging authenticated requests on behalf of users.
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L1-L5)
 - [route.ts](file://src/app/api/csrf/route.ts#L5-L7)
 
@@ -38,9 +41,11 @@ ReturnToken --> End([Token Ready for Use])
 ```
 
 **Diagram sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L13-L15)
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L8-L15)
 
 ## Token Storage and Client-Side Access
@@ -61,9 +66,11 @@ I --> J[Return Token in Response]
 ```
 
 **Diagram sources**
+
 - [route.ts](file://src/app/api/csrf/route.ts#L17-L27)
 
 **Section sources**
+
 - [route.ts](file://src/app/api/csrf/route.ts#L14-L27)
 
 ## Client-Side Integration
@@ -86,10 +93,12 @@ deactivate Auth
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L153-L164)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L145-L147)
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L145-L164)
 
 ## Server-Side Validation
@@ -112,10 +121,12 @@ H --> J[Continue Processing]
 ```
 
 **Diagram sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L27-L44)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L145-L147)
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L27-L44)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L145-L147)
 
@@ -124,6 +135,7 @@ H --> J[Continue Processing]
 The CSRF protection mechanism incorporates several security best practices to provide comprehensive protection against cross-site request forgery attacks. The use of cryptographically secure random tokens ensures that attackers cannot predict or guess valid tokens. The 24-hour token expiration implements token rotation, limiting the window of opportunity for any potential token compromise. The double-submit cookie pattern, combined with the `SameSite: 'strict'` attribute, provides defense in depth by requiring the attacker to both read the token value (which is protected by the same-origin policy) and submit it in a header. The constant-time comparison prevents timing attacks that could be used to gradually discover the token value. Additionally, the separation of concerns between the CSRF token (used for request validation) and the authentication session (stored in an HttpOnly cookie) follows the principle of least privilege.
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L8-L9)
 - [route.ts](file://src/app/api/csrf/route.ts#L22-L26)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L173-L179)
@@ -164,14 +176,17 @@ end
 ```
 
 **Diagram sources**
+
 - [route.ts](file://src/app/api/csrf/route.ts#L9-L33)
 - [authStore.ts](file://src/stores/authStore.ts#L153-L174)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L207)
 
 **Section sources**
+
 - [route.ts](file://src/app/api/csrf/route.ts#L9-L33)
 - [authStore.ts](file://src/stores/authStore.ts#L153-L174)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L207)
 
 ## Conclusion
+
 The CSRF protection mechanism in Kafkasder-panel provides a robust defense against cross-site request forgery attacks through a combination of cryptographically secure token generation, the double-submit cookie pattern, and strict server-side validation. By requiring clients to include a token in both a cookie and a request header, the system ensures that only legitimate requests from the application's origin can perform sensitive operations. The integration between the frontend authentication store and the CSRF workflow creates a seamless user experience while maintaining high security standards. The implementation follows security best practices including token rotation, constant-time comparison, and proper cookie attributes, making it resistant to common attack vectors. This comprehensive approach to CSRF protection helps maintain the integrity and security of user sessions within the application.

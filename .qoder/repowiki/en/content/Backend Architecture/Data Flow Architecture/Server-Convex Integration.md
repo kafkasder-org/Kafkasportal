@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Integration Architecture](#core-integration-architecture)
 3. [Lazy Initialization Pattern](#lazy-initialization-pattern)
@@ -32,6 +33,7 @@ The integration pattern follows a layered approach where Next.js API routes serv
 The architecture leverages Convex's code generation system, which produces type-safe API references in the `_generated` directory. These generated types ensure compile-time safety when calling Convex queries and mutations from Next.js routes. The integration is designed to be resilient to environment configuration issues, particularly during the Next.js build process when environment variables may not be available.
 
 **Section sources**
+
 - [server.ts](file://src/lib/convex/server.ts#L1-L71)
 - [convex-api-client.ts](file://src/lib/api/convex-api-client.ts#L1-L765)
 
@@ -58,9 +60,11 @@ ClientAccess --> UseClient["Use client for Convex operations"]
 ```
 
 **Diagram sources**
+
 - [server.ts](file://src/lib/convex/server.ts#L18-L48)
 
 **Section sources**
+
 - [server.ts](file://src/lib/convex/server.ts#L18-L48)
 - [client.ts](file://src/lib/convex/client.ts#L7-L43)
 
@@ -71,6 +75,7 @@ The integration employs a Proxy pattern to further enhance the lazy initializati
 The Proxy implementation includes special handling for the `__unsafe__getClient` method, which provides direct access to the underlying client instance for advanced use cases requiring additional configuration. For all other property accesses, the Proxy routes calls through the `getConvexHttp()` function, which implements the lazy initialization logic.
 
 This pattern provides several benefits:
+
 - Prevents premature client creation during module loading
 - Enables tree-shaking and reduces bundle size
 - Provides a clean API surface that appears synchronous while implementing asynchronous initialization patterns
@@ -100,9 +105,11 @@ ConvexHttpClientProxy --> ConvexClientManager : "uses"
 ```
 
 **Diagram sources**
+
 - [server.ts](file://src/lib/convex/server.ts#L5-L62)
 
 **Section sources**
+
 - [server.ts](file://src/lib/convex/server.ts#L52-L62)
 
 ## Login Flow Implementation
@@ -132,10 +139,12 @@ Note over API,Convex : Password verification occurs in Next.js<br/>due to bcrypt
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [auth.ts](file://convex/auth.ts#L33-L48)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [auth.ts](file://convex/auth.ts#L33-L48)
 
@@ -144,6 +153,7 @@ Note over API,Convex : Password verification occurs in Next.js<br/>due to bcrypt
 The integration implements a comprehensive error handling and logging strategy to ensure reliability and observability. All Convex calls are wrapped in try-catch blocks that provide meaningful error responses to clients while preserving sensitive information.
 
 When Convex calls fail, the system distinguishes between different error types:
+
 - Configuration errors (missing Convex URL) are caught during client initialization
 - Network errors during query/mutation execution are handled at the API route level
 - Authentication-specific errors are translated into appropriate HTTP status codes
@@ -153,6 +163,7 @@ The implementation uses a centralized logger to record all authentication events
 For mutations that are secondary to the main operation (like updating last login time), the system implements non-blocking error handling where failures are logged but do not affect the primary operation's success.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L208-L228)
 - [server.ts](file://src/lib/convex/server.ts#L34-L36)
 
@@ -161,6 +172,7 @@ For mutations that are secondary to the main operation (like updating last login
 The integration supports various Convex operations through a consistent pattern of query and mutation calls from Next.js API routes. Queries are used for read operations and are typically called with `convexHttp.query()`, while mutations are used for write operations and are called with `convexHttp.mutation()`.
 
 The pattern is consistent across different domains in the application:
+
 - User management operations use queries to retrieve user data and mutations to update user state
 - Authentication flows use queries for user lookup and mutations for session updates
 - Data operations for entities like beneficiaries, donations, and meetings follow the same pattern
@@ -168,6 +180,7 @@ The pattern is consistent across different domains in the application:
 The generated API types from Convex ensure that all operations are type-safe, with proper validation of input parameters and return types. This eliminates runtime type errors and provides excellent developer experience through IDE autocomplete and type checking.
 
 **Section sources**
+
 - [auth.ts](file://convex/auth.ts#L9-L82)
 - [convex-api-client.ts](file://src/lib/api/convex-api-client.ts#L121-L716)
 
@@ -176,11 +189,13 @@ The generated API types from Convex ensure that all operations are type-safe, wi
 A critical security consideration in this integration is the decision to keep password verification in Next.js rather than in Convex. This is necessitated by technical limitations—bcrypt, the library used for password hashing, relies on native modules that cannot be executed in Convex's serverless environment.
 
 This architectural decision has important security implications:
+
 - The password hash must be returned from Convex to Next.js, requiring careful handling to prevent exposure
 - All authentication logic must be implemented in trusted server-side code (Next.js API routes)
 - The system must ensure that password hashes are never exposed to client-side code
 
 The implementation addresses these concerns by:
+
 - Restricting access to password hashes to authentication-specific queries
 - Using HTTPS for all communications
 - Implementing proper error handling that doesn't leak information about user existence
@@ -189,6 +204,7 @@ The implementation addresses these concerns by:
 Additionally, the system implements account lockout mechanisms after repeated failed login attempts to prevent brute force attacks, with lockout state managed in Next.js rather than Convex for performance reasons.
 
 **Section sources**
+
 - [auth.ts](file://convex/auth.ts#L6-L8)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L96-L107)
 
@@ -207,6 +223,7 @@ Several common issues can arise with the server-Convex integration, primarily re
 The system includes validation and logging to help diagnose these issues, with clear error messages that guide developers toward proper configuration.
 
 **Section sources**
+
 - [server.ts](file://src/lib/convex/server.ts#L15-L21)
 - [client.ts](file://src/lib/convex/client.ts#L4-L39)
 
@@ -215,6 +232,7 @@ The system includes validation and logging to help diagnose these issues, with c
 The integration is designed with performance and reliability in mind. The lazy initialization and Proxy patterns minimize startup overhead and prevent unnecessary network connections during application initialization.
 
 For reliability, the system implements:
+
 - Graceful degradation when Convex is unavailable
 - Comprehensive error logging and monitoring
 - Input validation and sanitization
@@ -223,5 +241,6 @@ For reliability, the system implements:
 The use of generated API types from Convex ensures that all operations are optimized and follow best practices for data access patterns. The architecture supports scaling by leveraging Convex's serverless infrastructure while maintaining predictable performance characteristics.
 
 **Section sources**
+
 - [server.ts](file://src/lib/convex/server.ts#L68-L71)
 - [client.ts](file://src/lib/convex/client.ts#L84-L91)

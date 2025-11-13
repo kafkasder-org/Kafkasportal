@@ -310,7 +310,9 @@ function VirtualizedDataTable<T>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => { pagination.onPageChange(pagination.page - 1); }}
+              onClick={() => {
+                pagination.onPageChange(pagination.page - 1);
+              }}
               disabled={pagination.page <= 1}
             >
               Önceki
@@ -323,7 +325,9 @@ function VirtualizedDataTable<T>({
                     key={page}
                     variant={page === pagination.page ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => { pagination.onPageChange(page); }}
+                    onClick={() => {
+                      pagination.onPageChange(page);
+                    }}
                   >
                     {page}
                   </Button>
@@ -333,7 +337,9 @@ function VirtualizedDataTable<T>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => { pagination.onPageChange(pagination.page + 1); }}
+              onClick={() => {
+                pagination.onPageChange(pagination.page + 1);
+              }}
               disabled={pagination.page >= pagination.totalPages}
             >
               Sonraki

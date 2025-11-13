@@ -18,6 +18,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [CSRF Protection](#csrf-protection)
 3. [Rate Limiting](#rate-limiting)
@@ -28,6 +29,7 @@
 8. [Conclusion](#conclusion)
 
 ## Introduction
+
 Kafkasder-panel implements a comprehensive multi-layered security architecture designed to protect against common web application threats. The system employs CSRF protection, rate limiting, secure session management, input validation, and detailed security auditing to ensure robust protection of user data and application integrity. This document details the implementation of these security mechanisms, focusing on how they work together to create a secure environment for users and administrators.
 
 ## CSRF Protection
@@ -52,6 +54,7 @@ Stateful_API->>Client : 200 OK or 403 Forbidden
 ```
 
 **Diagram sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L1-L90)
 - [csrf/route.ts](file://src/app/api/csrf/route.ts#L1-L43)
 
@@ -62,6 +65,7 @@ Token validation employs constant-time comparison to prevent timing attacks. The
 Client-side integration is handled through a fetch wrapper that automatically includes the CSRF token in requests to state-changing endpoints. The system only includes CSRF tokens in `POST`, `PUT`, `PATCH`, and `DELETE` requests, as these are the operations that modify server state and are therefore vulnerable to CSRF attacks.
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts#L1-L90)
 - [csrf/route.ts](file://src/app/api/csrf/route.ts#L1-L43)
 
@@ -90,10 +94,12 @@ M --> N[Return Response]
 ```
 
 **Diagram sources**
+
 - [security.ts](file://src/lib/security.ts#L1-L507)
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L1-L148)
 
 The system implements different rate limiting profiles for various endpoint categories:
+
 - Authentication endpoints: 10 attempts per 10 minutes
 - Data modification endpoints: 50 requests per 15 minutes
 - Read-only endpoints: 200 requests per 15 minutes
@@ -107,6 +113,7 @@ The rate limiting system includes sophisticated features such as IP-based whitel
 Rate limit monitoring is implemented through the `RateLimitMonitor` class, which tracks violations and generates alerts when suspicious patterns are detected. The monitor maintains a rolling window of violations and can detect distributed attacks from multiple IP addresses or concentrated attacks on specific endpoints.
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L1-L507)
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L1-L148)
 - [rate-limit-monitor.ts](file://src/lib/rate-limit-monitor.ts#L1-L303)
@@ -137,10 +144,12 @@ Auth_API->>User : Process request or redirect to login
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [session.ts](file://src/lib/auth/session.ts#L1-L198)
 
 Session cookies are configured with multiple security flags:
+
 - `httpOnly: true` to prevent JavaScript access
 - `secure: true` in production to ensure transmission over HTTPS only
 - `sameSite: strict` to prevent CSRF attacks
@@ -153,6 +162,7 @@ Session management is integrated with CSRF protection by setting both the `auth-
 The session system includes robust error handling for invalid or expired sessions. When a session validation fails, the system returns a 401 Unauthorized response and clears the invalid session cookie to prevent repeated failed validation attempts.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts#L1-L73)
 - [session/route.ts](file://src/app/api/auth/session/route.ts#L1-L65)
@@ -163,6 +173,7 @@ The session system includes robust error handling for invalid or expired session
 Kafkasder-panel maintains comprehensive security audit logs in the `security_events` collection to track authentication activities, permission denials, and suspicious behavior. The system logs critical security events with detailed contextual information for monitoring and forensic analysis.
 
 The audit logging system captures a wide range of security-related events, including:
+
 - Login attempts (success and failure)
 - Logout operations
 - Permission denials
@@ -193,6 +204,7 @@ security_events ||--o{ users : "user_id"
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L659-L689)
 - [security_audit.ts](file://convex/security_audit.ts#L1-L44)
 
@@ -207,6 +219,7 @@ The audit logging system provides query capabilities to retrieve security events
 The system also implements compliance reporting features that generate summary reports of security events over specified time periods. These reports include metrics such as total security events, critical events, and event distribution by type, providing valuable insights into the security posture of the application.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L1-L44)
 - [schema.ts](file://convex/schema.ts#L659-L689)
 
@@ -238,6 +251,7 @@ Auth_API->>User : Grant access
 ```
 
 **Diagram sources**
+
 - [two_factor_auth.ts](file://convex/two_factor_auth.ts#L1-L48)
 - [schema.ts](file://convex/schema.ts#L752-L785)
 
@@ -248,6 +262,7 @@ Backup codes are generated when a user enables 2FA, providing alternative access
 The system logs all 2FA-related activities in the security audit log, including successful and failed verification attempts, enabling and disabling of 2FA, and backup code usage. This comprehensive logging enables detection of suspicious patterns such as repeated failed 2FA attempts or unexpected 2FA configuration changes.
 
 Users can manage their 2FA settings through a dedicated interface that allows them to:
+
 - Enable or disable 2FA
 - Regenerate backup codes
 - View enrollment status and last verification time
@@ -256,6 +271,7 @@ Users can manage their 2FA settings through a dedicated interface that allows th
 The 2FA implementation follows security best practices by requiring verification of the current 2FA code before allowing 2FA to be disabled, preventing attackers from removing 2FA protection after gaining partial access to an account.
 
 **Section sources**
+
 - [two_factor_auth.ts](file://convex/two_factor_auth.ts#L1-L48)
 - [schema.ts](file://convex/schema.ts#L752-L785)
 
@@ -285,6 +301,7 @@ trusted_devices ||--o{ users : "user_id"
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L783-L812)
 - [two_factor_auth.ts](file://convex/two_factor_auth.ts#L266-L316)
 
@@ -297,6 +314,7 @@ The system implements automatic trust expiration after a configurable period of 
 Trusted devices management is integrated with the security audit system, logging all additions and removals of trusted devices. This provides an audit trail of device trust changes and helps detect suspicious activity such as multiple trusted device registrations from different locations in a short time period.
 
 **Section sources**
+
 - [two_factor_auth.ts](file://convex/two_factor_auth.ts#L266-L316)
 - [schema.ts](file://convex/schema.ts#L783-L812)
 

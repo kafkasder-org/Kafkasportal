@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Client State Management with Zustand](#client-state-management-with-zustand)
 3. [Server State Synchronization with TanStack Query](#server-state-synchronization-with-tanstack-query)
@@ -22,9 +23,11 @@
 9. [Best Practices and Common Pitfalls](#best-practices-and-common-pitfalls)
 
 ## Introduction
+
 The Kafkasder-panel application implements a robust state management architecture that separates client state from server state while ensuring seamless synchronization between them. The system leverages Zustand for client-side state management, particularly for authentication state persistence, and integrates TanStack Query (via Convex client) for server state synchronization. This documentation details the implementation, integration points, and best practices for managing complex state interactions in the application.
 
 ## Client State Management with Zustand
+
 The application uses Zustand as its primary solution for client state management, with a specific focus on authentication state persistence through the `authStore.ts` file. The store is implemented with several middleware enhancements including `devtools` for debugging, `persist` for local storage persistence, `subscribeWithSelector` for selective subscriptions, and `immer` for immutable updates.
 
 The authentication store maintains critical user session information including user data, session tokens, authentication status, loading states, and error messages. It also manages UI-related state such as login modal visibility and remember-me preferences. The store implements a hydration process that checks localStorage for existing session data during initialization, allowing users to maintain their authenticated state across browser sessions.
@@ -73,12 +76,15 @@ AuthActions <|-- AuthStore
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L22-L306)
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L1-L403)
 
 ## Server State Synchronization with TanStack Query
+
 Server state in Kafkasder-panel is managed through TanStack Query, integrated with the Convex backend via the Convex client. This approach provides automatic caching, background refetching, and stale-while-revalidate strategies that ensure data consistency across the application. The query client is configured to work seamlessly with the Convex real-time database, enabling efficient data synchronization between client and server.
 
 The integration is implemented through custom hooks that abstract the complexity of direct API calls while providing type safety and optimal caching behavior. These hooks leverage the Convex client to execute queries and mutations against the backend, with automatic handling of loading states, error conditions, and data transformation. The system implements a clear separation between client state (managed by Zustand) and server state (managed by TanStack Query), with well-defined interaction points.
@@ -111,14 +117,17 @@ Note over QueryClient,Convex : Automatic cache management and background refetch
 ```
 
 **Diagram sources**
+
 - [useApiCache.ts](file://src/hooks/useApiCache.ts#L27-L177)
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 
 **Section sources**
+
 - [useApiCache.ts](file://src/hooks/useApiCache.ts#L1-L366)
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 
 ## Caching Strategies
+
 The application implements a comprehensive caching strategy that combines in-memory caching (via TanStack Query) with persistent storage (via IndexedDB) to optimize performance and enable offline functionality. The caching system is configured with different strategies for various data types based on their update frequency, importance, and size.
 
 The `useApiCache.ts` file defines specific caching hooks for different entity types, each with tailored configuration for stale time, cache time, and refetch behavior. For example, beneficiary data has a 5-minute stale time to balance freshness with performance, while static configuration data may have much longer cache durations. The system also implements automatic cache invalidation when related data is mutated, ensuring consistency across related queries.
@@ -150,14 +159,17 @@ style G fill:#D5E8D4,stroke:#82B366
 ```
 
 **Diagram sources**
+
 - [useApiCache.ts](file://src/hooks/useApiCache.ts#L1-L366)
 - [persistent-cache.ts](file://src/lib/persistent-cache.ts#L1-L454)
 
 **Section sources**
+
 - [useApiCache.ts](file://src/hooks/useApiCache.ts#L1-L366)
 - [persistent-cache.ts](file://src/lib/persistent-cache.ts#L1-L454)
 
 ## Form State Management
+
 Form state management in Kafkasder-panel is implemented using React Hook Form in combination with Zod for validation, providing a robust solution for complex form interactions. The `BeneficiaryForm.tsx` component serves as a prime example of this approach, demonstrating real-time validation, submission handling, and integration with the application's state management systems.
 
 The form implementation includes several advanced features such as real-time field validation with visual feedback, optimized onChange handlers that debounce validation checks, and a loading overlay that prevents multiple submissions. The form state is managed locally within the component, with validation errors displayed inline according to accessibility standards.
@@ -195,12 +207,15 @@ style W fill:#D5E8D4,stroke:#82B366
 ```
 
 **Diagram sources**
+
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L1-L480)
 
 **Section sources**
+
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L1-L480)
 
 ## Data Synchronization in Dashboard Pages
+
 Dashboard pages in Kafkasder-panel implement sophisticated data synchronization patterns that combine server state management with client state to provide a responsive user experience. The beneficiaries dashboard page demonstrates this approach by integrating multiple data sources, caching strategies, and real-time updates.
 
 The page implementation uses the `useCachedQuery` hook to fetch beneficiary data with automatic cache handling, falling back to direct API calls if the cached query fails. This ensures data availability even when the persistent cache is not accessible. The component also implements prefetching of related data (such as aid applications) to improve perceived performance when navigating between views.
@@ -239,12 +254,15 @@ Note over QueryClient,Cache : Automatic cache invalidation and background update
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L1-L281)
+
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L1-L281>)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L1-L281)
+
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L1-L281>)
 
 ## Error Handling and Loading States
+
 The application implements comprehensive error handling and loading state management across all state management layers. Each component and hook provides appropriate feedback to users during data fetching, submission, and error conditions, ensuring a predictable and accessible user experience.
 
 Loading states are managed through dedicated state variables in both the Zustand store and TanStack Query. The authentication store maintains an `isLoading` flag that controls UI elements such as loading spinners and disabled buttons during login and logout operations. Similarly, TanStack Query provides built-in loading states that are exposed through query and mutation hooks, allowing components to conditionally render loading indicators.
@@ -254,6 +272,7 @@ Error handling is implemented at multiple levels, with specific error messages f
 The system also implements global error handling through toast notifications that provide feedback for both successful operations and errors. These notifications are triggered by mutation success and error callbacks, ensuring consistent user feedback across the application. The error handling system includes network error detection and user-friendly messaging that guides users on how to resolve common issues.
 
 ## Optimistic Updates
+
 While the current implementation primarily relies on refetch-based updates rather than optimistic updates, the architecture supports both approaches through TanStack Query's mutation configuration. The system could be enhanced to implement optimistic updates for certain operations, particularly for high-frequency interactions where immediate feedback is important.
 
 The mutation configuration allows for the implementation of optimistic updates through the `onMutate` callback, which can update the query cache with the expected result before the server response is received. This would provide immediate UI feedback while maintaining data consistency through automatic rollback in case of mutation failure.
@@ -261,6 +280,7 @@ The mutation configuration allows for the implementation of optimistic updates t
 For operations that are well-suited to optimistic updates (such as status changes or simple edits), this pattern could significantly improve perceived performance. The system already has the necessary infrastructure in place, including proper cache invalidation and error handling, making it straightforward to implement optimistic updates where appropriate.
 
 ## Best Practices and Common Pitfalls
+
 The state management architecture in Kafkasder-panel follows several best practices that ensure maintainability, performance, and reliability. These include the clear separation of client and server state, the use of typed interfaces for all state objects, and the implementation of reusable custom hooks that abstract complex logic.
 
 To avoid common pitfalls such as stale data, the system implements automatic cache invalidation when mutations occur, ensuring that related queries are updated appropriately. The caching strategy is carefully tuned to balance data freshness with performance, with different stale times for different data types based on their update frequency.

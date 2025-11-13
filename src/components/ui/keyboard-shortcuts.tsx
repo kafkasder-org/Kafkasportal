@@ -3,12 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useCallback } from 'react';
 import { Command } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -50,17 +45,16 @@ export function KeyboardShortcuts({
 }: KeyboardShortcutsProps) {
   const [showDialog, setShowDialog] = useState(false);
 
-  const matchesShortcut = useCallback(
-    (event: KeyboardEvent, shortcut: Shortcut): boolean => {
-      const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
-      const ctrlMatch = shortcut.ctrl ? event.ctrlKey || event.metaKey : !event.ctrlKey && !event.metaKey;
-      const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey;
-      const altMatch = shortcut.alt ? event.altKey : !event.altKey;
+  const matchesShortcut = useCallback((event: KeyboardEvent, shortcut: Shortcut): boolean => {
+    const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
+    const ctrlMatch = shortcut.ctrl
+      ? event.ctrlKey || event.metaKey
+      : !event.ctrlKey && !event.metaKey;
+    const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey;
+    const altMatch = shortcut.alt ? event.altKey : !event.altKey;
 
-      return keyMatch && ctrlMatch && shiftMatch && altMatch;
-    },
-    []
-  );
+    return keyMatch && ctrlMatch && shiftMatch && altMatch;
+  }, []);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -114,11 +108,7 @@ export function KeyboardShortcuts({
             <h3 className="text-sm font-semibold text-slate-900 mb-3">Genel</h3>
             <div className="space-y-2">
               {commonShortcuts.map((item) => (
-                <ShortcutItem
-                  key={item.key}
-                  shortcut={item.key}
-                  description={item.description}
-                />
+                <ShortcutItem key={item.key} shortcut={item.key} description={item.description} />
               ))}
             </div>
           </div>
@@ -149,11 +139,7 @@ export function KeyboardShortcuts({
         </div>
 
         <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowDialog(false)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setShowDialog(false)}>
             Kapat
           </Button>
         </div>
@@ -171,11 +157,13 @@ function ShortcutItem({ shortcut, description }: ShortcutItemProps) {
   return (
     <div className="flex items-center justify-between py-2">
       <p className="text-sm text-slate-700">{description}</p>
-      <kbd className={cn(
-        'px-2 py-1 text-xs font-semibold text-slate-700',
-        'bg-slate-100 border border-slate-300 rounded-md',
-        'shadow-sm'
-      )}>
+      <kbd
+        className={cn(
+          'px-2 py-1 text-xs font-semibold text-slate-700',
+          'bg-slate-100 border border-slate-300 rounded-md',
+          'shadow-sm'
+        )}
+      >
         {shortcut}
       </kbd>
     </div>

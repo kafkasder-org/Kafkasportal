@@ -128,7 +128,7 @@ export function BeneficiaryFormWizard({
         status: 'AKTIF',
         approval_status: 'pending',
       };
-      
+
       return api.beneficiaries.createBeneficiary(beneficiaryData);
     },
     onSuccess: () => {
@@ -147,7 +147,7 @@ export function BeneficiaryFormWizard({
   const nextStep = async () => {
     const stepFields = getFieldsForStep(currentStep);
     const isValid = await trigger(stepFields);
-    
+
     if (isValid && currentStep < FORM_STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     }
@@ -164,7 +164,7 @@ export function BeneficiaryFormWizard({
     switch (step) {
       case 0: // Personal Info
         return ['firstName', 'lastName', 'identityNumber', 'mobilePhone'];
-      case 1: // Address Info  
+      case 1: // Address Info
         return ['address', 'city', 'district', 'neighborhood'];
       default:
         return [];
@@ -181,7 +181,7 @@ export function BeneficiaryFormWizard({
       } else {
         await createMutation.mutateAsync(data);
       }
-    } catch (error) {
+    } catch (_error) {
       // Error is handled in mutation
     } finally {
       setIsSubmitting(false);
@@ -197,7 +197,9 @@ export function BeneficiaryFormWizard({
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Adım {currentStep + 1} / {FORM_STEPS.length}</span>
+            <span>
+              Adım {currentStep + 1} / {FORM_STEPS.length}
+            </span>
             <span>{Math.round(progress)}% tamamlandı</span>
           </div>
           <Progress value={progress} className="h-2" />
@@ -239,11 +241,7 @@ export function BeneficiaryFormWizard({
                     </Button>
                   )}
                   {onCancel && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={onCancel}
-                    >
+                    <Button type="button" variant="ghost" onClick={onCancel}>
                       İptal
                     </Button>
                   )}
@@ -251,11 +249,7 @@ export function BeneficiaryFormWizard({
 
                 <div className="flex gap-2">
                   {currentStep < FORM_STEPS.length - 1 ? (
-                    <Button
-                      type="button"
-                      onClick={nextStep}
-                      className="flex items-center gap-2"
-                    >
+                    <Button type="button" onClick={nextStep} className="flex items-center gap-2">
                       Sonraki
                       <ChevronRight className="h-4 w-4" />
                     </Button>

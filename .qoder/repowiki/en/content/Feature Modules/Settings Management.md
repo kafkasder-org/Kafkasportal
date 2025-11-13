@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Settings Architecture](#settings-architecture)
 3. [Settings Categories and Data Model](#settings-categories-and-data-model)
@@ -26,6 +27,7 @@
 The Settings Management module provides a comprehensive system for managing application configuration through a structured key-value storage approach. This system enables administrators to configure application behavior, manage feature flags, and control sensitive settings through a secure interface. The implementation leverages Convex functions for real-time updates, with settings organized into categories such as organization, email, notifications, system, security, appearance, integrations, and reports. The module supports both individual setting updates and bulk operations, with proper validation and error handling throughout the process.
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
 
@@ -54,11 +56,13 @@ F --> I
 ```
 
 **Diagram sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [route.ts](file://src/app/api/settings/route.ts#L1-L128)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [route.ts](file://src/app/api/settings/route.ts#L1-L128)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
@@ -89,11 +93,13 @@ SYSTEM_SETTINGS ||--o{ REPORT_SETTINGS : contains
 ```
 
 **Diagram sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
 - [database.ts](file://src/types/database.ts#L1-L552)
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
 - [database.ts](file://src/types/database.ts#L1-L552)
@@ -128,10 +134,12 @@ API-->>Client : 200 OK with success message
 ```
 
 **Diagram sources**
+
 - [route.ts](file://src/app/api/settings/route.ts#L1-L128)
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 
 **Section sources**
+
 - [route.ts](file://src/app/api/settings/route.ts#L1-L128)
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 
@@ -140,7 +148,8 @@ API-->>Client : 200 OK with success message
 The settings interface implements dynamic forms that adapt to different setting categories, providing appropriate input controls based on the setting type. The implementation uses React Query for data fetching and mutation handling, with form validation through Zod schemas. Each category tab contains a form with inputs specific to that category's settings, including text fields, number inputs, switches for boolean values, and password inputs for sensitive data. The form tracks changes and enables the save button only when modifications are present, preventing unnecessary updates. Validation ensures that settings meet required criteria before submission, such as minimum password length or valid email formats.
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/settings/page.tsx#L1-L700)
+
+- [page.tsx](<file://src/app/(dashboard)/settings/page.tsx#L1-L700>)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
 
 ## Security Considerations
@@ -148,15 +157,17 @@ The settings interface implements dynamic forms that adapt to different setting 
 The Settings Management system incorporates multiple security measures to protect sensitive configuration data. Sensitive settings (those containing "password", "secret", or "key" in their keys) are automatically flagged and handled with additional care. The system implements proper authentication and authorization through Convex's security model, ensuring that only authorized users can modify settings. All API routes include error handling that avoids leaking sensitive information in error messages. The implementation also includes validation for security-related settings, such as enforcing minimum password lengths and session timeout limits. Additionally, the system supports two-factor authentication requirements as a configurable security policy.
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
-- [page.tsx](file://src/app/(dashboard)/settings/page.tsx#L1-L700)
+- [page.tsx](<file://src/app/(dashboard)/settings/page.tsx#L1-L700>)
 
 ## Audit Logging and Change Tracking
 
 The system maintains comprehensive audit logs for all setting changes, capturing who made the change, when it occurred, and which settings were modified. Each setting document includes `updated_by` and `updated_at` fields that are automatically populated during mutations. The audit trail enables administrators to track configuration changes over time and identify the source of any issues that arise from setting modifications. The implementation also supports resetting settings to defaults, with appropriate confirmation prompts to prevent accidental loss of configuration. Future enhancements could include detailed change logs that record both old and new values for audit purposes.
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [audit_logs.ts](file://convex/audit_logs.ts#L1-L50)
 
@@ -165,6 +176,7 @@ The system maintains comprehensive audit logs for all setting changes, capturing
 The Settings Management system supports environment-specific configurations through its flexible key-value storage model. Different environments (development, staging, production) can maintain their own setting values while sharing the same structure and categories. The system allows for feature flags to be toggled on or off per environment, enabling gradual feature rollouts and environment-specific behavior. Configuration values such as API endpoints, email settings, and integration credentials can be customized for each environment without changing the application code. The implementation also supports default values that apply across environments, with environment-specific overrides taking precedence.
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
 
@@ -173,9 +185,10 @@ The Settings Management system supports environment-specific configurations thro
 Several common issues may arise when managing settings in this system. Caching of settings can lead to stale data being displayed, which is mitigated through React Query's cache invalidation mechanisms and appropriate stale time settings. Validation of input values is enforced through Zod schemas on the frontend and type checking in Convex functions, preventing invalid configurations from being saved. Migration between versions requires careful consideration of setting schema changes, with backward compatibility maintained through default values and graceful handling of missing settings. Performance considerations include the use of indexed queries to prevent full table scans and batch processing for reset operations to avoid timeouts.
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts#L1-L244)
 - [settings.ts](file://src/lib/api/settings.ts#L1-L273)
-- [page.tsx](file://src/app/(dashboard)/settings/page.tsx#L1-L700)
+- [page.tsx](<file://src/app/(dashboard)/settings/page.tsx#L1-L700>)
 
 ## Conclusion
 

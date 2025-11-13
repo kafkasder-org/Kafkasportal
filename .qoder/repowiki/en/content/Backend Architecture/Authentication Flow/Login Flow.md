@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Login Flow Overview](#login-flow-overview)
 3. [Step-by-Step Authentication Process](#step-by-step-authentication-process)
@@ -26,6 +27,7 @@
 The login flow authentication sub-component is a critical security feature that handles user authentication through a multi-step process. This document provides a comprehensive analysis of the login flow, detailing the step-by-step authentication process, error handling strategies, rate limiting implementation, CSRF protection, session management, and security auditing. The system is designed with security best practices in mind, including protection against brute force attacks, secure password verification, and comprehensive logging for security monitoring.
 
 **Section sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 
 ## Login Flow Overview
@@ -55,6 +57,7 @@ API-->>Client : Return authentication result
 ```
 
 **Diagram sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 - [convex/auth.ts](file://convex/auth.ts)
 - [src/lib/auth/password.ts](file://src/lib/auth/password.ts)
@@ -62,6 +65,7 @@ API-->>Client : Return authentication result
 - [src/lib/logger.ts](file://src/lib/logger.ts)
 
 **Section sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 
 ## Step-by-Step Authentication Process
@@ -101,6 +105,7 @@ LogSuccess --> ReturnSuccess["Return 200 OK with User Data"]
 ```
 
 **Diagram sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 
 ### 3. Queries Convex getUserByEmail
@@ -120,6 +125,7 @@ Upon successful authentication, the system creates a session with CSRF protectio
 The authentication process concludes by setting secure cookies that maintain the user's authenticated state. These cookies include the session information and CSRF token, both configured with appropriate security flags.
 
 **Section sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 - [convex/auth.ts](file://convex/auth.ts)
 - [src/lib/auth/password.ts](file://src/lib/auth/password.ts)
@@ -131,14 +137,14 @@ The login flow implements a comprehensive error handling strategy that addresses
 
 ### Failure Scenarios and Responses
 
-| Failure Scenario | HTTP Status Code | Response Structure | User Message |
-|------------------|------------------|--------------------|--------------|
-| Missing credentials | 400 Bad Request | `{success: false, error: "Email ve şifre gereklidir"}` | "Email ve şifre gereklidir" |
-| Account locked | 429 Too Many Requests | `{success: false, error: "Hesap geçici olarak kilitlendi...", locked: true, remainingSeconds}` | "Hesap geçici olarak kilitlendi. X dakika sonra tekrar deneyin." |
-| Invalid credentials | 401 Unauthorized | `{success: false, error: "Geçersiz email veya şifre", remainingAttempts}` | "Geçersiz email veya şifre" |
-| Inactive account | 403 Forbidden | `{success: false, error: "Hesap aktif değil"}` | "Hesap aktif değil" |
-| Missing password hash | 401 Unauthorized | `{success: false, error: "Geçersiz email veya şifre"}` | "Geçersiz email veya şifre" |
-| Internal server error | 500 Internal Server | `{success: false, error: errorMessage}` | "Giriş yapılırken bir hata oluştu" |
+| Failure Scenario      | HTTP Status Code      | Response Structure                                                                             | User Message                                                     |
+| --------------------- | --------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Missing credentials   | 400 Bad Request       | `{success: false, error: "Email ve şifre gereklidir"}`                                         | "Email ve şifre gereklidir"                                      |
+| Account locked        | 429 Too Many Requests | `{success: false, error: "Hesap geçici olarak kilitlendi...", locked: true, remainingSeconds}` | "Hesap geçici olarak kilitlendi. X dakika sonra tekrar deneyin." |
+| Invalid credentials   | 401 Unauthorized      | `{success: false, error: "Geçersiz email veya şifre", remainingAttempts}`                      | "Geçersiz email veya şifre"                                      |
+| Inactive account      | 403 Forbidden         | `{success: false, error: "Hesap aktif değil"}`                                                 | "Hesap aktif değil"                                              |
+| Missing password hash | 401 Unauthorized      | `{success: false, error: "Geçersiz email veya şifre"}`                                         | "Geçersiz email veya şifre"                                      |
+| Internal server error | 500 Internal Server   | `{success: false, error: errorMessage}`                                                        | "Giriş yapılırken bir hata oluştu"                               |
 
 ### Error Handling Implementation
 
@@ -162,10 +168,12 @@ Verify --> |Valid| Success["Record Success & Create Session"]
 ```
 
 **Diagram sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 - [src/lib/auth/account-lockout.ts](file://src/lib/auth/account-lockout.ts)
 
 **Section sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 - [src/lib/auth/account-lockout.ts](file://src/lib/auth/account-lockout.ts)
 
@@ -200,9 +208,11 @@ AddHeaders --> |X-RateLimit-Remaining| Return["Return Response"]
 The rate limiting system uses the client's IP address combined with the request method and path to create a unique identifier for tracking request frequency. When the limit is exceeded, the system returns a 429 Too Many Requests status code with appropriate headers indicating the retry timeframe.
 
 **Diagram sources**
+
 - [src/lib/rate-limit.ts](file://src/lib/rate-limit.ts)
 
 **Section sources**
+
 - [src/lib/rate-limit.ts](file://src/lib/rate-limit.ts)
 
 ## CSRF Protection and Session Management
@@ -251,10 +261,12 @@ SessionManager --> "csrf-token cookie" : "sets"
 ```
 
 **Diagram sources**
+
 - [src/lib/csrf.ts](file://src/lib/csrf.ts)
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 
 **Section sources**
+
 - [src/lib/csrf.ts](file://src/lib/csrf.ts)
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 
@@ -298,10 +310,12 @@ Sentry --> Complete
 ```
 
 **Diagram sources**
+
 - [src/lib/logger.ts](file://src/lib/logger.ts)
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 
 **Section sources**
+
 - [src/lib/logger.ts](file://src/lib/logger.ts)
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 
@@ -310,6 +324,7 @@ Sentry --> Complete
 The login flow authentication sub-component implements a secure and robust authentication process that follows security best practices. The system effectively balances security requirements with user experience considerations through its multi-layered approach to authentication, error handling, and security monitoring.
 
 Key strengths of the implementation include:
+
 - Comprehensive input validation and error handling
 - Protection against brute force attacks through rate limiting
 - Secure password verification using bcrypt
@@ -320,6 +335,7 @@ Key strengths of the implementation include:
 The code structure is well-organized, with clear separation of concerns between different components (API route, database queries, password utilities, rate limiting, CSRF protection, and logging). This modular design makes the system maintainable and extensible while ensuring that each component focuses on a specific aspect of the authentication process.
 
 **Section sources**
+
 - [src/app/api/auth/login/route.ts](file://src/app/api/auth/login/route.ts)
 - [convex/auth.ts](file://convex/auth.ts)
 - [src/lib/auth/password.ts](file://src/lib/auth/password.ts)

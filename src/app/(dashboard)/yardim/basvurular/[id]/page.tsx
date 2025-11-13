@@ -33,10 +33,26 @@ import logger from '@/lib/logger';
 
 const STAGE_LABELS = {
   draft: { label: 'Taslak', icon: Clock, color: 'bg-muted text-muted-foreground' },
-  under_review: { label: 'İnceleme', icon: Clock, color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' },
-  approved: { label: 'Onaylandı', icon: CheckCircle, color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' },
-  ongoing: { label: 'Devam Ediyor', icon: Clock, color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400' },
-  completed: { label: 'Tamamlandı', icon: CheckCircle, color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400' },
+  under_review: {
+    label: 'İnceleme',
+    icon: Clock,
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+  },
+  approved: {
+    label: 'Onaylandı',
+    icon: CheckCircle,
+    color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+  },
+  ongoing: {
+    label: 'Devam Ediyor',
+    icon: Clock,
+    color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400',
+  },
+  completed: {
+    label: 'Tamamlandı',
+    icon: CheckCircle,
+    color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400',
+  },
 };
 
 export default function AidApplicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -69,9 +85,7 @@ export default function AidApplicationDetailPage({ params }: { params: Promise<{
   });
 
   // Runtime validation of API response
-  const application = data?.data
-    ? validateAidApplicationDocument(data.data)
-    : null;
+  const application = data?.data ? validateAidApplicationDocument(data.data) : null;
 
   // Log validation failures for debugging
   if (data?.data && !application) {
@@ -162,9 +176,16 @@ export default function AidApplicationDetailPage({ params }: { params: Promise<{
                 <Label>Aşama Değiştir</Label>
                 <Select
                   value={application.stage}
-                  onValueChange={(value) => updateStageMutation.mutate({ 
-                    stage: value as 'draft' | 'under_review' | 'approved' | 'ongoing' | 'completed' 
-                  })}
+                  onValueChange={(value) =>
+                    updateStageMutation.mutate({
+                      stage: value as
+                        | 'draft'
+                        | 'under_review'
+                        | 'approved'
+                        | 'ongoing'
+                        | 'completed',
+                    })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -233,7 +254,9 @@ export default function AidApplicationDetailPage({ params }: { params: Promise<{
                   <Package className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   <h4 className="font-medium text-purple-900 dark:text-purple-300">Ayni Yardım</h4>
                 </div>
-                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{application.in_kind_aid} Adet</p>
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  {application.in_kind_aid} Adet
+                </p>
               </div>
             )}
 

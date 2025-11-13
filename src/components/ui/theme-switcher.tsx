@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, startTransition } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -23,37 +23,40 @@ export function ThemeSwitcher({ defaultTheme = 'system', className }: ThemeSwitc
 
   // Initialize theme
   // Apply theme to document
-  const applyTheme = useCallback((newTheme: Theme) => {
-    // Safely access document element
-    if (typeof document === 'undefined') return;
-    
-    const html = document.documentElement;
-    if (!html) return;
-    
-    let effectiveTheme = newTheme;
+  const applyTheme = useCallback(
+    (newTheme: Theme) => {
+      // Safely access document element
+      if (typeof document === 'undefined') return;
 
-    // Validate theme value to prevent XSS
-    if (!['light', 'dark', 'system'].includes(newTheme)) {
-      console.warn('Invalid theme value:', newTheme);
-      return;
-    }
+      const html = document.documentElement;
+      if (!html) return;
 
-    if (newTheme === 'system') {
-      effectiveTheme = getSystemTheme();
-    }
+      let effectiveTheme = newTheme;
 
-    if (effectiveTheme === 'dark') {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
+      // Validate theme value to prevent XSS
+      if (!['light', 'dark', 'system'].includes(newTheme)) {
+        console.warn('Invalid theme value:', newTheme);
+        return;
+      }
 
-    // Save preference
-    localStorage.setItem('theme', newTheme);
-  }, [getSystemTheme]);
+      if (newTheme === 'system') {
+        effectiveTheme = getSystemTheme();
+      }
+
+      if (effectiveTheme === 'dark') {
+        html.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+      }
+
+      // Save preference
+      localStorage.setItem('theme', newTheme);
+    },
+    [getSystemTheme]
+  );
 
   useEffect(() => {
-    setMounted(true);
+    startTransition(() => setMounted(true));
   }, []);
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export function ThemeSwitcher({ defaultTheme = 'system', className }: ThemeSwitc
     // Load saved theme
     const saved = localStorage.getItem('theme') as Theme | null;
     if (saved) {
-      setTheme(saved);
+      startTransition(() => setTheme(saved));
       applyTheme(saved);
     } else {
       const system = getSystemTheme();
@@ -112,11 +115,7 @@ export function ThemeSwitcher({ defaultTheme = 'system', className }: ThemeSwitc
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`${isDark ? 'Light' : 'Dark'} mode`}
     >
-      {isDark ? (
-        <Sun className="h-5 w-5" />
-      ) : (
-        <Moon className="h-5 w-5" />
-      )}
+      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </button>
   );
 }
@@ -124,17 +123,17 @@ export function ThemeSwitcher({ defaultTheme = 'system', className }: ThemeSwitc
 /**
  * CSS for dark mode support
  * Add this to your globals.css or tailwind config:
- * 
+ *
  * @media (prefers-color-scheme: dark) {
  *   :root {
  *     color-scheme: dark;
  *   }
  * }
- * 
+ *
  * html.dark {
  *   color-scheme: dark;
  * }
- * 
+ *
  * html.light {
  *   color-scheme: light;
  * }

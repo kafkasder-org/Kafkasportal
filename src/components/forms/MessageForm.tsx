@@ -437,11 +437,15 @@ export function MessageForm({
             {errors.recipients && (
               <p className="text-sm text-red-600">{errors.recipients.message}</p>
             )}
-            {messageType === 'internal' && selectedRecipients.length === 0 && !isLoadingUsers && users.length === 0 && (
-              <p className="text-sm text-gray-500">
-                Kayıtlı kullanıcı bulunamadı. Kurum içi mesaj göndermek için önce kullanıcı ekleyin.
-              </p>
-            )}
+            {messageType === 'internal' &&
+              selectedRecipients.length === 0 &&
+              !isLoadingUsers &&
+              users.length === 0 && (
+                <p className="text-sm text-gray-500">
+                  Kayıtlı kullanıcı bulunamadı. Kurum içi mesaj göndermek için önce kullanıcı
+                  ekleyin.
+                </p>
+              )}
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedRecipients.map((recipient, index) => (
                 <Badge key={index} variant="secondary" className="flex items-center gap-1">
@@ -525,7 +529,9 @@ export function MessageForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => { setShowPreview(!showPreview); }}
+              onClick={() => {
+                setShowPreview(!showPreview);
+              }}
               className="w-full"
             >
               {showPreview ? 'Önizlemeyi Gizle' : 'Önizleme'}

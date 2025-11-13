@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Fields and Data Structure](#core-fields-and-data-structure)
 3. [Status Lifecycle and Workflow](#status-lifecycle-and-workflow)
@@ -22,12 +23,15 @@
 10. [Frontend Implementation](#frontend-implementation)
 
 ## Introduction
+
 The Scholarship Application entity in the Kafkasder-panel application represents a comprehensive system for managing scholarship applications. This document details the implementation of the application entity, including its data structure, workflow, relationships, and API interface. The entity serves as a central component in the scholarship management system, capturing applicant information, academic details, financial need, and supporting documentation.
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L128-L155)
 
 ## Core Fields and Data Structure
+
 The Scholarship Application entity contains comprehensive information about applicants and their circumstances. Key fields include:
 
 - **scholarshipId**: Reference to the scholarship being applied for
@@ -55,10 +59,12 @@ The Scholarship Application entity contains comprehensive information about appl
 The data structure is designed to capture both academic merit and financial need factors for comprehensive evaluation.
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L128-L155)
 - [aid_applications.ts](file://convex/aid_applications.ts#L55-L88)
 
 ## Status Lifecycle and Workflow
+
 The application status field implements a comprehensive lifecycle management system with the following possible values:
 
 - **DRAFT**: Application is being prepared
@@ -91,9 +97,11 @@ CANCELLED --> [*]
 ```
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L16-L25)
 
 ## Priority Scoring System
+
 The priority scoring system enables ranking and sorting of applications based on urgency and need. The priority field uses a numerical value that can be calculated from various factors including:
 
 - Financial need severity
@@ -105,10 +113,12 @@ The priority scoring system enables ranking and sorting of applications based on
 The system allows administrators to manually adjust priority scores or use automated scoring algorithms based on predefined criteria. Higher priority scores indicate applications that should be reviewed first or given special consideration.
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L142)
 - [aid_applications.ts](file://convex/aid_applications.ts#L80-L87)
 
 ## Relationships with Other Entities
+
 The Scholarship Application entity maintains critical relationships with other system entities:
 
 - **Scholarship**: One-to-many relationship where one scholarship can have multiple applications
@@ -182,11 +192,13 @@ SCHOLARSHIP_APPLICATION ||--o{ DOCUMENT : "has"
 ```
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L62-L80)
 - [scholarship.ts](file://src/types/scholarship.ts#L82-L115)
 - [scholarship.ts](file://src/types/scholarship.ts#L157-L166)
 
 ## Indexing Strategy
+
 The application entity implements an efficient indexing strategy to support various query patterns:
 
 - **by_scholarship**: Index on scholarshipId for retrieving all applications for a specific scholarship
@@ -197,9 +209,11 @@ The application entity implements an efficient indexing strategy to support vari
 These indexes ensure optimal performance for common operations such as listing applications by scholarship, filtering by status, and searching by applicant identity.
 
 **Section sources**
+
 - [aid_applications.ts](file://convex/aid_applications.ts#L19-L30)
 
 ## Application Workflow
+
 The application workflow encompasses the complete lifecycle from creation to final disposition:
 
 1. **Creation**: Applicants or administrators create a new application, initially in DRAFT status
@@ -234,10 +248,12 @@ M --> N[Finalize Record]
 ```
 
 **Diagram sources**
+
 - [aid_applications.ts](file://convex/aid_applications.ts#L55-L92)
 - [route.ts](file://src/app/api/aid-applications/route.ts#L61-L98)
 
 ## API Methods
+
 The Scholarship Application entity exposes a comprehensive API for managing applications:
 
 - **list**: Retrieve applications with optional filtering by scholarship, status, or beneficiary
@@ -249,9 +265,11 @@ The Scholarship Application entity exposes a comprehensive API for managing appl
 The API supports pagination, filtering, and sorting to handle large volumes of applications efficiently. Authentication and authorization are enforced to ensure only authorized users can access or modify application data.
 
 **Section sources**
+
 - [aid_applications.ts](file://convex/aid_applications.ts#L5-L162)
 
 ## Validation Rules
+
 The application entity implements comprehensive validation rules to ensure data quality:
 
 - Required fields validation (applicant_name, application_date, etc.)
@@ -264,10 +282,12 @@ The application entity implements comprehensive validation rules to ensure data 
 Validation occurs at multiple levels: frontend form validation, API request validation, and database schema validation to provide robust data integrity.
 
 **Section sources**
+
 - [aid-application.ts](file://src/lib/validations/aid-application.ts#L8-L45)
 - [route.ts](file://src/app/api/aid-applications/route.ts#L6-L27)
 
 ## Frontend Implementation
+
 The frontend implementation provides a user-friendly interface for managing scholarship applications:
 
 - **AidApplicationForm**: React component for creating and editing applications
@@ -282,5 +302,6 @@ The frontend implementation provides a user-friendly interface for managing scho
 The form interface guides users through the application process with clear sections for personal information, academic details, financial information, and supporting documents.
 
 **Section sources**
+
 - [AidApplicationForm.tsx](file://src/components/forms/AidApplicationForm.tsx#L27-L42)
 - [AidApplicationForm.tsx](file://src/components/forms/AidApplicationForm.tsx#L110-L349)

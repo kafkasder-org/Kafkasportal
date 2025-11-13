@@ -58,7 +58,7 @@ export function useStandardForm<TFormData extends FieldValues = any, TResponse =
   showErrorToast = true,
 }: UseStandardFormOptions<TFormData, TResponse>): UseStandardFormReturn<TFormData, TResponse> {
   const form = useForm<TFormData>({
-    resolver: zodResolver(schema) as any,
+    resolver: zodResolver(schema as any) as any,
     defaultValues: defaultValues as any,
     mode: 'onBlur',
   });

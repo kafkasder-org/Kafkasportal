@@ -25,10 +25,7 @@ function validateActionItem(data: Record<string, unknown>) {
     errors.push('Oluşturan kullanıcı zorunludur');
   }
 
-  if (
-    data.status &&
-    !['beklemede', 'devam', 'hazir', 'iptal'].includes(data.status as string)
-  ) {
+  if (data.status && !['beklemede', 'devam', 'hazir', 'iptal'].includes(data.status as string)) {
     errors.push('Geçersiz görev durumu');
   }
 
@@ -137,4 +134,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

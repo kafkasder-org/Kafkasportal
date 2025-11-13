@@ -22,11 +22,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Separator } from '@/components/ui/separator';
 
-import {
-  BeneficiaryCategory,
-  FundRegion,
-  FileConnection,
-} from '@/types/beneficiary';
+import { BeneficiaryCategory, FundRegion, FileConnection } from '@/types/beneficiary';
 import {
   quickAddBeneficiarySchema,
   QuickAddBeneficiaryFormData,

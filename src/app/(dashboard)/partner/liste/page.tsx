@@ -80,7 +80,12 @@ export default function PartnersPage() {
     address: '',
     website: '',
     tax_number: '',
-    partnership_type: 'donor' as 'donor' | 'supplier' | 'volunteer' | 'sponsor' | 'service_provider',
+    partnership_type: 'donor' as
+      | 'donor'
+      | 'supplier'
+      | 'volunteer'
+      | 'sponsor'
+      | 'service_provider',
     status: 'active' as 'active' | 'inactive' | 'pending',
     notes: '',
   });
@@ -249,11 +254,19 @@ export default function PartnersPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">Aktif</Badge>;
+        return (
+          <Badge className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+            Aktif
+          </Badge>
+        );
       case 'inactive':
         return <Badge variant="secondary">Pasif</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400">Beklemede</Badge>;
+        return (
+          <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400">
+            Beklemede
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -298,7 +311,9 @@ export default function PartnersPage() {
                     <Label htmlFor="create-type">Tür</Label>
                     <Select
                       value={formData.type}
-                      onValueChange={(value: any) => setFormData((prev) => ({ ...prev, type: value }))}
+                      onValueChange={(value: any) =>
+                        setFormData((prev) => ({ ...prev, type: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -314,7 +329,9 @@ export default function PartnersPage() {
                     <Label htmlFor="create-partnership-type">İşbirliği Türü</Label>
                     <Select
                       value={formData.partnership_type}
-                      onValueChange={(value: any) => setFormData((prev) => ({ ...prev, partnership_type: value }))}
+                      onValueChange={(value: any) =>
+                        setFormData((prev) => ({ ...prev, partnership_type: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -333,7 +350,9 @@ export default function PartnersPage() {
                     <Input
                       id="create-contact-person"
                       value={formData.contact_person}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, contact_person: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, contact_person: e.target.value }))
+                      }
                     />
                   </div>
                   <div>
@@ -357,7 +376,9 @@ export default function PartnersPage() {
                     <Label htmlFor="create-status">Durum</Label>
                     <Select
                       value={formData.status}
-                      onValueChange={(value: any) => setFormData((prev) => ({ ...prev, status: value }))}
+                      onValueChange={(value: any) =>
+                        setFormData((prev) => ({ ...prev, status: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -374,7 +395,9 @@ export default function PartnersPage() {
                     <Input
                       id="create-address"
                       value={formData.address}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, address: e.target.value }))
+                      }
                     />
                   </div>
                   <div className="col-span-2">
@@ -480,7 +503,9 @@ export default function PartnersPage() {
                     <TableCell>
                       <div className="text-sm">
                         {partner.contact_person && <div>{partner.contact_person}</div>}
-                        {partner.email && <div className="text-muted-foreground">{partner.email}</div>}
+                        {partner.email && (
+                          <div className="text-muted-foreground">{partner.email}</div>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(partner.status)}</TableCell>
@@ -492,11 +517,11 @@ export default function PartnersPage() {
                     <TableCell className="text-right">
                       <div className="flex justify-end space-x-2">
                         <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditPartner(partner)}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditPartner(partner)}
                         >
-                        <EditIcon className="w-4 h-4" />
+                          <EditIcon className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="outline"
@@ -558,7 +583,9 @@ export default function PartnersPage() {
               <Label htmlFor="edit-partnership-type">İşbirliği Türü</Label>
               <Select
                 value={formData.partnership_type}
-                onValueChange={(value: any) => setFormData((prev) => ({ ...prev, partnership_type: value }))}
+                onValueChange={(value: any) =>
+                  setFormData((prev) => ({ ...prev, partnership_type: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -577,7 +604,9 @@ export default function PartnersPage() {
               <Input
                 id="edit-contact-person"
                 value={formData.contact_person}
-                onChange={(e) => setFormData((prev) => ({ ...prev, contact_person: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, contact_person: e.target.value }))
+                }
               />
             </div>
             <div>

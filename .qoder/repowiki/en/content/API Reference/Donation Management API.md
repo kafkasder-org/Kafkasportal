@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [API Endpoints](#api-endpoints)
    - [GET /api/donations](#get-apidonations)
@@ -29,20 +30,24 @@
 9. [Usage Examples](#usage-examples)
 
 ## Introduction
+
 The Donation Management API provides comprehensive functionality for managing donation records within the system. It supports standard donation tracking as well as specialized kumbara (piggy bank) collection workflows. The API enables creation, retrieval, updating, and analysis of donation records with robust filtering capabilities, file attachment support, and integration with financial systems.
 
 The API is built on a Next.js backend with Convex as the database layer, providing real-time data synchronization and serverless functions. All endpoints require proper authentication and CSRF protection to ensure data security.
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L1-L149)
 - [route.ts](file://src/app/api/donations/route.ts#L1-L148)
 
 ## API Endpoints
 
 ### GET /api/donations
+
 Retrieves a paginated list of donation records with optional filtering parameters.
 
 **Query Parameters:**
+
 - `limit` (number, optional): Maximum number of records to return (default: 50)
 - `skip` (number, optional): Number of records to skip for pagination
 - `status` (string, optional): Filter by donation status (pending, completed, cancelled)
@@ -50,6 +55,7 @@ Retrieves a paginated list of donation records with optional filtering parameter
 - `is_kumbara` (boolean, optional): Filter by kumbara donation status
 
 **Response Format:**
+
 ```json
 {
   "success": true,
@@ -75,13 +81,16 @@ Retrieves a paginated list of donation records with optional filtering parameter
 ```
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L5-L52)
 - [route.ts](file://src/app/api/donations/route.ts#L54-L82)
 
 ### POST /api/donations
+
 Creates a new donation record in the system.
 
 **Request Body (Required Fields):**
+
 - `donor_name` (string): Name of the donor
 - `donor_phone` (string): Phone number of the donor
 - `amount` (number): Donation amount (must be positive)
@@ -92,6 +101,7 @@ Creates a new donation record in the system.
 - `receipt_number` (string): Unique receipt number
 
 **Request Body (Optional Kumbara Fields):**
+
 - `is_kumbara` (boolean): Indicates if this is a kumbara collection
 - `kumbara_location` (string): Location where kumbara was collected
 - `collection_date` (string): Date when kumbara was collected
@@ -103,6 +113,7 @@ Creates a new donation record in the system.
 - `route_duration` (number): Duration of collection route
 
 **Response Format:**
+
 ```json
 {
   "success": true,
@@ -117,16 +128,20 @@ Creates a new donation record in the system.
 ```
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L77-L108)
 - [route.ts](file://src/app/api/donations/route.ts#L89-L145)
 
 ### GET /api/donations/[id]
+
 Retrieves detailed information about a specific donation record by ID.
 
 **Path Parameter:**
+
 - `id` (string): The unique identifier of the donation record
 
 **Response Format:**
+
 ```json
 {
   "success": true,
@@ -167,21 +182,26 @@ Retrieves detailed information about a specific donation record by ID.
 ```
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L56-L61)
 - [\[id\]/route.ts](file://src/app/api/donations/[id]/route.ts#L42-L78)
 
 ### PUT /api/donations/[id]
+
 Updates an existing donation record.
 
 **Path Parameter:**
+
 - `id` (string): The unique identifier of the donation record
 
 **Request Body (Updatable Fields):**
+
 - `status` (string, optional): Updated status (pending, completed, cancelled)
 - `amount` (number, optional): Updated donation amount
 - `notes` (string, optional): Additional notes or comments
 
 **Response Format:**
+
 ```json
 {
   "success": true,
@@ -196,13 +216,16 @@ Updates an existing donation record.
 ```
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L112-L133)
 - [\[id\]/route.ts](file://src/app/api/donations/[id]/route.ts#L84-L137)
 
 ### GET /api/donations/stats
+
 Retrieves donation analytics and reporting data.
 
 **Query Parameters:**
+
 - `type` (string, optional): Type of statistics to retrieve
   - `overview`: Summary statistics (default)
   - `monthly`: Monthly donation trends
@@ -210,6 +233,7 @@ Retrieves donation analytics and reporting data.
   - `payment`: Distribution by payment method
 
 **Response Format (Overview):**
+
 ```json
 {
   "success": true,
@@ -226,6 +250,7 @@ Retrieves donation analytics and reporting data.
 ```
 
 **Response Format (Monthly):**
+
 ```json
 {
   "success": true,
@@ -240,15 +265,18 @@ Retrieves donation analytics and reporting data.
 ```
 
 **Section sources**
+
 - [stats/route.ts](file://src/app/api/donations/stats/route.ts#L22-L198)
 - [donations.ts](file://convex/donations.ts#L5-L52)
 
 ## Data Models
 
 ### Donation Document Structure
+
 The donation document contains comprehensive information about each donation, including donor details, financial information, and kumbara-specific data.
 
 **Core Fields:**
+
 - `donor_name`: Donor's full name
 - `donor_phone`: Donor's contact phone number
 - `donor_email`: Donor's email address
@@ -263,6 +291,7 @@ The donation document contains comprehensive information about each donation, in
 - `notes`: Additional comments or notes
 
 **Kumbara-Specific Fields:**
+
 - `is_kumbara`: Flag indicating kumbara collection
 - `kumbara_location`: Collection location name
 - `collection_date`: Date of collection
@@ -274,13 +303,16 @@ The donation document contains comprehensive information about each donation, in
 - `route_duration`: Duration of collection activity
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L77-L105)
 - [kumbara.ts](file://src/lib/validations/kumbara.ts#L5-L77)
 
 ## Kumbara Donation Workflow
+
 The Kumbara donation workflow supports specialized collection activities where donations are gathered from physical piggy banks at various locations. This workflow includes enhanced tracking of collection routes, locations, and team activities.
 
 **Workflow Steps:**
+
 1. **Collection Planning**: Define collection route with multiple kumbara locations
 2. **Field Collection**: Collect donations at each location, recording GPS coordinates
 3. **Data Entry**: Enter donation details with kumbara-specific information
@@ -291,13 +323,16 @@ The Kumbara donation workflow supports specialized collection activities where d
 The system supports both individual kumbara collections and batch processing of multiple collections from a single route.
 
 **Section sources**
+
 - [kumbara.ts](file://src/lib/validations/kumbara.ts#L5-L77)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L27-L40)
 
 ## Validation Rules
+
 The API enforces strict validation rules to ensure data quality and consistency.
 
 **Required Field Validations:**
+
 - `donor_name`: Minimum 2 characters
 - `donor_phone`: Valid Turkish phone number format (5XXXXXXXXX)
 - `amount`: Positive number greater than 0
@@ -308,6 +343,7 @@ The API enforces strict validation rules to ensure data quality and consistency.
 - `receipt_number`: Minimum 3 characters
 
 **Data Type Validations:**
+
 - Phone numbers must follow Turkish mobile format
 - Email addresses must be valid format
 - Amounts must be positive numbers
@@ -315,6 +351,7 @@ The API enforces strict validation rules to ensure data quality and consistency.
 - Coordinates must be valid latitude/longitude values
 
 **Kumbara-Specific Validations:**
+
 - `kumbara_location`: Minimum 2 characters
 - `kumbara_institution`: Minimum 2 characters
 - `collection_date`: Required and valid date
@@ -323,42 +360,51 @@ The API enforces strict validation rules to ensure data quality and consistency.
 - `route_duration`: Positive number
 
 **Section sources**
+
 - [kumbara.ts](file://src/lib/validations/kumbara.ts#L5-L77)
 - [route.ts](file://src/app/api/donations/route.ts#L14-L48)
 
 ## File Attachment and Storage
+
 The system supports file attachments for donation records, primarily for receipt documentation.
 
 **Attachment Process:**
+
 1. Upload file to `/api/storage/upload` endpoint
 2. Receive file ID in response
 3. Include file ID in donation creation/update request
 4. File is securely stored and linked to donation record
 
 **Supported File Types:**
+
 - Images (PNG, JPG, JPEG)
 - PDF documents
 
 **File Constraints:**
+
 - Maximum size: 5MB
 - Required fields: `file`, `bucket` (set to "receipts")
 
 The storage system automatically generates secure URLs for file access while maintaining proper access controls.
 
 **Section sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L152-L167)
 - [storage/upload/route.ts](file://src/app/api/storage/upload/route.ts)
 
 ## Financial Record Integration
+
 Donation records are automatically integrated with the financial management system to ensure proper accounting and reporting.
 
 **Integration Process:**
+
 1. When a donation status changes to "completed"
 2. A corresponding finance record is created
 3. The record is linked to the original donation
 4. Financial metrics are updated in real-time
 
 **Finance Record Creation:**
+
 - `record_type`: "income"
 - `category`: Based on donation type
 - `amount`: Donation amount
@@ -373,13 +419,16 @@ Donation records are automatically integrated with the financial management syst
 This integration ensures that all donations are properly accounted for in financial reports and dashboards.
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts#L55-L76)
 - [donations.ts](file://convex/donations.ts#L77-L108)
 
 ## Error Handling
+
 The API implements comprehensive error handling to provide meaningful feedback to clients.
 
 **Common Error Responses:**
+
 - `400 Bad Request`: Validation errors with detailed error messages
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
@@ -388,6 +437,7 @@ The API implements comprehensive error handling to provide meaningful feedback t
 - `500 Internal Server Error`: Unexpected server errors
 
 **Error Response Format:**
+
 ```json
 {
   "success": false,
@@ -399,12 +449,14 @@ The API implements comprehensive error handling to provide meaningful feedback t
 The system logs all errors with contextual information for debugging and monitoring purposes.
 
 **Section sources**
+
 - [route.ts](file://src/app/api/donations/route.ts#L71-L82)
 - [\[id\]/route.ts](file://src/app/api/donations/[id]/route.ts#L117-L136)
 
 ## Usage Examples
 
 ### Standard Donation Creation
+
 ```json
 POST /api/donations
 {
@@ -422,6 +474,7 @@ POST /api/donations
 ```
 
 ### Kumbara Collection
+
 ```json
 POST /api/donations
 {
@@ -453,6 +506,7 @@ POST /api/donations
 ```
 
 ### Donation Update
+
 ```json
 PUT /api/donations/doc123
 {
@@ -462,10 +516,12 @@ PUT /api/donations/doc123
 ```
 
 ### Filtered Donation Retrieval
+
 ```http
 GET /api/donations?status=completed&is_kumbara=true&limit=25
 ```
 
 **Section sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L146-L183)
 - [kumbara.ts](file://src/lib/validations/kumbara.ts#L5-L77)

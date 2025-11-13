@@ -13,7 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import {
   Search,
@@ -33,10 +39,17 @@ import {
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const TaskForm = dynamic(() => import('@/components/forms/TaskForm').then(mod => ({ default: mod.TaskForm })), {
-  loading: () => <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>,
-  ssr: false,
-});
+const TaskForm = dynamic(
+  () => import('@/components/forms/TaskForm').then((mod) => ({ default: mod.TaskForm })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 import { KanbanBoard } from '@/components/tasks/KanbanBoard';
 import { toast } from 'sonner';
 import {
@@ -219,9 +232,9 @@ export default function TasksPage() {
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Yeni Görev Oluştur</DialogTitle>
-            </DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Yeni Görev Oluştur</DialogTitle>
+              </DialogHeader>
               <TaskForm
                 onSuccess={() => {
                   setShowCreateModal(false);
@@ -303,7 +316,9 @@ export default function TasksPage() {
             {/* Status Filter */}
             <Select
               value={statusFilter}
-              onValueChange={(value) => { setStatusFilter(value as StatusFilter); }}
+              onValueChange={(value) => {
+                setStatusFilter(value as StatusFilter);
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Durum" />
@@ -320,7 +335,9 @@ export default function TasksPage() {
             {/* Priority Filter */}
             <Select
               value={priorityFilter}
-              onValueChange={(value) => { setPriorityFilter(value as PriorityFilter); }}
+              onValueChange={(value) => {
+                setPriorityFilter(value as PriorityFilter);
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Öncelik" />
@@ -420,7 +437,9 @@ export default function TasksPage() {
                   <div
                     key={task._id}
                     className="border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() => { handleTaskClick(task); }}
+                    onClick={() => {
+                      handleTaskClick(task);
+                    }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 space-y-3">

@@ -325,7 +325,7 @@ export async function prefetchData(
  */
 export function createOptimizedQueryClient(): QueryClient {
   const isDev = process.env.NODE_ENV === 'development';
-  
+
   return new QueryClient({
     defaultOptions: {
       queries: {

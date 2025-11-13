@@ -8,23 +8,26 @@ interface PerformanceMetrics {
   lcp?: number; // Largest Contentful Paint
   fid?: number; // First Input Delay
   cls?: number; // Cumulative Layout Shift
-  
+
   // Custom metrics
   routeTransitionTime?: number;
   modalOpenTime?: number;
   scrollPerformance?: number;
   memoryUsage?: number;
-  
+
   // Navigation timing
   pageLoadTime?: number;
   domContentLoaded?: number;
   resourceLoadTime?: number;
 }
 
+type MetricsHandler = (metrics: PerformanceMetrics) => void;
+
 interface PerformanceMonitorProps {
   enableWebVitals?: boolean;
   enableCustomMetrics?: boolean;
-  onMetrics?: (metrics: PerformanceMetrics) =\u003e void;
+  onMetrics?: MetricsHandler;
+  routeName?: string;
 }
 
 export function PerformanceMonitor({
@@ -32,17 +35,17 @@ export function PerformanceMonitor({
   enableCustomMetrics = true,
   onMetrics,
 }: PerformanceMonitorProps) {
-  const routeStartTime = useRef\u003cnumber\u003e(0);
+  const routeStartTime = useRef<number>(0);
 
   // Web Vitals monitoring
-  useEffect(() =\u003e {
+  useEffect(() => {
     if (!enableWebVitals) return;
 
     // Largest Contentful Paint
-    const observer = new PerformanceObserver((list) =\u003e {
+    const observer = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1] as PerformanceEntry;
-      
+
       if (lastEntry) {
         const metrics: PerformanceMetrics = { lcp: lastEntry.startTime };
         onMetrics?.(metrics);
@@ -52,10 +55,12 @@ export function PerformanceMonitor({
     observer.observe({ entryTypes: ['largest-contentful-paint'] });
 
     // First Input Delay
-    const fidObserver = new PerformanceObserver((list) =\u003e {
+    const fidObserver = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         const firstInputEntry = entry as PerformanceEventTiming;
-        const metrics: PerformanceMetrics = { fid: firstInputEntry.processingStart - firstInputEntry.startTime };
+        const metrics: PerformanceMetrics = {
+          fid: firstInputEntry.processingStart - firstInputEntry.startTime,
+        };
         onMetrics?.(metrics);
       }
     });
@@ -64,7 +69,7 @@ export function PerformanceMonitor({
 
     // Cumulative Layout Shift
     let clsValue = 0;
-    const clsObserver = new PerformanceObserver((list) =\u003e {
+    const clsObserver = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         const layoutShiftEntry = entry as LayoutShift;
         if (!layoutShiftEntry.hadRecentInput) {
@@ -77,7 +82,7 @@ export function PerformanceMonitor({
 
     clsObserver.observe({ entryTypes: ['layout-shift'] });
 
-    return () =\u003e {
+    return () => {
       observer.disconnect();
       fidObserver.disconnect();
       clsObserver.disconnect();
@@ -85,12 +90,12 @@ export function PerformanceMonitor({
   }, [enableWebVitals, onMetrics]);
 
   // Route transition timing
-  useEffect(() =\u003e {
+  useEffect(() => {
     if (!enableCustomMetrics) return;
 
     routeStartTime.current = performance.now();
 
-    return () =\u003e {
+    return () => {
       if (routeStartTime.current) {
         const routeTransitionTime = performance.now() - routeStartTime.current;
         const metrics: PerformanceMetrics = { routeTransitionTime };
@@ -103,24 +108,24 @@ export function PerformanceMonitor({
 }
 
 // Custom hooks for performance tracking
-export const usePerformanceTracking = () =\u003e {
-  const trackModalOpen = useCallback(() =\u003e {
+export const usePerformanceTracking = () => {
+  const trackModalOpen = useCallback(() => {
     return performance.now();
   }, []);
 
-  const trackModalClose = useCallback((startTime: number) =\u003e {
+  const trackModalClose = useCallback((startTime: number) => {
     const modalOpenTime = performance.now() - startTime;
     return modalOpenTime;
   }, []);
 
-  const trackScrollPerformance = useCallback((callback: () =\u003e void) =\u003e {
+  const trackScrollPerformance = useCallback((callback: () => void) => {
     const startTime = performance.now();
     callback();
     const scrollPerformance = performance.now() - startTime;
     return scrollPerformance;
   }, []);
 
-  const getMemoryUsage = useCallback(() =\u003e {
+  const getMemoryUsage = useCallback(() => {
     if ('memory' in performance) {
       const memoryInfo = (performance as any).memory;
       return memoryInfo.usedJSHeapSize;
@@ -137,34 +142,34 @@ export const usePerformanceTracking = () =\u003e {
 };
 
 // Performance monitoring hook
-export const usePerformanceMonitor = () =\u003e {
-  const metricsRef = useRef\u003cPerformanceMetrics\u003e({});
+export const usePerformanceMonitor = (_context?: string) => {
+  const metricsRef = useRef<PerformanceMetrics>({});
   const { trackModalOpen, trackModalClose, getMemoryUsage } = usePerformanceTracking();
 
-  const trackRouteTransition = useCallback(() =\u003e {
+  const trackRouteTransition = useCallback(() => {
     const startTime = performance.now();
-    return () =\u003e {
+    return () => {
       const routeTransitionTime = performance.now() - startTime;
       metricsRef.current.routeTransitionTime = routeTransitionTime;
     };
   }, []);
 
-  const trackModalPerformance = useCallback(() =\u003e {
+  const trackModalPerformance = useCallback(() => {
     const startTime = trackModalOpen();
-    return () =\u003e {
+    return () => {
       const modalOpenTime = trackModalClose(startTime);
       metricsRef.current.modalOpenTime = modalOpenTime;
     };
   }, [trackModalOpen, trackModalClose]);
 
-  const updateMemoryUsage = useCallback(() =\u003e {
+  const updateMemoryUsage = useCallback(() => {
     const memoryUsage = getMemoryUsage();
     if (memoryUsage) {
       metricsRef.current.memoryUsage = memoryUsage;
     }
   }, [getMemoryUsage]);
 
-  const getMetrics = useCallback(() =\u003e {
+  const getMetrics = useCallback(() => {
     return { ...metricsRef.current };
   }, []);
 
@@ -176,7 +181,6 @@ export const usePerformanceMonitor = () =\u003e {
   };
 };
 
-// Performance boundary component
 interface PerformanceBoundaryProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
@@ -187,10 +191,10 @@ interface PerformanceBoundaryState {
   error?: Error;
 }
 
-export class PerformanceBoundary extends React.Component\u003c
+export class PerformanceBoundary extends React.Component<
   PerformanceBoundaryProps,
   PerformanceBoundaryState
-\u003e {
+> {
   constructor(props: PerformanceBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -202,9 +206,8 @@ export class PerformanceBoundary extends React.Component\u003c
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Performance Boundary Error:', error, errorInfo);
-    
-    // Track performance errors
-    if (typeof performance !== 'undefined' \u0026\u0026 performance.mark) {
+
+    if (typeof performance !== 'undefined' && performance.mark) {
       performance.mark('performance-error');
     }
   }
@@ -213,16 +216,16 @@ export class PerformanceBoundary extends React.Component\u003c
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          \u003cdiv className="text-center py-12"\u003e
-            \u003ch2 className="text-xl font-semibold text-red-600 mb-2"\u003eBir sorun oluştu\u003c/h2\u003e
-            \u003cp className="text-slate-600 mb-4"\u003eSayfa yüklenirken beklenmeyen bir hata oldu.\u003c/p\u003e
-            \u003cbutton
-              onClick={() =\u003e window.location.reload()}
+          <div className="text-center py-12">
+            <h2 className="text-xl font-semibold text-red-600 mb-2">Bir sorun oluştu</h2>
+            <p className="text-slate-600 mb-4">Sayfa yüklenirken beklenmeyen bir hata oldu.</p>
+            <button
+              onClick={() => window.location.reload()}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            \u003e
+            >
               Sayfayı Yenile
-            \u003c/button\u003e
-          \u003c/div\u003e
+            </button>
+          </div>
         )
       );
     }
@@ -231,23 +234,24 @@ export class PerformanceBoundary extends React.Component\u003c
   }
 }
 
-// FPS Monitor for real-time performance tracking
-export const useFPSMonitor = (enabled = true) =\u003e {
-  const fpsRef = useRef\u003cnumber\u003e(60);
-  const frameCountRef = useRef\u003cnumber\u003e(0);
-  const lastTimeRef = useRef\u003cnumber\u003e(0);
+export const useFPSMonitor = (enabled = true) => {
+  const fpsRef = useRef<number>(60);
+  const frameCountRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(0);
 
-  useEffect(() =\u003e {
+  useEffect(() => {
     if (!enabled) return;
 
     lastTimeRef.current = performance.now();
 
-    const measureFPS = () =\u003e {
+    const measureFPS = () => {
       frameCountRef.current++;
-      
+
       const currentTime = performance.now();
-      if (currentTime - lastTimeRef.current \u003e= 1000) {
-        fpsRef.current = Math.round((frameCountRef.current * 1000) / (currentTime - lastTimeRef.current));
+      if (currentTime - lastTimeRef.current >= 1000) {
+        fpsRef.current = Math.round(
+          (frameCountRef.current * 1000) / (currentTime - lastTimeRef.current)
+        );
         frameCountRef.current = 0;
         lastTimeRef.current = currentTime;
       }
@@ -257,17 +261,17 @@ export const useFPSMonitor = (enabled = true) =\u003e {
 
     const animationId = requestAnimationFrame(measureFPS);
 
-    return () =\u003e {
+    return () => {
       cancelAnimationFrame(animationId);
     };
   }, [enabled]);
 
-  const getFPS = useCallback(() =\u003e {
+  const getFPS = useCallback(() => {
     return fpsRef.current;
   }, []);
 
-  const isGoodPerformance = useCallback(() =\u003e {
-    return fpsRef.current \u003e= 55; // Good performance threshold
+  const isGoodPerformance = useCallback(() => {
+    return fpsRef.current >= 55;
   }, []);
 
   return {
@@ -276,21 +280,20 @@ export const useFPSMonitor = (enabled = true) =\u003e {
   };
 };
 
-// Performance optimized console logger
 export const perfLog = {
-  info: (message: string, data?: any) =\u003e {
+  info: (message: string, data?: any) => {
     if (process.env.NODE_ENV === 'development') {
       console.log(`🚀 [PERF] ${message}`, data);
     }
   },
-  
-  warn: (message: string, data?: any) =\u003e {
+
+  warn: (message: string, data?: any) => {
     if (process.env.NODE_ENV === 'development') {
       console.warn(`⚠️ [PERF] ${message}`, data);
     }
   },
-  
-  error: (message: string, data?: any) =\u003e {
+
+  error: (message: string, data?: any) => {
     console.error(`❌ [PERF] ${message}`, data);
   },
 };

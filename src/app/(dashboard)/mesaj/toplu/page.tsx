@@ -33,10 +33,17 @@ import {
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const MessageForm = dynamic(() => import('@/components/forms/MessageForm').then(mod => ({ default: mod.MessageForm })), {
-  loading: () => <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>,
-  ssr: false,
-});
+const MessageForm = dynamic(
+  () => import('@/components/forms/MessageForm').then((mod) => ({ default: mod.MessageForm })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 import { RecipientSelector } from '@/components/messages/RecipientSelector';
 import { MessageTemplateSelector } from '@/components/messages/MessageTemplateSelector';
 import {
@@ -104,7 +111,6 @@ export default function BulkMessagingPage() {
   // });
 
   const historyResponse = { data: [] };
-  
 
   const historyMessages = historyResponse?.data || [];
 

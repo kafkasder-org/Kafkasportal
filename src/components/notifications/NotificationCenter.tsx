@@ -50,7 +50,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
   const handleMarkAsRead = async (notificationId: Id<'workflow_notifications'>) => {
     try {
       await markAsRead({ id: notificationId });
-    } catch (error) {
+    } catch (_error) {
       toast.error('Bildirim güncellenemedi');
     }
   };
@@ -59,7 +59,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
     try {
       await markAllAsRead({ recipient: userId });
       toast.success('Tüm bildirimler okundu olarak işaretlendi');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Bildirimler güncellenemedi');
     }
   };
@@ -68,7 +68,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
     try {
       await deleteNotification({ id: notificationId });
       toast.success('Bildirim silindi');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Bildirim silinemedi');
     }
   };
@@ -123,12 +123,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
           <h3 className="font-semibold text-lg">Bildirimler</h3>
           <div className="flex items-center gap-2">
             {unreadCount && unreadCount > 0 ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleMarkAllAsRead}
-                className="text-xs"
-              >
+              <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} className="text-xs">
                 <CheckCheck className="h-4 w-4 mr-1" />
                 Tümünü Okundu İşaretle
               </Button>
@@ -136,7 +131,11 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'all' | 'unread')} className="w-full">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as 'all' | 'unread')}
+          className="w-full"
+        >
           <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="all">Tümü</TabsTrigger>
             <TabsTrigger value="unread">

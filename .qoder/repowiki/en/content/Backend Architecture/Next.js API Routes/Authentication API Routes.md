@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Authentication API Endpoints](#authentication-api-endpoints)
    - [POST /api/auth/login](#post-apiauthlogin)
@@ -28,9 +29,11 @@
 6. [Error Handling](#error-handling)
 
 ## Introduction
+
 The Kafkasder-panel authentication system provides a secure API for user authentication and session management. This documentation details the authentication endpoints, their integration with Convex backend functions, and the security mechanisms implemented throughout the authentication flow. The system uses HttpOnly cookies for session management, CSRF tokens for protection against cross-site request forgery, and rate limiting to prevent brute-force attacks.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts)
 - [session/route.ts](file://src/app/api/auth/session/route.ts)
@@ -39,11 +42,13 @@ The Kafkasder-panel authentication system provides a secure API for user authent
 ## Authentication API Endpoints
 
 ### POST /api/auth/login
+
 Handles user login with CSRF protection, password verification, and session cookie creation.
 
 **HTTP Method**: POST
 
 **Request Schema**:
+
 ```json
 {
   "email": "string",
@@ -53,6 +58,7 @@ Handles user login with CSRF protection, password verification, and session cook
 ```
 
 **Response Schema (Success)**:
+
 ```json
 {
   "success": true,
@@ -78,6 +84,7 @@ Handles user login with CSRF protection, password verification, and session cook
 ```
 
 **Response Schema (Error)**:
+
 ```json
 {
   "success": false,
@@ -91,6 +98,7 @@ Handles user login with CSRF protection, password verification, and session cook
 **Authentication Requirements**: None (public endpoint)
 
 **Error Codes**:
+
 - `400 Bad Request`: Missing email or password
 - `401 Unauthorized`: Invalid credentials
 - `403 Forbidden`: Inactive account
@@ -98,11 +106,13 @@ Handles user login with CSRF protection, password verification, and session cook
 - `500 Internal Server Error`: Server error during login process
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [auth.ts](file://convex/auth.ts)
 - [password.ts](file://src/lib/auth/password.ts)
 
 ### POST /api/auth/logout
+
 Clears session cookie and logs out the user.
 
 **HTTP Method**: POST
@@ -110,6 +120,7 @@ Clears session cookie and logs out the user.
 **Request Schema**: None
 
 **Response Schema (Success)**:
+
 ```json
 {
   "success": true,
@@ -118,6 +129,7 @@ Clears session cookie and logs out the user.
 ```
 
 **Response Schema (Error)**:
+
 ```json
 {
   "success": true,
@@ -128,13 +140,16 @@ Clears session cookie and logs out the user.
 **Authentication Requirements**: None (public endpoint, but requires active session)
 
 **Error Codes**:
+
 - `200 OK`: Logout successful (even if errors occur during cookie cleanup)
 - `500 Internal Server Error`: Error during logout process (still returns success)
 
 **Section sources**
+
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts)
 
 ### GET /api/auth/session
+
 Retrieves current session information for client-side authentication state initialization.
 
 **HTTP Method**: GET
@@ -142,6 +157,7 @@ Retrieves current session information for client-side authentication state initi
 **Request Schema**: None
 
 **Response Schema (Success)**:
+
 ```json
 {
   "success": true,
@@ -153,6 +169,7 @@ Retrieves current session information for client-side authentication state initi
 ```
 
 **Response Schema (Error)**:
+
 ```json
 {
   "success": false,
@@ -163,24 +180,29 @@ Retrieves current session information for client-side authentication state initi
 **Authentication Requirements**: Requires valid session cookie
 
 **Error Codes**:
+
 - `401 Unauthorized`: No active session or session expired
 - `401 Unauthorized`: Invalid session data
 - `500 Internal Server Error`: Server error during session validation
 
 **Section sources**
+
 - [session/route.ts](file://src/app/api/auth/session/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
 ### GET /api/auth/dev-login
+
 Development-only login bypass endpoint that creates a mock session for testing.
 
 **HTTP Method**: GET
 
 **Query Parameters**:
+
 - `user`: Mock user identifier (default: mock-admin-1)
 - `redirect`: Redirect path after login (default: /)
 
 **Allowed Mock Users**:
+
 - mock-admin-1
 - mock-admin-2
 - mock-manager-1
@@ -188,6 +210,7 @@ Development-only login bypass endpoint that creates a mock session for testing.
 - mock-viewer-1
 
 **Response Schema (Success)**:
+
 ```json
 {
   "success": true
@@ -195,6 +218,7 @@ Development-only login bypass endpoint that creates a mock session for testing.
 ```
 
 **Response Schema (Error)**:
+
 ```json
 {
   "success": false,
@@ -205,6 +229,7 @@ Development-only login bypass endpoint that creates a mock session for testing.
 **Authentication Requirements**: None (development only)
 
 **Error Codes**:
+
 - `400 Bad Request`: Invalid mock user
 - `404 Not Found`: Endpoint not available in production
 - `500 Internal Server Error`: Server error during dev login
@@ -212,16 +237,18 @@ Development-only login bypass endpoint that creates a mock session for testing.
 **Security Note**: This endpoint returns 404 in production to prevent discovery and usage.
 
 **Section sources**
+
 - [dev-login/route.ts](file://src/app/api/auth/dev-login/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
 ## Security Implementation
 
 ### CSRF Protection
+
 The authentication system implements CSRF protection using a dual-cookie approach:
 
 1. **CSRF Token Generation**: A cryptographically secure token is generated using `crypto.randomBytes()` when a user logs in successfully.
-2. **Cookie Strategy**: 
+2. **Cookie Strategy**:
    - `auth-session`: HttpOnly cookie containing session data (inaccessible to JavaScript)
    - `csrf-token`: Regular cookie containing the CSRF token (accessible to JavaScript)
 3. **Header Validation**: For state-changing operations (POST, PUT, PATCH, DELETE), the client must include the CSRF token in the `x-csrf-token` header.
@@ -241,14 +268,16 @@ Server->>Client : Process request if valid, 403 if invalid
 ```
 
 **Diagram sources**
+
 - [csrf.ts](file://src/lib/csrf.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 
 ### Rate Limiting
+
 The authentication endpoints are protected by rate limiting to prevent brute-force attacks:
 
 1. **Implementation**: Uses a rate limiter with configurable limits based on client IP, HTTP method, and endpoint path.
-2. **Configuration**: 
+2. **Configuration**:
    - 10 login attempts allowed per 10 minutes (configurable via environment variables)
    - Successful and failed requests are not counted toward the limit (prevents attackers from locking out legitimate users)
 3. **Headers**: Responses include rate limiting headers:
@@ -259,10 +288,12 @@ The authentication endpoints are protected by rate limiting to prevent brute-for
 The rate limiting is implemented through the `authRateLimit` middleware in `lib/rate-limit.ts`.
 
 **Section sources**
+
 - [rate-limit.ts](file://src/lib/rate-limit.ts)
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 
 ### Session Management
+
 The system uses HttpOnly cookies for secure session management:
 
 1. **Session Cookie**: `auth-session` cookie contains:
@@ -309,10 +340,12 @@ AuthResponse --> SessionUser : "returns"
 ```
 
 **Diagram sources**
+
 - [session.ts](file://src/lib/auth/session.ts)
 - [types/auth.ts](file://src/types/auth.ts)
 
 ## Client-Side Integration
+
 To integrate with the authentication API, clients should follow this flow:
 
 1. **Login Flow**:
@@ -329,15 +362,16 @@ To integrate with the authentication API, clients should follow this flow:
    - Clear any client-side authentication state
 
 Example client-side code:
+
 ```javascript
 // Login function
 async function login(email, password, rememberMe) {
   const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, rememberMe })
+    body: JSON.stringify({ email, password, rememberMe }),
   });
-  
+
   const data = await response.json();
   if (data.success) {
     // Login successful, CSRF token is automatically stored in cookie
@@ -350,21 +384,23 @@ async function login(email, password, rememberMe) {
 // API request with CSRF protection
 async function apiRequest(url, options = {}) {
   const csrfToken = getCsrfTokenFromCookie(); // Function from lib/csrf.ts
-  
+
   const headers = new Headers(options.headers);
   if (csrfToken && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(options.method || 'GET')) {
     headers.set('x-csrf-token', csrfToken);
   }
-  
+
   return fetch(url, { ...options, headers });
 }
 ```
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
 ## Security Considerations
+
 The authentication system implements multiple security measures:
 
 1. **Secure Cookie Flags**:
@@ -393,15 +429,18 @@ The authentication system implements multiple security measures:
    - Graceful degradation for logout operations (attempt to clear cookies even if errors occur)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts)
 - [dev-login/route.ts](file://src/app/api/auth/dev-login/route.ts)
 - [password.ts](file://src/lib/auth/password.ts)
 
 ## Error Handling
+
 The authentication API uses consistent error handling patterns:
 
 1. **Error Response Format**:
+
    ```json
    {
      "success": false,
@@ -428,6 +467,7 @@ The authentication API uses consistent error handling patterns:
    - Error details are captured for debugging but not exposed to clients
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [logout/route.ts](file://src/app/api/auth/logout/route.ts)
 - [session/route.ts](file://src/app/api/auth/session/route.ts)

@@ -8,6 +8,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Convex Client Initialization](#convex-client-initialization)
 3. [Provider Setup and Connection Management](#provider-setup-and-connection-management)
@@ -19,9 +20,11 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 This document details the real-time data synchronization implementation in Kafkasder-panel using Convex. The system leverages Convex's reactive capabilities to maintain automatic, bidirectional data updates between the backend and frontend through persistent WebSocket connections. This architecture enables immediate UI updates when data changes occur, providing a seamless user experience across the application's various modules including beneficiaries, donations, tasks, meetings, and more.
 
 ## Convex Client Initialization
+
 The Convex client initialization process in `src/lib/convex/client.ts` implements robust validation and error handling to ensure reliable connection establishment. The client creation is deferred during build time or when the Convex URL is invalid, preventing runtime errors in development and production environments.
 
 The initialization process includes comprehensive URL validation, checking for proper formatting, protocol specification (http/https), and the required `.convex.cloud` domain pattern. This defensive approach ensures that only valid URLs are used to create the Convex client instance.
@@ -38,12 +41,15 @@ G --> H[Initialize Successfully]
 ```
 
 **Diagram sources**
+
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 
 **Section sources**
+
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 
 ## Provider Setup and Connection Management
+
 The application's provider setup in `providers.tsx` orchestrates the integration of Convex with other essential services, including React Query for data fetching and caching. The provider component conditionally wraps the application with `ConvexProvider` only when Convex is properly configured and available.
 
 The connection management strategy employs a graceful fallback mechanism that allows the application to function without Convex during build processes or when configuration is incomplete. This ensures that the application remains operational while providing clear feedback about the Convex connection status.
@@ -61,12 +67,15 @@ H --> I[Process Real-time Updates]
 ```
 
 **Diagram sources**
+
 - [providers.tsx](file://src/app/providers.tsx#L1-L147)
 
 **Section sources**
+
 - [providers.tsx](file://src/app/providers.tsx#L1-L147)
 
 ## Data Model Structure and Synchronization
+
 The data model structure defined in `convex/schema.ts` establishes the foundation for efficient real-time synchronization. Each collection is designed with appropriate indexes and search capabilities to optimize query performance and enable reactive updates.
 
 The schema defines comprehensive data models for various entities including users, beneficiaries, donations, tasks, meetings, and workflow notifications. Each collection includes carefully designed indexes that support efficient querying and filtering, which is crucial for real-time applications where performance directly impacts user experience.
@@ -108,12 +117,15 @@ datetime transaction_date
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L1-L1446)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L1-L1446)
 
 ## Query Subscription and Reactive Updates
+
 The real-time data synchronization system implements a subscription-based model where frontend components automatically receive updates when underlying data changes. This reactive approach eliminates the need for manual polling and ensures that the UI always reflects the current state of the data.
 
 When a component subscribes to a query, Convex establishes a persistent WebSocket connection that remains open for the duration of the subscription. Any changes to the queried data trigger immediate push notifications to all subscribed clients, which then automatically re-execute the query to fetch the updated data.
@@ -139,10 +151,12 @@ ConvexProvider->>Component : update component state
 ```
 
 **Diagram sources**
+
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 - [providers.tsx](file://src/app/providers.tsx#L1-L147)
 
 ## Connection Lifecycle and Reconnection Strategies
+
 The connection lifecycle management system implements robust strategies for handling connection establishment, maintenance, and recovery. The system is designed to gracefully handle network interruptions and automatically re-establish connections when possible.
 
 During the initial connection phase, the system performs comprehensive validation of the Convex URL and environment configuration. If the connection cannot be established, the system provides clear feedback through console messages in development mode, helping developers identify and resolve configuration issues.
@@ -163,10 +177,12 @@ Connected --> [*] : "application closed"
 ```
 
 **Diagram sources**
+
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 - [providers.tsx](file://src/app/providers.tsx#L1-L147)
 
 ## Performance Optimization Techniques
+
 The real-time synchronization system incorporates several performance optimization techniques to ensure efficient data handling and minimize resource consumption.
 
 Selective subscription allows components to subscribe only to the specific data they need, reducing the amount of data transferred over the WebSocket connection. This targeted approach improves both network efficiency and client-side performance.
@@ -191,10 +207,12 @@ D --> L[Fetch minimal required data]
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L1-L1446)
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 
 ## Debugging and Monitoring with Convex DevTools
+
 The application integrates Convex DevTools to provide comprehensive debugging and monitoring capabilities for real-time behavior. These tools enable developers to inspect active subscriptions, monitor WebSocket traffic, and analyze query performance.
 
 In development mode, the system exposes debug utilities through the browser's window object, allowing for manual inspection of the authentication store, query client, and cache utilities. This facilitates troubleshooting and performance analysis during development.
@@ -218,10 +236,12 @@ D --> M[Examine Cache State]
 ```
 
 **Diagram sources**
+
 - [providers.tsx](file://src/app/providers.tsx#L1-L147)
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 
 ## Conclusion
+
 The real-time data synchronization implementation in Kafkasder-panel using Convex provides a robust and efficient solution for maintaining data consistency between the backend and frontend. By leveraging persistent WebSocket connections and reactive query subscriptions, the system ensures that users always see the most current data without the need for manual refreshes.
 
 The architecture combines Convex's real-time capabilities with React Query's caching mechanisms to deliver optimal performance and user experience. Comprehensive connection management, reconnection strategies, and debugging tools ensure reliability and maintainability across different environments and network conditions.

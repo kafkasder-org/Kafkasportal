@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [User Roles and Permissions Storage](#user-roles-and-permissions-storage)
 3. [Permission Checking Methods](#permission-checking-methods)
@@ -19,9 +20,11 @@
 7. [Implementation Examples](#implementation-examples)
 
 ## Introduction
+
 The role-based access control (RBAC) system in this application provides a comprehensive security framework for managing user access to various features and resources. The system combines role-based and permission-based authorization to enable fine-grained access control. This document explains how user roles and permissions are stored, retrieved, and evaluated throughout the application.
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts)
 - [permissions.ts](file://src/types/permissions.ts)
 
@@ -48,9 +51,11 @@ timestamp lastLogin
 ```
 
 **Diagram sources**
+
 - [users.ts](file://convex/users.ts#L84-L220)
 
 **Section sources**
+
 - [users.ts](file://convex/users.ts#L84-L220)
 - [authStore.ts](file://src/stores/authStore.ts#L65-L89)
 
@@ -81,10 +86,12 @@ AuthActions --> AuthState : "uses"
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L43-L47)
 - [authStore.ts](file://src/stores/authStore.ts#L277-L305)
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L43-L47)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L29-L58)
 
@@ -106,11 +113,13 @@ UI->>UI : Render based on result
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L44)
 - [authStore.ts](file://src/stores/authStore.ts#L284-L289)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L60-L70)
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L44)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L60-L70)
 
@@ -134,10 +143,12 @@ RedirectDashboard --> End
 ```
 
 **Diagram sources**
+
 - [proxy.ts](file://src/proxy.ts#L103-L138)
 - [proxy.ts](file://src/proxy.ts#L144-L227)
 
 **Section sources**
+
 - [proxy.ts](file://src/proxy.ts#L38-L98)
 - [authStore.ts](file://src/stores/authStore.ts#L108-L142)
 
@@ -180,10 +191,12 @@ PermissionValue <|-- SPECIAL_PERMISSIONS
 ```
 
 **Diagram sources**
+
 - [permissions.ts](file://src/types/permissions.ts#L1-L39)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L10-L11)
 
 **Section sources**
+
 - [permissions.ts](file://src/types/permissions.ts#L1-L39)
 - [authStore.ts](file://src/stores/authStore.ts#L14-L15)
 
@@ -207,9 +220,11 @@ ReturnFalse --> End
 ```
 
 **Diagram sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L277-L282)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L29-L41)
 
 **Section sources**
+
 - [authStore.ts](file://src/stores/authStore.ts#L277-L305)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L29-L70)

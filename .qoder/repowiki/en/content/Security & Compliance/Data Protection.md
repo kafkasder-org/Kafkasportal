@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Data Masking and Validation](#data-masking-and-validation)
 3. [Field-Level Encryption and Access Controls](#field-level-encryption-and-access-controls)
@@ -22,6 +23,7 @@
 6. [Developer Guidelines](#developer-guidelines)
 
 ## Introduction
+
 Kafkasder-panel implements comprehensive data protection measures to ensure compliance with Turkish KVKK regulations and international privacy standards. The system protects sensitive personal information through multiple layers of security including data masking, field-level encryption, strict access controls, and immutable audit logging. Special attention is given to protecting Turkish ID numbers (TC Kimlik No) through validation using the Luhn algorithm and secure storage practices. The system enforces a 7-year data retention policy as required by KVKK regulations and maintains immutable audit records for all critical operations. This documentation details the implementation of these data protection measures and provides guidance for developers on handling sensitive data in new features.
 
 ## Data Masking and Validation
@@ -45,11 +47,13 @@ ValidateEleventh --> |Yes| ReturnTrue["Return true"]
 ```
 
 **Diagram sources**
+
 - [security.ts](file://src/lib/security.ts#L46-L55)
 
 The `sanitizeTcNo` function complements the validation by cleaning and normalizing TC Kimlik No inputs. It removes all non-digit characters, verifies the 11-digit length requirement, ensures the first digit is not zero (as per Turkish ID regulations), and applies the official validation algorithm to confirm authenticity. This function returns null for invalid inputs, preventing malformed or fraudulent ID numbers from being processed.
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L46-L55)
 - [sanitization.ts](file://src/lib/sanitization.ts#L131-L160)
 
@@ -92,11 +96,13 @@ SanitizationUtils --> Beneficiary : "sanitizes"
 ```
 
 **Diagram sources**
+
 - [security.ts](file://src/lib/security.ts#L13-L61)
 - [sanitization.ts](file://src/lib/sanitization.ts#L1-L412)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L13-L61)
 - [sanitization.ts](file://src/lib/sanitization.ts#L1-L412)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)
@@ -124,14 +130,16 @@ Note over Audit : Immutable record stored<br>for 7 years as required by KVKK
 ```
 
 **Diagram sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L214-L273)
-- [page.tsx](file://src/app/(dashboard)/denetim-kayitlari/page.tsx#L496-L512)
+- [page.tsx](<file://src/app/(dashboard)/denetim-kayitlari/page.tsx#L496-L512>)
 
 The audit logs include special monitoring for TC Kimlik No access, which is logged separately and subject to regular review. This ensures that access to the most sensitive personal identifier is closely monitored and auditable. The system's compliance report generation confirms KVKK compliance based on audit log completeness and proper consent tracking.
 
 **Section sources**
+
 - [security_audit.ts](file://convex/security_audit.ts#L214-L273)
-- [page.tsx](file://src/app/(dashboard)/denetim-kayitlari/page.tsx#L496-L512)
+- [page.tsx](<file://src/app/(dashboard)/denetim-kayitlari/page.tsx#L496-L512>)
 
 ## Privacy and Consent Management
 
@@ -173,6 +181,7 @@ ConsentsAPI --> Consent : "stores"
 ```
 
 **Diagram sources**
+
 - [ConsentsManager.tsx](file://src/components/consents/ConsentsManager.tsx#L35-L309)
 - [consents.ts](file://convex/consents.ts#L1-L48)
 - [schema.ts](file://convex/schema.ts#L862-L892)
@@ -180,6 +189,7 @@ ConsentsAPI --> Consent : "stores"
 The consent management system is integrated with the beneficiary data model, ensuring that data processing activities are only performed when valid consent is present. The system also tracks the person who signed the consent and when it was recorded, providing a complete audit trail for compliance purposes.
 
 **Section sources**
+
 - [ConsentsManager.tsx](file://src/components/consents/ConsentsManager.tsx#L35-L309)
 - [consents.ts](file://convex/consents.ts#L1-L48)
 - [schema.ts](file://convex/schema.ts#L862-L892)
@@ -203,6 +213,7 @@ When implementing new features that handle sensitive data in Kafkasder-panel, de
 7. **Comply with retention policies**: Ensure that data is retained only for the required 7-year period as mandated by KVKK regulations, and implement proper data deletion procedures for records that have exceeded their retention period.
 
 **Section sources**
+
 - [security.ts](file://src/lib/security.ts#L13-L61)
 - [sanitization.ts](file://src/lib/sanitization.ts#L1-L412)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)

@@ -29,6 +29,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Beneficiary Management](#beneficiary-management)
 2. [Donation Management](#donation-management)
 3. [Scholarship Management](#scholarship-management)
@@ -49,9 +50,10 @@ The system supports multiple beneficiary categories including orphan families, r
 Users can search, filter, and sort beneficiaries based on various criteria such as category, location, status, and specific needs. The interface provides quick access to related records including dependents, documents, and communication logs. Administrators can generate reports on beneficiary demographics and track the impact of aid programs over time.
 
 **Section sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts)
 - [beneficiary.ts](file://src/types/beneficiary.ts)
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L66-L86)
 
 ## Donation Management
@@ -63,8 +65,9 @@ The module includes specialized functionality for "kumbara" (piggy bank) campaig
 Donation records include detailed information such as donor name, contact information, amount, currency, payment method, donation purpose, and receipt details. The system supports multiple currencies (TRY, USD, EUR) and various payment methods including cash, bank transfer, credit card, and digital payments. Administrators can view donation trends, generate financial reports, and track the success of specific fundraising campaigns.
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts)
-- [page.tsx](file://src/app/(dashboard)/bagis/liste/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/bagis/liste/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L48-L63)
 
 ## Scholarship Management
@@ -76,9 +79,10 @@ The application process includes multiple stages: draft, submitted, under review
 For approved scholarships, the system tracks payment status (pending, processing, paid, failed, suspended) and student status (active, graduated, suspended, dropped out, transferred). Administrators can monitor academic progress, disburse funds according to schedule, and maintain communication with scholarship recipients. The module also includes reporting tools to evaluate the effectiveness of scholarship programs and demonstrate impact to stakeholders.
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts)
 - [scholarship.ts](file://src/types/scholarship.ts)
-- [page.tsx](file://src/app/(dashboard)/burs/ogrenciler/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/burs/ogrenciler/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L88-L99)
 
 ## Financial Management
@@ -90,8 +94,9 @@ Each financial record includes essential details such as transaction type (incom
 The module includes a financial dashboard that provides real-time insights into the organization's financial health, including total income, expenses, net balance, and pending transactions. Administrators can generate detailed financial reports, track cash flow, and monitor budget adherence. The system also includes tools for managing bank accounts associated with beneficiaries and tracking kumbara collection amounts.
 
 **Section sources**
+
 - [finance_records.ts](file://convex/finance_records.ts)
-- [page.tsx](file://src/app/(dashboard)/fon/gelir-gider/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/fon/gelir-gider/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L101-L117)
 
 ## Task & Meeting Management
@@ -103,10 +108,11 @@ The meeting management component allows users to schedule meetings, set agendas,
 The task management component converts meeting decisions into actionable items with assigned owners, deadlines, and priority levels. Tasks can be tracked through various statuses (pending, in progress, completed, cancelled) and are displayed in a Kanban board interface for visual workflow management. Users receive notifications about upcoming deadlines and can update task progress in real-time. The system also includes a notification center to keep team members informed about important workflow events.
 
 **Section sources**
+
 - [tasks.ts](file://convex/tasks.ts)
 - [meetings.ts](file://convex/meetings.ts)
-- [page.tsx](file://src/app/(dashboard)/is/gorevler/page.tsx)
-- [page.tsx](file://src/app/(dashboard)/is/toplantilar/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/is/gorevler/page.tsx>)
+- [page.tsx](<file://src/app/(dashboard)/is/toplantilar/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L131-L147)
 
 ## User Management
@@ -118,8 +124,9 @@ The system implements role-based access control (RBAC) with predefined permissio
 The module includes an audit trail that records all user activities, including login attempts, data modifications, and permission changes. This provides accountability and supports compliance with data protection regulations (KVKK/GDPR). The interface displays user information including name, email, role, status, and last activity date, with filtering and search capabilities for managing large user bases.
 
 **Section sources**
+
 - [users.ts](file://convex/users.ts)
-- [page.tsx](file://src/app/(dashboard)/kullanici/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/kullanici/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L169-L187)
 
 ## Messaging System
@@ -131,8 +138,9 @@ The internal messaging component allows team members to exchange messages, share
 The external messaging component supports bulk communication for announcements, reminders, and updates. Administrators can send targeted messages to specific beneficiary groups, donors, or volunteers. The system tracks message delivery status and provides reporting on engagement metrics. All communications are logged in the system for accountability and can be linked to specific beneficiaries or cases.
 
 **Section sources**
+
 - [messages.ts](file://convex/messages.ts)
-- [page.tsx](file://src/app/(dashboard)/mesaj/kurum-ici/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/mesaj/kurum-ici/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L118-L129)
 
 ## Partner Management
@@ -144,8 +152,9 @@ Partners can be categorized by type (institutional, corporate, governmental, NGO
 The module supports document management for partnership agreements, memorandums of understanding, and other legal documents. It also includes communication tools for maintaining regular contact with partners and coordinating joint initiatives. Reporting features allow the organization to demonstrate the impact of partnerships to stakeholders and identify opportunities for expanding collaboration.
 
 **Section sources**
+
 - [partners.ts](file://convex/partners.ts)
-- [page.tsx](file://src/app/(dashboard)/partner/liste/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/partner/liste/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L148-L157)
 
 ## Settings Management
@@ -157,8 +166,9 @@ The system settings are organized into categories including organization, email,
 Notification settings allow users to customize their alert preferences, including email, push, and SMS notifications for various system events. System settings include parameters such as session timeout, maximum login attempts, and maintenance mode. Security settings control authentication requirements, password policies, and two-factor authentication.
 
 **Section sources**
+
 - [system_settings.ts](file://convex/system_settings.ts)
-- [page.tsx](file://src/app/(dashboard)/settings/page.tsx)
+- [page.tsx](<file://src/app/(dashboard)/settings/page.tsx>)
 - [navigation.ts](file://src/config/navigation.ts#L189-L197)
 
 ## Module Relationships
@@ -224,9 +234,11 @@ I --> |Configures| H
 ```
 
 **Diagram sources**
+
 - [navigation.ts](file://src/config/navigation.ts)
 - [permissions.ts](file://src/types/permissions.ts)
 
 **Section sources**
+
 - [navigation.ts](file://src/config/navigation.ts)
 - [permissions.ts](file://src/types/permissions.ts)

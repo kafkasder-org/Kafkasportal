@@ -8,6 +8,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Orphan Dashboard Implementation](#orphan-dashboard-implementation)
 3. [Backend Logic for Orphan-Specific Rules](#backend-logic-for-orphan-specific-rules)
@@ -17,6 +18,7 @@
 7. [Compliance and Privacy Considerations](#compliance-and-privacy-considerations)
 
 ## Introduction
+
 The Orphan (Yetim) Tracking sub-module is a specialized component within the Kafkasder beneficiary management system designed to manage scholarship programs for orphaned students. This module provides a dedicated interface for tracking, evaluating, and supporting orphan beneficiaries through an automated workflow that integrates with financial aid, guardianship records, and social worker assessments. The system implements a priority-based scoring mechanism that gives special consideration to orphan status, ensuring equitable access to educational support. The implementation follows a secure, role-based access model with comprehensive audit logging to protect sensitive personal information.
 
 ## Orphan Dashboard Implementation
@@ -44,10 +46,12 @@ G --> M[Show Motivation Letter]
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/burs/yetim/page.tsx#L51-L517)
+
+- [page.tsx](<file://src/app/(dashboard)/burs/yetim/page.tsx#L51-L517>)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/burs/yetim/page.tsx#L51-L517)
+
+- [page.tsx](<file://src/app/(dashboard)/burs/yetim/page.tsx#L51-L517>)
 
 ## Backend Logic for Orphan-Specific Rules
 
@@ -78,10 +82,12 @@ UI->>UI : Display payment details in dialog
 ```
 
 **Diagram sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L301-L338)
-- [page.tsx](file://src/app/(dashboard)/burs/yetim/page.tsx#L77-L107)
+- [page.tsx](<file://src/app/(dashboard)/burs/yetim/page.tsx#L77-L107>)
 
 **Section sources**
+
 - [scholarships.ts](file://convex/scholarships.ts#L301-L338)
 
 ## Orphan Type Categorization and Eligibility
@@ -137,10 +143,12 @@ ScholarshipApplication "1" -- "0..*" Payment : has payments
 ```
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L53-L58)
 - [scholarship.ts](file://src/types/scholarship.ts#L82-L115)
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L53-L58)
 
 ## Integration Points
@@ -160,6 +168,7 @@ Data export capabilities allow for reporting to regulatory bodies and funding or
 In real-world usage, orphan case management follows predictable data entry patterns. Administrators typically begin by creating a beneficiary record with the `isOrphan` flag set to true and selecting the appropriate `orphanStatus` category. The guardian information is then populated, establishing the legal and practical support structure for the orphaned student.
 
 Common data entry sequences include:
+
 1. Creating the application with basic student information
 2. Adding educational details (university, department, GPA)
 3. Documenting family situation and financial status

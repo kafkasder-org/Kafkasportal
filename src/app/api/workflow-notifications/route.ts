@@ -25,10 +25,7 @@ function validateNotification(data: Record<string, unknown>) {
     errors.push('Geçersiz bildirim kategorisi');
   }
 
-  if (
-    data.status &&
-    !['beklemede', 'gonderildi', 'okundu'].includes(data.status as string)
-  ) {
+  if (data.status && !['beklemede', 'gonderildi', 'okundu'].includes(data.status as string)) {
     errors.push('Geçersiz bildirim durumu');
   }
 
@@ -71,10 +68,7 @@ export async function GET(request: NextRequest) {
       method: 'GET',
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Bildirimler alınamadı' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Bildirimler alınamadı' }, { status: 500 });
   }
 }
 
@@ -130,10 +124,6 @@ export async function POST(request: NextRequest) {
       payload: body,
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Bildirim oluşturulamadı' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Bildirim oluşturulamadı' }, { status: 500 });
   }
 }
-

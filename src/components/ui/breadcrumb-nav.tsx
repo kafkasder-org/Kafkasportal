@@ -109,10 +109,7 @@ export function BreadcrumbNav() {
                 <Home className="h-4 w-4" />
               </Link>
             ) : item.current ? (
-              <span
-                className="px-2 py-1 text-slate-900 font-medium"
-                aria-current="page"
-              >
+              <span className="px-2 py-1 text-slate-900 font-medium" aria-current="page">
                 {item.label}
               </span>
             ) : (

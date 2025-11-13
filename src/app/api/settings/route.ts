@@ -38,10 +38,7 @@ export async function POST(request: NextRequest) {
     const { category, settings } = body;
 
     if (!category || !settings) {
-      return NextResponse.json(
-        { error: 'Kategori ve ayarlar gerekli' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Kategori ve ayarlar gerekli' }, { status: 400 });
     }
 
     const convex = getConvexHttp();
@@ -70,10 +67,7 @@ export async function PUT(request: NextRequest) {
     const { settings } = body; // { category: { key: value } }
 
     if (!settings || typeof settings !== 'object') {
-      return NextResponse.json(
-        { error: 'Geçersiz ayarlar formatı' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Geçersiz ayarlar formatı' }, { status: 400 });
     }
 
     const convex = getConvexHttp();
@@ -124,4 +118,3 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
-

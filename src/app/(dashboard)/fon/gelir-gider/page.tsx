@@ -64,7 +64,7 @@ interface FinanceRecord {
 const STATUS_LABELS = {
   pending: { label: 'Beklemede', color: 'bg-yellow-100 text-yellow-700' },
   approved: { label: 'Onaylandı', color: 'bg-green-100 text-green-700' },
-  rejected: { label: 'Reddedildi', color: 'bg-red-100 text-red-700' }
+  rejected: { label: 'Reddedildi', color: 'bg-red-100 text-red-700' },
 };
 
 export default function IncomeExpensePage() {
@@ -125,7 +125,17 @@ export default function IncomeExpensePage() {
 
   // Mock data for demonstration
   const { data: recordsData, isLoading } = useQuery({
-    queryKey: ['finance-records', page, search, recordTypeFilter, categoryFilter, statusFilter, dateFilter, customStartDate, customEndDate],
+    queryKey: [
+      'finance-records',
+      page,
+      search,
+      recordTypeFilter,
+      categoryFilter,
+      statusFilter,
+      dateFilter,
+      customStartDate,
+      customEndDate,
+    ],
     queryFn: () => {
       const mockRecords: FinanceRecord[] = [
         {
@@ -141,7 +151,7 @@ export default function IncomeExpensePage() {
           status: 'approved',
           created_by: 'user_1',
           approved_by: 'user_2',
-          _creationTime: '2024-12-01T10:00:00Z'
+          _creationTime: '2024-12-01T10:00:00Z',
         },
         {
           _id: '2',
@@ -156,7 +166,7 @@ export default function IncomeExpensePage() {
           status: 'approved',
           created_by: 'user_1',
           approved_by: 'user_2',
-          _creationTime: '2024-12-05T09:00:00Z'
+          _creationTime: '2024-12-05T09:00:00Z',
         },
         {
           _id: '3',
@@ -170,7 +180,7 @@ export default function IncomeExpensePage() {
           receipt_number: 'RCP-2024-003',
           status: 'pending',
           created_by: 'user_1',
-          _creationTime: '2024-12-10T08:00:00Z'
+          _creationTime: '2024-12-10T08:00:00Z',
         },
         {
           _id: '4',
@@ -184,20 +194,21 @@ export default function IncomeExpensePage() {
           status: 'approved',
           created_by: 'user_1',
           approved_by: 'user_2',
-          _creationTime: '2024-11-28T15:00:00Z'
-        }
+          _creationTime: '2024-11-28T15:00:00Z',
+        },
       ];
 
       return Promise.resolve({
-        data: mockRecords.filter(record => {
-          const matchesSearch = !search ||
+        data: mockRecords.filter((record) => {
+          const matchesSearch =
+            !search ||
             record.description.toLowerCase().includes(search.toLowerCase()) ||
             record.category.toLowerCase().includes(search.toLowerCase()) ||
             record.receipt_number?.toLowerCase().includes(search.toLowerCase());
           const matchesType = recordTypeFilter === 'all' || record.record_type === recordTypeFilter;
           const matchesCategory = categoryFilter === 'all' || record.category === categoryFilter;
           const matchesStatus = statusFilter === 'all' || record.status === statusFilter;
-          
+
           let matchesDate = true;
           if (dateFilter === 'today') {
             const today = new Date().toISOString().split('T')[0];
@@ -218,7 +229,7 @@ export default function IncomeExpensePage() {
               matchesDate = false; // Don't show any records if dates are invalid
             }
           }
-          
+
           return matchesSearch && matchesType && matchesCategory && matchesStatus && matchesDate;
         }),
         total: mockRecords.length,
@@ -233,21 +244,21 @@ export default function IncomeExpensePage() {
   // Calculate financial statistics
   const stats = useMemo(() => {
     const totalIncome = records
-      .filter(r => r.record_type === 'income' && r.status === 'approved')
+      .filter((r) => r.record_type === 'income' && r.status === 'approved')
       .reduce((sum, r) => sum + r.amount, 0);
-    
+
     const totalExpense = records
-      .filter(r => r.record_type === 'expense' && r.status === 'approved')
+      .filter((r) => r.record_type === 'expense' && r.status === 'approved')
       .reduce((sum, r) => sum + r.amount, 0);
-    
+
     const netIncome = totalIncome - totalExpense;
-    
+
     const pendingIncome = records
-      .filter(r => r.record_type === 'income' && r.status === 'pending')
+      .filter((r) => r.record_type === 'income' && r.status === 'pending')
       .reduce((sum, r) => sum + r.amount, 0);
-    
+
     const pendingExpense = records
-      .filter(r => r.record_type === 'expense' && r.status === 'pending')
+      .filter((r) => r.record_type === 'expense' && r.status === 'pending')
       .reduce((sum, r) => sum + r.amount, 0);
 
     return {
@@ -257,7 +268,7 @@ export default function IncomeExpensePage() {
       pendingIncome,
       pendingExpense,
       totalRecords: total,
-      approvedRecords: records.filter(r => r.status === 'approved').length,
+      approvedRecords: records.filter((r) => r.status === 'approved').length,
     };
   }, [records, total]);
 
@@ -267,8 +278,18 @@ export default function IncomeExpensePage() {
       ['Tarih', new Date().toLocaleDateString('tr-TR')],
       [''],
       ['KAYIT LİSTESİ'],
-      ['Tarih', 'Tip', 'Kategori', 'Açıklama', 'Tutar', 'Para Birimi', 'Ödeme Yöntemi', 'Makbuz No', 'Durum'],
-      ...records.map(record => [
+      [
+        'Tarih',
+        'Tip',
+        'Kategori',
+        'Açıklama',
+        'Tutar',
+        'Para Birimi',
+        'Ödeme Yöntemi',
+        'Makbuz No',
+        'Durum',
+      ],
+      ...records.map((record) => [
         new Date(record.transaction_date).toLocaleDateString('tr-TR'),
         record.record_type === 'income' ? 'Gelir' : 'Gider',
         record.category,
@@ -281,12 +302,12 @@ export default function IncomeExpensePage() {
       ]),
       [''],
       ['ÖZET'],
-      ['Toplam Gelir', `${stats.totalIncome.toLocaleString('tr-TR')  } ₺`],
-      ['Toplam Gider', `${stats.totalExpense.toLocaleString('tr-TR')  } ₺`],
-      ['Net Gelir', `${stats.netIncome.toLocaleString('tr-TR')  } ₺`],
+      ['Toplam Gelir', `${stats.totalIncome.toLocaleString('tr-TR')} ₺`],
+      ['Toplam Gider', `${stats.totalExpense.toLocaleString('tr-TR')} ₺`],
+      ['Net Gelir', `${stats.netIncome.toLocaleString('tr-TR')} ₺`],
     ];
 
-    const csv = csvContent.map(row => row.join(',')).join('\n');
+    const csv = csvContent.map((row) => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -346,9 +367,7 @@ export default function IncomeExpensePage() {
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Yeni Gelir/Gider Kaydı</DialogTitle>
-                <DialogDescription>
-                  Yeni bir gelir veya gider kaydı oluşturun
-                </DialogDescription>
+                <DialogDescription>Yeni bir gelir veya gider kaydı oluşturun</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <p className="text-center text-muted-foreground py-8">
@@ -372,7 +391,8 @@ export default function IncomeExpensePage() {
               {stats.totalIncome.toLocaleString('tr-TR')} ₺
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {stats.pendingIncome > 0 && `${stats.pendingIncome.toLocaleString('tr-TR')} ₺ beklemede`}
+              {stats.pendingIncome > 0 &&
+                `${stats.pendingIncome.toLocaleString('tr-TR')} ₺ beklemede`}
             </p>
           </CardContent>
         </Card>
@@ -387,7 +407,8 @@ export default function IncomeExpensePage() {
               {stats.totalExpense.toLocaleString('tr-TR')} ₺
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {stats.pendingExpense > 0 && `${stats.pendingExpense.toLocaleString('tr-TR')} ₺ beklemede`}
+              {stats.pendingExpense > 0 &&
+                `${stats.pendingExpense.toLocaleString('tr-TR')} ₺ beklemede`}
             </p>
           </CardContent>
         </Card>
@@ -395,10 +416,14 @@ export default function IncomeExpensePage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Net Gelir</CardTitle>
-            <DollarSign className={`h-4 w-4 ${stats.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+            <DollarSign
+              className={`h-4 w-4 ${stats.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${stats.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div
+              className={`text-2xl font-bold ${stats.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            >
               {stats.netIncome.toLocaleString('tr-TR')} ₺
             </div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -414,9 +439,7 @@ export default function IncomeExpensePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalRecords}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Toplam işlem
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Toplam işlem</p>
           </CardContent>
         </Card>
       </div>
@@ -466,7 +489,9 @@ export default function IncomeExpensePage() {
                   <SelectItem value="Kurs Gelirleri">Kurs Gelirleri</SelectItem>
                   <SelectItem value="Etkinlik Gelirleri">Etkinlik Gelirleri</SelectItem>
                   <SelectItem value="Burs Ödemeleri">Burs Ödemeleri</SelectItem>
-                  <SelectItem value="İhtiyaç Sahibi Yardımları">İhtiyaç Sahibi Yardımları</SelectItem>
+                  <SelectItem value="İhtiyaç Sahibi Yardımları">
+                    İhtiyaç Sahibi Yardımları
+                  </SelectItem>
                   <SelectItem value="Ofis Giderleri">Ofis Giderleri</SelectItem>
                   <SelectItem value="Personel Giderleri">Personel Giderleri</SelectItem>
                 </SelectContent>
@@ -621,7 +646,7 @@ export default function IncomeExpensePage() {
                           {new Date(record.transaction_date).toLocaleDateString('tr-TR')}
                         </span>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 text-sm">
                         <div>
                           <span className="text-muted-foreground">Tür:</span>
@@ -635,7 +660,9 @@ export default function IncomeExpensePage() {
                         </div>
                         <div>
                           <span className="text-muted-foreground">Tutar:</span>
-                          <p className={`font-bold ${record.record_type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                          <p
+                            className={`font-bold ${record.record_type === 'income' ? 'text-green-600' : 'text-red-600'}`}
+                          >
                             {record.amount.toLocaleString('tr-TR')} ₺
                           </p>
                         </div>
@@ -712,9 +739,7 @@ export default function IncomeExpensePage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Kayıt Detayı</DialogTitle>
-            <DialogDescription>
-              {selectedRecord?.description}
-            </DialogDescription>
+            <DialogDescription>{selectedRecord?.description}</DialogDescription>
           </DialogHeader>
           {selectedRecord && (
             <div className="space-y-4">

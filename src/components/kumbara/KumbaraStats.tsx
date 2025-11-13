@@ -78,9 +78,7 @@ export function KumbaraStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatNumber(data?.total_kumbara || 0)}</div>
-          <p className="text-xs text-muted-foreground">
-            Kayıtlı kumbara sayısı
-          </p>
+          <p className="text-xs text-muted-foreground">Kayıtlı kumbara sayısı</p>
         </CardContent>
       </Card>
 
@@ -92,9 +90,7 @@ export function KumbaraStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(data?.total_amount || 0)}</div>
-          <p className="text-xs text-muted-foreground">
-            Tüm kumbara bağışları
-          </p>
+          <p className="text-xs text-muted-foreground">Tüm kumbara bağışları</p>
         </CardContent>
       </Card>
 
@@ -106,9 +102,7 @@ export function KumbaraStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatNumber(data?.active_locations || 0)}</div>
-          <p className="text-xs text-muted-foreground">
-            Başvuru alan konum
-          </p>
+          <p className="text-xs text-muted-foreground">Başvuru alan konum</p>
         </CardContent>
       </Card>
 
@@ -129,11 +123,7 @@ export function KumbaraStats() {
               />
             )}
             {data?.monthly_growth !== undefined && (
-              <span
-                className={
-                  data.monthly_growth >= 0 ? 'text-green-600' : 'text-red-600'
-                }
-              >
+              <span className={data.monthly_growth >= 0 ? 'text-green-600' : 'text-red-600'}>
                 {data.monthly_growth >= 0 ? '+' : ''}
                 {data.monthly_growth.toFixed(1)}%
               </span>

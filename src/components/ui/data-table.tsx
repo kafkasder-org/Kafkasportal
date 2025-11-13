@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-Search,
-ChevronLeft,
-ChevronRight,
-ChevronsLeft,
-ChevronsRight,
-Loader2,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Loader2,
   RefreshCw,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -94,7 +94,9 @@ export function DataTable<T extends Record<string, unknown>>({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 value={effectiveSearchValue}
-                onChange={(e) => { handleSearchChange(e.target.value); }}
+                onChange={(e) => {
+                  handleSearchChange(e.target.value);
+                }}
                 placeholder={searchPlaceholder}
                 className="pl-9"
               />
@@ -113,10 +115,10 @@ export function DataTable<T extends Record<string, unknown>>({
         <CardContent className="p-0">
           {/* Loading State */}
           {isLoading && (
-          <div className="space-y-4 p-6">
-          {/* Skeleton Table Header */}
-          <div className="flex gap-4 pb-4 border-b border-border">
-              {columns.slice(0, 4).map((_, index) => (
+            <div className="space-y-4 p-6">
+              {/* Skeleton Table Header */}
+              <div className="flex gap-4 pb-4 border-b border-border">
+                {columns.slice(0, 4).map((_, index) => (
                   <Skeleton key={`header-${index}`} className="h-4 flex-1" />
                 ))}
               </div>
@@ -127,10 +129,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   {columns.slice(0, 4).map((_, colIndex) => (
                     <Skeleton
                       key={`cell-${rowIndex}-${colIndex}`}
-                      className={cn(
-                        'h-4',
-                        colIndex === 0 ? 'w-12' : 'flex-1'
-                      )}
+                      className={cn('h-4', colIndex === 0 ? 'w-12' : 'flex-1')}
                     />
                   ))}
                 </div>
@@ -148,37 +147,39 @@ export function DataTable<T extends Record<string, unknown>>({
 
           {/* Error State */}
           {error && !isLoading && (
-          <div className="flex flex-col items-center justify-center py-16 gap-4">
-          <div className="p-3 rounded-full bg-destructive/10">
-          <Search className="h-8 w-8 text-destructive" />
-          </div>
-          <div className="text-center space-y-2">
-          <p className="font-semibold text-foreground">Veri Yükleme Hatası</p>
-          <p className="text-sm text-muted-foreground max-w-md">
-          {error.message || 'Veriler yüklenirken bir hata oluştu'}
-          </p>
-          </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col items-center justify-center py-16 gap-4">
+              <div className="p-3 rounded-full bg-destructive/10">
+                <Search className="h-8 w-8 text-destructive" />
+              </div>
+              <div className="text-center space-y-2">
+                <p className="font-semibold text-foreground">Veri Yükleme Hatası</p>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  {error.message || 'Veriler yüklenirken bir hata oluştu'}
+                </p>
+              </div>
+              <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => { window.location.reload(); }}
+                  onClick={() => {
+                    window.location.reload();
+                  }}
                   className="gap-2"
                 >
                   <RefreshCw className="h-4 w-4" />
                   Sayfayı Yenile
                 </Button>
                 <Button
-                variant="default"
-                size="sm"
-                onClick={() => {
-                if (refetch) {
-                  refetch();
-                } else {
-                  window.location.reload();
-                }
-                }}
-                className="gap-2"
+                  variant="default"
+                  size="sm"
+                  onClick={() => {
+                    if (refetch) {
+                      refetch();
+                    } else {
+                      window.location.reload();
+                    }
+                  }}
+                  className="gap-2"
                 >
                   <RefreshCw className="h-4 w-4" />
                   Tekrar Dene
@@ -204,8 +205,8 @@ export function DataTable<T extends Record<string, unknown>>({
 
           {/* Data Table */}
           {!isLoading && !error && filteredData.length > 0 && (
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
-          {/* Mobile scroll indicator */}
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+              {/* Mobile scroll indicator */}
               <div className="md:hidden text-xs text-muted-foreground text-center py-2 border-b border-border/50">
                 Yatay kaydırma için sola/sağa kaydırın →
               </div>
@@ -239,7 +240,8 @@ export function DataTable<T extends Record<string, unknown>>({
                           'border-b border-border/50 transition-all duration-200 group',
                           striped && index % 2 === 0 && 'bg-muted/30',
                           hoverable && 'hover:bg-accent/40 hover:shadow-sm cursor-pointer',
-                          onRowClick && 'cursor-pointer focus-within:ring-2 focus-within:ring-primary/50',
+                          onRowClick &&
+                            'cursor-pointer focus-within:ring-2 focus-within:ring-primary/50',
                           rowClassName?.(item, index)
                         )}
                         tabIndex={onRowClick ? 0 : undefined}
@@ -250,7 +252,9 @@ export function DataTable<T extends Record<string, unknown>>({
                             onRowClick(item, index);
                           }
                         }}
-                        aria-label={onRowClick ? `Satır ${index + 1} - Detayları görüntüle` : undefined}
+                        aria-label={
+                          onRowClick ? `Satır ${index + 1} - Detayları görüntüle` : undefined
+                        }
                       >
                         {columns.map((column) => (
                           <td
@@ -289,7 +293,9 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => { pagination.onPageChange(1); }}
+              onClick={() => {
+                pagination.onPageChange(1);
+              }}
               disabled={pagination.page === 1}
               aria-label="İlk sayfa"
             >
@@ -298,7 +304,9 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => { pagination.onPageChange(pagination.page - 1); }}
+              onClick={() => {
+                pagination.onPageChange(pagination.page - 1);
+              }}
               disabled={pagination.page === 1}
               aria-label="Önceki sayfa"
             >
@@ -322,7 +330,9 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => { pagination.onPageChange(pagination.page + 1); }}
+              onClick={() => {
+                pagination.onPageChange(pagination.page + 1);
+              }}
               disabled={pagination.page === pagination.totalPages}
               aria-label="Sonraki sayfa"
             >
@@ -331,7 +341,9 @@ export function DataTable<T extends Record<string, unknown>>({
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={() => { pagination.onPageChange(pagination.totalPages); }}
+              onClick={() => {
+                pagination.onPageChange(pagination.totalPages);
+              }}
               disabled={pagination.page === pagination.totalPages}
               aria-label="Son sayfa"
             >

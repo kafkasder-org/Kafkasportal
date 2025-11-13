@@ -9,7 +9,6 @@ interface PartnerFilters {
   partnership_type?: string;
 }
 
-
 interface PartnerData {
   name?: string;
   type?: string;
@@ -49,7 +48,12 @@ function validatePartnerData(data: PartnerData): ValidationResult {
     errors.push('Geçersiz partner türü');
   }
 
-  if (!data.partnership_type || !['donor', 'supplier', 'volunteer', 'sponsor', 'service_provider'].includes(data.partnership_type)) {
+  if (
+    !data.partnership_type ||
+    !['donor', 'supplier', 'volunteer', 'sponsor', 'service_provider'].includes(
+      data.partnership_type
+    )
+  ) {
     errors.push('Geçersiz işbirliği türü');
   }
 
@@ -86,7 +90,8 @@ async function getPartnersHandler(request: NextRequest) {
   const filters: PartnerFilters = {};
   if (searchParams.get('type')) filters.type = searchParams.get('type') || undefined;
   if (searchParams.get('status')) filters.status = searchParams.get('status') || undefined;
-  if (searchParams.get('partnership_type')) filters.partnership_type = searchParams.get('partnership_type') || undefined;
+  if (searchParams.get('partnership_type'))
+    filters.partnership_type = searchParams.get('partnership_type') || undefined;
 
   try {
     const response = await convexPartners.list({
@@ -147,18 +152,23 @@ async function createPartnerHandler(request: NextRequest) {
     // Prepare Convex mutation data
     const partnerData = {
       name: body.name || '',
-      type: body.type as "organization" | "individual" | "sponsor",
+      type: body.type as 'organization' | 'individual' | 'sponsor',
       contact_person: body.contact_person,
       email: body.email,
       phone: body.phone,
       address: body.address,
       website: body.website,
       tax_number: body.tax_number,
-      partnership_type: body.partnership_type as "donor" | "supplier" | "volunteer" | "sponsor" | "service_provider",
+      partnership_type: body.partnership_type as
+        | 'donor'
+        | 'supplier'
+        | 'volunteer'
+        | 'sponsor'
+        | 'service_provider',
       collaboration_start_date: body.collaboration_start_date,
       collaboration_end_date: body.collaboration_end_date,
       notes: body.notes,
-      status: (body.status as "active" | "inactive" | "pending") || "active",
+      status: (body.status as 'active' | 'inactive' | 'pending') || 'active',
       total_contribution: body.total_contribution || 0,
       contribution_count: body.contribution_count || 0,
       logo_url: body.logo_url,

@@ -77,7 +77,6 @@ export default function FinancialDashboardPage() {
   });
 
   // Fetch all records for table view
-  
 
   // Calculate cumulative data
   const cumulativeData = useMemo(() => {

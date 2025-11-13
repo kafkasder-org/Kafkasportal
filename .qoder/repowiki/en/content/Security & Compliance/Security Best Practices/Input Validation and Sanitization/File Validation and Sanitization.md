@@ -1,4 +1,5 @@
 (docs)
+
 # File Validation and Sanitization
 
 <cite>
@@ -10,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Validation Implementation](#core-validation-implementation)
 3. [Filename Sanitization Process](#filename-sanitization-process)
@@ -41,9 +43,11 @@ Sanitize --> Success["Return Valid Result\nwith sanitized filename"]
 ```
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L368-L410)
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L354-L411)
 
 ## Filename Sanitization Process
@@ -62,6 +66,7 @@ LimitLength --> Output["Output: sanitized filename"]
 ```
 
 The function processes filenames through the following steps:
+
 1. Returns empty string for null or empty inputs
 2. Replaces all special characters (except letters, numbers, underscore, dot, and hyphen) with underscores
 3. Removes all '..' sequences that could enable path traversal attacks
@@ -71,9 +76,11 @@ The function processes filenames through the following steps:
 For example, a malicious filename like '../../../etc/passwd' would be transformed into 'etc_passwd' through this sanitization process, effectively neutralizing the path traversal attempt while preserving the original filename's readability.
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L195-L203)
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L192-L204)
 
 ## UI-Level Security Checks
@@ -92,15 +99,18 @@ LengthCheck --> |Valid| Success["Accept File with Sanitized Name"]
 ```
 
 The UI component enforces two additional security measures:
+
 1. **Double extension prevention**: Files with multiple extensions (e.g., 'document.pdf.exe') are rejected to prevent MIME type spoofing attacks where a malicious executable is disguised as a benign file.
 2. **Filename length limitation**: Filenames longer than 255 characters are rejected to prevent potential buffer overflow attacks and filesystem issues.
 
 These checks complement the core validation by addressing attack vectors that might bypass MIME type and extension validation through clever filename manipulation.
 
 **Diagram sources**
+
 - [file-upload.tsx](file://src/components/ui/file-upload.tsx#L116-L145)
 
 **Section sources**
+
 - [file-upload.tsx](file://src/components/ui/file-upload.tsx#L116-L145)
 
 ## Error Handling and User Feedback
@@ -127,6 +137,7 @@ Success --> [*]
 ```
 
 The error messaging strategy follows these principles:
+
 - **Specific but not revealing**: Messages indicate what is wrong (e.g., "Dosya boyutu 10MB'dan büyük olamaz") without explaining the exact validation mechanism
 - **Actionable guidance**: Users receive clear information about how to fix the issue
 - **Consistent language**: All messages are in Turkish to ensure accessibility for the primary user base
@@ -135,10 +146,12 @@ The error messaging strategy follows these principles:
 The system returns validation results with both a boolean `valid` flag and an optional `error` string that contains the Turkish error message when validation fails. Successful validation includes the `sanitizedFilename` property with the cleaned filename ready for safe storage.
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L364-L367)
 - [file-upload.tsx](file://src/components/ui/file-upload.tsx#L100-L101)
 
 **Section sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L380-L402)
 - [file-upload.tsx](file://src/components/ui/file-upload.tsx#L125-L141)
 
@@ -177,6 +190,7 @@ style H fill:#f96,stroke:#333
 ```
 
 The architecture demonstrates how validation responsibilities are distributed:
+
 - **UI Layer**: Handles user interaction, displays error messages, and provides the upload interface
 - **Validation Layer**: Contains the core `validateFile` and `sanitizeFilename` functions that perform the actual security checks
 - **Security Layer**: Provides additional security utilities and alternative validation approaches
@@ -184,6 +198,7 @@ The architecture demonstrates how validation responsibilities are distributed:
 This layered approach allows for consistent validation across different parts of the application while enabling specific components to add additional security checks as needed.
 
 **Diagram sources**
+
 - [sanitization.ts](file://src/lib/sanitization.ts#L354-L410)
 - [file-upload.tsx](file://src/components/ui/file-upload.tsx#L116-L145)
 - [security.ts](file://src/lib/security.ts#L282-L321)

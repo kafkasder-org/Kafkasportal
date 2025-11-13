@@ -85,9 +85,7 @@ export function DefaultErrorFallback({
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
-            Bir Hata Oluştu
-          </h1>
+          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">Bir Hata Oluştu</h1>
           <p className="text-slate-600 text-center mb-6">
             Üzgünüz, bir şeyler ters gitti. Lütfen sayfayı yenileyiniz.
           </p>
@@ -98,9 +96,7 @@ export function DefaultErrorFallback({
               <p className="text-xs font-mono text-red-600 mb-2">
                 <strong>Hata:</strong>
               </p>
-              <p className="text-xs text-red-600 font-mono break-all">
-                {error.message}
-              </p>
+              <p className="text-xs text-red-600 font-mono break-all">{error.message}</p>
               {error.stack && (
                 <details className="mt-3">
                   <summary className="text-xs font-semibold text-red-600 cursor-pointer hover:text-red-700">
@@ -133,10 +129,7 @@ export function DefaultErrorFallback({
               Yeniden Dene
             </Button>
             <Link href="/genel" className="block">
-              <Button
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2"
-              >
+              <Button variant="outline" className="w-full flex items-center justify-center gap-2">
                 <Home className="h-4 w-4" />
                 Anasayfaya Git
               </Button>
@@ -187,10 +180,7 @@ interface AsyncErrorBoundaryProps extends Props {
   resetKeys?: Array<string | number>;
 }
 
-export class AsyncErrorBoundary extends Component<
-  AsyncErrorBoundaryProps,
-  State
-> {
+export class AsyncErrorBoundary extends Component<AsyncErrorBoundaryProps, State> {
   constructor(props: AsyncErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -213,11 +203,7 @@ export class AsyncErrorBoundary extends Component<
     const { resetKeys } = this.props;
     const { resetKeys: prevResetKeys } = prevProps;
 
-    if (
-      resetKeys &&
-      prevResetKeys &&
-      resetKeys.length !== prevResetKeys.length
-    ) {
+    if (resetKeys && prevResetKeys && resetKeys.length !== prevResetKeys.length) {
       this.setState({ hasError: false, error: undefined });
     }
   }
@@ -232,9 +218,7 @@ export class AsyncErrorBoundary extends Component<
         return this.props.fallback(this.state.error, this.reset);
       }
 
-      return (
-        <MinimalErrorFallback error={this.state.error} reset={this.reset} />
-      );
+      return <MinimalErrorFallback error={this.state.error} reset={this.reset} />;
     }
 
     return this.props.children;

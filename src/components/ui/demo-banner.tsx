@@ -16,9 +16,7 @@ export function DemoBanner() {
       <div className="flex items-start gap-3">
         <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <h3 className="text-sm font-semibold text-amber-900">
-            Demo Veriler Gösteriliyor
-          </h3>
+          <h3 className="text-sm font-semibold text-amber-900">Demo Veriler Gösteriliyor</h3>
           <p className="mt-1 text-sm text-amber-800">
             Bu sayfada gösterilen veriler demo amaçlıdır. Production ortamında gerçek veriler
             kullanılacaktır. Detaylar için{' '}

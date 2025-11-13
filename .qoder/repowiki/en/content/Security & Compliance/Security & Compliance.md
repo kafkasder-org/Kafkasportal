@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Authentication and Authorization System](#authentication-and-authorization-system)
 2. [Audit Logging System](#audit-logging-system)
 3. [Data Protection Measures](#data-protection-measures)
@@ -44,10 +45,12 @@ Client->>User : Redirect to dashboard
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [auth.ts](file://convex/auth.ts)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [auth.ts](file://convex/auth.ts)
 
@@ -98,10 +101,12 @@ end note
 ```
 
 **Diagram sources**
+
 - [permissions.ts](file://src/types/permissions.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
 **Section sources**
+
 - [permissions.ts](file://src/types/permissions.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
@@ -128,10 +133,12 @@ style ReturnSuccess fill:#b8e4b4,stroke:#333
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts)
 - [session.ts](file://src/lib/auth/session.ts)
 
@@ -159,11 +166,13 @@ USERS ||--o{ AUDIT_LOGS : "performs"
 ```
 
 **Diagram sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts)
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts)
-- [denetim-kayitlari/page.tsx](file://src/app/(dashboard)/denetim-kayitlari/page.tsx)
+- [denetim-kayitlari/page.tsx](<file://src/app/(dashboard)/denetim-kayitlari/page.tsx>)
 
 ### Audit Log Features
 
@@ -185,16 +194,18 @@ B --> |No| G
 ```
 
 **Diagram sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts)
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts)
 
 ## Data Protection Measures
 
 The application implements several data protection measures to safeguard sensitive information, particularly Turkish ID numbers (TC Kimlik No) which are subject to strict privacy regulations under KVKK. The system employs data masking to protect sensitive information both in the user interface and in logging systems.
 
-The data masking system specifically targets Turkish ID numbers, displaying only the first three and last two digits while masking the middle six digits (e.g., 123******89). This ensures that sensitive personal information is not fully exposed in the user interface or in system logs. The masking function also handles hashed values of ID numbers, displaying only the first eight and last four characters of the hash.
+The data masking system specifically targets Turkish ID numbers, displaying only the first three and last two digits while masking the middle six digits (e.g., 123**\*\***89). This ensures that sensitive personal information is not fully exposed in the user interface or in system logs. The masking function also handles hashed values of ID numbers, displaying only the first eight and last four characters of the hash.
 
 ```mermaid
 flowchart TD
@@ -211,9 +222,11 @@ H --> I[User Interface or Log Output]
 ```
 
 **Diagram sources**
+
 - [logger.ts](file://src/lib/logger.ts)
 
 **Section sources**
+
 - [logger.ts](file://src/lib/logger.ts)
 
 ### Data Protection Implementation
@@ -247,9 +260,11 @@ Server->>Client : Process request if valid
 ```
 
 **Diagram sources**
+
 - [csrf.ts](file://src/lib/csrf.ts)
 
 **Section sources**
+
 - [csrf.ts](file://src/lib/csrf.ts)
 
 ### Input Validation with Zod
@@ -286,7 +301,9 @@ I --> |No| K[Return 429 Too Many Requests]
 ```
 
 **Diagram sources**
+
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts)
 
 **Section sources**
+
 - [rate-limit-config.ts](file://src/lib/rate-limit-config.ts)

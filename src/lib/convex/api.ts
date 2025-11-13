@@ -180,13 +180,11 @@ export const convexMeetings = {
  * Meeting Decisions API
  */
 export const convexMeetingDecisions = {
-  list: async (
-    params?: {
-      meeting_id?: Id<'meetings'>;
-      owner?: Id<'users'>;
-      status?: 'acik' | 'devam' | 'kapatildi';
-    }
-  ) => {
+  list: async (params?: {
+    meeting_id?: Id<'meetings'>;
+    owner?: Id<'users'>;
+    status?: 'acik' | 'devam' | 'kapatildi';
+  }) => {
     return await convexHttp.query(api.meeting_decisions.list, params || {});
   },
   get: async (id: Id<'meeting_decisions'>) => {
@@ -207,13 +205,11 @@ export const convexMeetingDecisions = {
  * Meeting Action Items API
  */
 export const convexMeetingActionItems = {
-  list: async (
-    params?: {
-      meeting_id?: Id<'meetings'>;
-      assigned_to?: Id<'users'>;
-      status?: 'beklemede' | 'devam' | 'hazir' | 'iptal';
-    }
-  ) => {
+  list: async (params?: {
+    meeting_id?: Id<'meetings'>;
+    assigned_to?: Id<'users'>;
+    status?: 'beklemede' | 'devam' | 'hazir' | 'iptal';
+  }) => {
     return await convexHttp.query(api.meeting_action_items.list, params || {});
   },
   get: async (id: Id<'meeting_action_items'>) => {
@@ -227,7 +223,11 @@ export const convexMeetingActionItems = {
   },
   updateStatus: async (
     id: Id<'meeting_action_items'>,
-    payload: { status: 'beklemede' | 'devam' | 'hazir' | 'iptal'; changed_by: Id<'users'>; note?: string }
+    payload: {
+      status: 'beklemede' | 'devam' | 'hazir' | 'iptal';
+      changed_by: Id<'users'>;
+      note?: string;
+    }
   ) => {
     return await convexHttp.mutation(api.meeting_action_items.updateStatus, { id, ...payload });
   },
@@ -240,13 +240,11 @@ export const convexMeetingActionItems = {
  * Workflow Notifications API
  */
 export const convexWorkflowNotifications = {
-  list: async (
-    params?: {
-      recipient?: Id<'users'>;
-      status?: 'beklemede' | 'gonderildi' | 'okundu';
-      category?: 'meeting' | 'gorev' | 'rapor' | 'hatirlatma';
-    }
-  ) => {
+  list: async (params?: {
+    recipient?: Id<'users'>;
+    status?: 'beklemede' | 'gonderildi' | 'okundu';
+    category?: 'meeting' | 'gorev' | 'rapor' | 'hatirlatma';
+  }) => {
     return await convexHttp.query(api.workflow_notifications.list, params || {});
   },
   get: async (id: Id<'workflow_notifications'>) => {
@@ -291,15 +289,13 @@ export const convexMessages = {
  * Users API
  */
 export const convexUsers = {
-  list: async (
-    params?: {
-      search?: string;
-      role?: string;
-      isActive?: boolean;
-      limit?: number;
-      cursor?: string;
-    }
-  ) => {
+  list: async (params?: {
+    search?: string;
+    role?: string;
+    isActive?: boolean;
+    limit?: number;
+    cursor?: string;
+  }) => {
     return await convexHttp.query(api.users.list, params || {});
   },
   get: async (id: Id<'users'>) => {

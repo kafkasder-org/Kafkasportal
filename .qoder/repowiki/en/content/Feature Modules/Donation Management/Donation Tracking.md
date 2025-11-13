@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Donation Data Model](#donation-data-model)
 3. [DonationForm Component Implementation](#donationform-component-implementation)
@@ -22,13 +23,16 @@
 10. [Conclusion](#conclusion)
 
 ## Introduction
+
 The Donation Tracking sub-module provides a comprehensive system for managing donations within the application. It enables users to create, edit, and view individual donations through the DonationForm component, which interfaces with Convex functions defined in donations.ts. The system supports various donation types, payment methods, and status transitions while maintaining data integrity through robust validation and audit mechanisms. This documentation details the implementation of the donation tracking functionality, including the data model, form validation, user authentication integration, real-time synchronization, and financial reporting integration.
 
 **Section sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L1-L532)
 - [donations.ts](file://convex/donations.ts#L1-L149)
 
 ## Donation Data Model
+
 The donation data model is defined in the Convex schema and includes comprehensive fields for tracking donation details, donor information, payment methods, and status transitions. The model supports both standard donations and Kumbara (money box) specific donations.
 
 ```mermaid
@@ -60,6 +64,7 @@ DONATIONS ||--o{ FILES : "receipt_file_id"
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [donations.ts](file://convex/donations.ts#L77-L105)
 
@@ -73,6 +78,7 @@ The donation record includes the following key attributes:
 - **Document Reference**: File ID for uploaded receipt documents
 
 The schema includes multiple indexes to optimize query performance:
+
 - `by_status`: Index on donation status for filtering by status
 - `by_donor_email`: Index on donor email for donor-specific queries
 - `by_receipt_number`: Unique index on receipt number to prevent duplicates
@@ -80,10 +86,12 @@ The schema includes multiple indexes to optimize query performance:
 - `by_kumbara_location`: Index on Kumbara location for location-based queries
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [donations.ts](file://convex/donations.ts#L4-L52)
 
 ## DonationForm Component Implementation
+
 The DonationForm component provides a user interface for creating and editing donation records. It is implemented as a React component using the 'use client' directive, indicating it runs on the client side with React hooks for state management and form handling.
 
 ```mermaid
@@ -104,6 +112,7 @@ E --> E3[Success/Error Handling]
 ```
 
 **Diagram sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L98-L530)
 
 The component implements the following key features:
@@ -116,15 +125,18 @@ The component implements the following key features:
 - **Responsive Design**: Adapts layout for different screen sizes with grid-based form organization
 
 The form is organized into logical sections:
+
 1. Donor Information (name, phone, email)
 2. Donation Details (amount, currency, receipt number)
 3. Donation Classification (type, payment method, purpose)
 4. Additional Information (notes, receipt file upload)
 
 **Section sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L98-L530)
 
 ## Form Validation with Zod
+
 The DonationForm implements robust validation using the Zod library to ensure data integrity before submission. The validation schema is defined at the component level and enforces strict requirements for all required fields.
 
 ```mermaid
@@ -158,6 +170,7 @@ FieldWithValidation --> DonationValidationSchema : "validates"
 ```
 
 **Diagram sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L27-L40)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L59-L97)
 
@@ -171,14 +184,17 @@ The validation implementation includes:
 - **Error Messages**: User-friendly error messages in Turkish that clearly explain validation requirements
 
 The validation process occurs in two stages:
+
 1. **Immediate Feedback**: As users type, individual fields are validated asynchronously and visual indicators are updated
 2. **Final Validation**: When the form is submitted, the entire form is validated using react-hook-form's built-in validation before the mutation is executed
 
 **Section sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L27-L40)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L108-L114)
 
 ## Handling One-time and Recurring Donations
+
 The donation system is designed to handle both one-time and recurring donations through the same data model and form interface, with differentiation based on the donation_type field and additional metadata.
 
 ```mermaid
@@ -200,6 +216,7 @@ end note
 ```
 
 **Diagram sources**
+
 - [donations.ts](file://convex/donations.ts#L77-L105)
 - [schema.ts](file://convex/schema.ts#L168-L216)
 
@@ -210,6 +227,7 @@ The implementation handles different donation types as follows:
 - **Kumbara Donations**: Special type of donation collected from money boxes, with additional location and route information
 
 The system supports various payment methods including:
+
 - Cash (Nakit)
 - Credit Card (Kredi Kartı)
 - Bank Transfer (Banka Transferi)
@@ -220,10 +238,12 @@ The system supports various payment methods including:
 For recurring donations, the system does not have automated scheduling but allows manual creation of multiple donation records with consistent donor information and purpose, enabling organizations to manage recurring giving programs while maintaining complete control over each transaction.
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L85-L86)
 - [schema.ts](file://convex/schema.ts#L180-L181)
 
 ## User Authentication and Audit Trails
+
 The donation system integrates with user authentication to maintain audit trails for all donation operations. Every donation record is associated with the creating user through the audit logging system, ensuring accountability and traceability.
 
 ```mermaid
@@ -245,6 +265,7 @@ Form->>Form : Invalidate queries
 ```
 
 **Diagram sources**
+
 - [donations.ts](file://convex/donations.ts#L107-L108)
 - [audit_logs.ts](file://convex/audit_logs.ts#L12-L34)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L132-L138)
@@ -258,6 +279,7 @@ The audit trail implementation includes:
 - **Resource Identification**: Each log entry includes the specific resource ID (donation ID) for precise tracking
 
 When a donation is created, the system automatically logs a CREATE action in the audit_logs collection with details including:
+
 - User ID and name of the creating user
 - Action type (CREATE)
 - Resource type ('donations')
@@ -268,10 +290,12 @@ When a donation is created, the system automatically logs a CREATE action in the
 This comprehensive audit trail enables organizations to track all donation activities, investigate discrepancies, and maintain compliance with financial regulations.
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L12-L34)
 - [donations.ts](file://convex/donations.ts#L107-L108)
 
 ## Real-time Synchronization with Convex Subscriptions
+
 The donation tracking system leverages Convex's real-time capabilities to ensure immediate synchronization of donation records across all connected clients. This enables multiple users to view and work with the most current donation data without manual refreshing.
 
 ```mermaid
@@ -291,6 +315,7 @@ end
 ```
 
 **Diagram sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L136-L137)
 - [donations.ts](file://convex/donations.ts#L107-L108)
 
@@ -304,10 +329,12 @@ The real-time synchronization is implemented through the following mechanisms:
 The system uses React Query's useQuery hook in various components (such as the donations list page) to subscribe to donation data. When a new donation is created through the DonationForm, the query invalidation triggers all subscribed components to refresh their data from the server, ensuring consistency across the application.
 
 **Section sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L136-L137)
 - [donations.ts](file://convex/donations.ts#L107-L108)
 
 ## Integration with Financial Reporting and Audit Logs
+
 The donation system is tightly integrated with financial reporting and audit logging systems to ensure data consistency and compliance. Donation records are automatically synchronized with financial records and audit trails, providing a comprehensive view of financial activities.
 
 ```mermaid
@@ -361,6 +388,7 @@ string timestamp
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [schema.ts](file://convex/schema.ts#L547-L577)
 - [audit_logs.ts](file://convex/audit_logs.ts#L6-L34)
@@ -373,17 +401,20 @@ Key integration points include:
 - **User Accountability**: Both donation records and audit logs reference the creating user, ensuring accountability
 
 The system supports financial reporting through:
+
 - **Standardized Data Structure**: Consistent field names and types across related collections
 - **Unique Identifiers**: Use of receipt numbers as unique identifiers that can be referenced across systems
 - **Status Tracking**: Donation status field that can be mapped to financial record status for reconciliation
 - **Timestamps**: Creation timestamps that enable chronological reporting and reconciliation
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [schema.ts](file://convex/schema.ts#L547-L577)
 - [audit_logs.ts](file://convex/audit_logs.ts#L6-L34)
 
 ## Common Issues and Error Handling
+
 The donation tracking system implements comprehensive error handling to address common issues such as duplicate entries, data reconciliation, and failed transactions. The system provides clear feedback to users and maintains data integrity through validation and transaction management.
 
 ```mermaid
@@ -409,6 +440,7 @@ style D1 fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [donations.ts](file://convex/donations.ts#L64-L73)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L162-L169)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L140-L142)
@@ -416,47 +448,59 @@ style D1 fill:#f9f,stroke:#333
 The system addresses the following common issues:
 
 ### Duplicate Entries
+
 The system prevents duplicate donations through multiple mechanisms:
+
 - **Receipt Number Uniqueness**: The by_receipt_number index in the schema prevents duplicate receipt numbers
 - **Pre-submission Validation**: The form validates receipt numbers in real-time, checking for existing donations
 - **Server-side Validation**: The Convex function checks for existing donations with the same receipt number before insertion
 
 ### Data Reconciliation
+
 For data reconciliation issues, the system provides:
+
 - **Audit Trail**: Complete history of all changes to donation records
 - **Status Transitions**: Clear status tracking (pending, completed, cancelled) for reconciliation
 - **Timestamps**: Creation and modification timestamps for chronological analysis
 - **User Attribution**: Tracking of which user created or modified each record
 
 ### Failed Transactions
+
 The system handles failed transactions gracefully:
+
 - **Atomic Operations**: Donation creation and file upload are handled as separate steps to prevent partial failures
 - **File Upload Resilience**: If file upload fails, the donation is still created without the receipt, with a warning to the user
 - **Error Recovery**: Clear error messages guide users on how to resolve issues and retry
 - **Transaction Integrity**: The system ensures that either both the donation and file are created, or neither, maintaining data consistency
 
 ### Error Handling Implementation
+
 The error handling is implemented at multiple levels:
+
 - **Client-side**: Real-time validation prevents many errors before submission
 - **Form Submission**: Comprehensive validation with user-friendly error messages
 - **Network Level**: Handling of network failures with appropriate error messages
 - **Server-side**: Robust error handling in Convex functions with proper error propagation
 
 The DonationForm component specifically handles errors by:
+
 - Displaying inline error messages for invalid fields
 - Showing toast notifications for submission errors
 - Maintaining form state during errors to allow correction
 - Providing clear instructions for resolving common issues
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L64-L73)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L162-L169)
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L140-L142)
 
 ## Conclusion
+
 The Donation Tracking sub-module provides a robust, secure, and user-friendly system for managing donations within the application. Through the integration of the DonationForm component with Convex backend functions, the system enables efficient creation, editing, and viewing of donation records while maintaining data integrity and compliance.
 
 Key strengths of the implementation include:
+
 - **Comprehensive Data Model**: Well-structured schema that captures all necessary donation details, including specialized fields for Kumbara donations
 - **Robust Validation**: Multi-layered validation using Zod for type safety and data integrity
 - **Real-time Synchronization**: Seamless data updates across clients through Convex subscriptions and React Query invalidation
@@ -468,6 +512,7 @@ The system effectively balances user experience with data integrity, providing i
 Future enhancements could include automated recurring donation scheduling, enhanced reconciliation tools, and more sophisticated duplicate detection algorithms, but the current implementation provides a solid foundation for effective donation management.
 
 **Section sources**
+
 - [DonationForm.tsx](file://src/components/forms/DonationForm.tsx#L1-L532)
 - [donations.ts](file://convex/donations.ts#L1-L149)
 - [schema.ts](file://convex/schema.ts#L168-L216)

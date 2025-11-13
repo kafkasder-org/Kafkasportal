@@ -1,5 +1,5 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
 
 // List donations with filters
 export const list = query({
@@ -12,14 +12,14 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     let donations;
-    
+
     // Filter by is_kumbara first if provided
     if (args.is_kumbara !== undefined) {
       donations = await ctx.db
-        .query("donations")
-        .withIndex("by_is_kumbara", (q) => q.eq("is_kumbara", args.is_kumbara))
+        .query('donations')
+        .withIndex('by_is_kumbara', (q) => q.eq('is_kumbara', args.is_kumbara))
         .collect();
-      
+
       // Apply additional filters on already filtered results
       if (args.status) {
         donations = donations.filter((d) => d.status === args.status);
@@ -29,16 +29,18 @@ export const list = query({
       }
     } else if (args.status) {
       donations = await ctx.db
-        .query("donations")
-        .withIndex("by_status", (q) => q.eq("status", args.status as "pending" | "completed" | "cancelled"))
+        .query('donations')
+        .withIndex('by_status', (q) =>
+          q.eq('status', args.status as 'pending' | 'completed' | 'cancelled')
+        )
         .collect();
     } else if (args.donor_email) {
       donations = await ctx.db
-        .query("donations")
-        .withIndex("by_donor_email", (q) => q.eq("donor_email", args.donor_email!))
+        .query('donations')
+        .withIndex('by_donor_email', (q) => q.eq('donor_email', args.donor_email!))
         .collect();
     } else {
-      donations = await ctx.db.query("donations").collect();
+      donations = await ctx.db.query('donations').collect();
     }
 
     const skip = args.skip || 0;
@@ -54,7 +56,7 @@ export const list = query({
 
 // Get donation by ID
 export const get = query({
-  args: { id: v.id("donations") },
+  args: { id: v.id('donations') },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -65,10 +67,8 @@ export const getByReceiptNumber = query({
   args: { receipt_number: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("donations")
-      .withIndex("by_receipt_number", (q) =>
-        q.eq("receipt_number", args.receipt_number)
-      )
+      .query('donations')
+      .withIndex('by_receipt_number', (q) => q.eq('receipt_number', args.receipt_number))
       .first();
   },
 });
@@ -80,18 +80,14 @@ export const create = mutation({
     donor_phone: v.string(),
     donor_email: v.optional(v.string()),
     amount: v.number(),
-    currency: v.union(v.literal("TRY"), v.literal("USD"), v.literal("EUR")),
+    currency: v.union(v.literal('TRY'), v.literal('USD'), v.literal('EUR')),
     donation_type: v.string(),
     payment_method: v.string(),
     donation_purpose: v.string(),
     notes: v.optional(v.string()),
     receipt_number: v.string(),
     receipt_file_id: v.optional(v.string()),
-    status: v.union(
-      v.literal("pending"),
-      v.literal("completed"),
-      v.literal("cancelled")
-    ),
+    status: v.union(v.literal('pending'), v.literal('completed'), v.literal('cancelled')),
     // Kumbara-specific fields
     is_kumbara: v.optional(v.boolean()),
     kumbara_location: v.optional(v.string()),
@@ -104,20 +100,16 @@ export const create = mutation({
     route_duration: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("donations", args);
+    return await ctx.db.insert('donations', args);
   },
 });
 
 // Update donation
 export const update = mutation({
   args: {
-    id: v.id("donations"),
+    id: v.id('donations'),
     status: v.optional(
-      v.union(
-        v.literal("pending"),
-        v.literal("completed"),
-        v.literal("cancelled")
-      )
+      v.union(v.literal('pending'), v.literal('completed'), v.literal('cancelled'))
     ),
     amount: v.optional(v.number()),
     notes: v.optional(v.string()),
@@ -126,7 +118,7 @@ export const update = mutation({
     const { id, ...updates } = args;
     const donation = await ctx.db.get(id);
     if (!donation) {
-      throw new Error("Donation not found");
+      throw new Error('Donation not found');
     }
     await ctx.db.patch(id, updates);
     return await ctx.db.get(id);
@@ -135,14 +127,13 @@ export const update = mutation({
 
 // Delete donation
 export const remove = mutation({
-  args: { id: v.id("donations") },
+  args: { id: v.id('donations') },
   handler: async (ctx, args) => {
     const donation = await ctx.db.get(args.id);
     if (!donation) {
-      throw new Error("Donation not found");
+      throw new Error('Donation not found');
     }
     await ctx.db.delete(args.id);
     return { success: true };
   },
 });
-

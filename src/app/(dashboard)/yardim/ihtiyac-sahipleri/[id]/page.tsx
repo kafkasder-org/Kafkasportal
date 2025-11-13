@@ -64,7 +64,10 @@ import { Loader2 } from 'lucide-react';
 
 // Lazy load managers for faster dialog opening
 const DocumentsManager = dynamic(
-  () => import('@/components/documents/DocumentsManager').then((mod) => ({ default: mod.DocumentsManager })),
+  () =>
+    import('@/components/documents/DocumentsManager').then((mod) => ({
+      default: mod.DocumentsManager,
+    })),
   {
     loading: () => (
       <div className="flex items-center justify-center py-8">
@@ -77,7 +80,10 @@ const DocumentsManager = dynamic(
 );
 
 const ConsentsManager = dynamic(
-  () => import('@/components/consents/ConsentsManager').then((mod) => ({ default: mod.ConsentsManager })),
+  () =>
+    import('@/components/consents/ConsentsManager').then((mod) => ({
+      default: mod.ConsentsManager,
+    })),
   {
     loading: () => (
       <div className="flex items-center justify-center py-8">
@@ -89,7 +95,10 @@ const ConsentsManager = dynamic(
 );
 
 const BankAccountsManager = dynamic(
-  () => import('@/components/bank-accounts/BankAccountsManager').then((mod) => ({ default: mod.BankAccountsManager })),
+  () =>
+    import('@/components/bank-accounts/BankAccountsManager').then((mod) => ({
+      default: mod.BankAccountsManager,
+    })),
   {
     loading: () => (
       <div className="flex items-center justify-center py-8">
@@ -101,7 +110,10 @@ const BankAccountsManager = dynamic(
 );
 
 const DependentsManager = dynamic(
-  () => import('@/components/dependents/DependentsManager').then((mod) => ({ default: mod.DependentsManager })),
+  () =>
+    import('@/components/dependents/DependentsManager').then((mod) => ({
+      default: mod.DependentsManager,
+    })),
   {
     loading: () => (
       <div className="flex items-center justify-center py-8">
@@ -119,7 +131,7 @@ const checkMernis = async (tcNo: string) => {
     return {
       success: false,
       error: 'TC Kimlik numarası 11 haneli olmalıdır',
-      data: { isValid: false, message: 'TC Kimlik numarası 11 haneli olmalıdır' }
+      data: { isValid: false, message: 'TC Kimlik numarası 11 haneli olmalıdır' },
     };
   }
 
@@ -128,14 +140,14 @@ const checkMernis = async (tcNo: string) => {
     return {
       success: false,
       error: 'TC Kimlik numarası sadece rakam içermelidir',
-      data: { isValid: false, message: 'TC Kimlik numarası sadece rakam içermelidir' }
+      data: { isValid: false, message: 'TC Kimlik numarası sadece rakam içermelidir' },
     };
   }
 
   return {
     success: true,
     error: null,
-    data: { isValid: true, message: 'TC Kimlik numarası geçerli' }
+    data: { isValid: true, message: 'TC Kimlik numarası geçerli' },
   };
 };
 
@@ -253,37 +265,51 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
   // Sample data for cascading dropdowns
   const cities = ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Adana', 'Konya', 'Gaziantep'];
   const districts: Record<string, string[]> = {
-    'İstanbul': ['Kadıköy', 'Beşiktaş', 'Şişli', 'Beyoğlu', 'Üsküdar', 'Bakırköy'],
-    'Ankara': ['Çankaya', 'Keçiören', 'Yenimahalle', 'Mamak', 'Sincan'],
-    'İzmir': ['Konak', 'Karşıyaka', 'Bornova', 'Buca', 'Alsancak'],
-    'Bursa': ['Nilüfer', 'Osmangazi', 'Yıldırım'],
-    'Antalya': ['Muratpaşa', 'Kepez', 'Konyaaltı'],
-    'Adana': ['Seyhan', 'Çukurova', 'Yüreğir'],
-    'Konya': ['Selçuklu', 'Meram', 'Karatay'],
-    'Gaziantep': ['Şahinbey', 'Şehitkamil'],
+    İstanbul: ['Kadıköy', 'Beşiktaş', 'Şişli', 'Beyoğlu', 'Üsküdar', 'Bakırköy'],
+    Ankara: ['Çankaya', 'Keçiören', 'Yenimahalle', 'Mamak', 'Sincan'],
+    İzmir: ['Konak', 'Karşıyaka', 'Bornova', 'Buca', 'Alsancak'],
+    Bursa: ['Nilüfer', 'Osmangazi', 'Yıldırım'],
+    Antalya: ['Muratpaşa', 'Kepez', 'Konyaaltı'],
+    Adana: ['Seyhan', 'Çukurova', 'Yüreğir'],
+    Konya: ['Selçuklu', 'Meram', 'Karatay'],
+    Gaziantep: ['Şahinbey', 'Şehitkamil'],
   };
   const neighborhoods: Record<string, string[]> = {
-    'Kadıköy': ['Moda', 'Bahariye', 'Acıbadem', 'Fenerbahçe'],
-    'Beşiktaş': ['Ortaköy', 'Bebek', 'Etiler', 'Levent'],
-    'Şişli': ['Mecidiyeköy', 'Gayrettepe', 'Harbiye'],
-    'Çankaya': ['Kızılay', 'Çankaya', 'Bahçelievler', 'Yenimahalle'],
+    Kadıköy: ['Moda', 'Bahariye', 'Acıbadem', 'Fenerbahçe'],
+    Beşiktaş: ['Ortaköy', 'Bebek', 'Etiler', 'Levent'],
+    Şişli: ['Mecidiyeköy', 'Gayrettepe', 'Harbiye'],
+    Çankaya: ['Kızılay', 'Çankaya', 'Bahçelievler', 'Yenimahalle'],
   };
   const streets: Record<string, string[]> = {
-    'Moda': ['Moda Caddesi', 'Bağdat Caddesi', 'Acıbadem Caddesi'],
-    'Ortaköy': ['Ortaköy Caddesi', 'Bebek Caddesi'],
-    'Kızılay': ['Atatürk Bulvarı', 'Kızılay Caddesi'],
+    Moda: ['Moda Caddesi', 'Bağdat Caddesi', 'Acıbadem Caddesi'],
+    Ortaköy: ['Ortaköy Caddesi', 'Bebek Caddesi'],
+    Kızılay: ['Atatürk Bulvarı', 'Kızılay Caddesi'],
   };
 
-  const diseaseCategories = ['Kalp ve Damar', 'Solunum', 'Sindirim', 'Sinir Sistemi', 'Kanser', 'Endokrin', 'Kas-İskelet', 'Diğer'];
+  const diseaseCategories = [
+    'Kalp ve Damar',
+    'Solunum',
+    'Sindirim',
+    'Sinir Sistemi',
+    'Kanser',
+    'Endokrin',
+    'Kas-İskelet',
+    'Diğer',
+  ];
   const diseases: Record<string, string[]> = {
-    'Kalp ve Damar': ['Hipertansiyon', 'Koroner Arter Hastalığı', 'Kalp Yetmezliği', 'Ritim Bozukluğu'],
-    'Solunum': ['Astım', 'KOAH', 'Bronşit', 'Pnömoni'],
-    'Sindirim': ['Gastrit', 'Ülser', 'Karaciğer Hastalığı', 'Kolon Hastalığı'],
+    'Kalp ve Damar': [
+      'Hipertansiyon',
+      'Koroner Arter Hastalığı',
+      'Kalp Yetmezliği',
+      'Ritim Bozukluğu',
+    ],
+    Solunum: ['Astım', 'KOAH', 'Bronşit', 'Pnömoni'],
+    Sindirim: ['Gastrit', 'Ülser', 'Karaciğer Hastalığı', 'Kolon Hastalığı'],
     'Sinir Sistemi': ['Epilepsi', 'Parkinson', 'Alzheimer', 'Migren'],
-    'Kanser': ['Akciğer Kanseri', 'Meme Kanseri', 'Prostat Kanseri', 'Kolorektal Kanser'],
-    'Endokrin': ['Diyabet', 'Tiroid Hastalığı', 'Obezite'],
+    Kanser: ['Akciğer Kanseri', 'Meme Kanseri', 'Prostat Kanseri', 'Kolorektal Kanser'],
+    Endokrin: ['Diyabet', 'Tiroid Hastalığı', 'Obezite'],
     'Kas-İskelet': ['Romatoid Artrit', 'Osteoporoz', 'Fibromiyalji'],
-    'Diğer': ['Kronik Böbrek Hastalığı', 'Anemi', 'Depresyon'],
+    Diğer: ['Kronik Böbrek Hastalığı', 'Anemi', 'Depresyon'],
   };
 
   const { data, isLoading, error, refetch } = useQuery({
@@ -304,7 +330,8 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
     enabled: !!id,
   });
 
-  const aidApplications: AidApplicationDocument[] = (aidApplicationsData?.data as AidApplicationDocument[]) || [];
+  const aidApplications: AidApplicationDocument[] =
+    (aidApplicationsData?.data as AidApplicationDocument[]) || [];
   const aidApplicationsCount = aidApplications.length;
 
   const updateMutation = useMutation({
@@ -324,10 +351,11 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
         });
       }
     },
-    onError: () => toast.error('❌ Bağlantı hatası', {
-      description: 'Güncelleme sırasında bir hata oluştu. İnternet bağlantınızı kontrol edin.',
-      duration: 5000,
-    }),
+    onError: () =>
+      toast.error('❌ Bağlantı hatası', {
+        description: 'Güncelleme sırasında bir hata oluştu. İnternet bağlantınızı kontrol edin.',
+        duration: 5000,
+      }),
   });
 
   const deleteMutation = useMutation({
@@ -346,10 +374,11 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
         });
       }
     },
-    onError: () => toast.error('❌ Bağlantı hatası', {
-      description: 'Silme sırasında bir hata oluştu. İnternet bağlantınızı kontrol edin.',
-      duration: 5000,
-    }),
+    onError: () =>
+      toast.error('❌ Bağlantı hatası', {
+        description: 'Silme sırasında bir hata oluştu. İnternet bağlantınızı kontrol edin.',
+        duration: 5000,
+      }),
   });
 
   const mernisMutation = useMutation({
@@ -374,10 +403,11 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
         });
       }
     },
-    onError: () => toast.error('❌ Bağlantı Hatası', {
-      description: 'Mernis servisi ile bağlantı kurulamadı. Lütfen daha sonra tekrar deneyin.',
-      duration: 5000,
-    }),
+    onError: () =>
+      toast.error('❌ Bağlantı Hatası', {
+        description: 'Mernis servisi ile bağlantı kurulamadı. Lütfen daha sonra tekrar deneyin.',
+        duration: 5000,
+      }),
   });
 
   const {
@@ -450,9 +480,10 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
     const { firstName, lastName, ...rest } = values;
     const payload: Partial<BeneficiaryDocument> = {
       ...rest,
-      name: firstName && lastName 
-        ? `${firstName} ${lastName}`.trim()
-        : values.name || beneficiary?.name || '',
+      name:
+        firstName && lastName
+          ? `${firstName} ${lastName}`.trim()
+          : values.name || beneficiary?.name || '',
     };
     updateMutation.mutate(payload);
   };
@@ -494,10 +525,22 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
   const STAGE_LABELS = {
     draft: { label: 'Taslak', color: 'bg-muted text-muted-foreground' },
-    under_review: { label: 'İnceleme', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' },
-    approved: { label: 'Onaylandı', color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' },
-    ongoing: { label: 'Devam Ediyor', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400' },
-    completed: { label: 'Tamamlandı', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400' },
+    under_review: {
+      label: 'İnceleme',
+      color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+    },
+    approved: {
+      label: 'Onaylandı',
+      color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+    },
+    ongoing: {
+      label: 'Devam Ediyor',
+      color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400',
+    },
+    completed: {
+      label: 'Tamamlandı',
+      color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400',
+    },
   };
 
   const modalCards = [
@@ -553,34 +596,42 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
   ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50"
+    >
       {/* Premium Header */}
       <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-      <div className="flex items-center gap-3 min-w-0">
-      <Button variant="ghost" onClick={() => router.back()} size="sm" className="gap-2 hover:bg-slate-100/80 shrink-0">
-      <ArrowLeft className="h-4 w-4" />
-      <span className="hidden sm:inline">Geri</span>
-      </Button>
-      <Separator orientation="vertical" className="h-6 hidden sm:block" />
-      <div className="min-w-0">
-      <h1 className="text-base sm:text-lg font-semibold text-slate-800 tracking-tight truncate">
-      İhtiyaç Sahibi Detay - {beneficiary.name}
-      </h1>
-      </div>
-      </div>
-
-      <div className="flex items-center gap-2 shrink-0">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+            <div className="flex items-center gap-3 min-w-0">
               <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 text-red-600 hover:bg-red-50/80 border-red-200/60 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-              onClick={() => deleteMutation.mutate()}
-              disabled={deleteMutation.isPending}
+                variant="ghost"
+                onClick={() => router.back()}
+                size="sm"
+                className="gap-2 hover:bg-slate-100/80 shrink-0"
               >
-              {deleteMutation.isPending ? (
-                <>
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Geri</span>
+              </Button>
+              <Separator orientation="vertical" className="h-6 hidden sm:block" />
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-semibold text-slate-800 tracking-tight truncate">
+                  İhtiyaç Sahibi Detay - {beneficiary.name}
+                </h1>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 text-red-600 hover:bg-red-50/80 border-red-200/60 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                onClick={() => deleteMutation.mutate()}
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? (
+                  <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-red-600 border-t-transparent" />
                     Siliniyor...
                   </>
@@ -592,13 +643,13 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 )}
               </Button>
               <Button
-              type="submit"
-              size="sm"
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-              disabled={isSubmitting || updateMutation.isPending}
+                type="submit"
+                size="sm"
+                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                disabled={isSubmitting || updateMutation.isPending}
               >
-              {isSubmitting || updateMutation.isPending ? (
-                <>
+                {isSubmitting || updateMutation.isPending ? (
+                  <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
                     Kaydediliyor...
                   </>
@@ -609,7 +660,12 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                   </>
                 )}
               </Button>
-              <Button variant="outline" size="sm" className="gap-2 hover:bg-slate-100/80" onClick={() => router.back()}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 hover:bg-slate-100/80"
+                onClick={() => router.back()}
+              >
                 <X className="h-4 w-4" />
                 Kapat
               </Button>
@@ -620,9 +676,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
       {/* Main Content */}
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 py-4">
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 xl:gap-6">
-      {/* Left Column - Main Form */}
-      <div className="col-span-1 xl:col-span-9 space-y-4 xl:space-y-6">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 xl:gap-6">
+          {/* Left Column - Main Form */}
+          <div className="col-span-1 xl:col-span-9 space-y-4 xl:space-y-6">
             {/* Temel Bilgiler */}
             <Card>
               <CardHeader className="pb-3 border-b border-slate-100">
@@ -642,15 +698,15 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
                   <div className="col-span-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">Ad *</Label>
-                    <Input
-                      {...register('firstName')}
+                      <Label className="text-sm font-medium text-slate-700">Ad *</Label>
+                      <Input
+                        {...register('firstName')}
                         className={`h-10 border-slate-200/60 focus:border-blue-500/50 transition-colors ${
                           errors.firstName ? 'border-red-300 focus:border-red-500' : ''
                         }`}
-                    />
-                    {errors.firstName && (
-                      <p className="text-xs text-red-600 animate-in slide-in-from-top-1 duration-200 flex items-center gap-1">
+                      />
+                      {errors.firstName && (
+                        <p className="text-xs text-red-600 animate-in slide-in-from-top-1 duration-200 flex items-center gap-1">
                           <span className="inline-block w-1 h-1 bg-red-500 rounded-full animate-pulse" />
                           {errors.firstName.message}
                         </p>
@@ -722,13 +778,29 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-slate-700">
-                        {identityDocType === 'tc' ? 'TC Kimlik No' : identityDocType === 'ikamet' ? 'İkamet No' : 'Pasaport No'}
+                        {identityDocType === 'tc'
+                          ? 'TC Kimlik No'
+                          : identityDocType === 'ikamet'
+                            ? 'İkamet No'
+                            : 'Pasaport No'}
                       </Label>
                       <div className="flex gap-2">
                         <Input
-                          {...register(identityDocType === 'tc' ? 'tc_no' : identityDocType === 'ikamet' ? 'ikamet_no' : 'pasaport_no')}
+                          {...register(
+                            identityDocType === 'tc'
+                              ? 'tc_no'
+                              : identityDocType === 'ikamet'
+                                ? 'ikamet_no'
+                                : 'pasaport_no'
+                          )}
                           className="h-10 border-slate-200/60 focus:border-blue-500/50"
-                          placeholder={identityDocType === 'tc' ? '11 haneli TC Kimlik No' : identityDocType === 'ikamet' ? 'İkamet No' : 'Pasaport No'}
+                          placeholder={
+                            identityDocType === 'tc'
+                              ? '11 haneli TC Kimlik No'
+                              : identityDocType === 'ikamet'
+                                ? 'İkamet No'
+                                : 'Pasaport No'
+                          }
                         />
                         {identityDocType === 'tc' && (
                           <Button
@@ -750,14 +822,20 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                           </Button>
                         )}
                       </div>
-                      {errors.tc_no && identityDocType === 'tc' && <p className="text-xs text-red-600">{errors.tc_no.message}</p>}
-                      {errors.ikamet_no && identityDocType === 'ikamet' && <p className="text-xs text-red-600">{errors.ikamet_no.message}</p>}
-                      {errors.pasaport_no && identityDocType === 'pasaport' && <p className="text-xs text-red-600">{errors.pasaport_no.message}</p>}
+                      {errors.tc_no && identityDocType === 'tc' && (
+                        <p className="text-xs text-red-600">{errors.tc_no.message}</p>
+                      )}
+                      {errors.ikamet_no && identityDocType === 'ikamet' && (
+                        <p className="text-xs text-red-600">{errors.ikamet_no.message}</p>
+                      )}
+                      {errors.pasaport_no && identityDocType === 'pasaport' && (
+                        <p className="text-xs text-red-600">{errors.pasaport_no.message}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">Telefon</Label>
-                    <Input
+                      <Label className="text-sm font-medium text-slate-700">Telefon</Label>
+                      <Input
                         {...register('phone')}
                         className={`h-10 border-slate-200/60 focus:border-blue-500/50 transition-colors ${
                           errors.phone ? 'border-red-300 focus:border-red-500' : ''
@@ -785,14 +863,21 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 pt-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Doğum Tarihi</Label>
-                    <Input type="date" {...register('birth_date')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      type="date"
+                      {...register('birth_date')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Doğum Yeri</Label>
-                    <Input {...register('birth_place')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('birth_place')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Cinsiyet</Label>
@@ -814,15 +899,24 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Din</Label>
-                    <Input {...register('religion')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('religion')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Baba Adı</Label>
-                    <Input {...register('father_name')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('father_name')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Anne Adı</Label>
-                    <Input {...register('mother_name')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('mother_name')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Medeni Durum</Label>
@@ -857,7 +951,7 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 pt-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Şehir</Label>
                     <Controller
@@ -911,11 +1005,13 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                             <SelectValue placeholder="İlçe seçiniz" />
                           </SelectTrigger>
                           <SelectContent>
-                            {(districts[selectedCity || getValues('city') || ''] || []).map((district) => (
-                              <SelectItem key={district} value={district}>
-                                {district}
-                              </SelectItem>
-                            ))}
+                            {(districts[selectedCity || getValues('city') || ''] || []).map(
+                              (district) => (
+                                <SelectItem key={district} value={district}>
+                                  {district}
+                                </SelectItem>
+                              )
+                            )}
                           </SelectContent>
                         </Select>
                       )}
@@ -940,7 +1036,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                             <SelectValue placeholder="Mahalle seçiniz" />
                           </SelectTrigger>
                           <SelectContent>
-                            {(neighborhoods[selectedDistrict || getValues('district') || ''] || []).map((neighborhood) => (
+                            {(
+                              neighborhoods[selectedDistrict || getValues('district') || ''] || []
+                            ).map((neighborhood) => (
                               <SelectItem key={neighborhood} value={neighborhood}>
                                 {neighborhood}
                               </SelectItem>
@@ -965,7 +1063,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                             <SelectValue placeholder="Sokak seçiniz" />
                           </SelectTrigger>
                           <SelectContent>
-                            {(streets[selectedNeighborhood || getValues('neighborhood') || ''] || []).map((street) => (
+                            {(
+                              streets[selectedNeighborhood || getValues('neighborhood') || ''] || []
+                            ).map((street) => (
                               <SelectItem key={street} value={street}>
                                 {street}
                               </SelectItem>
@@ -976,7 +1076,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">Ailedeki Kişi Sayısı</Label>
+                    <Label className="text-sm font-medium text-slate-700">
+                      Ailedeki Kişi Sayısı
+                    </Label>
                     <Controller
                       control={control}
                       name="family_size"
@@ -1001,8 +1103,14 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Açık Adres (Bina No, Daire No vb.)</Label>
-                  <Textarea {...register('address')} rows={3} className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50" />
+                  <Label className="text-sm font-medium text-slate-700">
+                    Açık Adres (Bina No, Daire No vb.)
+                  </Label>
+                  <Textarea
+                    {...register('address')}
+                    rows={3}
+                    className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -1019,19 +1127,43 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 <div className="grid grid-cols-4 gap-3">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Çocuk Sayısı</Label>
-                    <Input type="number" {...register('children_count')} className="h-10 border-slate-200/60 focus:border-blue-500/50" min="0" max="20" />
+                    <Input
+                      type="number"
+                      {...register('children_count')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      min="0"
+                      max="20"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Yetim Çocuk Sayısı</Label>
-                    <Input type="number" {...register('orphan_children_count')} className="h-10 border-slate-200/60 focus:border-blue-500/50" min="0" max="20" />
+                    <Input
+                      type="number"
+                      {...register('orphan_children_count')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      min="0"
+                      max="20"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Yaşlı Sayısı (65+)</Label>
-                    <Input type="number" {...register('elderly_count')} className="h-10 border-slate-200/60 focus:border-blue-500/50" min="0" max="20" />
+                    <Input
+                      type="number"
+                      {...register('elderly_count')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      min="0"
+                      max="20"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Engelli Sayısı</Label>
-                    <Input type="number" {...register('disabled_count')} className="h-10 border-slate-200/60 focus:border-blue-500/50" min="0" max="20" />
+                    <Input
+                      type="number"
+                      {...register('disabled_count')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      min="0"
+                      max="20"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -1069,15 +1201,29 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Gelir Kaynağı</Label>
-                    <Input {...register('income_source')} className="h-10 border-slate-200/60 focus:border-blue-500/50" placeholder="İş, sosyal yardım, vb." />
+                    <Input
+                      {...register('income_source')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      placeholder="İş, sosyal yardım, vb."
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Aylık Gelir (TL)</Label>
-                    <Input type="number" {...register('monthly_income')} className="h-10 border-slate-200/60 focus:border-blue-500/50" min="0" />
+                    <Input
+                      type="number"
+                      {...register('monthly_income')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      min="0"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Aylık Gider (TL)</Label>
-                    <Input type="number" {...register('monthly_expense')} className="h-10 border-slate-200/60 focus:border-blue-500/50" min="0" />
+                    <Input
+                      type="number"
+                      {...register('monthly_expense')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      min="0"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">İş Durumu</Label>
@@ -1101,7 +1247,10 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Meslek</Label>
-                    <Input {...register('occupation')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('occupation')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Sosyal Güvenlik</Label>
@@ -1148,26 +1297,24 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                       control={control}
                       name="has_debt"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Borç Var</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Borç Var
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2 pt-2">
                     <Controller
                       control={control}
                       name="has_vehicle"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Araç Var</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Araç Var
+                    </Label>
                   </div>
                 </div>
               </CardContent>
@@ -1233,46 +1380,45 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                       control={control}
                       name="has_chronic_illness"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Kronik Hastalık Var</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Kronik Hastalık Var
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Controller
                       control={control}
                       name="has_disability"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Engellilik Durumu Var</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Engellilik Durumu Var
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Controller
                       control={control}
                       name="has_health_insurance"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Sağlık Sigortası Var</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Sağlık Sigortası Var
+                    </Label>
                   </div>
                 </div>
                 {getValues('has_chronic_illness') && (
                   <div className="space-y-2">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium text-slate-700">Hastalık Kategorisi</Label>
+                        <Label className="text-sm font-medium text-slate-700">
+                          Hastalık Kategorisi
+                        </Label>
                         <Select
                           value={selectedDiseaseCategory}
                           onValueChange={(value) => {
@@ -1323,12 +1469,23 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 {getValues('has_disability') && (
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Engellilik Detayı</Label>
-                    <Textarea {...register('disability_detail')} rows={2} className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50" />
+                    <Textarea
+                      {...register('disability_detail')}
+                      rows={2}
+                      className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Düzenli Kullanılan İlaçlar</Label>
-                  <Textarea {...register('regular_medication')} rows={2} className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50" placeholder="İlaç adları ve dozları" />
+                  <Label className="text-sm font-medium text-slate-700">
+                    Düzenli Kullanılan İlaçlar
+                  </Label>
+                  <Textarea
+                    {...register('regular_medication')}
+                    rows={2}
+                    className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50"
+                    placeholder="İlaç adları ve dozları"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -1354,7 +1511,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                             <SelectValue placeholder="Seçiniz" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="OKUMA_YAZMA_BILMIYOR">Okuma Yazma Bilmiyor</SelectItem>
+                            <SelectItem value="OKUMA_YAZMA_BILMIYOR">
+                              Okuma Yazma Bilmiyor
+                            </SelectItem>
                             <SelectItem value="OKUMA_YAZMA_BILIYOR">Okuma Yazma Biliyor</SelectItem>
                             <SelectItem value="ILKOKUL">İlkokul</SelectItem>
                             <SelectItem value="ORTAOKUL">Ortaokul</SelectItem>
@@ -1368,8 +1527,13 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                     />
                   </div>
                   <div className="space-y-2 col-span-2">
-                    <Label className="text-sm font-medium text-slate-700">Okul Adı (Öğrenci ise)</Label>
-                    <Input {...register('school_name')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Label className="text-sm font-medium text-slate-700">
+                      Okul Adı (Öğrenci ise)
+                    </Label>
+                    <Input
+                      {...register('school_name')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -1386,16 +1550,28 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
               <CardContent className="space-y-3 pt-4">
                 <div className="grid grid-cols-3 gap-3">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">Acil Durum İletişim Adı</Label>
-                    <Input {...register('emergency_contact_name')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Label className="text-sm font-medium text-slate-700">
+                      Acil Durum İletişim Adı
+                    </Label>
+                    <Input
+                      {...register('emergency_contact_name')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Yakınlık Derecesi</Label>
-                    <Input {...register('emergency_contact_relation')} className="h-10 border-slate-200/60 focus:border-blue-500/50" placeholder="Eş, kardeş, vb." />
+                    <Input
+                      {...register('emergency_contact_relation')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      placeholder="Eş, kardeş, vb."
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Telefon</Label>
-                    <Input {...register('emergency_contact_phone')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('emergency_contact_phone')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -1413,19 +1589,32 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 <div className="grid grid-cols-4 gap-3">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Referans Adı</Label>
-                    <Input {...register('reference_name')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('reference_name')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Referans Telefon</Label>
-                    <Input {...register('reference_phone')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('reference_phone')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Yakınlık</Label>
-                    <Input {...register('reference_relation')} className="h-10 border-slate-200/60 focus:border-blue-500/50" />
+                    <Input
+                      {...register('reference_relation')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Başvuru Kaynağı</Label>
-                    <Input {...register('application_source')} className="h-10 border-slate-200/60 focus:border-blue-500/50" placeholder="Nasıl öğrendi?" />
+                    <Input
+                      {...register('application_source')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      placeholder="Nasıl öğrendi?"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -1443,11 +1632,19 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 <div className="grid grid-cols-4 gap-3">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Yardım Türü</Label>
-                    <Input {...register('aid_type')} className="h-10 border-slate-200/60 focus:border-blue-500/50" placeholder="Nakit, gıda, giyim, vb." />
+                    <Input
+                      {...register('aid_type')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      placeholder="Nakit, gıda, giyim, vb."
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Yardım Süresi</Label>
-                    <Input {...register('aid_duration')} className="h-10 border-slate-200/60 focus:border-blue-500/50" placeholder="3 ay, 6 ay, vb." />
+                    <Input
+                      {...register('aid_duration')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      placeholder="3 ay, 6 ay, vb."
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700">Öncelik</Label>
@@ -1470,8 +1667,15 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">Toplam Yardım Tutarı (TL)</Label>
-                    <Input type="number" {...register('totalAidAmount')} className="h-10 border-slate-200/60 focus:border-blue-500/50" min="0" />
+                    <Label className="text-sm font-medium text-slate-700">
+                      Toplam Yardım Tutarı (TL)
+                    </Label>
+                    <Input
+                      type="number"
+                      {...register('totalAidAmount')}
+                      className="h-10 border-slate-200/60 focus:border-blue-500/50"
+                      min="0"
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
@@ -1480,39 +1684,36 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                       control={control}
                       name="emergency"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Acil Durum</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Acil Durum
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Controller
                       control={control}
                       name="previous_aid"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Daha Önce Yardım Aldı</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Daha Önce Yardım Aldı
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Controller
                       control={control}
                       name="other_organization_aid"
                       render={({ field }) => (
-                        <Checkbox
-                          checked={field.value || false}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange} />
                       )}
                     />
-                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">Başka Kurumdan Yardım Alıyor</Label>
+                    <Label className="text-sm font-medium text-slate-700 cursor-pointer">
+                      Başka Kurumdan Yardım Alıyor
+                    </Label>
                   </div>
                 </div>
               </CardContent>
@@ -1521,7 +1722,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
             {/* Durum ve Onay */}
             <Card>
               <CardHeader className="pb-3 border-b border-slate-100">
-                <CardTitle className="text-base font-semibold text-slate-800">Durum ve Onay</CardTitle>
+                <CardTitle className="text-base font-semibold text-slate-800">
+                  Durum ve Onay
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 pt-4">
                 <div className="flex items-center justify-between">
@@ -1538,25 +1741,37 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                         >
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="TASLAK" id="taslak" />
-                            <Label htmlFor="taslak" className="text-sm font-normal text-slate-700 cursor-pointer">
+                            <Label
+                              htmlFor="taslak"
+                              className="text-sm font-normal text-slate-700 cursor-pointer"
+                            >
                               Taslak
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="AKTIF" id="aktif" />
-                            <Label htmlFor="aktif" className="text-sm font-normal text-slate-700 cursor-pointer">
+                            <Label
+                              htmlFor="aktif"
+                              className="text-sm font-normal text-slate-700 cursor-pointer"
+                            >
                               Aktif
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="PASIF" id="pasif" />
-                            <Label htmlFor="pasif" className="text-sm font-normal text-slate-700 cursor-pointer">
+                            <Label
+                              htmlFor="pasif"
+                              className="text-sm font-normal text-slate-700 cursor-pointer"
+                            >
                               Pasif
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="SILINDI" id="silindi" />
-                            <Label htmlFor="silindi" className="text-sm font-normal text-slate-700 cursor-pointer">
+                            <Label
+                              htmlFor="silindi"
+                              className="text-sm font-normal text-slate-700 cursor-pointer"
+                            >
                               Silindi
                             </Label>
                           </div>
@@ -1596,7 +1811,12 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
               <CardContent className="pt-4">
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-slate-700">Genel Notlar</Label>
-                  <Textarea {...register('notes')} rows={4} className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50" placeholder="Ek bilgiler, gözlemler, özel durumlar..." />
+                  <Textarea
+                    {...register('notes')}
+                    rows={4}
+                    className="resize-none text-sm border-slate-200/60 focus:border-blue-500/50"
+                    placeholder="Ek bilgiler, gözlemler, özel durumlar..."
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -1627,16 +1847,22 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
                   <div className="text-center p-3 bg-purple-50 rounded-lg">
                     <div className="text-2xl font-bold text-purple-600">
-                      {beneficiary.totalAidAmount ? `${beneficiary.totalAidAmount.toLocaleString('tr-TR')} ₺` : '0 ₺'}
+                      {beneficiary.totalAidAmount
+                        ? `${beneficiary.totalAidAmount.toLocaleString('tr-TR')} ₺`
+                        : '0 ₺'}
                     </div>
                     <div className="text-sm text-muted-foreground">Toplam Yardım</div>
                   </div>
 
                   <div className="text-center p-3 bg-orange-50 rounded-lg">
                     <div className="text-2xl font-bold text-orange-600">
-                      {beneficiary.priority === 'ACIL' ? 'Acil' :
-                       beneficiary.priority === 'YUKSEK' ? 'Yüksek' :
-                       beneficiary.priority === 'ORTA' ? 'Orta' : 'Düşük'}
+                      {beneficiary.priority === 'ACIL'
+                        ? 'Acil'
+                        : beneficiary.priority === 'YUKSEK'
+                          ? 'Yüksek'
+                          : beneficiary.priority === 'ORTA'
+                            ? 'Orta'
+                            : 'Düşük'}
                     </div>
                     <div className="text-sm text-muted-foreground">Öncelik</div>
                   </div>
@@ -1647,7 +1873,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
             {/* Kayıt Bilgileri */}
             <Card>
               <CardHeader className="pb-3 border-b border-slate-100">
-                <CardTitle className="text-base font-semibold text-slate-800">Kayıt Bilgileri</CardTitle>
+                <CardTitle className="text-base font-semibold text-slate-800">
+                  Kayıt Bilgileri
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-4">
                 <div className="grid grid-cols-2 gap-3 text-sm">
@@ -1670,9 +1898,13 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
           {/* Right Column - 6 Square Modal Cards */}
           <div className="col-span-1 xl:col-span-3 order-first xl:order-last">
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 gap-3 xl:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 gap-3 xl:gap-4">
               {modalCards.map((card) => (
-                <Dialog key={card.id} open={openModal === card.id} onOpenChange={(open) => setOpenModal(open ? card.id : null)}>
+                <Dialog
+                  key={card.id}
+                  open={openModal === card.id}
+                  onOpenChange={(open) => setOpenModal(open ? card.id : null)}
+                >
                   <DialogTrigger asChild>
                     <Card className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105 aspect-square">
                       <CardContent className="flex flex-col items-center justify-center h-full p-6 text-center space-y-3">
@@ -1737,7 +1969,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                         <DialogDescription>{card.description}</DialogDescription>
                       </DialogHeader>
                       <div className="py-4">
-                        <p className="text-sm text-muted-foreground">Bu bölüm yakında aktif olacaktır.</p>
+                        <p className="text-sm text-muted-foreground">
+                          Bu bölüm yakında aktif olacaktır.
+                        </p>
                       </div>
                     </DialogContent>
                   )}
@@ -1754,9 +1988,7 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
           <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Yapılan Yardımlar</DialogTitle>
-              <DialogDescription>
-                Yapılan yardımları görüntüle ve takip et
-              </DialogDescription>
+              <DialogDescription>Yapılan yardımları görüntüle ve takip et</DialogDescription>
             </DialogHeader>
             <div className="py-4">
               <AidHistoryChart beneficiaryId={id} />
@@ -1776,7 +2008,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
               {aidApplications.length === 0 ? (
                 <div className="text-center py-8">
                   <HandHeart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-lg font-medium text-muted-foreground">Henüz başvuru bulunmuyor</p>
+                  <p className="text-lg font-medium text-muted-foreground">
+                    Henüz başvuru bulunmuyor
+                  </p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Bu kişi için henüz yardım başvurusu oluşturulmamış.
                   </p>
@@ -1810,7 +2044,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
                             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                               <Calendar className="h-4 w-4" />
-                              <span>{new Date(app.application_date).toLocaleDateString('tr-TR')}</span>
+                              <span>
+                                {new Date(app.application_date).toLocaleDateString('tr-TR')}
+                              </span>
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
@@ -1819,7 +2055,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                                   <DollarSign className="h-4 w-4 text-green-600" />
                                   <div>
                                     <p className="text-xs text-muted-foreground">Tek Seferlik</p>
-                                    <p className="font-semibold">{app.one_time_aid.toLocaleString('tr-TR')} ₺</p>
+                                    <p className="font-semibold">
+                                      {app.one_time_aid.toLocaleString('tr-TR')} ₺
+                                    </p>
                                   </div>
                                 </div>
                               )}
@@ -1828,7 +2066,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                                   <DollarSign className="h-4 w-4 text-blue-600" />
                                   <div>
                                     <p className="text-xs text-muted-foreground">Düzenli Mali</p>
-                                    <p className="font-semibold">{app.regular_financial_aid.toLocaleString('tr-TR')} ₺</p>
+                                    <p className="font-semibold">
+                                      {app.regular_financial_aid.toLocaleString('tr-TR')} ₺
+                                    </p>
                                   </div>
                                 </div>
                               )}
@@ -1837,7 +2077,9 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                                   <Utensils className="h-4 w-4 text-orange-600" />
                                   <div>
                                     <p className="text-xs text-muted-foreground">Düzenli Gıda</p>
-                                    <p className="font-semibold">{app.regular_food_aid.toLocaleString('tr-TR')} ₺</p>
+                                    <p className="font-semibold">
+                                      {app.regular_food_aid.toLocaleString('tr-TR')} ₺
+                                    </p>
                                   </div>
                                 </div>
                               )}
@@ -1846,14 +2088,18 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                                   <Package className="h-4 w-4 text-purple-600" />
                                   <div>
                                     <p className="text-xs text-muted-foreground">Ayni Yardım</p>
-                                    <p className="font-semibold">{app.in_kind_aid.toLocaleString('tr-TR')} ₺</p>
+                                    <p className="font-semibold">
+                                      {app.in_kind_aid.toLocaleString('tr-TR')} ₺
+                                    </p>
                                   </div>
                                 </div>
                               )}
                             </div>
 
                             {app.description && (
-                              <p className="text-sm text-muted-foreground mb-2">{app.description}</p>
+                              <p className="text-sm text-muted-foreground mb-2">
+                                {app.description}
+                              </p>
                             )}
                           </div>
                           <Link href={`/yardim/basvurular/${app._id}`}>

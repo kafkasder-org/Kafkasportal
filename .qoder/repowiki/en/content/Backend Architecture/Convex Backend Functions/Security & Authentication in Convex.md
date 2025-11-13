@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Authentication Flow with JWT and Session Management](#authentication-flow-with-jwt-and-session-management)
 3. [Two-Factor Authentication Implementation](#two-factor-authentication-implementation)
@@ -25,6 +26,7 @@
 8. [Conclusion](#conclusion)
 
 ## Introduction
+
 This document provides a comprehensive overview of the security and authentication mechanisms implemented in the Convex backend for the Kafkasder-panel application. It details how user authentication is managed through JSON Web Tokens (JWT) and session cookies, the integration of two-factor authentication (2FA), role-based access control (RBAC), secure password handling, and audit logging. The system leverages Convex's server functions to enforce permissions at the query and mutation level, ensuring data integrity and compliance with security best practices.
 
 The authentication flow begins with user login via email and password, followed by session creation and CSRF protection. Multi-factor authentication is supported through TOTP and backup codes, while trusted devices allow users to bypass repeated 2FA prompts. Role-based permissions are enforced using `ctx.auth` within Convex queries and mutations, restricting unauthorized access to sensitive operations.
@@ -68,11 +70,13 @@ end
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [session/route.ts](file://src/app/api/auth/session/route.ts#L1-L64)
 - [session.ts](file://src/lib/auth/session.ts#L1-L198)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [session/route.ts](file://src/app/api/auth/session/route.ts#L1-L64)
 - [session.ts](file://src/lib/auth/session.ts#L1-L198)
@@ -121,10 +125,12 @@ TwoFactorSettings --> TrustedDevice : allows bypass
 ```
 
 **Diagram sources**
+
 - [two_factor_auth.ts](file://convex/two_factor_auth.ts#L1-L346)
 - [schema.ts](file://convex/schema.ts#L746-L794)
 
 **Section sources**
+
 - [two_factor_auth.ts](file://convex/two_factor_auth.ts#L1-L346)
 
 ## Role-Based Access Control (RBAC)
@@ -151,11 +157,13 @@ K --> L[Return Result]
 ```
 
 **Diagram sources**
+
 - [users.ts](file://convex/users.ts#L1-L220)
 - [session.ts](file://src/lib/auth/session.ts#L76-L185)
 - [schema.ts](file://convex/schema.ts#L9-L41)
 
 **Section sources**
+
 - [users.ts](file://convex/users.ts#L1-L220)
 - [session.ts](file://src/lib/auth/session.ts#L76-L185)
 
@@ -164,6 +172,7 @@ K --> L[Return Result]
 Password security is enforced through bcrypt hashing and strength validation. The `hashPassword` and `verifyPassword` functions in `password.ts` use bcryptjs to securely hash and compare passwords with a salt round of 12, providing strong protection against brute-force attacks.
 
 Password strength is validated on both client and server sides. The validation rules require:
+
 - Minimum 8 characters
 - Maximum 128 characters
 - At least one numeric character
@@ -192,10 +201,12 @@ end
 ```
 
 **Diagram sources**
+
 - [password.ts](file://src/lib/auth/password.ts#L1-L54)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L107-L127)
 
 **Section sources**
+
 - [password.ts](file://src/lib/auth/password.ts#L1-L54)
 
 ## API Endpoint Security and Vulnerability Prevention
@@ -226,17 +237,20 @@ I --> J[Return Response]
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [security_audit.ts](file://convex/security_audit.ts#L1-L273)
 - [schema.ts](file://convex/schema.ts#L675-L704)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L23-L231)
 - [security_audit.ts](file://convex/security_audit.ts#L1-L273)
 
 ## Audit Logging and Security Monitoring
 
 Audit logging is a core component of the system's security architecture. Every critical operation—such as data creation, modification, deletion, and access—is recorded in the `audit_logs` collection. Each log entry includes:
+
 - User ID and name
 - Action performed (CREATE, UPDATE, DELETE, VIEW)
 - Resource type and ID
@@ -245,6 +259,7 @@ Audit logging is a core component of the system's security architecture. Every c
 - Timestamp
 
 The `audit_logs.ts` file provides functions to:
+
 - Log actions (`logAction`)
 - List logs with filters (`list`)
 - Get statistics (`getStats`)
@@ -294,18 +309,22 @@ boolean is_active
 ```
 
 **Diagram sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L1-L178)
 - [security_audit.ts](file://convex/security_audit.ts#L1-L273)
 - [schema.ts](file://convex/schema.ts#L1-L800)
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L1-L178)
 - [security_audit.ts](file://convex/security_audit.ts#L1-L273)
 
 ## Conclusion
+
 The Convex backend implements a robust, multi-layered security model that combines session-based authentication, two-factor verification, role-based access control, secure password handling, and comprehensive audit logging. By leveraging Convex's server functions and data model, the system ensures that all data access is properly authenticated and authorized, minimizing the risk of unauthorized access or data breaches.
 
 Key strengths include:
+
 - Secure session management with CSRF protection
 - Support for 2FA with backup codes and trusted devices
 - Granular RBAC with fallback admin detection

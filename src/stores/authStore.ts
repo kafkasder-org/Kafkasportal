@@ -131,7 +131,10 @@ export const useAuthStore = create<AuthStore>()(
                   });
                   (async () => {
                     try {
-                      const resp = await fetch('/api/auth/session', { method: 'GET', cache: 'no-store' });
+                      const resp = await fetch('/api/auth/session', {
+                        method: 'GET',
+                        cache: 'no-store',
+                      });
                       if (!resp.ok) {
                         localStorage.removeItem('auth-session');
                         set((state) => {

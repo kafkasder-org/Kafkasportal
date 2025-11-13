@@ -20,6 +20,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [System Context](#system-context)
 3. [Convex Architecture](#convex-architecture)
@@ -34,6 +35,7 @@
 The Kafkasder-panel backend architecture leverages Convex as a real-time serverless backend, integrated with Next.js API Routes as the interface layer. This architecture provides a scalable, secure, and maintainable foundation for the application. Convex serves as the primary data store and business logic engine, while Next.js API Routes handle HTTP requests, authentication, and security concerns. The system is designed with robust error handling, monitoring, and security mechanisms to ensure reliability and protect sensitive data.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L1-L1446)
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 
@@ -63,6 +65,7 @@ style I fill:#66f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L1-L1446)
 - [client.ts](file://src/lib/convex/client.ts#L1-L108)
 - [sentry.client.config.ts](file://sentry.client.config.ts#L1-L10)
@@ -131,6 +134,7 @@ MEETING ||--o{ TASK : generates
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L1-L1446)
 
 ### Function Types
@@ -142,6 +146,7 @@ Convex functions are categorized into three types: queries, mutations, and actio
 - **Actions**: Functions that perform complex operations, such as sending emails or processing payments. They can call external APIs and are not limited to database operations. Examples include `sendEmailNotification` and `processPayment`.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L1-L1446)
 - [auth.ts](file://convex/auth.ts#L1-L82)
 
@@ -171,6 +176,7 @@ APIRoute-->>Client : HTTP Response
 ```
 
 **Diagram sources**
+
 - [api.ts](file://src/lib/convex/api.ts#L1-L442)
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [session/route.ts](file://src/app/api/auth/session/route.ts#L1-L65)
@@ -180,6 +186,7 @@ APIRoute-->>Client : HTTP Response
 The login flow is a prime example of how API routes and Convex functions work together. When a user submits their credentials, the `/api/auth/login` route is invoked. This route first validates the input, then checks if the account is locked due to failed login attempts. If the account is not locked, it calls the `getUserByEmail` query to retrieve the user's information from Convex. The password is then verified using a secure hashing algorithm. If the credentials are valid, a session cookie and CSRF token are generated, and the user's last login time is updated using the `updateLastLogin` mutation.
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [auth.ts](file://convex/auth.ts#L1-L82)
 - [session.ts](file://src/lib/auth/session.ts#L1-L198)
@@ -218,11 +225,13 @@ Server-->>Browser : Response
 ```
 
 **Diagram sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [session/route.ts](file://src/app/api/auth/session/route.ts#L1-L65)
 - [csrf.ts](file://src/lib/csrf.ts#L1-L57)
 
 **Section sources**
+
 - [login/route.ts](file://src/app/api/auth/login/route.ts#L1-L231)
 - [session/route.ts](file://src/app/api/auth/session/route.ts#L1-L65)
 - [csrf.ts](file://src/lib/csrf.ts#L1-L57)
@@ -245,6 +254,7 @@ Input validation is performed at multiple levels to ensure that only valid data 
 Secure session management is achieved through the use of HTTP-only cookies, secure flags, and strict same-site policies. Session cookies are signed to prevent tampering, and CSRF tokens are used to validate state-changing requests. Sessions are automatically expired after a configurable period of inactivity.
 
 **Section sources**
+
 - [rate-limit.ts](file://src/lib/rate-limit.ts#L1-L148)
 - [auth-utils.ts](file://src/lib/api/auth-utils.ts#L1-L123)
 - [session.ts](file://src/lib/auth/session.ts#L1-L198)
@@ -279,11 +289,13 @@ I --> J[Close Issue]
 ```
 
 **Diagram sources**
+
 - [error-tracker.ts](file://src/lib/error-tracker.ts#L1-L360)
 - [sentry.client.config.ts](file://sentry.client.config.ts#L1-L10)
 - [sentry.server.config.ts](file://sentry.server.config.ts#L1-L10)
 
 **Section sources**
+
 - [error-tracker.ts](file://src/lib/error-tracker.ts#L1-L360)
 - [errors.ts](file://convex/errors.ts#L1-L512)
 - [sentry.client.config.ts](file://sentry.client.config.ts#L1-L10)

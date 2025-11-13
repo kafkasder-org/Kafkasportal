@@ -42,7 +42,12 @@ function validatePartnerData(data: PartnerData): ValidationResult {
     errors.push('Geçersiz partner türü');
   }
 
-  if (data.partnership_type && !['donor', 'supplier', 'volunteer', 'sponsor', 'service_provider'].includes(data.partnership_type)) {
+  if (
+    data.partnership_type &&
+    !['donor', 'supplier', 'volunteer', 'sponsor', 'service_provider'].includes(
+      data.partnership_type
+    )
+  ) {
     errors.push('Geçersiz işbirliği türü');
   }
 
@@ -77,14 +82,11 @@ async function getPartnerHandler(
 ) {
   try {
     const { id } = await params;
-    const partnerId = id as Id<"partners">;
+    const partnerId = id as Id<'partners'>;
     const partner = await convexPartners.get(partnerId);
 
     if (!partner) {
-      return NextResponse.json(
-        { success: false, error: 'Partner bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Partner bulunamadı' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -132,25 +134,37 @@ async function updatePartnerHandler(
     }
 
     const { id } = await params;
-    const partnerId = id as Id<"partners">;
+    const partnerId = id as Id<'partners'>;
 
     // Prepare update data
     const updateData: Record<string, unknown> = {};
     if (body.name !== undefined) updateData.name = body.name;
-    if (body.type !== undefined) updateData.type = body.type as "organization" | "individual" | "sponsor";
+    if (body.type !== undefined)
+      updateData.type = body.type as 'organization' | 'individual' | 'sponsor';
     if (body.contact_person !== undefined) updateData.contact_person = body.contact_person;
     if (body.email !== undefined) updateData.email = body.email;
     if (body.phone !== undefined) updateData.phone = body.phone;
     if (body.address !== undefined) updateData.address = body.address;
     if (body.website !== undefined) updateData.website = body.website;
     if (body.tax_number !== undefined) updateData.tax_number = body.tax_number;
-    if (body.partnership_type !== undefined) updateData.partnership_type = body.partnership_type as "donor" | "supplier" | "volunteer" | "sponsor" | "service_provider";
-    if (body.collaboration_start_date !== undefined) updateData.collaboration_start_date = body.collaboration_start_date;
-    if (body.collaboration_end_date !== undefined) updateData.collaboration_end_date = body.collaboration_end_date;
+    if (body.partnership_type !== undefined)
+      updateData.partnership_type = body.partnership_type as
+        | 'donor'
+        | 'supplier'
+        | 'volunteer'
+        | 'sponsor'
+        | 'service_provider';
+    if (body.collaboration_start_date !== undefined)
+      updateData.collaboration_start_date = body.collaboration_start_date;
+    if (body.collaboration_end_date !== undefined)
+      updateData.collaboration_end_date = body.collaboration_end_date;
     if (body.notes !== undefined) updateData.notes = body.notes;
-    if (body.status !== undefined) updateData.status = body.status as "active" | "inactive" | "pending";
-    if (body.total_contribution !== undefined) updateData.total_contribution = body.total_contribution;
-    if (body.contribution_count !== undefined) updateData.contribution_count = body.contribution_count;
+    if (body.status !== undefined)
+      updateData.status = body.status as 'active' | 'inactive' | 'pending';
+    if (body.total_contribution !== undefined)
+      updateData.total_contribution = body.total_contribution;
+    if (body.contribution_count !== undefined)
+      updateData.contribution_count = body.contribution_count;
     if (body.logo_url !== undefined) updateData.logo_url = body.logo_url;
 
     const response = await convexPartners.update(partnerId, updateData);
@@ -184,15 +198,12 @@ async function deletePartnerHandler(
 ) {
   try {
     const { id } = await params;
-    const partnerId = id as Id<"partners">;
+    const partnerId = id as Id<'partners'>;
 
     // Check if partner exists
     const partner = await convexPartners.get(partnerId);
     if (!partner) {
-      return NextResponse.json(
-        { success: false, error: 'Partner bulunamadı' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Partner bulunamadı' }, { status: 404 });
     }
 
     await convexPartners.remove(partnerId);
@@ -207,10 +218,7 @@ async function deletePartnerHandler(
       method: 'DELETE',
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Silme işlemi başarısız' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Silme işlemi başarısız' }, { status: 500 });
   }
 }
 

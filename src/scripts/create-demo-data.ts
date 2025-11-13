@@ -66,7 +66,7 @@ async function createDemoData() {
       donor_name: 'Fatma Kaya',
       donor_phone: '+90 534 111 22 33',
       donor_email: 'fatma.kaya@example.com',
-      amount: 250.00,
+      amount: 250.0,
       currency: 'TRY' as const,
       donation_type: 'BANKA_HAVALESI',
       payment_method: 'BANKA_HAVALESI',
@@ -81,7 +81,10 @@ async function createDemoData() {
       const donationId = await convex.mutation(api.donations.create, donationData);
       console.log(`✅ Created donation: ${donationId}\n`);
     } catch (_e: unknown) {
-      if ((_e as Error).message.includes('already exists') || (_e as Error).message.includes('duplicate')) {
+      if (
+        (_e as Error).message.includes('already exists') ||
+        (_e as Error).message.includes('duplicate')
+      ) {
         console.log('⚠️ Donation already exists, skipping...\n');
       } else {
         throw _e;
@@ -112,7 +115,8 @@ async function createDemoData() {
     try {
       const messageId = await convex.mutation(api.messages.create, {
         subject: 'Kumbara Bağışı Hakkında Bilgilendirme',
-        content: 'Sayın Mehmet Özkan, bağışınız için teşekkür ederiz. Kumbara bağışınız Ahmet Yılmaz ailesine ulaştırılmıştır.',
+        content:
+          'Sayın Mehmet Özkan, bağışınız için teşekkür ederiz. Kumbara bağışınız Ahmet Yılmaz ailesine ulaştırılmıştır.',
         sender: 'admin' as any, // TODO: Replace with actual user ID
         recipients: ['user123' as any], // TODO: Replace with actual user IDs
         is_bulk: false,
@@ -127,11 +131,10 @@ async function createDemoData() {
     console.log('🎉 Demo data creation completed successfully!');
     console.log('\n📊 Created:');
     console.log('  - 1 Beneficiary (İhtiyaç Sahibi): Ayşe Demir');
-    console.log('  - 1 Donation (Bağış): Fatma Kaya\'dan 250 TL');
+    console.log("  - 1 Donation (Bağış): Fatma Kaya'dan 250 TL");
     console.log('  - 1 Task (Görev) - skipped');
     console.log('  - 1 Message (Mesaj) - skipped');
     console.log('\n🔍 You can now check the data in the Convex dashboard or via the UI');
-
   } catch (error: any) {
     console.error('❌ Error creating demo data:', error);
     throw error;

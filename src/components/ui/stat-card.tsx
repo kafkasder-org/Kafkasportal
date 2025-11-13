@@ -23,14 +23,7 @@ type StatCardVariant =
   | 'green'
   | 'purple';
 
-type StatCardIcon =
-  | LucideIcon
-  | ElementType
-  | ReactElement
-  | ReactNode
-  | string
-  | number
-  | null;
+type StatCardIcon = LucideIcon | ElementType | ReactElement | ReactNode | string | number | null;
 
 interface StatCardProps {
   title: string;
@@ -201,9 +194,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
                   {unit && <span className="text-sm text-slate-600">{unit}</span>}
                 </div>
 
-                {description && (
-                  <p className="text-sm text-slate-600 mt-2">{description}</p>
-                )}
+                {description && <p className="text-sm text-slate-600 mt-2">{description}</p>}
               </>
             )}
 
@@ -229,14 +220,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
           </div>
 
           {icon && (
-            <div
-              className={cn(
-                'p-3 rounded-lg',
-                styles.bg,
-                'border',
-                styles.border
-              )}
-            >
+            <div className={cn('p-3 rounded-lg', styles.bg, 'border', styles.border)}>
               {renderIcon()}
             </div>
           )}
@@ -296,16 +280,7 @@ export function StatCardsGrid({
   };
 
   return (
-    <div
-      className={cn(
-        'grid',
-        colStyles[columns],
-        gapStyles[gap],
-        className
-      )}
-    >
-      {children}
-    </div>
+    <div className={cn('grid', colStyles[columns], gapStyles[gap], className)}>{children}</div>
   );
 }
 
@@ -317,30 +292,15 @@ interface ComparisonStatCardProps extends Omit<StatCardProps, 'trend'> {
   label?: string;
 }
 
-export const ComparisonStatCard = forwardRef<
-  HTMLDivElement,
-  ComparisonStatCardProps
->(
+export const ComparisonStatCard = forwardRef<HTMLDivElement, ComparisonStatCardProps>(
   (
-    {
-      title,
-      value,
-      unit,
-      previousValue,
-      label,
-      icon,
-      variant,
-      loading,
-      onClick,
-      className,
-    },
+    { title, value, unit, previousValue, label, icon, variant, loading, onClick, className },
     ref
   ) => {
     const isPositive = Number(value) >= Number(previousValue);
     const difference = Math.abs(Number(value) - Number(previousValue));
-    const percentChange = previousValue !== 0
-      ? ((difference / Number(previousValue)) * 100).toFixed(1)
-      : '0';
+    const percentChange =
+      previousValue !== 0 ? ((difference / Number(previousValue)) * 100).toFixed(1) : '0';
 
     return (
       <StatCard
@@ -358,9 +318,7 @@ export const ComparisonStatCard = forwardRef<
           label: label || 'Son döneme göre',
           isPositive,
         }}
-        description={
-          label ? `Önceki: ${previousValue} ${unit || ''}` : undefined
-        }
+        description={label ? `Önceki: ${previousValue} ${unit || ''}` : undefined}
       />
     );
   }

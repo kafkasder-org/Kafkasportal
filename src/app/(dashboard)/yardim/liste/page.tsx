@@ -46,15 +46,33 @@ interface AidRecord extends AidApplicationDocument {
 
 const STAGE_LABELS = {
   draft: { label: 'Taslak', color: 'bg-muted text-muted-foreground' },
-  under_review: { label: 'İnceleme', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' },
-  approved: { label: 'Onaylandı', color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' },
-  ongoing: { label: 'Devam Ediyor', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400' },
-  completed: { label: 'Tamamlandı', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400' },
+  under_review: {
+    label: 'İnceleme',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+  },
+  approved: {
+    label: 'Onaylandı',
+    color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+  },
+  ongoing: {
+    label: 'Devam Ediyor',
+    color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400',
+  },
+  completed: {
+    label: 'Tamamlandı',
+    color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400',
+  },
 };
 
 const STATUS_LABELS = {
-  open: { label: 'Açık', color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' },
-  closed: { label: 'Kapalı', color: 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400' },
+  open: {
+    label: 'Açık',
+    color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+  },
+  closed: {
+    label: 'Kapalı',
+    color: 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400',
+  },
 };
 
 interface AidStats {
@@ -102,13 +120,18 @@ export default function AidListPage() {
     return {
       totalApplications: total,
       totalOneTimeAid: allData.reduce((sum, app) => sum + (app.one_time_aid || 0), 0),
-      totalRegularFinancialAid: allData.reduce((sum, app) => sum + (app.regular_financial_aid || 0), 0),
+      totalRegularFinancialAid: allData.reduce(
+        (sum, app) => sum + (app.regular_financial_aid || 0),
+        0
+      ),
       totalRegularFoodAid: allData.reduce((sum, app) => sum + (app.regular_food_aid || 0), 0),
       totalInKindAid: allData.reduce((sum, app) => sum + (app.in_kind_aid || 0), 0),
       totalServiceReferrals: allData.reduce((sum, app) => sum + (app.service_referral || 0), 0),
-      completedApplications: allData.filter(app => app.stage === 'completed').length,
-      ongoingApplications: allData.filter(app => app.stage === 'ongoing').length,
-      pendingApplications: allData.filter(app => app.stage === 'under_review' || app.stage === 'draft').length,
+      completedApplications: allData.filter((app) => app.stage === 'completed').length,
+      ongoingApplications: allData.filter((app) => app.stage === 'ongoing').length,
+      pendingApplications: allData.filter(
+        (app) => app.stage === 'under_review' || app.stage === 'draft'
+      ).length,
     };
   }, [applications, total]);
 
@@ -118,8 +141,20 @@ export default function AidListPage() {
       ['Tarih', new Date().toLocaleDateString('tr-TR')],
       [''],
       ['BAŞVURU LİSTESİ'],
-      ['Başvuru No', 'Başvuran', 'Tür', 'Tek Seferlik (₺)', 'Düzenli Finansal (₺)', 'Düzenli Gıda (Paket)', 'Ayni (Adet)', 'Sevk', 'Aşama', 'Durum', 'Tarih'],
-      ...applications.map(app => [
+      [
+        'Başvuru No',
+        'Başvuran',
+        'Tür',
+        'Tek Seferlik (₺)',
+        'Düzenli Finansal (₺)',
+        'Düzenli Gıda (Paket)',
+        'Ayni (Adet)',
+        'Sevk',
+        'Aşama',
+        'Durum',
+        'Tarih',
+      ],
+      ...applications.map((app) => [
         app._id,
         app.applicant_name,
         app.applicant_type,
@@ -134,7 +169,7 @@ export default function AidListPage() {
       ]),
     ];
 
-    const csv = csvContent.map(row => row.join(',')).join('\n');
+    const csv = csvContent.map((row) => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -155,10 +190,7 @@ export default function AidListPage() {
   };
 
   const getTotalAidValue = (app: AidRecord): number => {
-    return (
-      (app.one_time_aid || 0) +
-      (app.regular_financial_aid || 0)
-    );
+    return (app.one_time_aid || 0) + (app.regular_financial_aid || 0);
   };
 
   if (isLoading) {
@@ -166,7 +198,9 @@ export default function AidListPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Yardım Listesi</h1>
-          <p className="text-muted-foreground mt-2">Yapılan yardımları görüntüleyin ve takip edin</p>
+          <p className="text-muted-foreground mt-2">
+            Yapılan yardımları görüntüleyin ve takip edin
+          </p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -189,7 +223,9 @@ export default function AidListPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Yardım Listesi</h1>
-          <p className="text-muted-foreground mt-2">Yapılan yardımları görüntüleyin ve takip edin</p>
+          <p className="text-muted-foreground mt-2">
+            Yapılan yardımları görüntüleyin ve takip edin
+          </p>
         </div>
         <Card>
           <CardContent className="text-center py-12">
@@ -208,7 +244,9 @@ export default function AidListPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Yardım Listesi</h1>
-          <p className="text-muted-foreground mt-2">Yapılan yardımları görüntüleyin ve takip edin</p>
+          <p className="text-muted-foreground mt-2">
+            Yapılan yardımları görüntüleyin ve takip edin
+          </p>
         </div>
 
         <Dialog open={isExportDialogOpen} onOpenChange={setIsExportDialogOpen}>
@@ -221,12 +259,14 @@ export default function AidListPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Raporu Dışa Aktar</DialogTitle>
-              <DialogDescription>
-                Yardım listesini istediğiniz formatta indirin
-              </DialogDescription>
+              <DialogDescription>Yardım listesini istediğiniz formatta indirin</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <Button onClick={handleExportExcel} className="w-full justify-start" variant="outline">
+              <Button
+                onClick={handleExportExcel}
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Excel (CSV) Olarak İndir
               </Button>
@@ -262,7 +302,8 @@ export default function AidListPage() {
               {(stats.totalOneTimeAid + stats.totalRegularFinancialAid).toLocaleString('tr-TR')} ₺
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {stats.totalOneTimeAid > 0 && `${stats.totalOneTimeAid.toLocaleString('tr-TR')} ₺ tek seferlik`}
+              {stats.totalOneTimeAid > 0 &&
+                `${stats.totalOneTimeAid.toLocaleString('tr-TR')} ₺ tek seferlik`}
             </p>
           </CardContent>
         </Card>
@@ -373,10 +414,14 @@ export default function AidListPage() {
                               ? 'Kurum'
                               : 'Partner'}
                         </Badge>
-                        <Badge className={STAGE_LABELS[app.stage as keyof typeof STAGE_LABELS].color}>
+                        <Badge
+                          className={STAGE_LABELS[app.stage as keyof typeof STAGE_LABELS].color}
+                        >
                           {STAGE_LABELS[app.stage as keyof typeof STAGE_LABELS].label}
                         </Badge>
-                        <Badge className={STATUS_LABELS[app.status as keyof typeof STATUS_LABELS].color}>
+                        <Badge
+                          className={STATUS_LABELS[app.status as keyof typeof STATUS_LABELS].color}
+                        >
                           {STATUS_LABELS[app.status as keyof typeof STATUS_LABELS].label}
                         </Badge>
                       </div>

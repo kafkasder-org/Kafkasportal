@@ -118,7 +118,7 @@ export function validateServerEnv(): ServerEnv {
   try {
     const nodeEnv = process.env.NODE_ENV || 'development';
     const isProduction = nodeEnv === 'production';
-    
+
     return serverEnvSchema.parse({
       // Client vars
       NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
@@ -131,16 +131,15 @@ export function validateServerEnv(): ServerEnv {
       // Server-only vars
       NODE_ENV: nodeEnv,
       // Require secrets in production
-      CSRF_SECRET: isProduction 
-        ? process.env.CSRF_SECRET 
+      CSRF_SECRET: isProduction
+        ? process.env.CSRF_SECRET
         : process.env.CSRF_SECRET || 'development-csrf-secret-min-32-chars',
-      SESSION_SECRET: isProduction 
-        ? process.env.SESSION_SECRET 
+      SESSION_SECRET: isProduction
+        ? process.env.SESSION_SECRET
         : process.env.SESSION_SECRET || 'development-session-secret-min-32-chars',
       SENTRY_DSN: process.env.SENTRY_DSN,
       SENTRY_ORG: process.env.SENTRY_ORG,
       SENTRY_PROJECT: process.env.SENTRY_PROJECT,
-
 
       // Optional services
       SMTP_HOST: process.env.SMTP_HOST,

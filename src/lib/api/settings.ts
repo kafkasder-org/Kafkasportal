@@ -3,7 +3,7 @@
  * Type-safe API client for system settings management
  */
 
-export type SettingCategory = 
+export type SettingCategory =
   | 'organization'
   | 'email'
   | 'notifications'
@@ -269,4 +269,3 @@ class SettingsApi {
 }
 
 export const settingsApi = new SettingsApi();
-

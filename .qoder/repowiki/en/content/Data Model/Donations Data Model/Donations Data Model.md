@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Data Model Overview](#data-model-overview)
 3. [Field Definitions](#field-definitions)
@@ -25,6 +26,7 @@ The donations collection in the Kafkasder-panel application serves as a unified 
 The collection captures comprehensive information about each donation, including donor details, transaction metadata, and specific fields for Kumbara collections such as location coordinates and route points. This documentation provides a detailed analysis of the data model, its indexing strategy, query patterns, and performance considerations to guide developers and system administrators in effectively utilizing and optimizing this critical component of the application.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [donations.ts](file://convex/donations.ts#L77-L105)
 
@@ -62,6 +64,7 @@ number route_duration
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [database.ts](file://src/types/database.ts#L148-L171)
 
@@ -70,13 +73,17 @@ number route_duration
 The donations collection contains a comprehensive set of fields that capture all necessary information for both standard donations and Kumbara collections. The fields are organized into logical groups based on their purpose and usage patterns.
 
 ### Donor Information
+
 These fields capture essential information about the donor, enabling identification and communication:
+
 - **donor_name**: The full name of the donor (required)
 - **donor_phone**: Contact phone number for the donor (required)
 - **donor_email**: Email address for the donor (optional)
 
 ### Donation Metadata
+
 These fields provide context about the donation itself:
+
 - **amount**: The monetary value of the donation (required)
 - **currency**: The currency of the donation (TRY, USD, or EUR) (required)
 - **donation_type**: The category of donation (e.g., 'zakat', 'fitra', 'general') (required)
@@ -85,13 +92,17 @@ These fields provide context about the donation itself:
 - **notes**: Additional information about the donation (optional)
 
 ### Transaction Details
+
 These fields track the administrative aspects of the donation:
+
 - **receipt_number**: Unique identifier for the transaction receipt (required)
 - **receipt_file_id**: Reference to the stored receipt file in the system (optional)
 - **status**: Current state of the donation (pending, completed, or cancelled) (required)
 
 ### Kumbara-Specific Fields
+
 These optional fields are used exclusively for Kumbara (money box) collections:
+
 - **is_kumbara**: Flag indicating if the donation originated from a money box (optional)
 - **kumbara_location**: Physical location where the money box was placed or collected (optional)
 - **collection_date**: Date when the money box was collected (optional)
@@ -103,6 +114,7 @@ These optional fields are used exclusively for Kumbara (money box) collections:
 - **route_duration**: Estimated duration of the collection route in seconds (optional)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [database.ts](file://src/types/database.ts#L148-L171)
 
@@ -138,6 +150,7 @@ style K fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L212-L216)
 - [donations.ts](file://convex/donations.ts#L1-L40)
 
@@ -150,6 +163,7 @@ When querying donations, the system first checks for the presence of the is_kumb
 For queries filtered by status, the system uses the by_status index to efficiently retrieve matching records. Similarly, queries by donor_email leverage the by_donor_email index for fast lookups. When no specific filters are provided, the system retrieves all donations, which can be resource-intensive for large datasets.
 
 The query complexity varies significantly based on the filter combination:
+
 - Single-field queries (status, donor_email, is_kumbara) have O(log n) complexity due to index usage
 - Combined queries with is_kumbara as the primary filter have O(k + m) complexity, where k is the number of records matching the is_kumbara condition and m is the number of additional filters
 - Unfiltered queries have O(n) complexity as they require scanning all records
@@ -178,6 +192,7 @@ style QueryAll fill:#e6f3ff,stroke:#333
 ```
 
 **Diagram sources**
+
 - [donations.ts](file://convex/donations.ts#L14-L47)
 - [route.ts](file://src/app/api/donations/route.ts#L54-L70)
 
@@ -186,16 +201,19 @@ style QueryAll fill:#e6f3ff,stroke:#333
 The donations collection presents several performance considerations that must be addressed to ensure optimal system operation as the dataset grows. The current implementation has both strengths and potential bottlenecks that require attention.
 
 ### Current Strengths
+
 - **Efficient Single-Field Queries**: The indexing strategy provides excellent performance for queries filtering on a single field (status, donor_email, is_kumbara, receipt_number).
 - **Memory-Efficient Pagination**: The implementation applies pagination after filtering, minimizing the amount of data transferred to clients.
 - **Type Safety**: The TypeScript interfaces ensure data consistency and prevent runtime errors related to field access.
 
 ### Potential Bottlenecks
+
 - **In-Memory Filtering**: When using is_kumbara as a primary filter, additional filters are applied in memory rather than through compound indexes, which could impact performance with large datasets.
 - **Full Collection Scans**: Queries without filters retrieve all donations, which could become problematic as the collection grows.
 - **Lack of Compound Indexes**: The absence of compound indexes (e.g., on is_kumbara + status) prevents optimal performance for common multi-field queries.
 
 ### Optimization Recommendations
+
 1. **Implement Compound Indexes**: Create compound indexes for common filter combinations, particularly (is_kumbara, status) and (is_kumbara, donor_email), to eliminate in-memory filtering.
 2. **Add Date-Based Indexing**: Implement indexing on creation time or collection date to support time-range queries, which are common for reporting purposes.
 3. **Query Optimization**: Modify the query handler to use the most selective index first, rather than prioritizing is_kumbara, to minimize the initial result set size.
@@ -203,6 +221,7 @@ The donations collection presents several performance considerations that must b
 5. **Data Partitioning**: Consider partitioning the collection by is_kumbara if the performance difference between standard and Kumbara donations becomes significant.
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L14-L47)
 - [schema.ts](file://convex/schema.ts#L212-L216)
 
@@ -211,27 +230,32 @@ The donations collection presents several performance considerations that must b
 To effectively work with the donations collection and avoid common pitfalls, follow these best practices:
 
 ### Querying Donations
+
 - **Use Specific Filters**: Always include at least one indexed field in your queries to leverage the database indexes and avoid full collection scans.
 - **Prioritize Indexed Fields**: When combining multiple filters, structure your queries to use the most selective indexed field first.
 - **Limit Result Sets**: Use pagination parameters (limit, skip) to control the size of returned data, especially for unfiltered queries.
 - **Leverage Unique Indexes**: Use the by_receipt_number index for transaction lookups to ensure data integrity and optimal performance.
 
 ### Creating and Updating Donations
+
 - **Validate Kumbara Data**: When creating Kumbara donations, ensure all location and route data is complete and accurate.
 - **Maintain Consistent Status Transitions**: Follow the defined status workflow (pending → completed/cancelled) to maintain data consistency.
 - **Use Proper Currency Codes**: Always specify currency using the supported values (TRY, USD, EUR) to ensure compatibility with financial reporting.
 
 ### Working with Kumbara Collections
+
 - **Complete Location Information**: Populate both kumbara_location and location_coordinates fields to support both human-readable and programmatic location access.
 - **Accurate Route Data**: Ensure route_points, route_distance, and route_duration are updated together to maintain route integrity.
 - **Regular Collection Date Updates**: Keep the collection_date field current to support accurate reporting and scheduling.
 
 ### Performance Optimization
+
 - **Monitor Query Patterns**: Regularly review query performance and adjust indexes based on actual usage patterns.
 - **Implement Caching**: Use appropriate caching strategies for frequently accessed donation data, particularly for reporting and dashboard displays.
 - **Consider Data Archiving**: For very large datasets, consider archiving completed donations beyond a certain age to maintain optimal query performance.
 
 **Section sources**
+
 - [donations.ts](file://convex/donations.ts#L77-L105)
 - [route.ts](file://src/app/api/donations/route.ts#L89-L128)
 
@@ -244,5 +268,6 @@ The indexing strategy supports the most common query patterns, enabling efficien
 By following the best practices outlined in this documentation and considering the recommended performance optimizations, developers can ensure the donations collection continues to perform efficiently as the application scales. The model's flexibility and comprehensive field set make it well-suited to support the organization's donation management needs both now and in the future.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L216)
 - [donations.ts](file://convex/donations.ts#L1-L149)

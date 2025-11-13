@@ -8,6 +8,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [ScholarshipType Enum](#scholarshiptype-enum)
 3. [ApplicationStatus Enum](#applicationstatus-enum)
@@ -19,12 +20,15 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 This document provides comprehensive documentation for the enumeration types used in the scholarship system of the Kafkasder-panel application. These enums are fundamental to maintaining data consistency, enabling validation, and supporting user interface rendering throughout the scholarship management system. The primary enumeration types include ScholarshipType, ApplicationStatus, PaymentStatus, StudentStatus, EducationLevel, and OrphanStatus, each serving specific purposes in the application's data model and workflow.
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L4-L58)
 
 ## ScholarshipType Enum
+
 The ScholarshipType enum defines the different categories of scholarships available in the system. This enumeration ensures data consistency when categorizing scholarship programs and enables proper filtering and reporting capabilities.
 
 ```mermaid
@@ -39,6 +43,7 @@ A --> H[TALENT]
 ```
 
 The ScholarshipType enum includes the following values:
+
 - **ACADEMIC**: Scholarships awarded based on academic merit and performance
 - **NEED_BASED**: Scholarships awarded based on financial need and socioeconomic status
 - **ORPHAN**: Scholarships specifically for orphaned students
@@ -50,12 +55,15 @@ The ScholarshipType enum includes the following values:
 These types allow the system to categorize scholarship programs appropriately and apply specific eligibility criteria and processing rules based on the scholarship category.
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L6-L14)
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L6-L14)
 
 ## ApplicationStatus Enum
+
 The ApplicationStatus enum represents the various stages in the scholarship application lifecycle. This enumeration is crucial for tracking application progress and implementing workflow logic.
 
 ```mermaid
@@ -71,6 +79,7 @@ A --> I[CANCELLED]
 ```
 
 The ApplicationStatus enum includes the following values:
+
 - **DRAFT**: Application is being prepared and has not been submitted
 - **SUBMITTED**: Application has been completed and submitted for review
 - **UNDER_REVIEW**: Application is currently being evaluated by the review committee
@@ -83,12 +92,15 @@ The ApplicationStatus enum includes the following values:
 This status progression enables the system to manage the application workflow effectively and provide appropriate feedback to applicants at each stage.
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L16-L25)
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L16-L25)
 
 ## PaymentStatus Enum
+
 The PaymentStatus enum tracks the financial transaction status for scholarship disbursements. This enumeration is essential for financial management and reporting.
 
 ```mermaid
@@ -101,6 +113,7 @@ A --> F[SUSPENDED]
 ```
 
 The PaymentStatus enum includes the following values:
+
 - **PENDING**: Payment has been authorized but not yet processed
 - **PROCESSING**: Payment is currently being processed through the financial system
 - **PAID**: Payment has been successfully completed and funds have been transferred
@@ -110,12 +123,15 @@ The PaymentStatus enum includes the following values:
 This status tracking ensures accurate financial records and enables appropriate follow-up actions for payments that require attention.
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L27-L33)
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L27-L33)
 
 ## StudentStatus Enum
+
 The StudentStatus enum represents the current enrollment and participation status of scholarship recipients. This enumeration helps maintain accurate records of student engagement with the scholarship program.
 
 ```mermaid
@@ -128,6 +144,7 @@ A --> F[TRANSFERRED]
 ```
 
 The StudentStatus enum includes the following values:
+
 - **ACTIVE**: Student is currently enrolled and receiving the scholarship
 - **GRADUATED**: Student has successfully completed their education program
 - **SUSPENDED**: Student's scholarship has been temporarily suspended
@@ -137,12 +154,15 @@ The StudentStatus enum includes the following values:
 This status information is critical for determining scholarship continuation, renewal eligibility, and proper resource allocation.
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L35-L41)
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L35-L41)
 
 ## EducationLevel Enum
+
 The EducationLevel enum categorizes the academic level of students applying for or receiving scholarships. This enumeration supports proper scholarship matching and reporting by educational stage.
 
 ```mermaid
@@ -157,6 +177,7 @@ A --> H[VOCATIONAL]
 ```
 
 The EducationLevel enum includes the following values:
+
 - **PRIMARY**: Primary school level education
 - **SECONDARY**: Secondary school level education
 - **HIGH_SCHOOL**: High school level education
@@ -168,12 +189,15 @@ The EducationLevel enum includes the following values:
 This classification enables the system to match scholarships with appropriate educational levels and generate meaningful reports on scholarship distribution across different academic stages.
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L43-L51)
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L43-L51)
 
 ## OrphanStatus Enum
+
 The OrphanStatus enum specifies the specific circumstances of orphaned students, allowing for targeted support and appropriate scholarship allocation.
 
 ```mermaid
@@ -185,6 +209,7 @@ A --> E[PROTECTED]
 ```
 
 The OrphanStatus enum includes the following values:
+
 - **FULL_ORPHAN**: Student has lost both parents
 - **PARTIAL_ORPHAN**: Student has lost one parent
 - **ABANDONED**: Student has been abandoned by their family
@@ -193,23 +218,29 @@ The OrphanStatus enum includes the following values:
 This detailed classification enables the system to provide appropriate levels of support and ensure that the most vulnerable students receive priority consideration.
 
 **Diagram sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L53-L58)
 - [orphan-types.ts](file://src/lib/constants/orphan-types.ts#L5-L9)
 
 **Section sources**
+
 - [scholarship.ts](file://src/types/scholarship.ts#L53-L58)
 - [orphan-types.ts](file://src/lib/constants/orphan-types.ts#L5-L9)
 
 ## Usage in Application
+
 The enumeration types are extensively used throughout the Kafkasder-panel application to ensure data consistency, enable validation, and support user interface rendering. These enums are implemented in various components and services to maintain data integrity and provide a consistent user experience.
 
 ### Data Consistency and Validation
+
 The enumeration types serve as a single source of truth for valid values, preventing data entry errors and ensuring consistency across the application. When creating or updating scholarship records, applications, or student information, the system validates that the provided values match one of the defined enum values. This validation occurs at multiple levels:
+
 - Frontend form validation prevents submission of invalid values
 - Backend API validation ensures data integrity
 - Database schema constraints enforce referential integrity
 
 ### User Interface Rendering
+
 The enumeration types are used to render appropriate UI elements that enhance user experience. Helper functions in the application transform enum values into user-friendly representations:
 
 ```mermaid
@@ -224,6 +255,7 @@ UI->>User : Display approved status badge
 ```
 
 The `scholarship-helpers.tsx` file contains utility functions that convert enum values into visually appropriate components:
+
 - `getApplicationStatusBadge()` converts ApplicationStatus values into colored badges with icons
 - `getStudentStatusBadge()` renders StudentStatus values as appropriately styled badges
 - `getEducationLevelBadge()` displays EducationLevel values in a consistent format
@@ -231,12 +263,15 @@ The `scholarship-helpers.tsx` file contains utility functions that convert enum 
 These helper functions ensure consistent presentation of status information throughout the application, making it easier for users to quickly understand the current state of scholarship applications and student records.
 
 **Diagram sources**
+
 - [scholarship-helpers.tsx](file://src/lib/utils/scholarship-helpers.tsx#L25-L66)
 - [scholarship.ts](file://src/types/scholarship.ts#L16-L25)
 
 **Section sources**
+
 - [scholarship-helpers.tsx](file://src/lib/utils/scholarship-helpers.tsx#L8-L66)
 - [scholarship.ts](file://src/types/scholarship.ts#L16-L58)
 
 ## Conclusion
+
 The enumeration types in the Kafkasder-panel scholarship system play a critical role in maintaining data integrity, enabling workflow management, and providing a consistent user experience. By defining clear categories for scholarship types, application statuses, payment statuses, student statuses, education levels, and orphan statuses, the system ensures that all stakeholders—from administrators to applicants—have a shared understanding of the scholarship management process. These enums serve as the foundation for data validation, reporting, and user interface rendering, contributing to the overall reliability and usability of the scholarship management system.

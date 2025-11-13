@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [API Endpoints](#api-endpoints)
 3. [Data Model](#data-model)
@@ -21,20 +22,24 @@
 8. [Client Implementation](#client-implementation)
 
 ## Introduction
+
 The Kumbara API provides endpoints for managing money box (kumbara) donation locations and their collection status. This API enables organizations to register new kumbara locations, retrieve existing records with filtering capabilities, update collection information, and integrate with the broader donation system. The API supports route optimization data submission and automatic donation creation upon collection.
 
 The system is designed to track kumbara donations as a special type of donation within the organization's financial records, with specific fields for location, institution, collection date, and GPS coordinates. The API integrates with the organization's storage system for receipt management and generates QR codes for each registered kumbara.
 
 **Section sources**
+
 - [kumbara.ts](file://src/lib/validations/kumbara.ts#L1-L218)
 - [schema.ts](file://convex/schema.ts#L181-L210)
 
 ## API Endpoints
 
 ### GET /api/kumbara
+
 Retrieves a paginated list of all kumbara locations with their collection status. Supports filtering by location, institution, collection date, currency, and status.
 
 **Query Parameters:**
+
 - `location` (string, optional): Filter by kumbara location
 - `status` (string, optional): Filter by status ('pending', 'completed', 'cancelled')
 - `currency` (string, optional): Filter by currency ('TRY', 'USD', 'EUR')
@@ -45,6 +50,7 @@ Retrieves a paginated list of all kumbara locations with their collection status
 - `limit` (string, optional): Number of records per page (1-100, default: 20)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -87,12 +93,15 @@ Retrieves a paginated list of all kumbara locations with their collection status
 ```
 
 **Section sources**
+
 - [route.ts](file://src/app/api/kumbara/route.ts#L165-L273)
 
 ### POST /api/kumbara
+
 Registers a new kumbara location with collection details and optional route planning data.
 
 **Request Body:**
+
 ```json
 {
   "donor_name": "string",
@@ -129,6 +138,7 @@ Registers a new kumbara location with collection details and optional route plan
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -141,12 +151,15 @@ Registers a new kumbara location with collection details and optional route plan
 ```
 
 **Section sources**
+
 - [route.ts](file://src/app/api/kumbara/route.ts#L458-L520)
 
 ### GET /api/kumbara/[id]
+
 Retrieves detailed information about a specific kumbara location by ID.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -181,12 +194,15 @@ Retrieves detailed information about a specific kumbara location by ID.
 ```
 
 **Section sources**
+
 - [route.ts](file://src/app/api/kumbara/[id]/route.ts#L45-L84)
 
 ### PUT /api/kumbara/[id]
+
 Updates collection information for an existing kumbara location.
 
 **Request Body:**
+
 ```json
 {
   "amount": number,
@@ -197,6 +213,7 @@ Updates collection information for an existing kumbara location.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -205,12 +222,15 @@ Updates collection information for an existing kumbara location.
 ```
 
 **Section sources**
+
 - [route.ts](file://src/app/api/kumbara/[id]/route.ts#L91-L145)
 
 ## Data Model
+
 The Kumbara API uses a donation-based data model with specific fields for kumbara-related information. All kumbara records are stored as donations with the `is_kumbara` flag set to true.
 
 **Key Fields:**
+
 - `kumbara_location`: The location where the kumbara is placed or collected from
 - `kumbara_institution`: The institution or place where the kumbara is located
 - `collection_date`: The date when the kumbara was collected
@@ -221,6 +241,7 @@ The Kumbara API uses a donation-based data model with specific fields for kumbar
 - `route_duration`: Estimated duration of the collection route in seconds
 
 **Database Schema:**
+
 ```mermaid
 erDiagram
 DONATIONS {
@@ -249,12 +270,15 @@ number route_duration
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L168-L210)
 
 ## Validation Rules
+
 The Kumbara API implements comprehensive validation rules to ensure data integrity and consistency.
 
 ### Required Fields for POST /api/kumbara
+
 - `donor_name`: Minimum 2 characters, maximum 100 characters
 - `donor_phone`: Valid Turkish phone number format (5XXXXXXXXX)
 - `amount`: Positive number greater than 0
@@ -265,30 +289,38 @@ The Kumbara API implements comprehensive validation rules to ensure data integri
 - `receipt_number`: Minimum 3 characters, maximum 50 characters
 
 ### GPS Coordinate Validation
+
 - `location_coordinates`: Must contain valid latitude and longitude values
 - Latitude must be a number between -90 and 90
 - Longitude must be a number between -180 and 180
 - Both values must be present and valid for the coordinate to be accepted
 
 ### Route Data Validation
+
 - `route_points`: Each point must have valid latitude and longitude
 - `route_distance`: Must be a positive number or null
 - `route_duration`: Must be a positive number or null
 
 ### Duplicate Location Prevention
+
 The system checks for duplicate kumbara locations during registration. A duplicate is identified when:
+
 - The same `kumbara_location` and `kumbara_institution` combination already exists
 - The same `receipt_number` is used for another kumbara
 
 **Section sources**
+
 - [kumbara.ts](file://src/lib/validations/kumbara.ts#L5-L77)
 - [route.ts](file://src/app/api/kumbara/route.ts#L72-L132)
 
 ## Error Handling
+
 The Kumbara API provides detailed error responses to help clients handle validation and system errors.
 
 ### Common Error Responses
+
 **400 Bad Request - Validation Error:**
+
 ```json
 {
   "success": false,
@@ -302,6 +334,7 @@ The Kumbara API provides detailed error responses to help clients handle validat
 ```
 
 **404 Not Found:**
+
 ```json
 {
   "success": false,
@@ -310,6 +343,7 @@ The Kumbara API provides detailed error responses to help clients handle validat
 ```
 
 **401 Unauthorized:**
+
 ```json
 {
   "success": false,
@@ -318,6 +352,7 @@ The Kumbara API provides detailed error responses to help clients handle validat
 ```
 
 **500 Internal Server Error:**
+
 ```json
 {
   "success": false,
@@ -326,27 +361,34 @@ The Kumbara API provides detailed error responses to help clients handle validat
 ```
 
 ### Error Types
+
 - **Validation Errors**: Occur when request data fails validation rules
 - **Authentication Errors**: Occur when the user lacks required permissions
 - **Resource Not Found**: Occur when attempting to access a non-existent kumbara record
 - **System Errors**: Occur due to internal server issues
 
 **Section sources**
+
 - [route.ts](file://src/app/api/kumbara/route.ts#L262-L272)
 - [route.ts](file://src/app/api/kumbara/[id]/route.ts#L79-L83)
 
 ## Integration with Donation Transactions
+
 The Kumbara API is tightly integrated with the organization's donation transaction system, enabling automatic creation of donation records when kumbara collections are processed.
 
 ### Automatic Donation Creation
+
 When a kumbara collection is marked as 'completed', the system automatically:
+
 1. Creates a donation transaction record
 2. Links the transaction to the kumbara record
 3. Updates the financial records
 4. Generates appropriate accounting entries
 
 ### QR Code Integration
+
 Each registered kumbara generates a unique QR code containing:
+
 - Kumbara ID
 - Location information
 - Institution details
@@ -357,18 +399,22 @@ Each registered kumbara generates a unique QR code containing:
 The QR code enables quick scanning for collection reporting and status updates.
 
 ### Receipt Management
+
 The API integrates with the storage system to manage receipt documents:
+
 - Receipt files can be uploaded during kumbara registration
 - Receipts are stored with metadata linking to the kumbara record
 - Authorized users can access receipts through the API
 
 **Section sources**
+
 - [route.ts](file://src/app/api/kumbara/route.ts#L482-L489)
 - [KumbaraForm.tsx](file://src/components/kumbara/KumbaraForm.tsx#L249-L283)
 
 ## Examples
 
 ### Kumbara Registration
+
 ```json
 POST /api/kumbara
 Content-Type: application/json
@@ -411,6 +457,7 @@ Content-Type: application/json
 ```
 
 ### Collection Reporting
+
 ```json
 PUT /api/kumbara/donation_123
 Content-Type: application/json
@@ -422,6 +469,7 @@ Content-Type: application/json
 ```
 
 ### Route Optimization Data Submission
+
 ```json
 PUT /api/kumbara/donation_123
 Content-Type: application/json
@@ -447,14 +495,18 @@ Content-Type: application/json
 ```
 
 **Section sources**
+
 - [KumbaraForm.tsx](file://src/components/kumbara/KumbaraForm.tsx#L245-L293)
 - [KumbaraList.tsx](file://src/components/kumbara/KumbaraList.tsx#L107-L114)
 
 ## Client Implementation
+
 The Kumbara API is designed to work seamlessly with the client-side components provided in the application.
 
 ### KumbaraForm Component
+
 The KumbaraForm component provides a user-friendly interface for registering new kumbara locations:
+
 - Validates input fields in real-time
 - Shows progress indicator for form completion
 - Handles file uploads for receipts
@@ -462,7 +514,9 @@ The KumbaraForm component provides a user-friendly interface for registering new
 - Displays success messages with QR codes
 
 ### KumbaraList Component
+
 The KumbaraList component displays existing kumbara records and enables management:
+
 - Fetches data from GET /api/kumbara with filtering
 - Displays kumbara details in a tabular format
 - Shows GPS coordinates and route information
@@ -497,9 +551,11 @@ end
 ```
 
 **Diagram sources**
+
 - [KumbaraForm.tsx](file://src/components/kumbara/KumbaraForm.tsx#L89-L139)
 - [KumbaraList.tsx](file://src/components/kumbara/KumbaraList.tsx#L92-L103)
 
 **Section sources**
+
 - [KumbaraForm.tsx](file://src/components/kumbara/KumbaraForm.tsx#L47-L800)
 - [KumbaraList.tsx](file://src/components/kumbara/KumbaraList.tsx#L75-L409)

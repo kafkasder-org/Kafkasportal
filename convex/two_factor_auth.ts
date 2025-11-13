@@ -1,26 +1,26 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
 
 // Enable 2FA for a user (stores secret)
 export const enable2FA = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     secret: v.string(),
     backupCodes: v.array(v.string()),
   },
   handler: async (ctx, args) => {
     // Check if 2FA already enabled
     const existing = await ctx.db
-      .query("two_factor_settings")
-      .withIndex("by_user", (q) => q.eq("user_id", args.userId))
+      .query('two_factor_settings')
+      .withIndex('by_user', (q) => q.eq('user_id', args.userId))
       .first();
 
     if (existing) {
-      throw new Error("2FA is already enabled for this user");
+      throw new Error('2FA is already enabled for this user');
     }
 
     // Create 2FA settings
-    const settingId = await ctx.db.insert("two_factor_settings", {
+    const settingId = await ctx.db.insert('two_factor_settings', {
       user_id: args.userId,
       secret: args.secret, // Should be encrypted in production
       backup_codes: args.backupCodes.map((code) => ({
@@ -38,10 +38,10 @@ export const enable2FA = mutation({
     });
 
     // Log security event
-    await ctx.db.insert("security_events", {
-      event_type: "2fa_enabled",
+    await ctx.db.insert('security_events', {
+      event_type: '2fa_enabled',
       user_id: args.userId,
-      severity: "medium",
+      severity: 'medium',
       occurred_at: new Date().toISOString(),
       reviewed: false,
     });
@@ -57,17 +57,17 @@ export const enable2FA = mutation({
 // Disable 2FA
 export const disable2FA = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     verificationCode: v.string(), // Require verification before disabling
   },
   handler: async (ctx, args) => {
     const settings = await ctx.db
-      .query("two_factor_settings")
-      .withIndex("by_user", (q) => q.eq("user_id", args.userId))
+      .query('two_factor_settings')
+      .withIndex('by_user', (q) => q.eq('user_id', args.userId))
       .first();
 
     if (!settings) {
-      throw new Error("2FA is not enabled for this user");
+      throw new Error('2FA is not enabled for this user');
     }
 
     // In production, verify the code here
@@ -86,10 +86,10 @@ export const disable2FA = mutation({
     });
 
     // Log security event
-    await ctx.db.insert("security_events", {
-      event_type: "2fa_disabled",
+    await ctx.db.insert('security_events', {
+      event_type: '2fa_disabled',
       user_id: args.userId,
-      severity: "high",
+      severity: 'high',
       occurred_at: new Date().toISOString(),
       reviewed: false,
     });
@@ -101,22 +101,22 @@ export const disable2FA = mutation({
 // Verify 2FA code
 export const verify2FACode = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     code: v.string(),
   },
   handler: async (ctx, args) => {
     const settings = await ctx.db
-      .query("two_factor_settings")
-      .withIndex("by_user", (q) => q.eq("user_id", args.userId))
+      .query('two_factor_settings')
+      .withIndex('by_user', (q) => q.eq('user_id', args.userId))
       .first();
 
     if (!settings || !settings.enabled) {
-      throw new Error("2FA is not enabled for this user");
+      throw new Error('2FA is not enabled for this user');
     }
 
     // In production, use a proper TOTP library (e.g., otpauth, speakeasy)
     // const isValid = verifyTOTPCode(settings.secret, args.code);
-    
+
     // For now, simulate validation
     const isValid = args.code.length === 6; // Placeholder validation
 
@@ -127,11 +127,11 @@ export const verify2FACode = mutation({
       });
 
       // Log successful verification
-      await ctx.db.insert("security_events", {
-        event_type: "login_success",
+      await ctx.db.insert('security_events', {
+        event_type: 'login_success',
         user_id: args.userId,
-        severity: "low",
-        details: { method: "2fa" },
+        severity: 'low',
+        details: { method: '2fa' },
         occurred_at: new Date().toISOString(),
         reviewed: false,
       });
@@ -140,33 +140,33 @@ export const verify2FACode = mutation({
     }
 
     // Log failed verification
-    await ctx.db.insert("security_events", {
-      event_type: "login_failure",
+    await ctx.db.insert('security_events', {
+      event_type: 'login_failure',
       user_id: args.userId,
-      severity: "medium",
-      details: { method: "2fa", reason: "invalid_code" },
+      severity: 'medium',
+      details: { method: '2fa', reason: 'invalid_code' },
       occurred_at: new Date().toISOString(),
       reviewed: false,
     });
 
-    return { success: false, verified: false, error: "Invalid verification code" };
+    return { success: false, verified: false, error: 'Invalid verification code' };
   },
 });
 
 // Use backup code
 export const useBackupCode = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     backupCode: v.string(),
   },
   handler: async (ctx, args) => {
     const settings = await ctx.db
-      .query("two_factor_settings")
-      .withIndex("by_user", (q) => q.eq("user_id", args.userId))
+      .query('two_factor_settings')
+      .withIndex('by_user', (q) => q.eq('user_id', args.userId))
       .first();
 
     if (!settings || !settings.enabled) {
-      throw new Error("2FA is not enabled for this user");
+      throw new Error('2FA is not enabled for this user');
     }
 
     // Find matching backup code
@@ -175,7 +175,7 @@ export const useBackupCode = mutation({
     );
 
     if (backupCodeIndex === -1) {
-      return { success: false, error: "Invalid or already used backup code" };
+      return { success: false, error: 'Invalid or already used backup code' };
     }
 
     // Mark backup code as used
@@ -191,11 +191,11 @@ export const useBackupCode = mutation({
     });
 
     // Log backup code usage
-    await ctx.db.insert("security_events", {
-      event_type: "login_success",
+    await ctx.db.insert('security_events', {
+      event_type: 'login_success',
       user_id: args.userId,
-      severity: "medium",
-      details: { method: "backup_code" },
+      severity: 'medium',
+      details: { method: 'backup_code' },
       occurred_at: new Date().toISOString(),
       reviewed: false,
     });
@@ -206,7 +206,7 @@ export const useBackupCode = mutation({
       success: true,
       verified: true,
       remainingBackupCodes: remainingCodes,
-      warning: remainingCodes < 3 ? "You have less than 3 backup codes remaining" : null,
+      warning: remainingCodes < 3 ? 'You have less than 3 backup codes remaining' : null,
     };
   },
 });
@@ -214,18 +214,18 @@ export const useBackupCode = mutation({
 // Regenerate backup codes
 export const regenerateBackupCodes = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     newBackupCodes: v.array(v.string()),
     verificationCode: v.string(), // Require 2FA verification
   },
   handler: async (ctx, args) => {
     const settings = await ctx.db
-      .query("two_factor_settings")
-      .withIndex("by_user", (q) => q.eq("user_id", args.userId))
+      .query('two_factor_settings')
+      .withIndex('by_user', (q) => q.eq('user_id', args.userId))
       .first();
 
     if (!settings || !settings.enabled) {
-      throw new Error("2FA is not enabled for this user");
+      throw new Error('2FA is not enabled for this user');
     }
 
     // In production, verify the 2FA code first
@@ -241,11 +241,11 @@ export const regenerateBackupCodes = mutation({
     });
 
     // Log security event
-    await ctx.db.insert("security_events", {
-      event_type: "password_change",
+    await ctx.db.insert('security_events', {
+      event_type: 'password_change',
       user_id: args.userId,
-      severity: "medium",
-      details: { action: "backup_codes_regenerated" },
+      severity: 'medium',
+      details: { action: 'backup_codes_regenerated' },
       occurred_at: new Date().toISOString(),
       reviewed: false,
     });
@@ -260,12 +260,12 @@ export const regenerateBackupCodes = mutation({
 // Get 2FA status
 export const get2FAStatus = query({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
   },
   handler: async (ctx, args) => {
     const settings = await ctx.db
-      .query("two_factor_settings")
-      .withIndex("by_user", (q) => q.eq("user_id", args.userId))
+      .query('two_factor_settings')
+      .withIndex('by_user', (q) => q.eq('user_id', args.userId))
       .first();
 
     if (!settings) {
@@ -291,15 +291,15 @@ export const get2FAStatus = query({
 // Add trusted device
 export const addTrustedDevice = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     deviceFingerprint: v.string(),
     deviceName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("trusted_devices", {
+    return await ctx.db.insert('trusted_devices', {
       user_id: args.userId,
       device_fingerprint: args.deviceFingerprint,
-      device_name: args.deviceName || "Unknown Device",
+      device_name: args.deviceName || 'Unknown Device',
       added_at: new Date().toISOString(),
       last_used: new Date().toISOString(),
       is_active: true,
@@ -310,17 +310,17 @@ export const addTrustedDevice = mutation({
 // Check if device is trusted
 export const isDeviceTrusted = query({
   args: {
-    userId: v.id("users"),
+    userId: v.id('users'),
     deviceFingerprint: v.string(),
   },
   handler: async (ctx, args) => {
     const device = await ctx.db
-      .query("trusted_devices")
+      .query('trusted_devices')
       .filter((q) =>
         q.and(
-          q.eq(q.field("user_id"), args.userId),
-          q.eq(q.field("device_fingerprint"), args.deviceFingerprint),
-          q.eq(q.field("is_active"), true)
+          q.eq(q.field('user_id'), args.userId),
+          q.eq(q.field('device_fingerprint'), args.deviceFingerprint),
+          q.eq(q.field('is_active'), true)
         )
       )
       .first();
@@ -332,7 +332,7 @@ export const isDeviceTrusted = query({
 // Remove trusted device
 export const removeTrustedDevice = mutation({
   args: {
-    deviceId: v.id("trusted_devices"),
+    deviceId: v.id('trusted_devices'),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.deviceId, {

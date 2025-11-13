@@ -9,12 +9,13 @@
 Türkçe olarak geliştirilmiş, **yardım dernekleri, vakıflar ve sivil toplum kuruluşları** için profesyonel bir yönetim platformu.
 
 > **v1.0.0 Production Release** - İlk stabil sürüm yayında! 🎉
-> 
+>
 > **Demo Mode:** Analitik ve bazı finansal raporlar demo data kullanmaktadır. v1.1.0'da gerçek API entegrasyonu tamamlanacaktır. Detaylar için [docs/TODO.md](docs/TODO.md) dosyasına bakın.
 
 ## 🚀 Özellikler
 
 ### Çekirdek Modüller
+
 - ✅ **Kimlik Doğrulama** - Email/şifre, RBAC, CSRF koruması
 - ✅ **İhtiyaç Sahipleri** - Başvuru ve takip sistemi
 - ✅ **Bağış Yönetimi** - Standart bağışlar + kumbara sistemi (GPS takipli)
@@ -24,6 +25,7 @@ Türkçe olarak geliştirilmiş, **yardım dernekleri, vakıflar ve sivil toplum
 - ✅ **İletişim** - Kurum içi mesajlaşma, toplu SMS/e-posta
 
 ### Gelişmiş Özellikler
+
 - 📊 Analitik ve raporlama dashboard'u
 - 📈 Performans izleme (Web Vitals)
 - 🧠 Akıllı API cache sistemi
@@ -46,17 +48,20 @@ Türkçe olarak geliştirilmiş, **yardım dernekleri, vakıflar ve sivil toplum
 ## 🔧 Kurulum
 
 ### 1. Depoyu Klonlayın
+
 ```bash
 git clone https://github.com/your-username/dernek-yonetim-sistemi.git
 cd dernek-yonetim-sistemi
 ```
 
 ### 2. Bağımlılıkları Yükleyin
+
 ```bash
 npm install
 ```
 
 ### 3. Environment Variables
+
 ```bash
 cp .env.example .env.local
 ```
@@ -64,12 +69,14 @@ cp .env.example .env.local
 Gerekli değişkenler için [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) dosyasına bakın.
 
 ### 4. Convex Setup
+
 ```bash
 npm install -g convex
 npx convex dev
 ```
 
 ### 5. Uygulamayı Başlatın
+
 ```bash
 npm run dev
 ```
@@ -109,6 +116,7 @@ npm run test:coverage
 ## 🚀 Deployment
 
 ### Vercel (Önerilen)
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
 ```bash
@@ -146,6 +154,7 @@ Detaylı deployment rehberi için [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) dosya
 Katkılarınızı bekliyoruz! Lütfen [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını okuyun.
 
 **Hızlı Katkı:**
+
 1. Fork yapın
 2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
 3. Commit edin (`git commit -m 'feat: add amazing feature'`)

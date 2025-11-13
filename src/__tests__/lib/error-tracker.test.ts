@@ -3,11 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  generateErrorFingerprint,
-  collectDeviceInfo,
-  getPageContext,
-} from '@/lib/error-tracker';
+import { generateErrorFingerprint, collectDeviceInfo, getPageContext } from '@/lib/error-tracker';
 
 describe('Error Tracker', () => {
   describe('generateErrorFingerprint', () => {

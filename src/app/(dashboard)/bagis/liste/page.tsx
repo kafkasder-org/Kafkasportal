@@ -11,10 +11,17 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Search, Plus, DollarSign, User, Calendar, FileText } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const DonationForm = dynamic(() => import('@/components/forms/DonationForm').then(mod => ({ default: mod.DonationForm })), {
-  loading: () => <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>,
-  ssr: false,
-});
+const DonationForm = dynamic(
+  () => import('@/components/forms/DonationForm').then((mod) => ({ default: mod.DonationForm })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 export default function DonationsPage() {
   const [search, setSearch] = useState('');
@@ -22,18 +29,19 @@ export default function DonationsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['donations', search],
-    queryFn: () => api.donations.getDonations({
-      page: 1,
-      limit: 10000, // Load all data for virtual scrolling
-      search
-    }),
+    queryFn: () =>
+      api.donations.getDonations({
+        page: 1,
+        limit: 10000, // Load all data for virtual scrolling
+        search,
+      }),
   });
 
   const donations = data?.data || [];
 
   const totalAmount = donations.reduce((sum, d) => sum + d.amount, 0);
 
-  const columns: DataTableColumn<typeof donations[0]>[] = [
+  const columns: DataTableColumn<(typeof donations)[0]>[] = [
     {
       key: 'donor',
       label: 'Bağışçı',
@@ -141,8 +149,12 @@ export default function DonationsPage() {
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DonationForm
-              onSuccess={() => { setShowCreateForm(false); }}
-              onCancel={() => { setShowCreateForm(false); }}
+              onSuccess={() => {
+                setShowCreateForm(false);
+              }}
+              onCancel={() => {
+                setShowCreateForm(false);
+              }}
             />
           </DialogContent>
         </Dialog>

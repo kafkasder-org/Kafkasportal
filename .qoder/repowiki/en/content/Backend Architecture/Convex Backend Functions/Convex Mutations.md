@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Mutation Implementation with defineMutation](#mutation-implementation-with-defineMutation)
 3. [Validation with Zod Schemas](#validation-with-zod-schemas)
@@ -21,19 +22,22 @@
 8. [Form Submissions and UI Best Practices](#form-submissions-and-ui-best-practices)
 
 ## Introduction
+
 Convex mutations in Kafkasder-panel are write operations that modify data within the Convex database. These operations are executed atomically with ACID guarantees, ensuring data consistency and reliability. Mutations are defined using the `defineMutation` function and can be invoked from the client-side through the Convex API. This document details the implementation, validation, security, and usage patterns of mutations in the Kafkasder-panel application.
 
 ## Mutation Implementation with defineMutation
+
 Mutations in Kafkasder-panel are implemented using the `mutation` function from Convex. This function defines a mutation that is accessible from the client and allows modification of the database. The `mutation` function takes an object with `args` and `handler` properties. The `args` property defines the input schema using Convex values (`v`), and the `handler` property contains the logic to be executed.
 
 For example, the `updateLastLogin` mutation in `auth.ts` updates the last login time of a user:
+
 ```typescript
 export const updateLastLogin = mutation({
-  args: { userId: v.id("users") },
+  args: { userId: v.id('users') },
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     await ctx.db.patch(args.userId, {
@@ -46,6 +50,7 @@ export const updateLastLogin = mutation({
 ```
 
 Similarly, the `createBeneficiary` mutation in `beneficiaries.ts` creates a new beneficiary record:
+
 ```typescript
 export const create = mutation({
   args: {
@@ -88,11 +93,14 @@ export const create = mutation({
 ```
 
 **Section sources**
+
 - [auth.ts](file://convex/auth.ts#L53-L67)
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L89-L169)
 
 ## Validation with Zod Schemas
+
 Mutations are validated using Zod schemas on the client-side to ensure data integrity before sending requests to the server. The `BeneficiaryForm.tsx` component uses a Zod schema to validate form inputs:
+
 ```typescript
 const beneficiarySchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -109,6 +117,7 @@ const beneficiarySchema = z.object({
 ```
 
 The form uses `react-hook-form` with `zodResolver` to integrate Zod validation:
+
 ```typescript
 const {
   register,
@@ -120,20 +129,23 @@ const {
 ```
 
 **Section sources**
+
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L27-L41)
 
 ## Security and Authorization
+
 Mutations are secured using Convex's authorization model. The `auth.ts` file includes a `getCurrentUser` query that checks user authentication and returns user data without the password hash:
+
 ```typescript
 export const getCurrentUser = query({
-  args: { userId: v.optional(v.id("users")) },
+  args: { userId: v.optional(v.id('users')) },
   handler: async (ctx, args) => {
     if (!args.userId) {
       return null;
     }
-    
+
     const user = await ctx.db.get(args.userId);
-    
+
     if (!user || !user.isActive) {
       return null;
     }
@@ -145,6 +157,7 @@ export const getCurrentUser = query({
 ```
 
 Additionally, mutations can include authorization checks within their handlers. For example, the `createBeneficiary` mutation ensures that the TC number is valid and unique:
+
 ```typescript
 if (!isValidTcNumber(payload.tc_no)) {
   throw new Error('Invalid TC number format');
@@ -161,11 +174,14 @@ if (existing) {
 ```
 
 **Section sources**
+
 - [auth.ts](file://convex/auth.ts#L9-L25)
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L153-L164)
 
 ## Client-Side Invocation
+
 Mutations are invoked from the client-side using the `api.mutations.*` pattern and React hooks like `useMutation`. The `useFormMutation` custom hook in `useFormMutation.ts` standardizes mutation handling across the application:
+
 ```typescript
 export function useFormMutation<TData = unknown, TVariables = unknown>({
   queryKey,
@@ -217,6 +233,7 @@ export function useFormMutation<TData = unknown, TVariables = unknown>({
 ```
 
 In `BeneficiaryForm.tsx`, the `useFormMutation` hook is used to create a beneficiary:
+
 ```typescript
 const createBeneficiaryMutation = useFormMutation({
   queryKey: ['beneficiaries'],
@@ -241,13 +258,16 @@ const createBeneficiaryMutation = useFormMutation({
 ```
 
 **Section sources**
+
 - [useFormMutation.ts](file://src/hooks/useFormMutation.ts#L47-L102)
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L121-L144)
 
 ## Error Handling and Transactional Integrity
+
 Mutations in Convex are executed atomically, ensuring transactional integrity. If any part of the mutation fails, the entire operation is rolled back. Error handling is implemented both in the mutation handlers and in the client-side code.
 
 In the `createBeneficiary` mutation, errors are thrown for invalid TC numbers or duplicate entries:
+
 ```typescript
 if (!isValidTcNumber(payload.tc_no)) {
   throw new Error('Invalid TC number format');
@@ -259,6 +279,7 @@ if (existing) {
 ```
 
 On the client-side, the `useFormMutation` hook handles errors by displaying toast notifications and logging errors for debugging:
+
 ```typescript
 onError: (error: unknown) => {
   const message =
@@ -277,11 +298,14 @@ onError: (error: unknown) => {
 ```
 
 **Section sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L153-L164)
 - [useFormMutation.ts](file://src/hooks/useFormMutation.ts#L77-L93)
 
 ## Interaction with Database Indexes
+
 Mutations interact with database indexes defined in `schema.ts` to ensure efficient data retrieval and uniqueness constraints. The `beneficiaries` table has several indexes:
+
 ```typescript
 beneficiaries: defineTable({
   // ... fields
@@ -296,6 +320,7 @@ beneficiaries: defineTable({
 ```
 
 These indexes are used in mutations to check for existing records and to query data efficiently. For example, the `createBeneficiary` mutation uses the `by_tc_no` index to check for duplicate TC numbers:
+
 ```typescript
 const existing = await ctx.db
   .query('beneficiaries')
@@ -304,11 +329,14 @@ const existing = await ctx.db
 ```
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L156-L162)
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L158-L161)
 
 ## Form Submissions and UI Best Practices
+
 Form submissions in Kafkasder-panel follow best practices for user experience, including optimistic updates and loading states. The `BeneficiaryForm.tsx` component uses a loading state to indicate submission progress:
+
 ```typescript
 const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -323,25 +351,24 @@ const onSubmit = async (data: BeneficiaryFormData) => {
 ```
 
 The form also provides real-time validation feedback using the `fieldValidation` state:
+
 ```typescript
 const [fieldValidation, setFieldValidation] = useState<
   Record<string, 'valid' | 'invalid' | 'pending'>
 >({});
 
-const validateField = useCallback(
-  async (fieldName: keyof BeneficiaryFormData, value: unknown) => {
-    try {
-      await beneficiarySchema.shape[fieldName].parseAsync(value);
-      setFieldValidation((prev) => ({ ...prev, [fieldName]: 'valid' }));
-    } catch {
-      setFieldValidation((prev) => ({ ...prev, [fieldName]: 'invalid' }));
-    }
-  },
-  []
-);
+const validateField = useCallback(async (fieldName: keyof BeneficiaryFormData, value: unknown) => {
+  try {
+    await beneficiarySchema.shape[fieldName].parseAsync(value);
+    setFieldValidation((prev) => ({ ...prev, [fieldName]: 'valid' }));
+  } catch {
+    setFieldValidation((prev) => ({ ...prev, [fieldName]: 'invalid' }));
+  }
+}, []);
 ```
 
 Optimistic updates are achieved by invalidating queries on success, which triggers a refetch of the data:
+
 ```typescript
 onSuccess: () => {
   toast.success('Beneficiary created successfully');
@@ -351,5 +378,6 @@ onSuccess: () => {
 ```
 
 **Section sources**
+
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L102-L144)
 - [useFormMutation.ts](file://src/hooks/useFormMutation.ts#L63-L73)

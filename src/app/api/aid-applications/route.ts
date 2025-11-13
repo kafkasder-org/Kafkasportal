@@ -8,7 +8,10 @@ function validateApplication(data: Record<string, unknown>): {
   errors: string[];
 } {
   const errors: string[] = [];
-  if (!data.applicant_name || (typeof data.applicant_name === 'string' && data.applicant_name.trim().length < 2)) {
+  if (
+    !data.applicant_name ||
+    (typeof data.applicant_name === 'string' && data.applicant_name.trim().length < 2)
+  ) {
     errors.push('Başvuru sahibi adı zorunludur');
   }
   if (!data.application_date) {
@@ -37,7 +40,7 @@ export async function GET(request: NextRequest) {
     const response = await convexAidApplications.list({
       ...params,
       stage: searchParams.get('stage') || undefined,
-      beneficiary_id: searchParams.get('beneficiary_id') as Id<"beneficiaries"> | undefined,
+      beneficiary_id: searchParams.get('beneficiary_id') as Id<'beneficiaries'> | undefined,
     });
 
     return NextResponse.json({
@@ -61,7 +64,7 @@ export async function GET(request: NextRequest) {
 async function createApplicationHandler(request: NextRequest) {
   let body: Record<string, unknown> | null = null;
   try {
-    body = await request.json() as Record<string, unknown>;
+    body = (await request.json()) as Record<string, unknown>;
     if (!body) {
       return NextResponse.json({ success: false, error: 'Geçersiz istek verisi' }, { status: 400 });
     }
@@ -77,13 +80,14 @@ async function createApplicationHandler(request: NextRequest) {
       application_date: (body.application_date as string) || new Date().toISOString(),
       applicant_type: (body.applicant_type as 'person' | 'organization' | 'partner') || 'person',
       applicant_name: body.applicant_name as string,
-      beneficiary_id: body.beneficiary_id as Id<"beneficiaries"> | undefined,
+      beneficiary_id: body.beneficiary_id as Id<'beneficiaries'> | undefined,
       one_time_aid: body.one_time_aid as number | undefined,
       regular_financial_aid: body.regular_financial_aid as number | undefined,
       regular_food_aid: body.regular_food_aid as number | undefined,
       in_kind_aid: body.in_kind_aid as number | undefined,
       service_referral: body.service_referral as number | undefined,
-      stage: (body.stage as 'draft' | 'under_review' | 'approved' | 'ongoing' | 'completed') || 'draft',
+      stage:
+        (body.stage as 'draft' | 'under_review' | 'approved' | 'ongoing' | 'completed') || 'draft',
       status: (body.status as 'open' | 'closed') || 'open',
       description: body.description as string | undefined,
       notes: body.notes as string | undefined,
@@ -111,4 +115,3 @@ async function createApplicationHandler(request: NextRequest) {
 }
 
 export const POST = createApplicationHandler;
-

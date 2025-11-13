@@ -21,8 +21,6 @@ const publicRoutes = [
 
 // Auth routes that should redirect to dashboard if already authenticated
 
- 
-
 // API routes that require authentication (protected endpoints)
 const protectedApiRoutes = [
   '/api/users',

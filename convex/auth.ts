@@ -1,5 +1,5 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
 
 /**
  * Get current user by ID
@@ -7,20 +7,20 @@ import { v } from "convex/values";
  * as Convex cannot run bcrypt (native module)
  */
 export const getCurrentUser = query({
-  args: { userId: v.optional(v.id("users")) },
+  args: { userId: v.optional(v.id('users')) },
   handler: async (ctx, args) => {
     if (!args.userId) {
       return null;
     }
-    
+
     const user = await ctx.db.get(args.userId);
-    
+
     if (!user || !user.isActive) {
       return null;
     }
 
     // Return user without password hash
-     
+
     const { passwordHash: _passwordHash, ...userWithoutPassword } = user;
     return userWithoutPassword;
   },
@@ -35,8 +35,8 @@ export const getUserByEmail = query({
   args: { email: v.string() },
   handler: async (ctx, args) => {
     const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .query('users')
+      .withIndex('by_email', (q) => q.eq('email', args.email))
       .first();
 
     if (!user) {
@@ -52,11 +52,11 @@ export const getUserByEmail = query({
  * Update last login time
  */
 export const updateLastLogin = mutation({
-  args: { userId: v.id("users") },
+  args: { userId: v.id('users') },
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     await ctx.db.patch(args.userId, {
@@ -78,4 +78,3 @@ export const logout = mutation({
     return { success: true };
   },
 });
-

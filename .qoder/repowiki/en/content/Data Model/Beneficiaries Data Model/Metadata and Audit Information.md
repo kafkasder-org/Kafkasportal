@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Metadata Fields](#core-metadata-fields)
 3. [Audit Trail Implementation](#audit-trail-implementation)
@@ -20,16 +21,20 @@
 7. [Audit Reporting Capabilities](#audit-reporting-capabilities)
 
 ## Introduction
+
 This document provides comprehensive documentation for the metadata and audit information fields within the beneficiaries collection of the non-profit organization's system. The metadata fields—including createdAt, updatedAt, createdBy, updatedBy, registrationTime, registrationIP, and registeredBy—play a critical role in maintaining data integrity, enabling audit trails, and ensuring compliance with regulatory requirements. These fields are automatically populated by the system to track changes, support investigations, and generate audit reports. The system utilizes Convex as the backend database, which stores timestamps in ISO 8601 format, ensuring standardized and consistent time representation across the application.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L154)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L501-L506)
 
 ## Core Metadata Fields
+
 The beneficiaries collection contains several critical metadata fields that provide essential context about record creation, modification, and registration. These fields are defined in the Convex schema and TypeScript interfaces, ensuring type safety and consistency across the application.
 
 ### Creation and Modification Metadata
+
 The following fields track when records are created and modified:
 
 - **createdAt**: String field storing the ISO 8601 timestamp when the beneficiary record was created. This field is automatically populated by the system upon record creation.
@@ -40,6 +45,7 @@ The following fields track when records are created and modified:
 These fields are implemented in both the Convex schema definition and the TypeScript interface, ensuring consistency between the database structure and application code.
 
 ### Registration Metadata
+
 Additional fields capture information about the initial registration process:
 
 - **registrationTime**: String field storing the ISO 8601 timestamp when the beneficiary was registered in the system.
@@ -62,18 +68,22 @@ string registeredBy
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L154)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L491-L499)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L154)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L491-L506)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L293-L297)
 
 ## Audit Trail Implementation
+
 The system implements a comprehensive audit trail mechanism through the audit_logs collection, which captures all critical operations performed within the application. This implementation ensures complete traceability of actions taken on beneficiary records and other system entities.
 
 ### Audit Log Structure
+
 The audit_logs collection is designed to capture detailed information about each operation:
 
 - **userId**: Reference to the user who performed the action
@@ -88,6 +98,7 @@ The audit_logs collection is designed to capture detailed information about each
 - **metadata**: Additional contextual information about the action
 
 ### Audit Logging Workflow
+
 The audit logging process is implemented through the logAction mutation in the audit_logs module. When any critical operation occurs, the system automatically creates an audit log entry with the relevant details. For example, when a beneficiary record is created or updated, the system logs this action with the appropriate metadata.
 
 The audit system also includes query functions to retrieve audit logs with various filters, such as by user, resource, action type, or date range. This enables targeted investigations and reporting.
@@ -107,17 +118,21 @@ Note over Audit : All timestamps stored in ISO 8601 format
 ```
 
 **Diagram sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L12-L34)
 - [schema.ts](file://convex/schema.ts#L1179-L1220)
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L12-L93)
 - [schema.ts](file://convex/schema.ts#L1179-L1220)
 
 ## Data Integrity and Compliance
+
 The metadata and audit information fields play a crucial role in maintaining data integrity and ensuring compliance with regulatory requirements for the non-profit organization.
 
 ### Data Integrity Mechanisms
+
 The system employs several mechanisms to ensure data integrity:
 
 - **Immutable Timestamps**: Creation timestamps (createdAt, registrationTime) are set once upon record creation and cannot be modified, establishing a reliable audit trail.
@@ -126,6 +141,7 @@ The system employs several mechanisms to ensure data integrity:
 - **IP Tracking**: Registration and modification IP addresses are recorded, providing additional context for security investigations.
 
 ### Compliance Support
+
 These metadata fields directly support compliance with various regulatory requirements:
 
 - **Audit Requirements**: The comprehensive audit trail satisfies requirements for tracking changes to beneficiary records, demonstrating accountability and transparency.
@@ -136,14 +152,17 @@ These metadata fields directly support compliance with various regulatory requir
 The system's use of ISO 8601 timestamps ensures consistency and standardization, which is particularly important for compliance reporting that may need to correlate events across different systems or time zones.
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L154)
 - [audit_logs.ts](file://convex/audit_logs.ts#L12-L93)
 - [data_import_export.ts](file://convex/data_import_export.ts#L203-L276)
 
 ## System Automation and Population
+
 The metadata fields are automatically populated by the system without requiring manual input, ensuring consistency and reliability of the audit trail.
 
 ### Automatic Field Population
+
 The system implements automatic population of metadata fields through several mechanisms:
 
 - **Creation Time**: The createdAt field is automatically set to the current ISO 8601 timestamp when a new beneficiary record is inserted into the database.
@@ -152,6 +171,7 @@ The system implements automatic population of metadata fields through several me
 - **IP Address**: The registrationIP field captures the client's IP address from the HTTP request headers.
 
 ### Mutation Handlers
+
 The automatic population is implemented in the mutation handlers within the beneficiaries module. When a create operation is performed, the system automatically includes the metadata fields in the database insertion. Similarly, update operations automatically update the updatedAt field and updatedBy field with the current timestamp and user identifier.
 
 The audit logging system also automatically captures timestamps using new Date().toISOString(), ensuring all audit entries use the standardized ISO 8601 format.
@@ -172,18 +192,22 @@ Log --> End([Operation Complete])
 ```
 
 **Diagram sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L89-L169)
 - [audit_logs.ts](file://convex/audit_logs.ts#L12-L34)
 
 **Section sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L89-L169)
 - [audit_logs.ts](file://convex/audit_logs.ts#L12-L34)
 - [data_import_export.ts](file://convex/data_import_export.ts#L203-L276)
 
 ## Usage for Issue Investigation
+
 The metadata and audit information fields are essential tools for investigating issues and understanding the history of beneficiary records.
 
 ### Investigation Capabilities
+
 The comprehensive metadata enables several types of investigations:
 
 - **Change History**: By examining createdAt, updatedAt, createdBy, and updatedBy fields, investigators can understand the complete history of a beneficiary record.
@@ -192,6 +216,7 @@ The comprehensive metadata enables several types of investigations:
 - **Security Incident Response**: The registrationIP and audit log IP addresses help identify potential security incidents or unauthorized access.
 
 ### Audit Log Queries
+
 The system provides query functions to facilitate investigations:
 
 - **getResourceHistory**: Retrieves all audit log entries for a specific resource, showing the complete change history.
@@ -201,13 +226,16 @@ The system provides query functions to facilitate investigations:
 These capabilities enable the non-profit organization to quickly respond to data quality issues, security concerns, or compliance inquiries by providing a complete and verifiable record of all system activities.
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L97-L156)
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L172-L214)
 
 ## Audit Reporting Capabilities
+
 The metadata and audit trail system provides robust capabilities for generating compliance reports and operational insights for the non-profit organization.
 
 ### Report Generation
+
 The system supports several types of audit reports:
 
 - **Change Logs**: Comprehensive reports showing all modifications to beneficiary records over a specified period.
@@ -216,6 +244,7 @@ The system supports several types of audit reports:
 - **Operational Analytics**: Statistical reports on system usage patterns and workflow efficiency.
 
 ### Data Export and Analysis
+
 The audit information can be exported and analyzed to support organizational decision-making:
 
 - **Data Export**: Audit logs can be exported in standard formats (CSV, Excel) for external analysis.
@@ -226,5 +255,6 @@ The audit information can be exported and analyzed to support organizational dec
 The use of standardized ISO 8601 timestamps ensures that audit reports maintain temporal accuracy and consistency, which is critical for regulatory compliance and cross-system integration.
 
 **Section sources**
+
 - [audit_logs.ts](file://convex/audit_logs.ts#L97-L156)
 - [data_import_export.ts](file://convex/data_import_export.ts#L203-L276)

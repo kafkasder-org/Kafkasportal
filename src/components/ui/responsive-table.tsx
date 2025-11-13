@@ -198,8 +198,6 @@ export function ResponsiveGrid({
     );
   }
 
-  
-
   return (
     <div
       className={`grid gap-4 grid-cols-${itemsPerRow.mobile} md:grid-cols-${itemsPerRow.tablet} lg:grid-cols-${itemsPerRow.desktop}`}

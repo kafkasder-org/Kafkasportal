@@ -3,10 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  ChevronRight,
-  Settings,
-} from 'lucide-react';
+import { ChevronRight, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,14 +17,20 @@ interface ModernSidebarProps {
   className?: string;
 }
 
-export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className }: ModernSidebarProps) {
+export function ModernSidebar({
+  isMobileOpen = false,
+  onMobileToggle,
+  className,
+}: ModernSidebarProps) {
   const pathname = usePathname();
   const userPermissions = useAuthStore((state) => state.user?.permissions ?? []);
-  
+
   // DEV MODE: If no permissions, show all modules (for development/testing)
   const hasNoPermissions = userPermissions.length === 0;
-  const effectivePermissions = hasNoPermissions ? Object.values(MODULE_PERMISSIONS) : userPermissions;
-  
+  const effectivePermissions = hasNoPermissions
+    ? Object.values(MODULE_PERMISSIONS)
+    : userPermissions;
+
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -46,7 +49,9 @@ export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className 
     };
 
     window.addEventListener('storage', handleStorageChange);
-    return () => { window.removeEventListener('storage', handleStorageChange); };
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const toggleModule = (moduleId: string) => {
@@ -56,7 +61,8 @@ export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className 
   };
 
   const isActive = (href: string) => pathname === href;
-  const hasActiveSubpage = (module: NavigationModule) => module.subPages.some((sub) => isActive(sub.href));
+  const hasActiveSubpage = (module: NavigationModule) =>
+    module.subPages.some((sub) => isActive(sub.href));
 
   return (
     <TooltipProvider delayDuration={100}>
@@ -82,27 +88,26 @@ export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className 
       >
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-3 px-2 scrollbar-hide">
-          {navigationModules
-            .map((module) => {
-              if (module.permission && !effectivePermissions.includes(module.permission)) {
-                return null;
-              }
+          {navigationModules.map((module) => {
+            if (module.permission && !effectivePermissions.includes(module.permission)) {
+              return null;
+            }
 
-              const visibleSubPages = module.subPages.filter(
-                (subPage) => !subPage.permission || effectivePermissions.includes(subPage.permission)
-              );
+            const visibleSubPages = module.subPages.filter(
+              (subPage) => !subPage.permission || effectivePermissions.includes(subPage.permission)
+            );
 
-              if (visibleSubPages.length === 0) {
-                return null;
-              }
+            if (visibleSubPages.length === 0) {
+              return null;
+            }
 
             const isExpanded = expandedModules.includes(module.id);
-              const moduleWithVisiblePages: NavigationModule = {
-                ...module,
-                subPages: visibleSubPages,
-              };
-              const active = hasActiveSubpage(moduleWithVisiblePages);
-              const hasSubPages = visibleSubPages.length > 1;
+            const moduleWithVisiblePages: NavigationModule = {
+              ...module,
+              subPages: visibleSubPages,
+            };
+            const active = hasActiveSubpage(moduleWithVisiblePages);
+            const hasSubPages = visibleSubPages.length > 1;
 
             return (
               <div key={module.id} className="px-1.5 mb-1">
@@ -117,12 +122,17 @@ export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className 
                       isCollapsed && 'justify-center'
                     )}
                   >
-                    <module.icon className={cn('w-5 h-5 flex-shrink-0', isCollapsed && 'w-6 h-6')} />
+                    <module.icon
+                      className={cn('w-5 h-5 flex-shrink-0', isCollapsed && 'w-6 h-6')}
+                    />
                     {!isCollapsed && (
                       <>
                         <span className="flex-1 text-left">{module.name}</span>
                         <ChevronRight
-                          className={cn('w-4 h-4 transition-transform duration-200', isExpanded && 'rotate-90')}
+                          className={cn(
+                            'w-4 h-4 transition-transform duration-200',
+                            isExpanded && 'rotate-90'
+                          )}
                         />
                       </>
                     )}
@@ -142,7 +152,9 @@ export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className 
                           isCollapsed && 'justify-center'
                         )}
                       >
-                        <module.icon className={cn('w-5 h-5 flex-shrink-0', isCollapsed && 'w-6 h-6')} />
+                        <module.icon
+                          className={cn('w-5 h-5 flex-shrink-0', isCollapsed && 'w-6 h-6')}
+                        />
                         {!isCollapsed && <span>{module.name}</span>}
                       </Link>
                     </TooltipTrigger>
@@ -151,7 +163,7 @@ export function ModernSidebar({ isMobileOpen = false, onMobileToggle, className 
                 )}
 
                 {/* Sub Pages */}
-                    {hasSubPages && !isCollapsed && (
+                {hasSubPages && !isCollapsed && (
                   <AnimatePresence>
                     {isExpanded && (
                       <motion.div

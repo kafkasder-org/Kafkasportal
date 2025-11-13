@@ -3,7 +3,12 @@
  * DRY principle için tekrarlanan CRUD operasyonlarını tek factory ile yönetir
  */
 
-import type { QueryParams, ConvexResponse, CreateDocumentData, UpdateDocumentData } from '@/types/database';
+import type {
+  QueryParams,
+  ConvexResponse,
+  CreateDocumentData,
+  UpdateDocumentData,
+} from '@/types/database';
 import { getCache } from '@/lib/api-cache';
 
 // Cache TTL configuration per entity type
@@ -46,7 +51,7 @@ async function apiRequest<T>(
   };
 
   const response = await fetch(endpoint, { ...defaultOptions, ...options });
-  
+
   if (!response.ok) {
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
@@ -85,11 +90,11 @@ export function createCrudOperations<T>(
   return {
     async getAll(params?: QueryParams): Promise<ConvexResponse<T[]>> {
       const searchParams = new URLSearchParams();
-      
+
       if (params?.page) searchParams.set('page', params.page.toString());
       if (params?.limit) searchParams.set('limit', params.limit.toString());
       if (params?.search) searchParams.set('search', params.search);
-      
+
       // Add all filters
       if (params?.filters) {
         Object.entries(params.filters).forEach(([key, value]) => {
@@ -109,7 +114,7 @@ export function createCrudOperations<T>(
     async getById(id: string): Promise<ConvexResponse<T>> {
       const endpoint = `${baseEndpoint}/${id}`;
       const cacheKey = `${entityName}:${id}`;
-      
+
       return apiRequest<T>(endpoint, undefined, cacheKey, cacheCategory);
     },
 

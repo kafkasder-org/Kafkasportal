@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Data Aggregation and Visualization](#data-aggregation-and-visualization)
 3. [Analytics Functions Implementation](#analytics-functions-implementation)
@@ -21,12 +22,15 @@
 8. [Troubleshooting Guide](#troubleshooting-guide)
 
 ## Introduction
+
 The Donation Reporting sub-module provides comprehensive analytics and visualization capabilities for donation data within the Kafkasder-panel system. This documentation details how donation data is aggregated, visualized, and reported through interactive dashboards that support various filtering options, export formats, and performance optimizations. The system integrates Convex backend functions with React frontend components to deliver real-time insights into donation trends, donor statistics, and financial performance metrics.
 
 ## Data Aggregation and Visualization
+
 The donation reporting system aggregates data from multiple sources including direct donations, Kumbara collections, and other donation types. The primary visualization dashboard displays key metrics such as total collections, donation trends over time, donor statistics, and payment method distributions.
 
 The system processes donation data to calculate:
+
 - Total collection amounts and transaction counts
 - Average donation values
 - Donation status distributions (completed vs. pending)
@@ -37,13 +41,16 @@ The system processes donation data to calculate:
 Visualization components include bar charts for monthly trends, pie charts for donation type distributions, and data tables for detailed donor information. The Kumbara-specific reporting includes additional visualizations for location-based distributions and payment method breakdowns.
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618)
+
+- [page.tsx](<file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618>)
 - [KumbaraCharts.tsx](file://src/components/kumbara/KumbaraCharts.tsx#L41-L239)
 
 ## Analytics Functions Implementation
+
 The analytics functionality is implemented through Convex functions in the analytics.ts file. These server-side functions handle data aggregation, filtering, and statistical calculations.
 
 Key functions include:
+
 - `track`: Records analytics events with properties, user context, and timestamps
 - `getEventStats`: Retrieves statistics for specific events within date ranges
 - `getTopEvents`: Returns the most frequent events sorted by count
@@ -64,15 +71,19 @@ ConvexAPI-->>Frontend : Return processed report data
 ```
 
 **Diagram sources**
+
 - [analytics.ts](file://convex/analytics.ts#L6-L116)
 
 **Section sources**
+
 - [analytics.ts](file://convex/analytics.ts#L6-L116)
 
 ## Frontend Integration
+
 The frontend implementation integrates the analytics data with React components to create an interactive reporting dashboard. The main reporting page uses React Query for data fetching and state management, with caching to optimize performance.
 
 Key frontend components include:
+
 - Stat cards displaying summary metrics (total amount, average donation, etc.)
 - Bar charts visualizing monthly donation trends
 - Pie charts showing donation type distributions
@@ -99,12 +110,15 @@ E --> M[DataTable]
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618)
+
+- [page.tsx](<file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618>)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618)
+
+- [page.tsx](<file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618>)
 
 ## Filtering and Query Capabilities
+
 The reporting system supports multiple filtering options to enable targeted analysis of donation data. Users can filter reports by:
 
 - **Date ranges**: All time, last 7 days, last 30 days, current year, or custom date ranges
@@ -116,10 +130,12 @@ The filtering logic is implemented in the frontend component using useMemo to op
 For Kumbara collections specifically, additional filtering and visualization options are available through dedicated components that show location-based distributions and payment method breakdowns.
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618)
+
+- [page.tsx](<file://src/app/(dashboard)/bagis/raporlar/page.tsx#L80-L618>)
 - [KumbaraCharts.tsx](file://src/components/kumbara/KumbaraCharts.tsx#L41-L239)
 
 ## Report Export and Compliance
+
 The system provides multiple export options to support compliance requirements and stakeholder communication. Users can export reports in various formats:
 
 - **CSV/Excel**: Tabular data export for further analysis in spreadsheet applications
@@ -145,17 +161,21 @@ F --> K[Physical Distribution]
 ```
 
 **Diagram sources**
+
 - [export-buttons.tsx](file://src/components/ui/export-buttons.tsx#L1-L211)
 - [pdf-export.ts](file://src/lib/utils/pdf-export.ts)
 
 **Section sources**
+
 - [export-buttons.tsx](file://src/components/ui/export-buttons.tsx#L1-L211)
-- [page.tsx](file://src/app/(dashboard)/bagis/raporlar/page.tsx#L218-L264)
+- [page.tsx](<file://src/app/(dashboard)/bagis/raporlar/page.tsx#L218-L264>)
 
 ## Performance Considerations
+
 The reporting system implements several performance optimizations to handle large datasets efficiently:
 
 ### Caching Strategy
+
 The system uses a multi-layer caching approach with the api-cache.ts implementation providing client-side caching for API responses. The cache configuration includes:
 
 - Time-to-live (TTL) settings for different data types
@@ -164,14 +184,17 @@ The system uses a multi-layer caching approach with the api-cache.ts implementat
 - Garbage collection to remove expired entries
 
 Specific cache configurations are defined for different data types:
+
 - Donations: 3-minute TTL, 50-item maximum
 - Beneficiaries: 5-minute TTL, 100-item maximum
 - Tasks: 2-minute TTL, 75-item maximum
 
 ### Data Processing Optimization
+
 The frontend implements memoization using React's useMemo hook to prevent unnecessary recalculations when filters change. Large datasets are limited to 1000 records for reporting purposes to maintain responsiveness.
 
 ### Prefetching
+
 The system includes prefetching capabilities to anticipate user actions and load data before it's requested, improving perceived performance.
 
 ```mermaid
@@ -208,16 +231,20 @@ SmartCache --> CacheEntry : "contains"
 ```
 
 **Diagram sources**
+
 - [api-cache.ts](file://src/lib/api-cache.ts#L31-L144)
 
 **Section sources**
+
 - [api-cache.ts](file://src/lib/api-cache.ts#L1-L403)
-- [page.tsx](file://src/app/(dashboard)/bagis/raporlar/page.tsx#L88-L91)
+- [page.tsx](<file://src/app/(dashboard)/bagis/raporlar/page.tsx#L88-L91>)
 
 ## Troubleshooting Guide
+
 This section provides guidance for common issues encountered with the donation reporting system.
 
 ### Data Discrepancies
+
 When donation data appears incorrect or inconsistent:
 
 1. Check the date range filters to ensure they cover the expected period
@@ -227,6 +254,7 @@ When donation data appears incorrect or inconsistent:
 5. Check for any failed data import operations that might affect completeness
 
 ### Report Generation Failures
+
 If reports fail to generate or display:
 
 1. Verify network connectivity between frontend and backend services
@@ -236,6 +264,7 @@ If reports fail to generate or display:
 5. Confirm that the PDF generation library is properly configured
 
 ### Performance Issues
+
 For slow report loading or unresponsive interfaces:
 
 1. Monitor cache hit rates using the cache statistics tools
@@ -245,6 +274,7 @@ For slow report loading or unresponsive interfaces:
 5. Ensure that the garbage collection is functioning correctly
 
 **Section sources**
+
 - [analytics.ts](file://convex/analytics.ts#L6-L116)
 - [api-cache.ts](file://src/lib/api-cache.ts#L337-L398)
-- [page.tsx](file://src/app/(dashboard)/bagis/raporlar/page.tsx#L255-L263)
+- [page.tsx](<file://src/app/(dashboard)/bagis/raporlar/page.tsx#L255-L263>)

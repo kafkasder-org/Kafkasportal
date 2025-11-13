@@ -23,7 +23,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
     register,
     formState: { errors },
     watch,
-    setValue
+    setValue,
   } = useFormContext<BeneficiaryFormData>();
 
   return (
@@ -33,9 +33,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
           <User className="h-5 w-5" />
           Kişisel Bilgiler
         </CardTitle>
-        <CardDescription>
-          İhtiyaç sahibinin temel kişisel bilgileri
-        </CardDescription>
+        <CardDescription>İhtiyaç sahibinin temel kişisel bilgileri</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Name Fields */}
@@ -48,9 +46,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
               placeholder="Ad"
               className={errors.firstName ? 'border-red-500' : ''}
             />
-            {errors.firstName && (
-              <p className="text-sm text-red-500">{errors.firstName.message}</p>
-            )}
+            {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -61,9 +57,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
               placeholder="Soyad"
               className={errors.lastName ? 'border-red-500' : ''}
             />
-            {errors.lastName && (
-              <p className="text-sm text-red-500">{errors.lastName.message}</p>
-            )}
+            {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
           </div>
         </div>
 
@@ -91,9 +85,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
               {...register('birthDate')}
               className={errors.birthDate ? 'border-red-500' : ''}
             />
-            {errors.birthDate && (
-              <p className="text-sm text-red-500">{errors.birthDate.message}</p>
-            )}
+            {errors.birthDate && <p className="text-sm text-red-500">{errors.birthDate.message}</p>}
           </div>
         </div>
 
@@ -108,9 +100,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
               placeholder="Cinsiyet seçin"
               className={errors.gender ? 'border-red-500' : ''}
             />
-            {errors.gender && (
-              <p className="text-sm text-red-500">{errors.gender.message}</p>
-            )}
+            {errors.gender && <p className="text-sm text-red-500">{errors.gender.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -153,9 +143,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
               placeholder="Din seçin"
               className={errors.religion ? 'border-red-500' : ''}
             />
-            {errors.religion && (
-              <p className="text-sm text-red-500">{errors.religion.message}</p>
-            )}
+            {errors.religion && <p className="text-sm text-red-500">{errors.religion.message}</p>}
           </div>
         </div>
 
@@ -183,9 +171,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
               placeholder="example@example.com"
               className={errors.email ? 'border-red-500' : ''}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
           </div>
         </div>
 
@@ -199,9 +185,7 @@ export function PersonalInfoStep({ isUpdateMode: _isUpdateMode = false }: Person
             rows={3}
             className={errors.notes ? 'border-red-500' : ''}
           />
-          {errors.notes && (
-            <p className="text-sm text-red-500">{errors.notes.message}</p>
-          )}
+          {errors.notes && <p className="text-sm text-red-500">{errors.notes.message}</p>}
         </div>
       </CardContent>
     </Card>

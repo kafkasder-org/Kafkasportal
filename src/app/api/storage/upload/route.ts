@@ -6,15 +6,12 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const bucket = formData.get('bucket') as string || 'documents';
+    const bucket = (formData.get('bucket') as string) || 'documents';
     const beneficiaryId = formData.get('beneficiaryId') as string;
-    const documentType = formData.get('documentType') as string || 'other';
+    const documentType = (formData.get('documentType') as string) || 'other';
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'Dosya bulunamadı' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Dosya bulunamadı' }, { status: 400 });
     }
 
     // Validate file size (max 10MB)
@@ -35,7 +32,7 @@ export async function POST(request: NextRequest) {
       'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
-    
+
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
         { error: 'Desteklenmeyen dosya türü. Sadece resim ve PDF dosyaları kabul edilir.' },
@@ -94,4 +91,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

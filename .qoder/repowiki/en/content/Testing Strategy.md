@@ -18,6 +18,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Unit Testing with Vitest](#unit-testing-with-vitest)
 2. [Integration Testing Strategy](#integration-testing-strategy)
 3. [End-to-End Testing with Playwright](#end-to-end-testing-with-playwright)
@@ -43,8 +44,9 @@ D --> H[Component Behavior]
 ```
 
 **Diagram sources**
+
 - [vitest.config.ts](file://vitest.config.ts)
-- [src/__tests__/setup.ts](file://src/__tests__/setup.ts)
+- [src/**tests**/setup.ts](file://src/__tests__/setup.ts)
 
 The unit testing strategy covers various aspects of the application:
 
@@ -54,8 +56,9 @@ The unit testing strategy covers various aspects of the application:
 - **Authentication store**: The Zustand store at `src/stores/authStore.ts` is tested for proper state transitions and permission handling
 
 **Section sources**
+
 - [vitest.config.ts](file://vitest.config.ts#L1-L48)
-- [src/__tests__/setup.ts](file://src/__tests__/setup.ts#L1-L33)
+- [src/**tests**/setup.ts](file://src/__tests__/setup.ts#L1-L33)
 - [src/lib/utils.ts](file://src/lib/utils.ts)
 - [src/hooks/useInfiniteScroll.ts](file://src/hooks/useInfiniteScroll.ts)
 - [src/stores/authStore.ts](file://src/stores/authStore.ts)
@@ -81,7 +84,8 @@ Component-->>Test : Update State/UI
 ```
 
 **Diagram sources**
-- [src/__tests__/mocks/handlers.ts](file://src/__tests__/mocks/handlers.ts#L1-L65)
+
+- [src/**tests**/mocks/handlers.ts](file://src/__tests__/mocks/handlers.ts#L1-L65)
 - [src/lib/api-client.ts](file://src/lib/api-client.ts)
 
 Key aspects of the integration testing strategy include:
@@ -94,8 +98,9 @@ Key aspects of the integration testing strategy include:
 The integration tests also verify complex business logic such as beneficiary data sanitization, which is tested in `src/__tests__/integration/beneficiary-sanitization.test.ts`. This ensures that sensitive data is properly handled and displayed according to organizational policies.
 
 **Section sources**
-- [src/__tests__/integration/beneficiary-sanitization.test.ts](file://src/__tests__/integration/beneficiary-sanitization.test.ts)
-- [src/__tests__/mocks/handlers.ts](file://src/__tests__/mocks/handlers.ts#L1-L65)
+
+- [src/**tests**/integration/beneficiary-sanitization.test.ts](file://src/__tests__/integration/beneficiary-sanitization.test.ts)
+- [src/**tests**/mocks/handlers.ts](file://src/__tests__/mocks/handlers.ts#L1-L65)
 - [src/lib/validations/beneficiary.ts](file://src/lib/validations/beneficiary.ts)
 - [src/lib/validations/aid-application.ts](file://src/lib/validations/aid-application.ts)
 
@@ -129,6 +134,7 @@ end
 ```
 
 **Diagram sources**
+
 - [e2e/test-utils.ts](file://e2e/test-utils.ts#L1-L794)
 - [e2e/mock-api.ts](file://e2e/mock-api.ts#L1-L510)
 
@@ -142,6 +148,7 @@ The E2E tests utilize a sophisticated testing utility system in `e2e/test-utils.
 Additionally, the framework includes `e2e/mock-api.ts` which provides a comprehensive mock API implementation for deterministic testing. This mock API returns consistent test data and can simulate various scenarios such as network errors, slow responses, and different authentication states.
 
 **Section sources**
+
 - [e2e/test-utils.ts](file://e2e/test-utils.ts#L1-L794)
 - [e2e/mock-api.ts](file://e2e/mock-api.ts#L1-L510)
 - [e2e/auth.spec.ts](file://e2e/auth.spec.ts)
@@ -152,6 +159,7 @@ Additionally, the framework includes `e2e/mock-api.ts` which provides a comprehe
 The testing strategy for Kafkasder-panel includes comprehensive coverage requirements and reporting mechanisms to ensure code quality and identify areas needing additional tests. The project is configured to generate multiple types of test reports, providing insights into test execution and code coverage.
 
 According to the `vitest.config.ts` configuration, the test suite generates coverage reports in multiple formats:
+
 - Text summary
 - JSON format for machine processing
 - HTML reports for interactive browsing
@@ -174,10 +182,12 @@ H --> M[Test Aggregation]
 ```
 
 **Diagram sources**
+
 - [vitest.config.ts](file://vitest.config.ts#L20-L36)
 - [package.json](file://package.json#L16-L20)
 
 The coverage configuration excludes certain directories that don't require testing coverage, such as:
+
 - Node modules
 - Test files themselves
 - E2E test files
@@ -186,6 +196,7 @@ The coverage configuration excludes certain directories that don't require testi
 The reporting system also includes JUnit XML output (`junit.xml`) which enables integration with CI/CD systems and test aggregation tools. This allows for tracking test results over time and identifying flaky tests.
 
 Coverage requirements for the project include:
+
 - All utility functions must have unit tests with 100% branch coverage
 - All custom hooks must be tested for various states and side effects
 - All validation logic must be tested with both valid and invalid inputs
@@ -195,6 +206,7 @@ Coverage requirements for the project include:
 The project's CONTRIBUTING.md documentation emphasizes the importance of tests, requiring that all pull requests include appropriate unit and E2E tests for new features.
 
 **Section sources**
+
 - [vitest.config.ts](file://vitest.config.ts#L20-L36)
 - [package.json](file://package.json#L16-L20)
 - [CONTRIBUTING.md](file://CONTRIBUTING.md#L168-L237)
@@ -206,6 +218,7 @@ Kafkasder-panel follows several testing best practices to ensure high-quality, m
 ### Test Organization and Naming
 
 The project follows a consistent file naming convention using `*.test.ts` or `*.spec.ts` suffixes. Tests are organized by type and feature:
+
 - Unit tests in `src/__tests__` directory
 - Integration tests in `src/__tests__/integration/`
 - E2E tests in `e2e/` directory
@@ -219,6 +232,7 @@ Each test is designed to be independent and isolated, ensuring that test failure
 ### Mocking Strategy
 
 The project employs a layered mocking strategy:
+
 - **MSW (Mock Service Worker)**: Used for API mocking in unit and integration tests
 - **Manual mocks**: Specific modules are mocked using Vitest's mocking capabilities
 - **Playwright route interception**: Used in E2E tests to control API responses
@@ -226,6 +240,7 @@ The project employs a layered mocking strategy:
 ### Performance and Reliability
 
 To ensure test reliability, the framework includes several mechanisms:
+
 - Retry logic for flaky operations
 - Progressive timeouts based on operation complexity
 - Network idle detection to ensure all requests are complete
@@ -238,9 +253,10 @@ The test utilities include functions like `waitForNetworkIdle` and `waitForLoadi
 While not explicitly covered in the current test suite, the project's documentation suggests that accessibility testing should be included in the test strategy. This would involve testing for proper ARIA labels, keyboard navigation, and screen reader announcements.
 
 **Section sources**
+
 - [CONTRIBUTING.md](file://CONTRIBUTING.md#L186-L203)
 - [e2e/test-utils.ts](file://e2e/test-utils.ts#L1-L794)
-- [src/__tests__/setup.ts](file://src/__tests__/setup.ts#L1-L33)
+- [src/**tests**/setup.ts](file://src/__tests__/setup.ts#L1-L33)
 
 ## Practical Test Examples
 
@@ -262,9 +278,11 @@ G --> H[Verify Results]
 ```
 
 **Diagram sources**
-- [src/__tests__/lib/utils.test.ts](file://src/__tests__/lib/utils.test.ts)
+
+- [src/**tests**/lib/utils.test.ts](file://src/__tests__/lib/utils.test.ts)
 
 The test verifies that the function correctly handles:
+
 - Basic class name concatenation
 - Conditional classes based on boolean values
 - Arrays of class names
@@ -286,9 +304,11 @@ F --> G[Test State Persistence]
 ```
 
 **Diagram sources**
-- [src/stores/__tests__/authStore.test.ts](file://src/stores/__tests__/authStore.test.ts)
+
+- [src/stores/**tests**/authStore.test.ts](file://src/stores/__tests__/authStore.test.ts)
 
 The test cases verify:
+
 - Initial state has no user and appropriate default permissions
 - Successful login updates user state and permissions
 - Failed login maintains previous state
@@ -312,10 +332,12 @@ A --> I[Test Edge Cases]
 ```
 
 **Diagram sources**
-- [src/__tests__/lib/beneficiary-validation.test.ts](file://src/__tests__/lib/beneficiary-validation.test.ts)
+
+- [src/**tests**/lib/beneficiary-validation.test.ts](file://src/__tests__/lib/beneficiary-validation.test.ts)
 - [src/lib/validations/beneficiary.ts](file://src/lib/validations/beneficiary.ts)
 
 The validation tests cover:
+
 - Required fields are properly enforced
 - Field length constraints
 - Email format validation
@@ -347,10 +369,12 @@ User->>Page : Verify User in List
 ```
 
 **Diagram sources**
+
 - [e2e/user-management.spec.ts](file://e2e/user-management.spec.ts)
 - [e2e/test-utils.ts](file://e2e/test-utils.ts)
 
 The test verifies the complete user management workflow:
+
 - Navigation to the user management page
 - Display of existing users
 - Form display for new user creation
@@ -362,7 +386,8 @@ The test verifies the complete user management workflow:
 These practical examples demonstrate the comprehensive testing approach used in Kafkasder-panel, ensuring that critical functionality is thoroughly validated through multiple testing layers.
 
 **Section sources**
-- [src/__tests__/lib/utils.test.ts](file://src/__tests__/lib/utils.test.ts)
-- [src/stores/__tests__/authStore.test.ts](file://src/stores/__tests__/authStore.test.ts)
-- [src/__tests__/lib/beneficiary-validation.test.ts](file://src/__tests__/lib/beneficiary-validation.test.ts)
+
+- [src/**tests**/lib/utils.test.ts](file://src/__tests__/lib/utils.test.ts)
+- [src/stores/**tests**/authStore.test.ts](file://src/stores/__tests__/authStore.test.ts)
+- [src/**tests**/lib/beneficiary-validation.test.ts](file://src/__tests__/lib/beneficiary-validation.test.ts)
 - [e2e/user-management.spec.ts](file://e2e/user-management.spec.ts)

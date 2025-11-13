@@ -18,6 +18,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Data Model](#data-model)
 3. [Beneficiary Profile Implementation](#beneficiary-profile-implementation)
@@ -30,12 +31,15 @@
 10. [Common Issues](#common-issues)
 
 ## Introduction
+
 The Beneficiary Management module is a comprehensive system for managing aid recipients within the KafkasDer platform. This module provides functionality for creating, updating, and viewing beneficiary profiles, managing applications, tracking dependents, and handling document storage. The system is built on a robust data model with extensive validation and security features to ensure data integrity and compliance. The implementation leverages Convex as the backend database and uses React with Next.js for the frontend interface, providing a responsive and user-friendly experience for administrators and staff.
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/[id]/page.tsx#L1-L1910)
+
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/[id]/page.tsx#L1-L1910>)
 
 ## Data Model
+
 The data model for the Beneficiary Management module is defined in the Convex schema and consists of several interconnected collections. The primary collection is `beneficiaries`, which stores comprehensive information about aid recipients. This collection includes personal details such as name, TC identification number, contact information, address, family size, income level, health status, employment status, and various other attributes relevant to social assistance programs.
 
 The `beneficiaries` collection is structured with multiple indexes to optimize query performance, including indexes on TC number, status, and city. It also features a search index on the name field with filter fields for TC number, phone, and email, enabling efficient searching and filtering of beneficiary records. The schema enforces data integrity through validation rules, such as requiring the TC number to be exactly 11 digits and ensuring that certain fields like name, address, city, district, and neighborhood meet minimum length requirements.
@@ -133,15 +137,18 @@ BENEFICIARIES ||--o{ FILES : "has"
 ```
 
 **Diagram sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L158)
 - [dependents.ts](file://convex/dependents.ts#L1-L44)
 - [documents.ts](file://convex/documents.ts#L1-L44)
 
 **Section sources**
+
 - [schema.ts](file://convex/schema.ts#L47-L158)
 - [beneficiary.ts](file://src/types/beneficiary.ts#L393-L507)
 
 ## Beneficiary Profile Implementation
+
 The implementation of beneficiary profiles is centered around the `beneficiaries` collection in Convex, which serves as the primary data store for all beneficiary information. The system provides comprehensive CRUD (Create, Read, Update, Delete) operations through Convex queries and mutations, accessible via the API layer. The backend implementation in `beneficiaries.ts` defines functions for listing, retrieving, creating, updating, and removing beneficiary records, with appropriate validation and error handling.
 
 When creating a new beneficiary, the system performs several validation checks to ensure data integrity. The TC identification number is validated to ensure it is exactly 11 digits and follows the proper format. The system also checks for duplicate TC numbers to prevent the creation of duplicate records. The creation process includes mapping the status field from English values (active, inactive, archived) to their Turkish equivalents (AKTIF, PASIF, SILINDI) as required by the database schema.
@@ -170,16 +177,19 @@ UI-->>User : Show success message
 ```
 
 **Diagram sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L89-L169)
 - [route.ts](file://src/app/api/beneficiaries/route.ts#L128-L242)
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L99-L478)
 
 **Section sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L89-L169)
 - [route.ts](file://src/app/api/beneficiaries/route.ts#L128-L242)
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L99-L478)
 
 ## Form Validation Logic
+
 The form validation logic in the Beneficiary Management module is implemented using Zod, a TypeScript-first schema declaration and validation library. The validation schema is defined in `beneficiary.ts` within the `src/lib/validations` directory and includes comprehensive rules for all beneficiary fields. The schema ensures that required fields are present and meet specific criteria, such as minimum length requirements and format constraints.
 
 For example, the name field must be at least 2 characters long, the TC identification number must be exactly 11 digits and pass a checksum validation algorithm, and the phone number must follow the Turkish mobile phone format. The schema also includes conditional validation rules, such as requiring the marital status to be "single" if the beneficiary is under 18 years old, and ensuring that if a TC number is provided, the Mernis check must be performed.
@@ -211,14 +221,17 @@ ReturnMernisError --> End
 ```
 
 **Diagram sources**
+
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L37-L393)
 - [route.ts](file://src/app/api/beneficiaries/route.ts#L45-L79)
 
 **Section sources**
+
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L37-L393)
 - [route.ts](file://src/app/api/beneficiaries/route.ts#L45-L79)
 
 ## UI Components
+
 The UI components for the Beneficiary Management module are designed to provide a user-friendly and efficient interface for managing beneficiary records. The primary components are located in the `src/components/forms` directory and include `BeneficiaryForm`, `AdvancedBeneficiaryForm`, and `BeneficiaryFormWizard`. These components use React Hook Form for form state management and validation, with Zod for schema validation.
 
 The `BeneficiaryForm` component provides a simple, single-page form for creating new beneficiaries with essential fields. It includes real-time validation with visual feedback, showing green checkmarks for valid fields and red X marks for invalid fields. The form also displays detailed error messages below each field when validation fails, helping users understand and correct their input.
@@ -289,18 +302,21 @@ DocumentsManager --> TanStackQuery : "uses"
 ```
 
 **Diagram sources**
+
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L99-L478)
 - [BeneficiaryFormWizard.tsx](file://src/components/forms/BeneficiaryFormWizard.tsx#L45-L279)
 - [DependentsManager.tsx](file://src/components/dependents/DependentsManager.tsx#L35-L363)
 - [DocumentsManager.tsx](file://src/components/documents/DocumentsManager.tsx#L25-L274)
 
 **Section sources**
+
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L99-L478)
 - [BeneficiaryFormWizard.tsx](file://src/components/forms/BeneficiaryFormWizard.tsx#L45-L279)
 - [DependentsManager.tsx](file://src/components/dependents/DependentsManager.tsx#L35-L363)
 - [DocumentsManager.tsx](file://src/components/documents/DocumentsManager.tsx#L25-L274)
 
 ## Workflows
+
 The workflows for adding, updating, and viewing beneficiary details are designed to be intuitive and efficient, guiding users through the necessary steps while ensuring data integrity. The primary workflow for adding a new beneficiary begins with the user accessing the beneficiary creation form, either through the main dashboard or a dedicated "Add Beneficiary" button.
 
 When adding a new beneficiary, the user is presented with a form that includes fields for personal information, contact details, address, family size, income level, and other relevant data. As the user fills out the form, real-time validation provides immediate feedback on the validity of each field. Once the form is complete, the user submits it, triggering a series of backend processes that validate the data, check for duplicates, and create the new beneficiary record in the database.
@@ -353,14 +369,17 @@ AG --> AH([End])
 ```
 
 **Diagram sources**
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/[id]/page.tsx#L243-L458)
+
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/[id]/page.tsx#L243-L458>)
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L207-L214)
 
 **Section sources**
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/[id]/page.tsx#L243-L458)
+
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/[id]/page.tsx#L243-L458>)
 - [BeneficiaryForm.tsx](file://src/components/forms/BeneficiaryForm.tsx#L207-L214)
 
 ## Document Management
+
 The document management system in the Beneficiary Management module provides functionality for uploading, storing, retrieving, and deleting documents associated with beneficiary records. This system is implemented through the `DocumentsManager` component and the underlying Convex backend, which stores document metadata in the `files` collection and the actual file content in Convex's file storage.
 
 When a user uploads a document, the file is first sent to the `/api/storage/upload` endpoint, which processes the upload and stores the file in Convex's file storage. The endpoint returns a storage ID, which is then used to create a record in the `files` collection with metadata such as the file name, size, type, upload date, and beneficiary ID. This metadata enables efficient searching and filtering of documents, while the storage ID allows for secure retrieval of the file content.
@@ -400,14 +419,17 @@ UI-->>User : Show success message
 ```
 
 **Diagram sources**
+
 - [DocumentsManager.tsx](file://src/components/documents/DocumentsManager.tsx#L78-L106)
 - [documents.ts](file://convex/documents.ts#L1-L44)
 
 **Section sources**
+
 - [DocumentsManager.tsx](file://src/components/documents/DocumentsManager.tsx#L78-L106)
 - [documents.ts](file://convex/documents.ts#L1-L44)
 
 ## Dependent Tracking
+
 The dependent tracking system allows users to manage individuals who are dependent on a beneficiary, such as children, spouses, or elderly parents. This functionality is implemented through the `DependentsManager` component and the `dependents` collection in Convex, which stores information about each dependent and their relationship to the beneficiary.
 
 The `DependentsManager` component provides a modal interface for adding new dependents, with fields for the dependent's name, relationship to the beneficiary, date of birth, gender, TC identification number, phone number, education level, occupation, health status, disability status, monthly income, and notes. When a user submits the form, the data is sent to the Convex backend, where it is validated and stored in the `dependents` collection with a foreign key reference to the beneficiary.
@@ -450,14 +472,17 @@ DependentsManager --> TanStackQuery : "uses"
 ```
 
 **Diagram sources**
+
 - [DependentsManager.tsx](file://src/components/dependents/DependentsManager.tsx#L35-L363)
 - [dependents.ts](file://convex/dependents.ts#L1-L44)
 
 **Section sources**
+
 - [DependentsManager.tsx](file://src/components/dependents/DependentsManager.tsx#L35-L363)
 - [dependents.ts](file://convex/dependents.ts#L1-L44)
 
 ## Audit Logging
+
 The audit logging system in the Beneficiary Management module tracks all significant changes to beneficiary records and related data, providing a complete history of modifications for accountability and compliance purposes. This system is implemented through Convex's built-in change tracking and additional custom logging mechanisms that record user actions and system events.
 
 When a beneficiary record is created, updated, or deleted, the system automatically logs the change with metadata such as the timestamp, user ID, action type, and before/after values of the modified fields. This information is stored in a dedicated audit log collection, which can be queried and displayed in the user interface for review. The audit log provides a chronological record of all changes, allowing administrators to track the history of a beneficiary's information and identify any unauthorized modifications.
@@ -467,10 +492,12 @@ In addition to automatic change tracking, the system includes manual audit loggi
 The audit log data is accessible through the beneficiary profile page, where it appears as a tab or section alongside other information such as personal details, dependents, and documents. Users can view the complete history of changes to a beneficiary's record, with filters to narrow the results by date range, action type, or user. The system also supports exporting audit log data for external review or compliance reporting.
 
 **Section sources**
+
 - [beneficiaries.ts](file://convex/beneficiaries.ts#L172-L214)
 - [audit_logs.ts](file://convex/audit_logs.ts#L1-L44)
 
 ## Common Issues
+
 The Beneficiary Management module addresses several common issues related to data sanitization, validation errors, and performance optimization when handling large beneficiary datasets. These issues are mitigated through a combination of frontend and backend techniques that ensure data integrity, provide clear error feedback, and maintain responsive performance.
 
 Data sanitization is implemented through utility functions that clean and normalize input data before validation and storage. For example, the TC identification number is sanitized by removing any non-numeric characters and validating the format, while phone numbers are formatted to a standard Turkish mobile phone format. Email addresses are sanitized by removing leading and trailing whitespace and converting to lowercase. These sanitization functions are applied both on the frontend during form input and on the backend before database operations.
@@ -505,11 +532,13 @@ T --> K
 ```
 
 **Diagram sources**
+
 - [AdvancedBeneficiaryForm.tsx](file://src/components/forms/AdvancedBeneficiaryForm.tsx#L195-L236)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L37-L393)
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L239-L280)
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L239-L280>)
 
 **Section sources**
+
 - [AdvancedBeneficiaryForm.tsx](file://src/components/forms/AdvancedBeneficiaryForm.tsx#L195-L236)
 - [beneficiary.ts](file://src/lib/validations/beneficiary.ts#L37-L393)
-- [page.tsx](file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L239-L280)
+- [page.tsx](<file://src/app/(dashboard)/yardim/ihtiyac-sahipleri/page.tsx#L239-L280>)

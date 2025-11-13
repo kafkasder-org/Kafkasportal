@@ -28,23 +28,51 @@ import {
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-const AidApplicationForm = dynamic(() => import('@/components/forms/AidApplicationForm').then(mod => ({ default: mod.AidApplicationForm })), {
-  loading: () => <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>,
-  ssr: false,
-});
+const AidApplicationForm = dynamic(
+  () =>
+    import('@/components/forms/AidApplicationForm').then((mod) => ({
+      default: mod.AidApplicationForm,
+    })),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 import type { AidApplicationDocument } from '@/types/database';
 
 const STAGE_LABELS = {
   draft: { label: 'Taslak', color: 'bg-muted text-muted-foreground' },
-  under_review: { label: 'İnceleme', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' },
-  approved: { label: 'Onaylandı', color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' },
-  ongoing: { label: 'Devam Ediyor', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400' },
-  completed: { label: 'Tamamlandı', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400' },
+  under_review: {
+    label: 'İnceleme',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+  },
+  approved: {
+    label: 'Onaylandı',
+    color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+  },
+  ongoing: {
+    label: 'Devam Ediyor',
+    color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400',
+  },
+  completed: {
+    label: 'Tamamlandı',
+    color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400',
+  },
 };
 
 const STATUS_LABELS = {
-  open: { label: 'Açık', color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' },
-  closed: { label: 'Kapalı', color: 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400' },
+  open: {
+    label: 'Açık',
+    color: 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400',
+  },
+  closed: {
+    label: 'Kapalı',
+    color: 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400',
+  },
 };
 
 export default function AidApplicationsPage() {
@@ -79,7 +107,9 @@ export default function AidApplicationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Yardım Başvuruları</h1>
-          <p className="text-muted-foreground mt-2">Portal Plus tarzı başvuru sistemi - {total} kayıt</p>
+          <p className="text-muted-foreground mt-2">
+            Portal Plus tarzı başvuru sistemi - {total} kayıt
+          </p>
         </div>
 
         <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
@@ -91,8 +121,12 @@ export default function AidApplicationsPage() {
           </DialogTrigger>
           <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
             <AidApplicationForm
-              onSuccess={() => { setShowCreateForm(false); }}
-              onCancel={() => { setShowCreateForm(false); }}
+              onSuccess={() => {
+                setShowCreateForm(false);
+              }}
+              onCancel={() => {
+                setShowCreateForm(false);
+              }}
             />
           </DialogContent>
         </Dialog>
@@ -227,10 +261,14 @@ export default function AidApplicationsPage() {
 
                       {/* Aşama ve Durum */}
                       <div className="flex gap-2">
-                        <Badge className={STAGE_LABELS[app.stage as keyof typeof STAGE_LABELS].color}>
+                        <Badge
+                          className={STAGE_LABELS[app.stage as keyof typeof STAGE_LABELS].color}
+                        >
                           {STAGE_LABELS[app.stage as keyof typeof STAGE_LABELS].label}
                         </Badge>
-                        <Badge className={STATUS_LABELS[app.status as keyof typeof STATUS_LABELS].color}>
+                        <Badge
+                          className={STATUS_LABELS[app.status as keyof typeof STATUS_LABELS].color}
+                        >
                           {STATUS_LABELS[app.status as keyof typeof STATUS_LABELS].label}
                         </Badge>
                       </div>

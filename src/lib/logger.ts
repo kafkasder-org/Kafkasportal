@@ -65,12 +65,12 @@ function maskTcNumber(tcNo: string | null | undefined): string {
 
 function maskSensitive(obj: unknown): unknown {
   if (typeof obj !== 'object' || obj === null) return obj;
-  
+
   if (Array.isArray(obj)) {
-    return obj.map(item => maskSensitive(item));
+    return obj.map((item) => maskSensitive(item));
   }
-  
-  const masked: Record<string, unknown> = { ...obj as Record<string, unknown> };
+
+  const masked: Record<string, unknown> = { ...(obj as Record<string, unknown>) };
   for (const key in masked) {
     const keyLower = key.toLowerCase();
     if (

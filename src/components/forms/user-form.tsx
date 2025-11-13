@@ -48,12 +48,12 @@ const generateSecurePassword = () => {
     upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
     lower: 'abcdefghijkmnopqrstuvwxyz',
     numbers: '23456789',
-    symbols: '!@#$%&*?'
+    symbols: '!@#$%&*?',
   };
-  
+
   const allChars = charset.upper + charset.lower + charset.numbers + charset.symbols;
   const array = new Uint8Array(length);
-  
+
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
     crypto.getRandomValues(array);
   } else {
@@ -62,7 +62,7 @@ const generateSecurePassword = () => {
       array[i] = Math.floor(Math.random() * 256);
     }
   }
-  
+
   let password = '';
   for (let i = 0; i < length; i++) {
     password += allChars[array[i] % allChars.length];
@@ -156,7 +156,12 @@ export function UserForm({
               <FormItem>
                 <FormLabel>E-posta *</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="personel@dernek.org" autoComplete="off" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="personel@dernek.org"
+                    autoComplete="off"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -273,4 +278,3 @@ export function UserForm({
     </Form>
   );
 }
-

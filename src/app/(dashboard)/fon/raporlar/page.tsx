@@ -49,7 +49,12 @@ interface ReportData {
   totalIncome: number;
   totalExpense: number;
   netIncome: number;
-  categoryBreakdown: { category: string; amount: number; count: number; type: 'income' | 'expense' }[];
+  categoryBreakdown: {
+    category: string;
+    amount: number;
+    count: number;
+    type: 'income' | 'expense';
+  }[];
   monthlyData: { month: string; income: number; expense: number; net: number }[];
   paymentMethodData: { method: string; amount: number; count: number }[];
   statusData: { status: string; amount: number; count: number }[];
@@ -162,33 +167,39 @@ export default function FundReportsPage() {
       ['Rapor Türü', 'Finans Raporu'],
       ['Rapor Formatı', reportType === 'summary' ? 'Özet' : 'Detaylı'],
       ['Tarih', new Date().toLocaleDateString('tr-TR')],
-      ['Tarih Aralığı', dateRange === 'custom' ? `${customStartDate} - ${customEndDate}` : 'Tüm Zamanlar'],
+      [
+        'Tarih Aralığı',
+        dateRange === 'custom' ? `${customStartDate} - ${customEndDate}` : 'Tüm Zamanlar',
+      ],
       [''],
       ['ÖZET'],
-      ['Toplam Gelir', `${reportData.totalIncome.toLocaleString('tr-TR')  } ₺`],
-      ['Toplam Gider', `${reportData.totalExpense.toLocaleString('tr-TR')  } ₺`],
-      ['Net Gelir', `${reportData.netIncome.toLocaleString('tr-TR')  } ₺`],
+      ['Toplam Gelir', `${reportData.totalIncome.toLocaleString('tr-TR')} ₺`],
+      ['Toplam Gider', `${reportData.totalExpense.toLocaleString('tr-TR')} ₺`],
+      ['Net Gelir', `${reportData.netIncome.toLocaleString('tr-TR')} ₺`],
       [''],
       ['KATEGORİ DAĞILIMI'],
       ['Kategori', 'Tip', 'Tutar', 'Adet'],
-      ...reportData.categoryBreakdown.map(item => [
+      ...reportData.categoryBreakdown.map((item) => [
         item.category,
         item.type === 'income' ? 'Gelir' : 'Gider',
-        `${item.amount.toLocaleString('tr-TR')  } ₺`,
+        `${item.amount.toLocaleString('tr-TR')} ₺`,
         item.count.toString(),
       ]),
       [''],
       ['AYLIK TREND'],
       ['Ay', 'Gelir', 'Gider', 'Net'],
-      ...reportData.monthlyData.map(item => [
-        new Date(`${item.month  }-01`).toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' }),
-        `${item.income.toLocaleString('tr-TR')  } ₺`,
-        `${item.expense.toLocaleString('tr-TR')  } ₺`,
-        `${item.net.toLocaleString('tr-TR')  } ₺`,
+      ...reportData.monthlyData.map((item) => [
+        new Date(`${item.month}-01`).toLocaleDateString('tr-TR', {
+          year: 'numeric',
+          month: 'short',
+        }),
+        `${item.income.toLocaleString('tr-TR')} ₺`,
+        `${item.expense.toLocaleString('tr-TR')} ₺`,
+        `${item.net.toLocaleString('tr-TR')} ₺`,
       ]),
     ];
 
-    const csv = csvContent.map(row => row.join(',')).join('\n');
+    const csv = csvContent.map((row) => row.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -274,12 +285,14 @@ export default function FundReportsPage() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Raporu Dışa Aktar</DialogTitle>
-              <DialogDescription>
-                Finans raporunu istediğiniz formatta indirin
-              </DialogDescription>
+              <DialogDescription>Finans raporunu istediğiniz formatta indirin</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <Button onClick={handleExportExcel} className="w-full justify-start" variant="outline">
+              <Button
+                onClick={handleExportExcel}
+                className="w-full justify-start"
+                variant="outline"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Excel (CSV) Olarak İndir
               </Button>
@@ -369,7 +382,10 @@ export default function FundReportsPage() {
               {reportData.totalIncome.toLocaleString('tr-TR')} ₺
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {reportData.categoryBreakdown.filter(c => c.type === 'income').reduce((sum, c) => sum + c.count, 0)} kayıt
+              {reportData.categoryBreakdown
+                .filter((c) => c.type === 'income')
+                .reduce((sum, c) => sum + c.count, 0)}{' '}
+              kayıt
             </p>
           </CardContent>
         </Card>
@@ -384,7 +400,10 @@ export default function FundReportsPage() {
               {reportData.totalExpense.toLocaleString('tr-TR')} ₺
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {reportData.categoryBreakdown.filter(c => c.type === 'expense').reduce((sum, c) => sum + c.count, 0)} kayıt
+              {reportData.categoryBreakdown
+                .filter((c) => c.type === 'expense')
+                .reduce((sum, c) => sum + c.count, 0)}{' '}
+              kayıt
             </p>
           </CardContent>
         </Card>
@@ -392,10 +411,14 @@ export default function FundReportsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Net Gelir</CardTitle>
-            <DollarSign className={`h-4 w-4 ${reportData.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+            <DollarSign
+              className={`h-4 w-4 ${reportData.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${reportData.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div
+              className={`text-2xl font-bold ${reportData.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            >
               {reportData.netIncome.toLocaleString('tr-TR')} ₺
             </div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -404,7 +427,8 @@ export default function FundReportsPage() {
                     const percentage = (reportData.netIncome / reportData.totalIncome) * 100;
                     return Number.isFinite(percentage) ? `${percentage.toFixed(1)}%` : '0.0%';
                   })()
-                : '-'} marj
+                : '-'}{' '}
+              marj
             </p>
           </CardContent>
         </Card>
@@ -420,7 +444,9 @@ export default function FundReportsPage() {
               Aylık Trendi
             </CardTitle>
             <CardDescription>
-              {reportType === 'summary' ? 'Son 3 ayın finansal durumu' : 'Son 6 ayın finansal durumu'}
+              {reportType === 'summary'
+                ? 'Son 3 ayın finansal durumu'
+                : 'Son 6 ayın finansal durumu'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -429,12 +455,14 @@ export default function FundReportsPage() {
                 <div key={item.month}>
                   <div className="flex items-center justify-between text-sm mb-2">
                     <span className="font-medium">
-                      {new Date(`${item.month  }-01`).toLocaleDateString('tr-TR', {
+                      {new Date(`${item.month}-01`).toLocaleDateString('tr-TR', {
                         year: 'numeric',
                         month: 'short',
                       })}
                     </span>
-                    <span className={`font-bold ${item.net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <span
+                      className={`font-bold ${item.net >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                    >
                       {item.net.toLocaleString('tr-TR')} ₺
                     </span>
                   </div>
@@ -443,13 +471,13 @@ export default function FundReportsPage() {
                       <div
                         className="bg-green-500"
                         style={{
-                          width: `${Math.max(item.income / (item.income + item.expense) * 100, 0)}%`,
+                          width: `${Math.max((item.income / (item.income + item.expense)) * 100, 0)}%`,
                         }}
                       />
                       <div
                         className="bg-red-500"
                         style={{
-                          width: `${Math.max(item.expense / (item.income + item.expense) * 100, 0)}%`,
+                          width: `${Math.max((item.expense / (item.income + item.expense)) * 100, 0)}%`,
                         }}
                       />
                     </div>
@@ -479,7 +507,9 @@ export default function FundReportsPage() {
                 <div key={item.category}>
                   <div className="flex items-center justify-between text-sm mb-2">
                     <div className="flex items-center gap-2">
-                      <span className={`w-3 h-3 rounded-full ${item.type === 'income' ? 'bg-green-500' : 'bg-red-500'}`} />
+                      <span
+                        className={`w-3 h-3 rounded-full ${item.type === 'income' ? 'bg-green-500' : 'bg-red-500'}`}
+                      />
                       <span className="font-medium">{item.category}</span>
                     </div>
                     <span className="text-muted-foreground">
@@ -529,7 +559,10 @@ export default function FundReportsPage() {
                   </TableCell>
                   <TableCell className="text-right">{method.count}</TableCell>
                   <TableCell className="text-right">
-                    {(method.amount / method.count).toLocaleString('tr-TR', { maximumFractionDigits: 0 })} ₺
+                    {(method.amount / method.count).toLocaleString('tr-TR', {
+                      maximumFractionDigits: 0,
+                    })}{' '}
+                    ₺
                   </TableCell>
                 </TableRow>
               ))}
@@ -552,11 +585,13 @@ export default function FundReportsPage() {
                   <h3 className="font-semibold">{status.status}</h3>
                   <Badge variant="secondary">{status.count}</Badge>
                 </div>
-                <div className="text-2xl font-bold">
-                  {status.amount.toLocaleString('tr-TR')} ₺
-                </div>
+                <div className="text-2xl font-bold">{status.amount.toLocaleString('tr-TR')} ₺</div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {((status.amount / (reportData.totalIncome + reportData.totalExpense)) * 100).toFixed(1)}% toplam
+                  {(
+                    (status.amount / (reportData.totalIncome + reportData.totalExpense)) *
+                    100
+                  ).toFixed(1)}
+                  % toplam
                 </p>
               </div>
             ))}

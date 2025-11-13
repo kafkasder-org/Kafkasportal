@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { formatCurrency } from '@/lib/utils/format';
 
 interface MonthlyData {
   month: string;
@@ -37,6 +38,21 @@ interface PaymentData {
   count: number;
   [key: string]: any;
 }
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-lg border bg-background p-4 shadow-md">
+        <p className="font-semibold">{label}</p>
+        <p className="text-sm text-blue-600">{`Tutar: ${formatCurrency(payload[0].value)}`}</p>
+        {payload[0].payload?.count && (
+          <p className="text-sm text-green-600">{`Adet: ${payload[0].payload.count}`}</p>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
 
 export function KumbaraCharts() {
   const { data: monthlyData, isLoading: monthlyLoading } = useQuery<MonthlyData[]>({
@@ -74,34 +90,6 @@ export function KumbaraCharts() {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-lg border bg-background p-4 shadow-md">
-          <p className="font-semibold">{label}</p>
-          <p className="text-sm text-blue-600">
-            {`Tutar: ${formatCurrency(payload[0].value)}`}
-          </p>
-          {payload[0].payload?.count && (
-            <p className="text-sm text-green-600">
-              {`Adet: ${payload[0].payload.count}`}
-            </p>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
-
   if (monthlyLoading || locationLoading || paymentLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2">
@@ -133,19 +121,13 @@ export function KumbaraCharts() {
       <Card className="col-span-1 md:col-span-2">
         <CardHeader>
           <CardTitle>Aylık Kumbara Bağış Trendi</CardTitle>
-          <CardDescription>
-            Son 6 ayın kumbara bağış miktarları ve adetleri
-          </CardDescription>
+          <CardDescription>Son 6 ayın kumbara bağış miktarları ve adetleri</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis
-                dataKey="month"
-                className="text-xs"
-                tick={{ fontSize: 12 }}
-              />
+              <XAxis dataKey="month" className="text-xs" tick={{ fontSize: 12 }} />
               <YAxis
                 className="text-xs"
                 tick={{ fontSize: 12 }}
@@ -170,9 +152,7 @@ export function KumbaraCharts() {
       <Card>
         <CardHeader>
           <CardTitle>Lokasyon Bazlı Dağılım</CardTitle>
-          <CardDescription>
-            Kumbara bağışlarının konumlara göre dağılımı
-          </CardDescription>
+          <CardDescription>Kumbara bağışlarının konumlara göre dağılımı</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -202,9 +182,7 @@ export function KumbaraCharts() {
       <Card>
         <CardHeader>
           <CardTitle>Ödeme Yöntemi Dağılımı</CardTitle>
-          <CardDescription>
-            Kumbara bağışlarının ödeme yöntemlerine göre dağılımı
-          </CardDescription>
+          <CardDescription>Kumbara bağışlarının ödeme yöntemlerine göre dağılımı</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>

@@ -30,15 +30,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import {
-  Search,
-  Heart,
-  Users,
-  TrendingUp,
-  Calendar,
-  Eye,
-  CreditCard,
-} from 'lucide-react';
+import { Search, Heart, Users, TrendingUp, Calendar, Eye, CreditCard } from 'lucide-react';
 
 const STATUS_LABELS = {
   draft: { label: 'Taslak', color: 'bg-gray-100 text-gray-700' },
@@ -86,7 +78,7 @@ export default function OrphansPage() {
 
       // Filter for orphans only
       const orphans = response.data?.filter((app: any) => app.is_orphan === true) || [];
-      
+
       return {
         ...response,
         data: orphans,
@@ -98,9 +90,11 @@ export default function OrphansPage() {
   // Get payments for selected orphaeeeeeeeeeeeeeeeeen
   const { data: paymentsData } = useQuery({
     queryKey: ['orphan-payments', selectedOrphan?._id],
-    queryFn: () => 
+    queryFn: () =>
       selectedOrphan
-        ? scholarshipPaymentsApi.list({ application_id: selectedOrphan._id as Id<'scholarship_applications'> })
+        ? scholarshipPaymentsApi.list({
+            application_id: selectedOrphan._id as Id<'scholarship_applications'>,
+          })
         : Promise.resolve({ success: false, data: [], total: 0, error: null }),
     enabled: !!selectedOrphan,
     initialData: { success: false, data: [], total: 0, error: null },
@@ -125,13 +119,15 @@ export default function OrphansPage() {
   const stats = useMemo(() => {
     const total = orphans.length;
     const active = orphans.filter((o: any) => o.status === 'approved').length;
-    const pending = orphans.filter((o: any) => o.status === 'under_review' || o.status === 'submitted').length;
+    const pending = orphans.filter(
+      (o: any) => o.status === 'under_review' || o.status === 'submitted'
+    ).length;
     const totalSupport = orphans.reduce((sum: number, o: any) => {
       // We would need to get payments for each to calculate real total
       // For now just count approved ones
       return sum + (o.status === 'approved' ? 1 : 0);
     }, 0);
-    
+
     return { total, active, pending, totalSupport };
   }, [orphans]);
 
@@ -142,7 +138,9 @@ export default function OrphansPage() {
 
   // Calculate total paid for an orphan
   const getTotalPaid = (applicationId: string) => {
-    const orphanPayments = payments.filter((p: any) => p.application_id === applicationId && p.status === 'paid');
+    const orphanPayments = payments.filter(
+      (p: any) => p.application_id === applicationId && p.status === 'paid'
+    );
     return orphanPayments.reduce((sum: number, p: any) => sum + p.amount, 0);
   };
 
@@ -154,9 +152,7 @@ export default function OrphansPage() {
           <Heart className="h-8 w-8 text-red-500" />
           Yetim Öğrenciler
         </h1>
-        <p className="text-slate-600 mt-1">
-          Yetim öğrencilere sağlanan destekleri takip edin
-        </p>
+        <p className="text-slate-600 mt-1">Yetim öğrencilere sağlanan destekleri takip edin</p>
       </div>
 
       {/* Statistics */}
@@ -245,9 +241,7 @@ export default function OrphansPage() {
       <Card>
         <CardHeader>
           <CardTitle>Yetim Öğrenciler Listesi ({filteredOrphans.length})</CardTitle>
-          <CardDescription>
-            Yetim statüsündeki öğrencilerin burs bilgileri
-          </CardDescription>
+          <CardDescription>Yetim statüsündeki öğrencilerin burs bilgileri</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -275,7 +269,7 @@ export default function OrphansPage() {
               <TableBody>
                 {filteredOrphans.map((orphan: any) => {
                   const statusInfo = STATUS_LABELS[orphan.status as keyof typeof STATUS_LABELS];
-                  
+
                   return (
                     <TableRow key={orphan._id}>
                       <TableCell>
@@ -295,7 +289,9 @@ export default function OrphansPage() {
                           <div className="text-sm font-medium">{orphan.university || '-'}</div>
                           <div className="text-xs text-slate-500">{orphan.department || '-'}</div>
                           {orphan.grade_level && (
-                            <div className="text-xs text-slate-400">{orphan.grade_level}. Sınıf</div>
+                            <div className="text-xs text-slate-400">
+                              {orphan.grade_level}. Sınıf
+                            </div>
                           )}
                         </div>
                       </TableCell>
@@ -317,25 +313,19 @@ export default function OrphansPage() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Badge className={statusInfo.color}>
-                          {statusInfo.label}
-                        </Badge>
+                        <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm text-slate-600">
                           {orphan.submitted_at
                             ? new Date(orphan.submitted_at).toLocaleDateString('tr-TR')
                             : orphan.created_at
-                            ? new Date(orphan.created_at).toLocaleDateString('tr-TR')
-                            : '-'}
+                              ? new Date(orphan.created_at).toLocaleDateString('tr-TR')
+                              : '-'}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleViewDetails(orphan)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => handleViewDetails(orphan)}>
                           <Eye className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -363,13 +353,15 @@ export default function OrphansPage() {
             <div className="space-y-6">
               {/* Status Badge */}
               <div className="flex items-center gap-2">
-                <Badge className={STATUS_LABELS[selectedOrphan.status as keyof typeof STATUS_LABELS].color}>
+                <Badge
+                  className={
+                    STATUS_LABELS[selectedOrphan.status as keyof typeof STATUS_LABELS].color
+                  }
+                >
                   {STATUS_LABELS[selectedOrphan.status as keyof typeof STATUS_LABELS].label}
                 </Badge>
                 {selectedOrphan.priority_score && (
-                  <Badge variant="outline">
-                    Öncelik Puanı: {selectedOrphan.priority_score}
-                  </Badge>
+                  <Badge variant="outline">Öncelik Puanı: {selectedOrphan.priority_score}</Badge>
                 )}
               </div>
 
@@ -481,11 +473,13 @@ export default function OrphansPage() {
                             {new Date(payment.payment_date).toLocaleDateString('tr-TR')}
                           </div>
                         </div>
-                        <Badge className={
-                          payment.status === 'paid'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-yellow-100 text-yellow-700'
-                        }>
+                        <Badge
+                          className={
+                            payment.status === 'paid'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }
+                        >
                           {payment.status === 'paid' ? 'Ödendi' : 'Beklemede'}
                         </Badge>
                       </div>
