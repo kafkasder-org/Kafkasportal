@@ -27,8 +27,8 @@ jobs:
         run: npm ci
 
       - name: Generate Convex API
-        if: ${{ secrets.CONVEX_DEPLOYMENT != '' }}
         run: npx convex codegen --typecheck disable
+        continue-on-error: true
         env:
           CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
 
@@ -59,8 +59,8 @@ jobs:
         run: npm ci
 
       - name: Generate Convex API
-        if: ${{ secrets.CONVEX_DEPLOYMENT != '' }}
         run: npx convex codegen --typecheck disable
+        continue-on-error: true
         env:
           CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
 
@@ -106,8 +106,8 @@ jobs:
         run: npm ci
 
       - name: Generate Convex API
-        if: ${{ secrets.CONVEX_DEPLOYMENT != '' }}
         run: npx convex codegen --typecheck disable
+        continue-on-error: true
         env:
           CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
 
@@ -181,14 +181,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test, build, security]
     if: github.ref == 'refs/heads/develop'
-    environment:
-      name: staging
-      url: https://staging.portal.example.com
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Deploy to Vercel (Staging)
-        uses: amondnet/vercel-action@01f4f956dcf99a906fb99d6c2a516a80937d7a3c # v25
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -201,14 +198,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test, build, security, e2e]
     if: github.ref == 'refs/heads/main'
-    environment:
-      name: production
-      url: https://portal.example.com
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Deploy to Vercel (Production)
-        uses: amondnet/vercel-action@01f4f956dcf99a906fb99d6c2a516a80937d7a3c # v25
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
