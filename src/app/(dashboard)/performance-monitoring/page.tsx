@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import logger from '@/lib/logger';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -119,7 +120,7 @@ export default function PerformanceMonitoringPage() {
         enableCustomMetrics={isMonitoring}
         onMetrics={(metrics) => {
           if (process.env.NODE_ENV === 'development') {
-            console.log('Performance metrics:', metrics);
+            logger.info('Performance metrics', { metrics });
           }
         }}
         routeName="performance-dashboard"

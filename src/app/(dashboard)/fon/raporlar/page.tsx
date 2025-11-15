@@ -32,6 +32,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { DemoBanner } from '@/components/ui/demo-banner';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import {
   FileText,
   Download,
@@ -215,7 +216,7 @@ export default function FundReportsPage() {
       generateFinancialReportPDF(reportData);
       toast.success('Finans raporu PDF formatında indirildi');
     } catch (error) {
-      console.error('PDF export error:', error);
+      logger.error('Fund report PDF export failed', { error });
       toast.error('PDF oluşturulurken hata oluştu');
     }
   };

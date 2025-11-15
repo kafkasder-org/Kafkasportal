@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import {
   Search,
   Filter,
@@ -184,7 +185,7 @@ export default function AidListPage() {
       generateAidListPDF(applications);
       toast.success('Yardım listesi PDF formatında indirildi');
     } catch (error) {
-      console.error('PDF export error:', error);
+      logger.error('PDF export failed', { error });
       toast.error('PDF oluşturulurken hata oluştu');
     }
   };

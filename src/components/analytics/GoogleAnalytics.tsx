@@ -1,4 +1,5 @@
 import Script from 'next/script';
+import logger from '@/lib/logger';
 
 /**
  * Google Analytics 4 component
@@ -20,7 +21,7 @@ export function GoogleAnalytics() {
   const isValidFormat = /^(G|UA|AW|DC)-[A-Z0-9-]+$/i.test(gaMeasurementId);
 
   if (!isValidFormat) {
-    console.error('Invalid Google Analytics Measurement ID format');
+    logger.error('Invalid Google Analytics Measurement ID format', { gaMeasurementId });
     return null;
   }
 

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Navigation, Trash2, Route, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 
 interface MapLocation {
   lat: number;
@@ -85,7 +86,7 @@ export function MapLocationPicker({
         setLoadError(false);
       };
       script.onerror = () => {
-        console.error('Failed to load Google Maps');
+        logger.error('Failed to load Google Maps script');
         toast.error('Harita yüklenemedi. Lütfen API anahtarınızı kontrol edin.');
         setLoadError(true);
       };
@@ -238,7 +239,7 @@ export function MapLocationPicker({
         });
       }
     } catch (_error) {
-      console.error('Error initializing map:', _error);
+      logger.error('Map initialization failed', { error: _error });
       toast.error('Harita başlatılırken hata oluştu');
     }
   }, [isMapLoaded, initialLocation]);
@@ -274,7 +275,7 @@ export function MapLocationPicker({
           toast.success('Mevcut konum alındı');
         },
         (error) => {
-          console.error('Error getting current location:', error);
+          logger.error('Geolocation failed', { error });
           toast.error('Konum alınamadı');
         }
       );

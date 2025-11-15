@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Search, Clock, Zap, ArrowRight, X } from 'lucide-react';
@@ -242,7 +242,7 @@ export function AdvancedSearchModal({
           {/* Search Input */}
           <div className="border-b border-slate-200 p-4">
             <div className="flex items-center gap-3">
-              <Search className="h-5 w-5 text-slate-400 flex-shrink-0" />
+              <Search className="h-5 w-5 text-slate-400 shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
@@ -302,7 +302,7 @@ export function AdvancedSearchModal({
                           <p className="text-xs text-slate-500 mt-0.5">{result.description}</p>
                         )}
                       </div>
-                      <span className="text-xs text-slate-400 ml-2 flex-shrink-0">
+                      <span className="text-xs text-slate-400 ml-2 shrink-0">
                         {result.category}
                       </span>
                     </div>

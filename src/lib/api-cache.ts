@@ -3,6 +3,7 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
+import logger from '@/lib/logger';
 
 interface CacheConfig {
   ttl: number; // Time to live in milliseconds
@@ -312,7 +313,7 @@ export function usePrefetchWithCache() {
         queryClient.setQueryData([endpoint, params], data);
       } catch (error) {
         if ((error as Error).name !== 'AbortError' && process.env.NODE_ENV === 'development') {
-          console.warn('Prefetch failed:', error);
+          logger.warn('Prefetch failed', { error });
         }
       } finally {
         prefetchControllers.current.delete(cacheKey);

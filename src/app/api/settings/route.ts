@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
+import logger from '@/lib/logger';
 
 // GET - Get all settings or settings by category
 export async function GET(request: NextRequest) {
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
       data: settings,
     });
   } catch (_error) {
-    console.error('Settings GET error:', _error);
+    logger.error('Settings GET error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayarlar alınırken hata oluştu' },
       { status: 500 }
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       message: 'Ayarlar başarıyla kaydedildi',
     });
   } catch (_error) {
-    console.error('Settings POST error:', _error);
+    logger.error('Settings POST error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayarlar kaydedilirken hata oluştu' },
       { status: 500 }
@@ -87,7 +88,7 @@ export async function PUT(request: NextRequest) {
       message: 'Tüm ayarlar başarıyla güncellendi',
     });
   } catch (_error) {
-    console.error('Settings PUT error:', _error);
+    logger.error('Settings PUT error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayarlar güncellenirken hata oluştu' },
       { status: 500 }
@@ -111,7 +112,7 @@ export async function DELETE(request: NextRequest) {
       message: category ? `${category} kategorisi sıfırlandı` : 'Tüm ayarlar sıfırlandı',
     });
   } catch (_error) {
-    console.error('Settings DELETE error:', _error);
+    logger.error('Settings DELETE error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayarlar sıfırlanırken hata oluştu' },
       { status: 500 }

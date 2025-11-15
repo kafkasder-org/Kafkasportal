@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { AlertCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import { reportUserError } from '@/lib/error-tracker';
 
 interface ErrorReportFormProps {
@@ -45,7 +46,7 @@ export function ErrorReportForm({ userId, trigger }: ErrorReportFormProps) {
       setDescription('');
       setOpen(false);
     } catch (error) {
-      console.error('Failed to submit error report:', error);
+      logger.error('Error report submission failed', { error });
       toast.error('Hata raporu gönderilemedi');
     } finally {
       setSubmitting(false);

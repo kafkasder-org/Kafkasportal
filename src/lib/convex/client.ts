@@ -1,4 +1,5 @@
 import { ConvexReactClient } from 'convex/react';
+import logger from '@/lib/logger';
 
 // Get Convex URL from environment
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || '';
@@ -53,9 +54,10 @@ const createConvexClient = () => {
     if (isBuildTime) {
       // Silent during build - this is expected
     } else {
-      console.warn(
-        `⚠️ Invalid Convex URL format: ${convexUrl}. Expected format: https://your-project.convex.cloud`
-      );
+      logger.warn('Invalid Convex URL format', {
+        url: convexUrl,
+        expected: 'https://your-project.convex.cloud',
+      });
     }
     return null;
   }
@@ -69,9 +71,9 @@ const createConvexClient = () => {
   } catch (error) {
     // During build, log as warning instead of error
     if (isBuildTime) {
-      console.warn('🔧 Convex client creation skipped during build time');
+      logger.warn('Convex client creation skipped during build time');
     } else {
-      console.error('Failed to initialize Convex client:', error);
+      logger.error('Failed to initialize Convex client', { error });
     }
     return null;
   }
@@ -98,10 +100,10 @@ export const getConvexUrl = (): string => {
 // Log configuration status (only in development)
 if (process.env.NODE_ENV === 'development') {
   if (shouldUseConvex()) {
-    console.log('✅ Convex client initialized successfully');
+    logger.info('Convex client initialized successfully', { url: convexUrl });
   } else if (isBuildTime) {
     // Silent during build - this is expected
   } else {
-    console.warn('⚠️ Convex client not initialized - check NEXT_PUBLIC_CONVEX_URL');
+    logger.warn('Convex client not initialized', { url: convexUrl });
   }
 }

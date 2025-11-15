@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, ReactNode, useId } from 'react';
+import React, { forwardRef, ReactNode, useId } from 'react';
 import { cn } from '@/lib/utils';
 
 interface AccessibleFormFieldProps {

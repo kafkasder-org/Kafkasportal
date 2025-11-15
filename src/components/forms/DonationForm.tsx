@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { Loader2, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
 import { FileUpload } from '@/components/ui/file-upload';
 import { cn } from '@/lib/utils';
+import logger from '@/lib/logger';
 
 // Validation schema
 const donationSchema = z.object({
@@ -165,7 +166,7 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
             uploadedFileId = result.data?.fileId;
           }
         } catch (_error) {
-          console.error('File upload error:', _error);
+          logger.error('File upload error', { error: _error });
           // Continue without file if upload fails
         }
       }

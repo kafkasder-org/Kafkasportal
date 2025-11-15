@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw, Home } from 'lucide-react';
+import logger from '@/lib/logger';
 
 /**
  * Error component for Next.js App Router
@@ -20,23 +21,26 @@ export default function Error({
   const router = useRouter();
 
   useEffect(() => {
-    // Log error to console in development
+    // Log error to logger in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Route Error Context:', {
+      logger.error('Route error context', {
         error,
         digest: error.digest,
         stack: error.stack,
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        type: 'route-error',
       });
-      console.error('Current URL:', window.location.href);
-      console.error('User Agent:', navigator.userAgent);
 
       // Check for browser extensions
       const hasExtensions =
         document.documentElement.getAttribute('cz-shortcut-listen') ||
         document.documentElement.getAttribute('data-gr-ext') ||
         document.documentElement.getAttribute('data-loom-ext');
-      if (hasExtensions && process.env.NODE_ENV === 'development') {
-        console.warn('⚠️ Browser extensions detected - may cause hydration issues');
+      if (hasExtensions) {
+        logger.warn('Browser extensions detected - may cause hydration issues', {
+          extensions: hasExtensions,
+        });
       }
     }
 

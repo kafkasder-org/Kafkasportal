@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useEffect, useRef, useCallback } from 'react';
+import logger from '@/lib/logger';
 
 interface PerformanceMetrics {
   // Core Web Vitals
@@ -205,7 +206,7 @@ export class PerformanceBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Performance Boundary Error:', error, errorInfo);
+    logger.error('Performance boundary error', { error, errorInfo });
 
     if (typeof performance !== 'undefined' && performance.mark) {
       performance.mark('performance-error');
@@ -283,17 +284,17 @@ export const useFPSMonitor = (enabled = true) => {
 export const perfLog = {
   info: (message: string, data?: any) => {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🚀 [PERF] ${message}`, data);
+      logger.info(`[PERF] ${message}`, data);
     }
   },
 
   warn: (message: string, data?: any) => {
     if (process.env.NODE_ENV === 'development') {
-      console.warn(`⚠️ [PERF] ${message}`, data);
+      logger.warn(`[PERF] ${message}`, data);
     }
   },
 
   error: (message: string, data?: any) => {
-    console.error(`❌ [PERF] ${message}`, data);
+    logger.error(`[PERF] ${message}`, data);
   },
 };

@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, FileText, Download, Trash2, Image, File, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import logger from '@/lib/logger';
 import { toast } from 'sonner';
 import { convex } from '@/lib/convex/client';
 import { api as convexApi } from '@/convex/_generated/api';
@@ -44,7 +45,7 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
         });
         return docs as Document[];
       } catch (_error) {
-        console.error('Error fetching documents:', _error);
+        logger.error('Document fetch failed', { error: _error });
         return [];
       }
     },

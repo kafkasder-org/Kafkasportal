@@ -315,12 +315,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return <LoadingOverlay variant="pulse" fullscreen={true} text="Yükleniyor..." />;
   }
 
+  const newLocal = 'bg-linear-to-br from-blue-600 to-blue-700 text-white';
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50/50">
       {/* Skip to main content link for keyboard navigation */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-60 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         Ana içeriğe atla
       </a>
@@ -361,7 +362,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               )}
             </button>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 via-blue-600 to-blue-700 flex items-center justify-center shadow-md shadow-blue-500/20">
+              <div className="w-9 h-9 rounded-xl bg-linear-to-br from-blue-600 via-blue-600 to-blue-700 flex items-center justify-center shadow-md shadow-blue-500/20">
                 <Building2 className="w-4.5 h-4.5 text-white" />
               </div>
               <h1 className="hidden md:block text-lg font-semibold text-slate-800 tracking-tight">
@@ -391,7 +392,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 >
                   <Avatar size="sm" className="h-8 w-8 ring-2 ring-slate-200">
                     <AvatarImage src={user?.avatar ?? undefined} alt={user?.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xs font-semibold">
+                    <AvatarFallback className="bg-linear-to-br from-blue-600 to-blue-700 text-white text-xs font-semibold">
                       {user?.name ? getInitials(user.name) : 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -404,11 +405,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-64 p-0 border-slate-200/60 shadow-xl" align="end">
-                <div className="p-4 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-white">
+                <div className="p-4 border-b border-slate-100 bg-linear-to-br from-slate-50 to-white">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-11 w-11 ring-2 ring-slate-200">
                       <AvatarImage src={user?.avatar ?? undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+                      <AvatarFallback className={newLocal}>
                         {user?.name ? getInitials(user.name) : 'U'}
                       </AvatarFallback>
                     </Avatar>

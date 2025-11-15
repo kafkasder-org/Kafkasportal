@@ -44,6 +44,7 @@ import {
 
 // Error handling
 import { formatErrorMessage } from '@/lib/errors';
+import logger from '@/lib/logger';
 
 // Use central validation schema (mernisCheck is already included)
 const advancedBeneficiarySchema = beneficiarySchema;
@@ -167,7 +168,7 @@ export function AdvancedBeneficiaryForm({
       // ✅ Enhanced error handling
       const userMessage = formatErrorMessage(error);
       toast.error(`İhtiyaç sahibi eklenirken hata oluştu: ${userMessage}`);
-      console.error('Create beneficiary error:', error);
+      logger.error('Create beneficiary failed', { error, userMessage });
     },
   });
 
@@ -188,7 +189,7 @@ export function AdvancedBeneficiaryForm({
       // ✅ Enhanced error handling
       const userMessage = formatErrorMessage(error);
       toast.error(`İhtiyaç sahibi güncellenirken hata oluştu: ${userMessage}`);
-      console.error('Update beneficiary error:', error);
+      logger.error('Update beneficiary failed', { error, userMessage });
     },
   });
 
@@ -326,7 +327,7 @@ export function AdvancedBeneficiaryForm({
       // Enhanced error handling
       const userMessage = formatErrorMessage(error);
       toast.error(userMessage);
-      console.error('Form submission error:', error);
+      logger.error('Form submission failed', { error, userMessage });
     } finally {
       setIsSubmitting(false);
     }

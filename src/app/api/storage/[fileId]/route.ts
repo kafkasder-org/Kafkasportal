@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import logger from '@/lib/logger';
 
 export async function GET(
   _request: NextRequest,
@@ -26,7 +27,7 @@ export async function GET(
     }
     return NextResponse.redirect(file.url);
   } catch (_error) {
-    console.error('File retrieval error:', _error);
+    logger.error('File retrieval error', _error);
     return NextResponse.json({ error: 'Dosya alınamadı' }, { status: 500 });
   }
 }
@@ -46,7 +47,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (_error) {
-    console.error('File deletion error:', _error);
+    logger.error('File deletion error', _error);
     return NextResponse.json({ error: 'Dosya silinemedi' }, { status: 500 });
   }
 }

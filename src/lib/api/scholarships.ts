@@ -6,6 +6,7 @@
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { convex } from '@/lib/convex/client';
+import logger from '@/lib/logger';
 
 // Scholarship Programs API
 export const scholarshipsApi = {
@@ -26,7 +27,7 @@ export const scholarshipsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error listing scholarships:', error);
+      logger.error('Error listing scholarships', error);
       return {
         success: false,
         data: [],
@@ -47,7 +48,7 @@ export const scholarshipsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error getting scholarship:', error);
+      logger.error('Error getting scholarship', error);
       return {
         success: false,
         data: null,
@@ -81,7 +82,7 @@ export const scholarshipsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error creating scholarship:', error);
+      logger.error('Error creating scholarship', error);
       return {
         success: false,
         data: null,
@@ -116,7 +117,7 @@ export const scholarshipsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error updating scholarship:', error);
+      logger.error('Error updating scholarship', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Bilinmeyen hata',
@@ -134,7 +135,7 @@ export const scholarshipsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error deleting scholarship:', error);
+      logger.error('Error deleting scholarship', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Bilinmeyen hata',
@@ -155,7 +156,7 @@ export const scholarshipsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error getting statistics:', error);
+      logger.error('Error getting statistics', error);
       return {
         success: false,
         data: null,
@@ -185,7 +186,7 @@ export const scholarshipApplicationsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error listing applications:', error);
+      logger.error('Error listing applications', error);
       return {
         success: false,
         data: [],
@@ -206,7 +207,7 @@ export const scholarshipApplicationsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error getting application:', error);
+      logger.error('Error getting application', error);
       return {
         success: false,
         data: null,
@@ -247,7 +248,7 @@ export const scholarshipApplicationsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error creating application:', error);
+      logger.error('Error creating application', error);
       return {
         success: false,
         data: null,
@@ -275,7 +276,7 @@ export const scholarshipApplicationsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error updating application:', error);
+      logger.error('Error updating application', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Bilinmeyen hata',
@@ -293,7 +294,7 @@ export const scholarshipApplicationsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error submitting application:', error);
+      logger.error('Error submitting application', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Bilinmeyen hata',
@@ -333,7 +334,7 @@ export const scholarshipPaymentsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error listing payments:', error);
+      logger.error('Error listing payments', error);
       return {
         success: false,
         data: [],
@@ -363,7 +364,7 @@ export const scholarshipPaymentsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error creating payment:', error);
+      logger.error('Error creating payment', error);
       return {
         success: false,
         data: null,
@@ -390,7 +391,7 @@ export const scholarshipPaymentsApi = {
         error: null,
       };
     } catch (error) {
-      console.error('Error updating payment:', error);
+      logger.error('Error updating payment', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Bilinmeyen hata',

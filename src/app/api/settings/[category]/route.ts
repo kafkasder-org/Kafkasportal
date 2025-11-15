@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
+import logger from '@/lib/logger';
 
 // GET - Get settings for a specific category
 export async function GET(
@@ -20,7 +21,7 @@ export async function GET(
       data: settings,
     });
   } catch (_error) {
-    console.error('Settings category GET error:', _error);
+    logger.error('Settings category GET error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayarlar alınırken hata oluştu' },
       { status: 500 }
@@ -53,7 +54,7 @@ export async function POST(
       message: `${category} ayarları başarıyla güncellendi`,
     });
   } catch (_error) {
-    console.error('Settings category POST error:', _error);
+    logger.error('Settings category POST error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayarlar kaydedilirken hata oluştu' },
       { status: 500 }

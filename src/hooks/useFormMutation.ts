@@ -6,6 +6,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { UseMutationOptions } from '@tanstack/react-query';
+import logger from '@/lib/logger';
 
 interface UseFormMutationOptions<TData, TVariables> {
   /**
@@ -90,7 +91,7 @@ export function useFormMutation<TData = unknown, TVariables = unknown>({
       }
 
       // Log error for debugging
-      console.error('Mutation error:', error);
+      logger.error('Form mutation failed', { error, errorMessage });
     },
   });
 

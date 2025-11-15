@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useRef } from 'react';
 import { Suspense } from 'react';
 import { LoadingOverlay } from './loading-overlay';
 import { ErrorBoundary } from './error-boundary';
+import logger from '@/lib/logger';
 
 interface SuspenseBoundaryProps {
   children: ReactNode;
@@ -42,7 +43,7 @@ const FallbackWrapper: React.FC<{
     onSuspendRef.current?.();
 
     if (process.env.NODE_ENV === 'development') {
-      console.log('📄 [SuspenseBoundary] Suspended');
+      logger.debug('SuspenseBoundary suspended');
     }
 
     return () => {
@@ -57,9 +58,9 @@ const FallbackWrapper: React.FC<{
       onResumeRef.current?.();
 
       if (process.env.NODE_ENV === 'development') {
-        console.log(`✅ [SuspenseBoundary] Resumed after ${duration.toFixed(2)}ms`);
+        logger.debug('SuspenseBoundary resumed', { durationMs: duration.toFixed(2) });
         if (duration > 5000) {
-          console.warn('⚠️ [SuspenseBoundary] Suspension took longer than 5s');
+          logger.warn('SuspenseBoundary suspension exceeded 5s', { durationMs: duration });
         }
       }
     };

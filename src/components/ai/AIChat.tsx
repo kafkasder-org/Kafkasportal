@@ -16,6 +16,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { useStream } from '@convex-dev/persistent-text-streaming/react';
+import logger from '@/lib/logger';
 import { api } from '@/convex/_generated/api';
 import type { StreamId } from '@convex-dev/persistent-text-streaming';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,7 +85,7 @@ export function AIChat({ userId, convexSiteUrl }: AIChatProps) {
 
       setPrompt('');
     } catch (error) {
-      console.error('Error creating chat:', error);
+      logger.error('AI chat creation failed', { error });
     } finally {
       setIsCreating(false);
     }

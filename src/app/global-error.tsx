@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import logger from '@/lib/logger';
 
 interface PerformanceMemory {
   usedJSHeapSize?: number;
@@ -37,15 +38,18 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // Log critical error with context
-    console.error('CRITICAL ERROR:', error);
-    console.error('Error Digest:', error.digest);
-    console.error('User Agent:', navigator.userAgent);
-    console.error('Current URL:', window.location.href);
+    logger.error('Critical application error', {
+      error,
+      digest: error.digest,
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      type: 'global-error',
+    });
 
     // Check for unsupported browsers
     const isUnsupportedBrowser = /MSIE|Trident/.test(navigator.userAgent);
     if (isUnsupportedBrowser) {
-      console.error('🚨 Unsupported browser detected');
+      logger.warn('Unsupported browser detected', { userAgent: navigator.userAgent });
     }
 
     // Check if it's a hydration error
@@ -54,7 +58,7 @@ export default function GlobalError({
       error.message.toLowerCase().includes('mismatch');
 
     if (isHydrationError) {
-      console.error('🚨 This is a hydration error - consider clearing storage');
+      logger.error('Hydration error detected', { error, digest: error.digest });
     }
 
     // Send to Sentry with high priority

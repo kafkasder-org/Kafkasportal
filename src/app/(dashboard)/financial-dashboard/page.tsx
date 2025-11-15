@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useQuery } from 'convex/react';
+import logger from '@/lib/logger';
 import { api } from '@/convex/_generated/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -100,7 +101,7 @@ export default function FinancialDashboardPage() {
     // Öneri: jsPDF + jspdf-autotable kullan (zaten dependency'de var)
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
-      console.log('Exporting financial data...');
+      logger.info('Exporting financial data');
     }
   };
 

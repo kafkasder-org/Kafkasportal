@@ -3,6 +3,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 const N8N_WEBHOOK_URL =
   process.env.N8N_ERROR_WEBHOOK_URL || 'https://vmi2876541.contaboserver.net/webhook/error-logged';
@@ -12,10 +13,19 @@ const WEBHOOK_SECRET = process.env.N8N_WEBHOOK_SECRET || 'your-secret-key';
  * n8n'e hata bildirimi gönder
  * Sadece critical ve high severity hataları gönder
  */
-async function notifyN8N(errorData: any) {
+interface ErrorData {
+  error_code: string;
+  title: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  [key: string]: unknown;
+}
+
+async function notifyN8N(errorData: ErrorData) {
   // Sadece kritik hataları gönder
   if (!['critical', 'high'].includes(errorData.severity)) {
-    console.log('Skipping n8n notification for non-critical error');
+    logger.debug('Skipping n8n notification for non-critical error', {
+      severity: errorData.severity,
+    });
     return false;
   }
 
@@ -34,14 +44,15 @@ async function notifyN8N(errorData: any) {
     });
 
     if (!response.ok) {
-      console.error('n8n webhook failed:', await response.text());
+      const errorText = await response.text();
+      logger.error('n8n webhook failed', new Error(errorText));
       return false;
     }
 
-    console.log('n8n error webhook sent successfully');
+    logger.info('n8n error webhook sent successfully');
     return true;
   } catch (error) {
-    console.error('Error sending error webhook to n8n:', error);
+    logger.error('Error sending error webhook to n8n', error);
     return false;
   }
 }
@@ -60,7 +71,7 @@ export async function POST(request: Request) {
 
     // n8n'e webhook gönder (async, hata olsa bile devam et)
     notifyN8N(error).catch((err) => {
-      console.error('Error webhook notification failed (non-blocking):', err);
+      logger.error('Error webhook notification failed (non-blocking)', err);
     });
 
     return NextResponse.json({
@@ -68,7 +79,7 @@ export async function POST(request: Request) {
       message: 'Error webhook notification sent',
     });
   } catch (error) {
-    console.error('Error in error webhook:', error);
+    logger.error('Error in error webhook', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

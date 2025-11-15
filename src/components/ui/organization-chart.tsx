@@ -64,7 +64,7 @@ function OrgNode({
               <Badge
                 variant="secondary"
                 className={cn(
-                  'mb-2 bg-gradient-to-r text-white',
+                  'mb-2 bg-linear-to-r text-white',
                   levelColors[node.level as keyof typeof levelColors] || 'from-gray-500 to-gray-600'
                 )}
               >

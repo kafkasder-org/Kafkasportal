@@ -5,6 +5,7 @@
 
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import {
   exportData,
   ExportType,
@@ -39,7 +40,7 @@ export function useExport(options: UseExportOptions = {}) {
         );
         options.onSuccess?.();
       } catch (error) {
-        console.error('Export error:', error);
+        logger.error('Export failed', { error, type });
         toast.error('Dışa aktarma sırasında bir hata oluştu');
         options.onError?.(error as Error);
       } finally {

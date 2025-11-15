@@ -3,6 +3,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 const N8N_WEBHOOK_URL =
   process.env.N8N_DONATION_WEBHOOK_URL ||
@@ -12,7 +13,14 @@ const WEBHOOK_SECRET = process.env.N8N_WEBHOOK_SECRET || 'your-secret-key';
 /**
  * n8n'e bağış bildirimi gönder
  */
-async function notifyN8N(donationData: any) {
+interface DonationData {
+  donor_name: string;
+  amount: number;
+  receipt_number: string;
+  [key: string]: unknown;
+}
+
+async function notifyN8N(donationData: DonationData) {
   try {
     const response = await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
@@ -28,14 +36,15 @@ async function notifyN8N(donationData: any) {
     });
 
     if (!response.ok) {
-      console.error('n8n webhook failed:', await response.text());
+      const errorText = await response.text();
+      logger.error('n8n webhook failed', new Error(errorText));
       return false;
     }
 
-    console.log('n8n webhook sent successfully');
+    logger.info('n8n webhook sent successfully');
     return true;
   } catch (error) {
-    console.error('Error sending webhook to n8n:', error);
+    logger.error('Error sending webhook to n8n', error);
     return false;
   }
 }
@@ -56,7 +65,7 @@ export async function POST(request: Request) {
 
     // n8n'e webhook gönder (async, hata olsa bile devam et)
     notifyN8N(donation).catch((err) => {
-      console.error('Webhook notification failed (non-blocking):', err);
+      logger.error('Webhook notification failed (non-blocking)', err);
     });
 
     return NextResponse.json({
@@ -64,7 +73,7 @@ export async function POST(request: Request) {
       message: 'Webhook notification sent',
     });
   } catch (error) {
-    console.error('Error in donation webhook:', error);
+    logger.error('Error in donation webhook', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

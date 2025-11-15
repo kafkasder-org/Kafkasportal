@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import logger from '@/lib/logger';
 import {
   AlertCircle,
   AlertTriangle,
@@ -51,7 +52,7 @@ export default function ErrorsPage() {
       const { data } = await response.json();
       setStats(data);
     } catch (error) {
-      console.error('Failed to fetch stats:', error);
+      logger.error('Failed to fetch error stats', { error });
     }
   };
 
@@ -66,7 +67,7 @@ export default function ErrorsPage() {
       const { data } = await response.json();
       setErrors(data.errors || []);
     } catch (error) {
-      console.error('Failed to fetch errors:', error);
+      logger.error('Failed to fetch error list', { error });
     } finally {
       setLoading(false);
     }

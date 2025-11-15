@@ -4,6 +4,7 @@
  */
 
 import { captureError } from './error-tracker';
+import logger from '@/lib/logger';
 
 /**
  * Initialize global error handlers
@@ -31,7 +32,7 @@ export function initGlobalErrorHandlers(): void {
       },
       tags: ['unhandled', 'window-error'],
     }).catch((err) => {
-      console.error('Failed to capture unhandled error:', err);
+      logger.error('Failed to capture unhandled error', { error: err });
     });
   });
 
@@ -53,7 +54,7 @@ export function initGlobalErrorHandlers(): void {
       },
       tags: ['unhandled', 'promise-rejection'],
     }).catch((err) => {
-      console.error('Failed to capture unhandled rejection:', err);
+      logger.error('Failed to capture unhandled rejection', { error: err });
     });
 
     // Prevent default browser error logging

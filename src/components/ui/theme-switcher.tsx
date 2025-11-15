@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, startTransition } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -35,7 +36,7 @@ export function ThemeSwitcher({ defaultTheme = 'system', className }: ThemeSwitc
 
       // Validate theme value to prevent XSS
       if (!['light', 'dark', 'system'].includes(newTheme)) {
-        console.warn('Invalid theme value:', newTheme);
+        logger.warn('Invalid theme value', { theme: newTheme });
         return;
       }
 

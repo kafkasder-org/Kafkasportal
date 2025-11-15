@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import type { BeneficiaryDocument } from '@/types/database';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import { ArrowUpRight, Download, Plus } from 'lucide-react';
 
 // Performance monitoring imports
@@ -46,7 +47,7 @@ async function fetchBeneficiariesDirectly(params?: {
 
     return await response.json();
   } catch (error) {
-    console.error('Direct API call failed:', error);
+    logger.error('Direct API call failed', { error });
     throw error;
   }
 }
@@ -143,7 +144,7 @@ export default function BeneficiariesPage() {
   // Performance monitoring
   React.useEffect(() => {
     if (!isGoodPerformance() && process.env.NODE_ENV === 'development') {
-      console.warn('Performance degraded:', { fps: getFPS() });
+      logger.warn('Performance degraded', { fps: getFPS() });
     }
   }, [getFPS, isGoodPerformance]);
 

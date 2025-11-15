@@ -39,6 +39,7 @@ import { Plus, ArrowDownToLine, ArrowUpFromLine, AlertTriangle, Wallet } from 'l
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import { Id } from '@/convex/_generated/dataModel';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -118,7 +119,7 @@ export default function CashVaultPage() {
       resetForm();
     } catch (error) {
       toast.error('İşlem kaydedilirken hata oluştu');
-      console.error(error);
+      logger.error('Nakdi vezne error', { error });
     }
   };
 

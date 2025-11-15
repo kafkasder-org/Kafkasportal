@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import {
   FileText,
   Download,
@@ -257,7 +258,7 @@ export default function DonationReportsPage() {
       generateDonationPDF(reportData);
       toast.success('Rapor PDF formatında indirildi');
     } catch (error) {
-      console.error('PDF export error:', error);
+      logger.error('Donation report PDF export failed', { error });
       toast.error('PDF oluşturulurken hata oluştu');
     }
   };

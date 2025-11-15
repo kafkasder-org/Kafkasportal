@@ -5,6 +5,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import logger from '@/lib/logger';
 
 const N8N_TELEGRAM_WEBHOOK_URL =
   process.env.N8N_TELEGRAM_WEBHOOK_URL ||
@@ -58,14 +59,15 @@ async function sendTelegramNotification(notification: TelegramNotification) {
     });
 
     if (!response.ok) {
-      console.error('Telegram webhook failed:', await response.text());
+      const errorText = await response.text();
+      logger.error('Telegram webhook failed', new Error(errorText));
       return false;
     }
 
-    console.log('Telegram notification sent successfully');
+    logger.info('Telegram notification sent successfully');
     return true;
   } catch (error) {
-    console.error('Error sending Telegram notification:', error);
+    logger.error('Error sending Telegram notification', error);
     return false;
   }
 }
@@ -87,7 +89,7 @@ export async function POST(request: Request) {
 
     // Telegram bildirimi gönder (async, hata olsa bile devam et)
     sendTelegramNotification(notification).catch((err) => {
-      console.error('Telegram notification failed (non-blocking):', err);
+      logger.error('Telegram notification failed (non-blocking)', err);
     });
 
     return NextResponse.json({
@@ -95,7 +97,7 @@ export async function POST(request: Request) {
       message: 'Telegram notification sent',
     });
   } catch (error) {
-    console.error('Error in Telegram webhook:', error);
+    logger.error('Error in Telegram webhook', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

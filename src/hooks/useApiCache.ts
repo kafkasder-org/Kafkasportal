@@ -12,6 +12,7 @@ import {
   type UseQueryOptions,
   type UseMutationOptions,
 } from '@tanstack/react-query';
+import logger from '@/lib/logger';
 import {
   CACHE_KEYS,
   CACHE_STRATEGIES,
@@ -243,7 +244,7 @@ export function usePrefetchWithCache<T = unknown>(
       }
     };
 
-    prefetch().catch(console.error);
+    prefetch().catch((error) => logger.error('Prefetch failed', { error, queryKey }));
   }, [queryKey, queryFn, enabled, queryClient, strategy.staleTime]);
 }
 
@@ -358,7 +359,7 @@ export function useWarmUpCache(
 
     warmUp().catch((error) => {
       if (process.env.NODE_ENV === 'development') {
-        console.error('Cache warm-up error:', error);
+        logger.error('Cache warm-up error', { error });
       }
     });
   }, [enabled, queryClient, essentialDataFetchers]); // Include all dependencies

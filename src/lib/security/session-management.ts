@@ -3,6 +3,8 @@
  * Provides session timeout, concurrent session control, and device tracking
  */
 
+import logger from '@/lib/logger';
+
 export interface SessionConfig {
   maxAge: number; // Session max age in milliseconds
   inactivityTimeout: number; // Inactivity timeout in milliseconds
@@ -230,7 +232,7 @@ export class SecureSessionStorage {
       const serialized = JSON.stringify(metadata);
       localStorage.setItem(this.SESSION_KEY, serialized);
     } catch (error) {
-      console.error('Failed to save session metadata:', error);
+      logger.error('Failed to save session metadata', { error });
     }
   }
 
@@ -243,7 +245,7 @@ export class SecureSessionStorage {
 
       return JSON.parse(serialized) as SessionMetadata;
     } catch (error) {
-      console.error('Failed to load session metadata:', error);
+      logger.error('Failed to load session metadata', { error });
       return null;
     }
   }

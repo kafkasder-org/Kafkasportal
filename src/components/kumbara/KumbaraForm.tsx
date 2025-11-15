@@ -34,6 +34,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import type { KumbaraCreateInput } from '@/lib/validations/kumbara';
 import { kumbaraCreateSchema } from '@/lib/validations/kumbara';
@@ -276,7 +277,7 @@ export function KumbaraForm({ onSuccess, onCancel }: KumbaraFormProps) {
               return;
             }
           } catch (uploadError) {
-            console.error('Error uploading file:', uploadError);
+            logger.error('File upload failed', { error: uploadError });
             toast.error('Dosya yükleme işlemi başarısız');
             return;
           }
@@ -292,7 +293,7 @@ export function KumbaraForm({ onSuccess, onCancel }: KumbaraFormProps) {
 
         createKumbaraDonation(finalData);
       } catch (_error) {
-        console.error('Error creating kumbara donation:', _error);
+        logger.error('Kumbara donation creation failed', { error: _error });
         toast.error('Bir hata oluştu. Lütfen tekrar deneyin.');
       }
     },

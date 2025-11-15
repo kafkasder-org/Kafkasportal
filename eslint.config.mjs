@@ -27,7 +27,8 @@ const eslintConfig = defineConfig([
         },
       ],
 
-      'no-console': 'off',
+      // Console kullanımını error yap (production'da logger kullan)
+      'no-console': ['error', { allow: ['warn', 'error'] }],
 
       // Code quality rules
       'prefer-const': 'error',
@@ -69,6 +70,22 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/no-explicit-any': 'off',
       // Unused vars için daha toleranslı ol
       '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
+
+  // Logger implementation için exception
+  {
+    files: ['src/lib/logger.ts'],
+    rules: {
+      'no-console': 'off', // Logger implementation console kullanır
+    },
+  },
+
+  // API routes için exception (server-side logging)
+  {
+    files: ['src/app/api/**/*.ts'],
+    rules: {
+      'no-console': 'off', // Server-side API routes console kullanabilir
     },
   },
 

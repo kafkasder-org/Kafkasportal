@@ -4,7 +4,8 @@
  * Sends data to analytics or logs
  */
 
-import { onCLS, onLCP, onFCP, onTTFB, onINP, Metric } from 'web-vitals';
+import { onLCP, onCLS, onFCP, onTTFB, onINP, Metric } from 'web-vitals';
+import logger from '@/lib/logger';
 
 /**
  * Send metric to analytics (custom implementation)
@@ -22,7 +23,7 @@ function sendToAnalytics(metric: Metric): void {
       rating,
     };
     if (process.env.NODE_ENV === 'development') {
-      console.log(
+      logger.info(
         `📊 Web Vital: ${metricData.name} = ${metricData.value}ms (${metricData.rating})`,
         metricData
       );
@@ -75,7 +76,7 @@ function sendToAnalytics(metric: Metric): void {
     }).catch((error) => {
       // Silently fail - analytics should not block the app
       if (process.env.NODE_ENV === 'development') {
-        console.warn('Failed to send analytics:', error);
+        logger.warn('Failed to send analytics', { error });
       }
     });
   }

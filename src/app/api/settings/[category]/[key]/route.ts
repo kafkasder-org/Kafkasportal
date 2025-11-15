@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
+import logger from '@/lib/logger';
 
 // GET - Get a single setting
 export async function GET(
@@ -21,7 +22,7 @@ export async function GET(
       data: { category, key, value },
     });
   } catch (_error) {
-    console.error('Setting GET error:', _error);
+    logger.error('Setting GET error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayar alınırken hata oluştu' },
       { status: 500 }
@@ -55,7 +56,7 @@ export async function PUT(
       message: 'Ayar başarıyla güncellendi',
     });
   } catch (_error) {
-    console.error('Setting PUT error:', _error);
+    logger.error('Setting PUT error', _error);
     return NextResponse.json(
       { error: _error instanceof Error ? _error.message : 'Ayar güncellenirken hata oluştu' },
       { status: 500 }

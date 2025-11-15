@@ -13,6 +13,7 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery, useAction } from 'convex/react';
+import logger from '@/lib/logger';
 import { api } from '@/convex/_generated/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -131,7 +132,7 @@ export function AgentChat({ userId }: AgentChatProps) {
 
       setPrompt('');
     } catch (error) {
-      console.error('Error generating response:', error);
+      logger.error('Agent response generation failed', { error });
     } finally {
       setIsGenerating(false);
     }

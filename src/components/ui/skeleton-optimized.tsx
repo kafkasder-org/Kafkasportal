@@ -25,8 +25,8 @@ export const Skeleton = memo(function Skeleton({
     return (
       <div
         className={cn(
-          'bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200',
-          'bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]',
+          'bg-linear-to-r from-slate-200 via-slate-100 to-slate-200',
+          'bg-size-[200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]',
           height,
           width,
           rounded && 'rounded-lg',
@@ -47,8 +47,8 @@ export const Skeleton = memo(function Skeleton({
         <div
           key={i}
           className={cn(
-            'bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200',
-            'bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]',
+            'bg-linear-to-r from-slate-200 via-slate-100 to-slate-200',
+            'bg-size-[200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]',
             height,
             width,
             rounded && 'rounded-lg',
