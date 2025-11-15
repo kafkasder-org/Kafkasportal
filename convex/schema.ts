@@ -265,15 +265,24 @@ export default defineSchema({
     currency: v.union(v.literal('TRY'), v.literal('USD'), v.literal('EUR')),
     /** @type {string} - The type of donation (e.g., 'zakat', 'fitra', 'general'). */
     donation_type: v.string(),
-    /** @type {'cash'|'check'|'credit_card'|'online'|'bank_transfer'|'sms'|'in_kind'} - The payment method type. */
+    /** @type {'cash'|'check'|'credit_card'|'online'|'bank_transfer'|'sms'|'in_kind'|'NAKIT'|'CEK_SENET'|'KREDI_KARTI'|'ONLINE'|'BANKA_HAVALESI'|'SMS'|'AYNI'} - The payment method type. */
     payment_method: v.union(
+      // English lowercase (new format)
       v.literal('cash'), // Nakit Bağış - Direct cash handling
       v.literal('check'), // Çek Senet Bağış - Check/Promissory Note
       v.literal('credit_card'), // Kredi Kartı Bağış - Physical POS terminal
       v.literal('online'), // Online Bağış - Virtual POS gateway
       v.literal('bank_transfer'), // Banka Bağış - Bank account deposits
       v.literal('sms'), // SMS Bağış - Mobile carrier integration
-      v.literal('in_kind') // Ayni Bağış - Non-monetary (goods/supplies)
+      v.literal('in_kind'), // Ayni Bağış - Non-monetary (goods/supplies)
+      // Turkish uppercase (legacy format - for existing data)
+      v.literal('NAKIT'),
+      v.literal('CEK_SENET'),
+      v.literal('KREDI_KARTI'),
+      v.literal('ONLINE'),
+      v.literal('BANKA_HAVALESI'),
+      v.literal('SMS'),
+      v.literal('AYNI')
     ),
     /** @type {object} - Payment method-specific details stored as JSON. */
     payment_details: v.optional(v.any()),
@@ -1552,5 +1561,137 @@ export default defineSchema({
     .index('by_resolved', ['resolved'])
     .index('by_severity', ['severity'])
     .index('by_alert_type', ['alert_type'])
+    .index('by_created_at', ['created_at']),
+
+  /**
+   * @collection ai_chats
+   * @description Stores AI chat conversations with persistent text streaming.
+   * Uses @convex-dev/persistent-text-streaming for real-time streaming and database persistence.
+   */
+  ai_chats: defineTable({
+    /** @type {Id<'users'>} - The user who created this chat */
+    user_id: v.id('users'),
+    /** @type {string} - The title of the chat */
+    title: v.string(),
+    /** @type {string} - The user's prompt/question */
+    prompt: v.string(),
+    /** @type {string} - The stream ID from persistent-text-streaming component */
+    stream_id: v.string(),
+    /** @type {'pending'|'completed'|'error'} - The status of the chat generation */
+    status: v.union(v.literal('pending'), v.literal('completed'), v.literal('error')),
+    /** @type {number} - Creation timestamp */
+    created_at: v.number(),
+    /** @type {number} - Last update timestamp */
+    updated_at: v.number(),
+  })
+    .index('by_user_id', ['user_id'])
+    .index('by_status', ['status'])
+    .index('by_created_at', ['created_at']),
+
+  /**
+   * @collection agent_threads
+   * @description AI agent conversation threads with persistent message history
+   */
+  agent_threads: defineTable({
+    /** @type {Id<'users'>} - Thread owner */
+    user_id: v.id('users'),
+    /** @type {string} - Thread title */
+    title: v.string(),
+    /** @type {string} - Agent name/type that owns this thread */
+    agent_name: v.string(),
+    /** @type {object} - Thread metadata */
+    metadata: v.optional(v.any()),
+    /** @type {'active'|'archived'} - Thread status */
+    status: v.union(v.literal('active'), v.literal('archived')),
+    /** @type {number} - Creation timestamp */
+    created_at: v.number(),
+    /** @type {number} - Last message timestamp */
+    last_message_at: v.number(),
+  })
+    .index('by_user_id', ['user_id'])
+    .index('by_agent_name', ['agent_name'])
+    .index('by_status', ['status'])
+    .searchIndex('search_title', {
+      searchField: 'title',
+    }),
+
+  /**
+   * @collection agent_messages
+   * @description Messages within agent threads
+   */
+  agent_messages: defineTable({
+    /** @type {Id<'agent_threads'>} - Parent thread */
+    thread_id: v.id('agent_threads'),
+    /** @type {'user'|'assistant'|'system'|'tool'} - Message role */
+    role: v.union(
+      v.literal('user'),
+      v.literal('assistant'),
+      v.literal('system'),
+      v.literal('tool')
+    ),
+    /** @type {string} - Message content */
+    content: v.string(),
+    /** @type {string} - Agent name that created this message */
+    agent_name: v.optional(v.string()),
+    /** @type {object} - Tool calls or results */
+    tool_calls: v.optional(v.any()),
+    /** @type {object} - Additional metadata */
+    metadata: v.optional(v.any()),
+    /** @type {number} - Creation timestamp */
+    created_at: v.number(),
+  })
+    .index('by_thread_id', ['thread_id'])
+    .index('by_role', ['role'])
+    .searchIndex('search_content', {
+      searchField: 'content',
+      filterFields: ['thread_id', 'role'],
+    }),
+
+  /**
+   * @collection agent_tools
+   * @description Available tools that agents can use
+   */
+  agent_tools: defineTable({
+    /** @type {string} - Tool name */
+    name: v.string(),
+    /** @type {string} - Tool description */
+    description: v.string(),
+    /** @type {object} - Tool parameters schema */
+    parameters: v.any(),
+    /** @type {string} - Function identifier */
+    function_name: v.string(),
+    /** @type {boolean} - Is tool enabled */
+    enabled: v.boolean(),
+    /** @type {number} - Creation timestamp */
+    created_at: v.number(),
+  })
+    .index('by_name', ['name'])
+    .index('by_enabled', ['enabled']),
+
+  /**
+   * @collection agent_usage
+   * @description Track AI usage for billing and monitoring
+   */
+  agent_usage: defineTable({
+    /** @type {Id<'users'>} - User who triggered the usage */
+    user_id: v.id('users'),
+    /** @type {Id<'agent_threads'>} - Associated thread */
+    thread_id: v.optional(v.id('agent_threads')),
+    /** @type {string} - Agent name */
+    agent_name: v.string(),
+    /** @type {string} - Model used */
+    model: v.string(),
+    /** @type {number} - Input tokens */
+    input_tokens: v.number(),
+    /** @type {number} - Output tokens */
+    output_tokens: v.number(),
+    /** @type {number} - Total cost in cents */
+    cost_cents: v.optional(v.number()),
+    /** @type {number} - Timestamp */
+    created_at: v.number(),
+  })
+    .index('by_user_id', ['user_id'])
+    .index('by_thread_id', ['thread_id'])
+    .index('by_agent_name', ['agent_name'])
     .index('by_created_at', ['created_at']),
 });

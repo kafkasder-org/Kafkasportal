@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as agents from '../agents.js';
+import type * as ai_chat from '../ai_chat.js';
 import type * as aid_applications from '../aid_applications.js';
 import type * as analytics from '../analytics.js';
 import type * as audit_logs from '../audit_logs.js';
@@ -22,6 +24,7 @@ import type * as documents from '../documents.js';
 import type * as donations from '../donations.js';
 import type * as errors from '../errors.js';
 import type * as finance_records from '../finance_records.js';
+import type * as http from '../http.js';
 import type * as meeting_action_items from '../meeting_action_items.js';
 import type * as meeting_decisions from '../meeting_decisions.js';
 import type * as meetings from '../meetings.js';
@@ -50,6 +53,8 @@ import type { ApiFromModules, FilterApi, FunctionReference } from 'convex/server
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  agents: typeof agents;
+  ai_chat: typeof ai_chat;
   aid_applications: typeof aid_applications;
   analytics: typeof analytics;
   audit_logs: typeof audit_logs;
@@ -64,6 +69,7 @@ declare const fullApi: ApiFromModules<{
   donations: typeof donations;
   errors: typeof errors;
   finance_records: typeof finance_records;
+  http: typeof http;
   meeting_action_items: typeof meeting_action_items;
   meeting_decisions: typeof meeting_decisions;
   meetings: typeof meetings;
@@ -89,4 +95,40 @@ export declare const internal: FilterApi<
   FunctionReference<any, 'internal'>
 >;
 
-export declare const components: {};
+export declare const components: {
+  persistentTextStreaming: {
+    lib: {
+      addChunk: FunctionReference<
+        'mutation',
+        'internal',
+        { final: boolean; streamId: string; text: string },
+        any
+      >;
+      createStream: FunctionReference<'mutation', 'internal', {}, any>;
+      getStreamStatus: FunctionReference<
+        'query',
+        'internal',
+        { streamId: string },
+        'pending' | 'streaming' | 'done' | 'error' | 'timeout'
+      >;
+      getStreamText: FunctionReference<
+        'query',
+        'internal',
+        { streamId: string },
+        {
+          status: 'pending' | 'streaming' | 'done' | 'error' | 'timeout';
+          text: string;
+        }
+      >;
+      setStreamStatus: FunctionReference<
+        'mutation',
+        'internal',
+        {
+          status: 'pending' | 'streaming' | 'done' | 'error' | 'timeout';
+          streamId: string;
+        },
+        any
+      >;
+    };
+  };
+};

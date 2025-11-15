@@ -83,13 +83,22 @@ export const create = mutation({
     currency: v.union(v.literal('TRY'), v.literal('USD'), v.literal('EUR')),
     donation_type: v.string(),
     payment_method: v.union(
+      // English lowercase (new format)
       v.literal('cash'),
       v.literal('check'),
       v.literal('credit_card'),
       v.literal('online'),
       v.literal('bank_transfer'),
       v.literal('sms'),
-      v.literal('in_kind')
+      v.literal('in_kind'),
+      // Turkish uppercase (legacy format)
+      v.literal('NAKIT'),
+      v.literal('CEK_SENET'),
+      v.literal('KREDI_KARTI'),
+      v.literal('ONLINE'),
+      v.literal('BANKA_HAVALESI'),
+      v.literal('SMS'),
+      v.literal('AYNI')
     ),
     donation_purpose: v.string(),
     notes: v.optional(v.string()),
