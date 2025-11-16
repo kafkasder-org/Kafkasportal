@@ -1,6 +1,22 @@
 'use client';
 
-import { use, useState } from 'react';
+/**
+ * ÖNEMLİ NOT:
+ * Bu sayfadaki İhtiyaç Sahibi Detay formunun tasarım ve yerleşimi
+ * ürün kararı ile sabitlenmiştir.
+ *
+ * LÜTFEN AŞAĞIDAKİLERİ YAPMAYIN:
+ * - Kart yapısını, grid kolonlarını veya form alanlarının sırasını değiştirmeyin
+ * - Sağdaki modül kartlarının (dokümanlar, rıza beyanı vb.) yerleşimini bozmayın
+ *
+ * SADECE ŞUNLARA İZİN VAR:
+ * - Arka uç entegrasyonu, mapping, validasyon, küçük metin düzeltmeleri
+ * - Hata düzeltmeleri (görsel yapıyı değiştirmeden)
+ *
+ * Büyük tasarım değişiklikleri gerekiyorsa, önce ürün sahibinden onay alındığından emin olun.
+ */
+
+import { use, useEffect, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -252,6 +268,84 @@ const docSchema = z.object({
 
 type FormValues = z.infer<typeof docSchema>;
 
+const mapBeneficiaryToFormValues = (beneficiary: BeneficiaryDocument): FormValues => ({
+  name: beneficiary.name || '',
+  firstName: beneficiary.name?.split(' ')[0] || '',
+  lastName: beneficiary.name?.split(' ').slice(1).join(' ') || '',
+  tc_no: beneficiary.tc_no || '',
+  ikamet_no: beneficiary.ikamet_no || '',
+  pasaport_no: beneficiary.pasaport_no || '',
+  phone: beneficiary.phone || '',
+
+  nationality: beneficiary.nationality || '',
+  religion: beneficiary.religion || '',
+  marital_status: beneficiary.marital_status || '',
+  address: beneficiary.address || '',
+  city: beneficiary.city || '',
+  district: beneficiary.district || '',
+  neighborhood: beneficiary.neighborhood || '',
+  street: beneficiary.street || '',
+  family_size: beneficiary.family_size ?? 1,
+  status: beneficiary.status,
+  approval_status: beneficiary.approval_status || 'pending',
+
+  birth_date: beneficiary.birth_date || '',
+  birth_place: beneficiary.birth_place || '',
+  gender: beneficiary.gender || '',
+  father_name: beneficiary.father_name || '',
+  mother_name: beneficiary.mother_name || '',
+
+  children_count: beneficiary.children_count ?? 0,
+  orphan_children_count: beneficiary.orphan_children_count ?? 0,
+  elderly_count: beneficiary.elderly_count ?? 0,
+  disabled_count: beneficiary.disabled_count ?? 0,
+
+  income_level: beneficiary.income_level || '',
+  income_source: beneficiary.income_source || '',
+  monthly_income: beneficiary.monthly_income ?? 0,
+  monthly_expense: beneficiary.monthly_expense ?? 0,
+  has_debt: beneficiary.has_debt || false,
+  debt_amount: beneficiary.debt_amount ?? 0,
+  has_vehicle: beneficiary.has_vehicle || false,
+  housing_type: beneficiary.housing_type || '',
+  social_security: beneficiary.social_security || '',
+  work_status: beneficiary.employment_status || '',
+  occupation: beneficiary.occupation || '',
+
+  blood_type: beneficiary.blood_type || '',
+  has_chronic_illness: beneficiary.has_chronic_illness || false,
+  chronic_illness_detail: beneficiary.chronic_illness_detail || '',
+  has_disability: beneficiary.has_disability || false,
+  disability_detail: beneficiary.disability_detail || '',
+  has_health_insurance: beneficiary.has_health_insurance || false,
+  regular_medication: beneficiary.regular_medication || '',
+  health_status: beneficiary.health_status || '',
+
+  education_level: beneficiary.education_level || '',
+  school_name: beneficiary.school_name || '',
+  student_status: beneficiary.student_status || '',
+
+  emergency_contact_name: beneficiary.emergency_contact_name || '',
+  emergency_contact_relation: beneficiary.emergency_contact_relation || '',
+  emergency_contact_phone: beneficiary.emergency_contact_phone || '',
+
+  reference_name: beneficiary.reference_name || '',
+  reference_phone: beneficiary.reference_phone || '',
+  reference_relation: beneficiary.reference_relation || '',
+  application_source: beneficiary.application_source || '',
+
+  aid_type: beneficiary.aid_type || '',
+  aid_duration: beneficiary.aid_duration || '',
+  priority: beneficiary.priority || '',
+  emergency: beneficiary.emergency || false,
+  previous_aid: beneficiary.previous_aid || false,
+  other_organization_aid: beneficiary.other_organization_aid || false,
+  totalAidAmount: beneficiary.totalAidAmount ?? 0,
+
+  notes: beneficiary.notes || '',
+  contact_preference: beneficiary.contact_preference || '',
+});
+
 export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
@@ -417,63 +511,25 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
     formState: { isSubmitting, errors },
     getValues,
     setValue,
+    reset,
   } = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(docSchema) as any,
-    defaultValues: beneficiary
-      ? {
-          name: beneficiary.name || '',
-          firstName: beneficiary.name?.split(' ')[0] || '',
-          lastName: beneficiary.name?.split(' ').slice(1).join(' ') || '',
-          tc_no: beneficiary.tc_no || '',
-          phone: beneficiary.phone || '',
-
-          nationality: beneficiary.nationality || '',
-          religion: beneficiary.religion || '',
-          marital_status: beneficiary.marital_status || '',
-          address: beneficiary.address || '',
-          city: beneficiary.city || '',
-          district: beneficiary.district || '',
-          neighborhood: beneficiary.neighborhood || '',
-          family_size: beneficiary.family_size ?? 1,
-          status: beneficiary.status,
-          approval_status: beneficiary.approval_status || 'pending',
-          birth_date: beneficiary.birth_date || '',
-          gender: beneficiary.gender || '',
-          children_count: beneficiary.children_count ?? 0,
-          orphan_children_count: beneficiary.orphan_children_count ?? 0,
-          elderly_count: beneficiary.elderly_count ?? 0,
-          disabled_count: beneficiary.disabled_count ?? 0,
-          income_level: beneficiary.income_level || '',
-          income_source: beneficiary.income_source || '',
-          has_debt: beneficiary.has_debt || false,
-          has_vehicle: beneficiary.has_vehicle || false,
-          housing_type: beneficiary.housing_type || '',
-          work_status: beneficiary.employment_status || '',
-          occupation: beneficiary.occupation || '',
-          has_chronic_illness: beneficiary.has_chronic_illness || false,
-          chronic_illness_detail: beneficiary.chronic_illness_detail || '',
-          has_disability: beneficiary.has_disability || false,
-          disability_detail: beneficiary.disability_detail || '',
-          has_health_insurance: beneficiary.has_health_insurance || false,
-          regular_medication: beneficiary.regular_medication || '',
-          health_status: beneficiary.health_status || '',
-          education_level: beneficiary.education_level || '',
-          reference_name: beneficiary.reference_name || '',
-          reference_phone: beneficiary.reference_phone || '',
-          reference_relation: beneficiary.reference_relation || '',
-          application_source: beneficiary.application_source || '',
-          aid_type: beneficiary.aid_type || '',
-          aid_duration: beneficiary.aid_duration || '',
-          priority: beneficiary.priority || '',
-          emergency: beneficiary.emergency || false,
-          previous_aid: beneficiary.previous_aid || false,
-          other_organization_aid: beneficiary.other_organization_aid || false,
-          notes: beneficiary.notes || '',
-          contact_preference: beneficiary.contact_preference || '',
-        }
-      : undefined,
+    // Initial empty defaults; real values are loaded via reset() when beneficiary geliyor
+    defaultValues: {
+      name: '',
+      firstName: '',
+      lastName: '',
+      status: 'TASLAK',
+      approval_status: 'pending',
+    } as Partial<FormValues>,
   });
+
+  useEffect(() => {
+    if (beneficiary) {
+      reset(mapBeneficiaryToFormValues(beneficiary));
+    }
+  }, [beneficiary, reset]);
 
   const onSubmit = (values: FormValues) => {
     // Combine firstName and lastName into name for BeneficiaryDocument

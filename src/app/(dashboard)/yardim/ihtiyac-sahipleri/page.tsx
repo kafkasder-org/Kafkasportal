@@ -11,6 +11,7 @@ import Link from 'next/link';
 import type { BeneficiaryDocument } from '@/types/database';
 import { toast } from 'sonner';
 import { ArrowUpRight, Download, Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 // Performance monitoring imports
 import { useFPSMonitor } from '@/lib/performance-monitor';
@@ -75,6 +76,8 @@ export default function BeneficiariesPage() {
   // Smart caching
   const { prefetch } = usePrefetchWithCache();
 
+  const router = useRouter();
+
   const [search, setSearch] = useState('');
   const [showQuickAddModal, setShowQuickAddModal] = useState(false);
 
@@ -112,6 +115,12 @@ export default function BeneficiariesPage() {
   const beneficiaries = (cachedData?.data ||
     fallbackQuery.data?.data ||
     []) as BeneficiaryDocument[];
+
+  // Tablo için 1'den başlayan satır numarası ekle
+  const tableData = beneficiaries.map((item, index) => ({
+    ...item,
+    rowIndex: index + 1,
+  }));
 
   // Memoized handlers
   const handleModalClose = useCallback(() => {
@@ -157,8 +166,15 @@ export default function BeneficiariesPage() {
   }, [prefetch]);
 
   // Memoized columns
-  const columns: DataTableColumn<BeneficiaryDocument>[] = useMemo(
+  const columns: DataTableColumn<BeneficiaryDocument & { rowIndex: number }>[] = useMemo(
     () => [
+      {
+        key: 'rowIndex',
+        label: 'ID',
+        className:
+          'flex-none w-[60px] max-w-[60px] text-xs overflow-hidden text-center text-muted-foreground',
+        render: (item) => <span>{item.rowIndex}</span>,
+      },
       {
         key: 'actions',
         label: '',
@@ -174,10 +190,12 @@ export default function BeneficiariesPage() {
       {
         key: 'type',
         label: 'Tür',
-        className: 'flex-none w-[120px] max-w-[120px] text-xs overflow-hidden',
-        render: () => (
+        className: 'flex-none w-[140px] max-w-[140px] text-xs overflow-hidden',
+        render: (item) => (
           <Badge variant="secondary" className="font-medium">
-            İhtiyaç Sahibi
+            {!item.beneficiary_type || item.beneficiary_type === 'primary_person'
+              ? 'İhtiyaç Sahibi Kişi'
+              : 'Bakmakla Yükümlü Olunan Kişi'}
           </Badge>
         ),
       },
@@ -400,8 +418,8 @@ export default function BeneficiariesPage() {
           <CardDescription>Toplam {beneficiaries.length} kayıt</CardDescription>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
-          <VirtualizedDataTable<BeneficiaryDocument>
-            data={beneficiaries}
+          <VirtualizedDataTable<BeneficiaryDocument & { rowIndex: number }>
+            data={tableData}
             columns={columns}
             isLoading={isLoading || fallbackQuery.isLoading}
             error={(error || fallbackQuery.error) as Error}
@@ -419,6 +437,12 @@ export default function BeneficiariesPage() {
             }}
             rowHeight={64}
             containerHeight={800}
+            onRowClick={(item) => {
+              // Tüm satıra tıklanınca da detay sayfasına git
+              if (item._id) {
+                router.push(`/yardim/ihtiyac-sahipleri/${item._id}`);
+              }
+            }}
           />
         </CardContent>
       </Card>
