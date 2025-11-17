@@ -18,6 +18,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { meetings as meetingsApi } from '@/lib/api/convex-api-client';
 import type { MeetingDocument } from '@/types/database';
 import { Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { MeetingForm } from '@/components/forms/MeetingForm';
 
 // Lazy load heavy components
 const CalendarView = dynamic(() => import('@/components/meetings/CalendarView').then((m) => ({ default: m.CalendarView })), {
@@ -59,19 +60,6 @@ export default function MeetingsPage() {
   const upcomingMeetings = meetings.filter((m) => new Date(m.meeting_date) > new Date()).length;
   const completedMeetings = meetings.filter((m) => m.status === 'completed').length;
   const cancelledMeetings = meetings.filter((m) => m.status === 'cancelled').length;
-
-  // Mutations
-  const _createMeetingMutation = useMutation({
-    mutationFn: (data: Partial<MeetingDocument>) => meetingsApi.create(data as any),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meetings'] });
-      setShowCreateModal(false);
-      toast.success('Toplantı başarıyla oluşturuldu');
-    },
-    onError: () => {
-      toast.error('Toplantı oluşturulamadı');
-    },
-  });
 
   const _deleteMeetingMutation = useMutation({
     mutationFn: (meetingId: string) => meetingsApi.delete(meetingId),
@@ -171,14 +159,15 @@ export default function MeetingsPage() {
 
       {/* Create Meeting Modal */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Yeni Toplantı Oluştur</DialogTitle>
-            <DialogDescription>Yeni bir toplantı oluşturmak için formunu doldurun</DialogDescription>
+            <DialogDescription>Yeni bir toplantı oluşturmak için formu doldurun</DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <p className="text-center text-muted-foreground">Toplantı formu yakında eklenecektir</p>
-          </div>
+          <MeetingForm
+            onSuccess={() => setShowCreateModal(false)}
+            onCancel={() => setShowCreateModal(false)}
+          />
         </DialogContent>
       </Dialog>
 
