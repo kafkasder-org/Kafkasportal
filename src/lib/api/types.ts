@@ -37,14 +37,28 @@ export interface BeneficiaryUpdateInput extends Partial<BeneficiaryCreateInput> 
 // ========================================
 
 export interface DonationCreateInput {
-  donor_id?: string;
-  beneficiary_id?: string;
+  donor_name: string;
+  donor_phone: string;
+  donor_email?: string;
   amount: number;
-  currency: string;
-  donation_date: string;
-  description?: string;
-  status?: string;
-  payment_method?: string;
+  currency: 'TRY' | 'USD' | 'EUR';
+  donation_type: string;
+  payment_method: string;
+  donation_purpose: string;
+  notes?: string;
+  receipt_number: string;
+  receipt_file_id?: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  // Kumbara-specific fields (optional)
+  is_kumbara?: boolean;
+  kumbara_location?: string;
+  collection_date?: string;
+  kumbara_institution?: string;
+  location_coordinates?: { lat: number; lng: number };
+  location_address?: string;
+  route_points?: { lat: number; lng: number }[];
+  route_distance?: number;
+  route_duration?: number;
   [key: string]: unknown;
 }
 
@@ -59,10 +73,14 @@ export interface DonationUpdateInput extends Partial<DonationCreateInput> {
 export interface TaskCreateInput {
   title: string;
   description?: string;
-  assigned_to?: string;
+  assigned_to?: Id<'users'>;
+  created_by: Id<'users'>;
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   due_date?: string;
-  status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  priority?: 'low' | 'medium' | 'high' | 'critical';
+  category?: string;
+  tags?: string[];
+  is_read: boolean;
   [key: string]: unknown;
 }
 
@@ -77,13 +95,14 @@ export interface TaskUpdateInput extends Partial<TaskCreateInput> {
 export interface MeetingCreateInput {
   title: string;
   description?: string;
-  start_time: string;
-  end_time: string;
+  meeting_date: string;
   location?: string;
-  organizer_id?: string;
-  attendees?: string[];
-  status?: 'scheduled' | 'ongoing' | 'completed' | 'cancelled';
-  meeting_type?: 'internal' | 'external' | 'board';
+  organizer: Id<'users'>;
+  participants: Id<'users'>[];
+  status: 'scheduled' | 'ongoing' | 'completed' | 'cancelled';
+  meeting_type: 'general' | 'committee' | 'board' | 'other';
+  agenda?: string;
+  notes?: string;
   [key: string]: unknown;
 }
 
@@ -161,12 +180,20 @@ export interface UserUpdateInput extends Partial<UserCreateInput> {
 // ========================================
 
 export interface AidApplicationCreateInput {
-  beneficiary_id: Id<'beneficiaries'>;
-  aid_type: string;
-  amount_requested: number;
-  reason?: string;
-  status?: 'pending' | 'approved' | 'rejected' | 'in_review';
-  applied_date?: string;
+  application_date: string;
+  applicant_type: 'person' | 'organization' | 'partner';
+  applicant_name: string;
+  beneficiary_id?: Id<'beneficiaries'>;
+  one_time_aid?: number;
+  regular_financial_aid?: number;
+  regular_food_aid?: number;
+  in_kind_aid?: number;
+  service_referral?: number;
+  stage: 'draft' | 'under_review' | 'approved' | 'ongoing' | 'completed';
+  status: 'open' | 'closed';
+  description?: string;
+  notes?: string;
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
   [key: string]: unknown;
 }
 

@@ -93,6 +93,7 @@ describe('API Type Definitions', () => {
         amount: 1000,
         currency: 'TRY',
         donation_type: 'zakat',
+        payment_method: 'cash',
         donation_purpose: 'General Aid',
         receipt_number: 'RCP-001',
         status: 'pending',
@@ -127,8 +128,8 @@ describe('API Type Definitions', () => {
     it('should require title and assigned_to user', () => {
       const task: TaskCreateInput = {
         title: 'Complete report',
-        assigned_to: 'user_123',
-        created_by: 'user_456',
+        assigned_to: 'user_123' as any,
+        created_by: 'user_456' as any,
         priority: 'high',
         status: 'pending',
         is_read: false,
@@ -144,8 +145,8 @@ describe('API Type Definitions', () => {
       priorities.forEach((priority) => {
         const task: TaskCreateInput = {
           title: 'Test Task',
-          assigned_to: 'user_123',
-          created_by: 'user_456',
+          assigned_to: 'user_123' as any,
+          created_by: 'user_456' as any,
           priority,
           status: 'pending',
           is_read: false,
@@ -161,8 +162,8 @@ describe('API Type Definitions', () => {
       const meeting: MeetingCreateInput = {
         title: 'Board Meeting',
         meeting_date: '2024-12-20T10:00:00Z',
-        organizer: 'user_123',
-        participants: ['user_456', 'user_789'],
+        organizer: 'user_123' as any,
+        participants: ['user_456', 'user_789'] as any,
         status: 'scheduled',
         meeting_type: 'board',
       };
@@ -178,8 +179,8 @@ describe('API Type Definitions', () => {
         const meeting: MeetingCreateInput = {
           title: 'Meeting',
           meeting_date: '2024-12-20T10:00:00Z',
-          organizer: 'user_123',
-          participants: [],
+          organizer: 'user_123' as any,
+          participants: [] as any,
           status: 'scheduled',
           meeting_type: type,
         };
@@ -271,6 +272,7 @@ describe('API Type Definitions', () => {
         amount: 100,
         currency: 'TRY',
         donation_type: 'zakat',
+        payment_method: 'cash',
         donation_purpose: 'Test',
         receipt_number: 'RCP-001',
         status: 'pending',

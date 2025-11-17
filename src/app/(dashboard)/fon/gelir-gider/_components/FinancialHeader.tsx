@@ -20,7 +20,7 @@ interface FinancialHeaderProps {
 
 export function FinancialHeader({
   onExportExcel,
-  onAddNew,
+  onAddNew: _onAddNew,
   isAddDialogOpen,
   onAddDialogOpenChange,
 }: FinancialHeaderProps) {

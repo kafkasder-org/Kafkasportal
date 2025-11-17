@@ -2,11 +2,7 @@
 
 import { toast } from 'sonner';
 import type { FinanceRecord } from '@/lib/financial/calculations';
-import { formatCurrency, formatTransactionDate } from '@/lib/financial/calculations';
-
-interface ExportButtonProps {
-  records: FinanceRecord[];
-}
+import { formatTransactionDate } from '@/lib/financial/calculations';
 
 /**
  * Generate CSV content from financial records

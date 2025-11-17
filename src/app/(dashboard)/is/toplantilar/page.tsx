@@ -15,7 +15,7 @@ import dynamic from 'next/dynamic';
 import { DemoBanner } from '@/components/ui/demo-banner';
 import { MeetingsHeader } from './_components/MeetingsHeader';
 import { useAuthStore } from '@/stores/authStore';
-import { api } from '@/lib/api/convex-api-client';
+import { meetings as meetingsApi } from '@/lib/api/convex-api-client';
 import type { MeetingDocument } from '@/types/database';
 import { Calendar, CheckCircle, XCircle } from 'lucide-react';
 
@@ -25,50 +25,44 @@ const CalendarView = dynamic(() => import('@/components/meetings/CalendarView').
   ssr: false,
 });
 
-const MeetingListView = dynamic(() => import('@/components/meetings/MeetingListView').then((m) => ({ default: m.MeetingListView })), {
-  loading: () => <div className="p-8 text-center">Yükleniyor...</div>,
-  ssr: false,
-});
+// MeetingListView component is not implemented yet
+// const MeetingListView = dynamic(() => import('@/components/meetings/MeetingListView').then((m) => ({ default: m.MeetingListView })), {
+//   loading: () => <div className="p-8 text-center">Yükleniyor...</div>,
+//   ssr: false,
+// });
 
 export default function MeetingsPage() {
   const queryClient = useQueryClient();
-  const { user } = useAuthStore();
+  const { user: _user } = useAuthStore();
 
   // View state
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedMeeting, setSelectedMeeting] = useState<MeetingDocument | null>(null);
+  const [_selectedMeeting, setSelectedMeeting] = useState<MeetingDocument | null>(null);
   const [meetingToDelete, setMeetingToDelete] = useState<string | null>(null);
 
-  // Filter state
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [meetingTypeFilter, setMeetingTypeFilter] = useState('all');
+  // Filter state (unused for now since list view is not implemented)
+  const [_search, _setSearch] = useState('');
+  const [_statusFilter, _setStatusFilter] = useState('all');
+  const [_meetingTypeFilter, _setMeetingTypeFilter] = useState('all');
 
   // Fetch meetings
   const { data: meetingsData, isLoading } = useQuery({
-    queryKey: ['meetings', search, statusFilter, meetingTypeFilter],
-    queryFn: () =>
-      api.meetings.getMeetings({
-        filters: {
-          search: search || undefined,
-          status: statusFilter !== 'all' ? statusFilter : undefined,
-          meeting_type: meetingTypeFilter !== 'all' ? meetingTypeFilter : undefined,
-        },
-      }),
+    queryKey: ['meetings'],
+    queryFn: () => meetingsApi.getAll(),
   });
 
-  const meetings: MeetingDocument[] = meetingsData?.data || [];
+  const meetings: MeetingDocument[] = (meetingsData?.data as MeetingDocument[]) || [];
 
   // Calculate statistics
   const totalMeetings = meetings.length;
-  const upcomingMeetings = meetings.filter((m) => new Date(m.start_time) > new Date()).length;
-  const completedMeetings = meetings.filter((m) => new Date(m.end_time) < new Date()).length;
+  const upcomingMeetings = meetings.filter((m) => new Date(m.meeting_date) > new Date()).length;
+  const completedMeetings = meetings.filter((m) => m.status === 'completed').length;
   const cancelledMeetings = meetings.filter((m) => m.status === 'cancelled').length;
 
   // Mutations
-  const createMeetingMutation = useMutation({
-    mutationFn: (data: Partial<MeetingDocument>) => api.meetings.createMeeting(data),
+  const _createMeetingMutation = useMutation({
+    mutationFn: (data: Partial<MeetingDocument>) => meetingsApi.create(data as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meetings'] });
       setShowCreateModal(false);
@@ -79,8 +73,8 @@ export default function MeetingsPage() {
     },
   });
 
-  const deleteMeetingMutation = useMutation({
-    mutationFn: (meetingId: string) => api.meetings.deleteMeeting(meetingId),
+  const _deleteMeetingMutation = useMutation({
+    mutationFn: (meetingId: string) => meetingsApi.delete(meetingId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['meetings'] });
       setMeetingToDelete(null);
@@ -164,21 +158,13 @@ export default function MeetingsPage() {
           ) : viewMode === 'calendar' ? (
             <CalendarView
               meetings={meetings}
-              onSelectMeeting={setSelectedMeeting}
+              onSelectMeeting={setSelectedMeeting as any}
               onCreateMeeting={() => setShowCreateModal(true)}
             />
           ) : (
-            <MeetingListView
-              meetings={meetings}
-              search={search}
-              onSearchChange={setSearch}
-              statusFilter={statusFilter}
-              onStatusFilterChange={setStatusFilter}
-              meetingTypeFilter={meetingTypeFilter}
-              onMeetingTypeFilterChange={setMeetingTypeFilter}
-              onSelectMeeting={setSelectedMeeting}
-              onDeleteMeeting={setMeetingToDelete}
-            />
+            <div className="p-8 text-center text-muted-foreground">
+              Liste görünümü henüz uygulanmadı. Lütfen takvim görünümünü kullanın.
+            </div>
           )}
         </CardContent>
       </Card>
