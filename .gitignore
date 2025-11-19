@@ -139,6 +139,12 @@ KEYS-AND-CREDENTIALS.md
 #Ignore cursor AI rules
 .cursor\rules\codacy.mdc
 
+# IDE and tool-specific directories
+.claude/
+.cursor/
+.serena/
+weweb-custom/
+
 # Logs
 logs
 dev-debug.log
