@@ -1,32 +1,60 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# Dependabot configuration for automatic dependency updates and security patches
+# Documentation: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
 updates:
-  # Enable version updates for npm (Node.js dependencies)
+  # npm dependencies - Production and development dependencies
+  # Includes security updates (GitHub also handles security alerts automatically)
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 10
+      interval: 'daily'
+      time: '06:00'
+    # Allow more PRs for security updates
+    open-pull-requests-limit: 20
+    # Group updates to reduce PR noise (security updates are not grouped)
+    groups:
+      # Group all patch and minor updates together
+      production-dependencies:
+        dependency-type: 'production'
+        update-types:
+          - 'minor'
+          - 'patch'
+      dev-dependencies:
+        dependency-type: 'development'
+        update-types:
+          - 'minor'
+          - 'patch'
+    # Major updates are handled separately
+    versioning-strategy: 'increase-if-necessary'
     labels:
       - 'dependencies'
       - 'npm'
+      - 'automated'
     commit-message:
       prefix: 'deps'
+      prefix-development: 'deps-dev'
       include: 'scope'
+    # Note: Security updates are automatically handled by GitHub's Dependabot alerts
+    # This configuration handles regular version updates including security patches
 
-  # Enable version updates for GitHub Actions
+  # GitHub Actions - CI/CD workflows
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     labels:
       - 'dependencies'
       - 'github-actions'
+      - 'ci/cd'
+      - 'automated'
     commit-message:
       prefix: 'ci'
       include: 'scope'
+    groups:
+      github-actions:
+        patterns:
+          - '*'
