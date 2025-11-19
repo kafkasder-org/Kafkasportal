@@ -40,6 +40,7 @@ export default function MeetingsPage() {
   // View state
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState<MeetingDocument | null>(null);
 
   // Filter state (unused for now since list view is not implemented)
   const [_search, _setSearch] = useState('');
@@ -168,6 +169,23 @@ export default function MeetingsPage() {
             onSuccess={() => setShowCreateModal(false)}
             onCancel={() => setShowCreateModal(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* View/Edit Meeting Modal */}
+      <Dialog open={!!selectedMeeting} onOpenChange={() => setSelectedMeeting(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Toplantı Detayları</DialogTitle>
+            <DialogDescription>Toplantı bilgilerini görüntüleyin veya düzenleyin</DialogDescription>
+          </DialogHeader>
+          {selectedMeeting && (
+            <MeetingForm
+              initialData={selectedMeeting}
+              onSuccess={() => setSelectedMeeting(null)}
+              onCancel={() => setSelectedMeeting(null)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

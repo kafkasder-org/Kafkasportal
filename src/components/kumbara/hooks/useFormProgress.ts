@@ -4,14 +4,14 @@
  */
 
 import { useMemo } from 'react';
-import { useWatch, type Control } from 'react-hook-form';
+import { useWatch, type Control, type FieldValues } from 'react-hook-form';
 
-interface UseFormProgressOptions<T> {
+interface UseFormProgressOptions<T extends FieldValues> {
   control: Control<T>;
   requiredFieldNames: readonly (keyof T)[];
 }
 
-export function useFormProgress<T>({ control, requiredFieldNames }: UseFormProgressOptions<T>) {
+export function useFormProgress<T extends FieldValues>({ control, requiredFieldNames }: UseFormProgressOptions<T>) {
   const watchedFields = useWatch({
     control,
     name: requiredFieldNames as any,
@@ -20,7 +20,7 @@ export function useFormProgress<T>({ control, requiredFieldNames }: UseFormProgr
   const progress = useMemo(() => {
     const fieldValues = Array.isArray(watchedFields) ? watchedFields : [watchedFields];
 
-    const completedFields = fieldValues.filter((value) => {
+    const completedFields = (fieldValues as any[]).filter((value: any) => {
       return value !== undefined && value !== null && value !== '';
     });
 

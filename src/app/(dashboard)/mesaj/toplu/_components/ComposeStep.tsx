@@ -35,7 +35,6 @@ interface ComposeStepProps {
 export function ComposeStep({
   messageType,
   messageData,
-  onMessageTypeChange: _onMessageTypeChange,
   onMessageChange,
 }: ComposeStepProps) {
   return (

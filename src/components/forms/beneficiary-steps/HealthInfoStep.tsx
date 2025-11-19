@@ -6,7 +6,6 @@
 'use client';
 
 import { useFormContext } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
@@ -168,16 +167,16 @@ export function HealthInfoStep() {
 
           {has_health_insurance && (
             <div className="ml-7 space-y-2">
-              <Label htmlFor="socialSecurityStatus">Sosyal Güvenlik Durumu</Label>
+              <Label htmlFor="socialSecurity">Sosyal Güvenlik Durumu</Label>
               <ParameterSelect
                 parameter="SOSYAL_GUVENLIK_DURUMU"
-                value={watch('socialSecurityStatus')}
-                onValueChange={(value) => setValue('socialSecurityStatus', value as any)}
+                value={String(watch('socialSecurity') ?? '')}
+                onValueChange={(value) => setValue('socialSecurity', value as any)}
                 placeholder="Sosyal güvenlik durumu seçin"
-                className={errors.socialSecurityStatus ? 'border-red-500' : ''}
+                className={errors.socialSecurity ? 'border-red-500' : ''}
               />
-              {errors.socialSecurityStatus && (
-                <p className="text-sm text-red-500">{errors.socialSecurityStatus.message}</p>
+              {errors.socialSecurity && (
+                <p className="text-sm text-red-500">{errors.socialSecurity.message}</p>
               )}
             </div>
           )}

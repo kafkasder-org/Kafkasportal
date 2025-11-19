@@ -127,7 +127,8 @@ export function useStandardForm<TFormData extends FieldValues, TResponse = unkno
 
   // Initialize form with schema validation
   const form = useForm<TFormData>({
-    resolver: zodResolver(schema) as any,
+    // @ts-expect-error - Zod v4 type incompatibility with hookform resolver
+    resolver: zodResolver(schema),
     defaultValues: defaultValues as any,
     mode: 'onBlur',
   });
@@ -156,7 +157,8 @@ export function useStandardForm<TFormData extends FieldValues, TResponse = unkno
 
   // Create form submission handler
   const handleSubmit = form.handleSubmit(async (data) => {
-    await mutation.mutate(data as TFormData);
+    // @ts-expect-error - Generic type constraint issue with FieldValues
+    await mutation.mutate(data);
   });
 
   return {

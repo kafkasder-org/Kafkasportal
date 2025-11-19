@@ -200,7 +200,8 @@ export function withLogging(handler: RouteHandler): RouteHandler {
     const duration = Date.now() - startTime;
     logger.info(`[${request.method}] ${request.url}`, {
       status: response.status,
-      duration: `${duration}ms`,
+      duration: duration,
+      durationMs: `${duration}ms`,
     });
 
     return response;

@@ -97,11 +97,11 @@ export const donationExportColumns: ExportColumn[] = [
     header: 'Tutar',
     key: 'amount',
     width: 25,
-    formatter: (value) =>
+    formatter: (value: unknown) =>
       new Intl.NumberFormat('tr-TR', {
         style: 'currency',
         currency: 'TRY',
-      }).format(value),
+      }).format(Number(value)),
   },
   { header: 'Bağış Türü', key: 'donation_type', width: 30 },
   { header: 'Durum', key: 'status', width: 20 },
@@ -115,24 +115,24 @@ export const financialRecordExportColumns: ExportColumn[] = [
     header: 'Gelir',
     key: 'income',
     width: 25,
-    formatter: (value) =>
+    formatter: (value: unknown) =>
       value
         ? new Intl.NumberFormat('tr-TR', {
             style: 'currency',
             currency: 'TRY',
-          }).format(value)
+          }).format(Number(value))
         : '-',
   },
   {
     header: 'Gider',
     key: 'expense',
     width: 25,
-    formatter: (value) =>
+    formatter: (value: unknown) =>
       value
         ? new Intl.NumberFormat('tr-TR', {
             style: 'currency',
             currency: 'TRY',
-          }).format(value)
+          }).format(Number(value))
         : '-',
   },
 ];

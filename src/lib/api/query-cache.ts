@@ -40,7 +40,7 @@ export class QueryCache<T = unknown> {
     // Check if data is in cache and still valid
     const cached = this.cache.get(key as any);
     if (cached && !this.isExpired(cached)) {
-      return cached.data as R;
+      return cached.data as unknown as R;
     }
 
     // Check if request is already pending
@@ -52,7 +52,7 @@ export class QueryCache<T = unknown> {
     // Execute query and cache result
     const request = queryFn()
       .then((data) => {
-        this.set(key, data, ttl);
+        this.set(key, data as any, ttl);
         this.pendingRequests.delete(key);
         return data;
       })
@@ -71,8 +71,10 @@ export class QueryCache<T = unknown> {
   set(key: string, data: T, ttl = this.defaultTTL): void {
     // Implement simple LRU eviction if cache is full
     if (this.cache.size >= this.maxSize) {
-      const firstKey = this.cache.keys().next().value;
-      this.cache.delete(firstKey);
+      const firstKey = this.cache.keys().next().value as string | undefined;
+      if (firstKey) {
+        this.cache.delete(firstKey);
+      }
     }
 
     this.cache.set(key, {
@@ -240,7 +242,7 @@ export class BatchRequestManager<T = unknown> {
    * Add request to batch
    */
   async add(key: string, params: unknown): Promise<T> {
-    return new Promise((resolve, reject) => {
+    return new Promise((_resolve, reject) => {
       this.batch.push({ key, params });
 
       // Execute immediately if batch is full
@@ -293,7 +295,7 @@ export class BatchRequestManager<T = unknown> {
 /**
  * Create efficient API query configuration
  */
-export function createQueryConfig<T>(options?: {
+export function createQueryConfig<T = unknown>(options?: {
   enabled?: boolean;
   staleTime?: number;
   cacheTime?: number;

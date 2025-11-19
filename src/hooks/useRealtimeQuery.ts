@@ -36,7 +36,7 @@ export function useRealtimeQuery<Query extends FunctionReference<'query'>>(
   } = options;
 
   const data = useConvexQuery(query, args);
-  const previousDataRef = useRef<FunctionReturnType<Query>>();
+  const previousDataRef = useRef<FunctionReturnType<Query> | undefined>(undefined);
   const isInitialRenderRef = useRef(true);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export function useRealtimeList<Query extends FunctionReference<'query'>>(
   const { itemName = 'öğe', skipInitial = true } = options;
 
   const data = useConvexQuery(query, args);
-  const previousCountRef = useRef<number>();
+  const previousCountRef = useRef<number | undefined>(undefined);
   const isInitialRenderRef = useRef(true);
 
   useEffect(() => {
@@ -137,7 +137,7 @@ export function useEditConflictDetection<T extends { _id: string; _updatedAt?: n
   hasConflict: boolean;
   conflictMessage: string | null;
 } {
-  const lastSeenTimestampRef = useRef<number>();
+  const lastSeenTimestampRef = useRef<number | undefined>(undefined);
   const hasConflict = useRef(false);
   const conflictMessage = useRef<string | null>(null);
 
@@ -184,7 +184,7 @@ export function useEditConflictDetection<T extends { _id: string; _updatedAt?: n
  * Hook for showing presence indicators (who is online/editing)
  * This is a placeholder for future implementation with Convex presence
  */
-export function usePresence(resourceId: string, userId?: string) {
+export function usePresence(_resourceId: string, _userId?: string) {
   // TODO: Implement with Convex presence API
   // For now, return empty state
   return {

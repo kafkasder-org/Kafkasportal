@@ -11,7 +11,7 @@ import logger from '@/lib/logger';
 
 export function ServiceWorkerRegister() {
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [_updateAvailable, setUpdateAvailable] = useState(false);
 
   useEffect(() => {
     // Only register service worker in production and on client
@@ -135,8 +135,8 @@ export function ServiceWorkerRegister() {
       });
 
       // Sync offline data if service worker supports it
-      if (registration?.sync) {
-        registration.sync.register('sync-offline-data').catch((error) => {
+      if (registration && 'sync' in registration) {
+        (registration as any).sync.register('sync-offline-data').catch((error: any) => {
           logger.error('Background sync registration failed', { error });
         });
       }

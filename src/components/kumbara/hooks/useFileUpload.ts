@@ -4,14 +4,14 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { UseFormSetValue } from 'react-hook-form';
+import type { UseFormSetValue, FieldValues, Path } from 'react-hook-form';
 
-interface UseFileUploadOptions<T> {
+interface UseFileUploadOptions<T extends FieldValues> {
   setValue: UseFormSetValue<T>;
-  fieldName: keyof T;
+  fieldName: Path<T>;
 }
 
-export function useFileUpload<T>({ setValue, fieldName }: UseFileUploadOptions<T>) {
+export function useFileUpload<T extends FieldValues>({ setValue, fieldName }: UseFileUploadOptions<T>) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
