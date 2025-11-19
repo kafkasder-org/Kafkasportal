@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -33,14 +32,11 @@ const CalendarView = dynamic(() => import('@/components/meetings/CalendarView').
 // });
 
 export default function MeetingsPage() {
-  const queryClient = useQueryClient();
   const { user: _user } = useAuthStore();
 
   // View state
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [_selectedMeeting, setSelectedMeeting] = useState<MeetingDocument | null>(null);
-  const [meetingToDelete, setMeetingToDelete] = useState<string | null>(null);
 
   // Filter state (unused for now since list view is not implemented)
   const [_search, _setSearch] = useState('');
@@ -60,18 +56,6 @@ export default function MeetingsPage() {
   const upcomingMeetings = meetings.filter((m) => new Date(m.meeting_date) > new Date()).length;
   const completedMeetings = meetings.filter((m) => m.status === 'completed').length;
   const cancelledMeetings = meetings.filter((m) => m.status === 'cancelled').length;
-
-  const _deleteMeetingMutation = useMutation({
-    mutationFn: (meetingId: string) => meetingsApi.delete(meetingId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meetings'] });
-      setMeetingToDelete(null);
-      toast.success('Toplantı silindi');
-    },
-    onError: () => {
-      toast.error('Toplantı silinemedi');
-    },
-  });
 
   return (
     <div className="space-y-6">
@@ -146,8 +130,8 @@ export default function MeetingsPage() {
           ) : viewMode === 'calendar' ? (
             <CalendarView
               meetings={meetings}
-              onSelectMeeting={setSelectedMeeting as any}
-              onCreateMeeting={() => setShowCreateModal(true)}
+              onMeetingClick={() => {}}
+              onDateClick={() => setShowCreateModal(true)}
             />
           ) : (
             <div className="p-8 text-center text-muted-foreground">
@@ -168,16 +152,6 @@ export default function MeetingsPage() {
             onSuccess={() => setShowCreateModal(false)}
             onCancel={() => setShowCreateModal(false)}
           />
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Modal */}
-      <Dialog open={!!meetingToDelete} onOpenChange={(open) => !open && setMeetingToDelete(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Toplantıyı Sil?</DialogTitle>
-            <DialogDescription>Bu işlem geri alınamaz. Emin misiniz?</DialogDescription>
-          </DialogHeader>
         </DialogContent>
       </Dialog>
     </div>

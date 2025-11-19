@@ -84,16 +84,16 @@ export function HealthInfoStep() {
 
           {hasChronicIllness && (
             <div className="ml-7 space-y-2">
-              <Label htmlFor="chronicIllness">Hastalık Detayı</Label>
+              <Label htmlFor="chronicIllnessDetail">Hastalık Detayı</Label>
               <Textarea
-                id="chronicIllness"
-                {...register('chronicIllness')}
+                id="chronicIllnessDetail"
+                {...register('chronicIllnessDetail')}
                 placeholder="Kronik hastalık hakkında detaylı bilgi giriniz..."
                 rows={3}
-                className={errors.chronicIllness ? 'border-red-500' : ''}
+                className={errors.chronicIllnessDetail ? 'border-red-500' : ''}
               />
-              {errors.chronicIllness && (
-                <p className="text-sm text-red-500">{errors.chronicIllness.message}</p>
+              {errors.chronicIllnessDetail && (
+                <p className="text-sm text-red-500">{errors.chronicIllnessDetail.message}</p>
               )}
             </div>
           )}
@@ -145,21 +145,7 @@ export function HealthInfoStep() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="disabilityPercentage">Engellilik Oranı (%)</Label>
-                <Input
-                  id="disabilityPercentage"
-                  type="number"
-                  min={0}
-                  max={100}
-                  {...register('disabilityPercentage', { valueAsNumber: true })}
-                  placeholder="0-100 arası"
-                  className={errors.disabilityPercentage ? 'border-red-500' : ''}
-                />
-                {errors.disabilityPercentage && (
-                  <p className="text-sm text-red-500">{errors.disabilityPercentage.message}</p>
-                )}
-              </div>
+              {/* Disability percentage field removed - not in schema */}
             </div>
           )}
         </div>

@@ -29,27 +29,25 @@ const MessageTemplateSelector = dynamic(
 interface ComposeStepProps {
   messageType: MessageType;
   messageData: { subject?: string; content: string };
-  onMessageTypeChange: (type: MessageType) => void;
   onMessageChange: (data: { subject?: string; content: string }) => void;
 }
 
-export function ComposeStep({
-  messageType,
-  messageData,
-  onMessageTypeChange,
-  onMessageChange,
-}: ComposeStepProps) {
+export function ComposeStep({ messageType, messageData, onMessageChange }: ComposeStepProps) {
   return (
     <div className="space-y-6">
       {/* Message Template Selector */}
-      <MessageTemplateSelector onSelectTemplate={onMessageChange} />
+      <MessageTemplateSelector
+        messageType={messageType}
+        onSelect={(template) =>
+          onMessageChange({ subject: template.subject, content: template.content })
+        }
+      />
 
       {/* Message Form */}
       <MessageForm
-        messageType={messageType}
+        defaultMessageType={messageType}
         initialData={messageData}
-        onSubmit={onMessageChange}
-        onMessageTypeChange={onMessageTypeChange}
+        onSuccess={() => {}}
       />
     </div>
   );

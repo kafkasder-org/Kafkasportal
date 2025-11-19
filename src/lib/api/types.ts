@@ -116,10 +116,13 @@ export interface MeetingUpdateInput extends Partial<MeetingCreateInput> {
 
 export interface MeetingDecisionCreateInput {
   meeting_id: Id<'meetings'>;
-  description: string;
-  decided_by?: string;
-  implementation_date?: string;
-  status?: 'pending' | 'implemented' | 'cancelled';
+  title: string;
+  summary?: string;
+  owner?: Id<'users'>;
+  created_by: Id<'users'>;
+  status?: 'acik' | 'devam' | 'kapatildi';
+  tags?: string[];
+  due_date?: string;
   [key: string]: unknown;
 }
 

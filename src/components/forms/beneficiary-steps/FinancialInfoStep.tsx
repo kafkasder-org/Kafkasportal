@@ -67,33 +67,17 @@ export function FinancialInfoStep() {
           </div>
         </div>
 
-        {/* Income Source and Sector */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="incomeSource">Gelir Kaynağı</Label>
-            <ParameterSelect
-              parameter="GELIR_KAYNAGI"
-              value={watch('incomeSource')}
-              onValueChange={(value) => setValue('incomeSource', value as any)}
-              placeholder="Gelir kaynağı seçin"
-              className={errors.incomeSource ? 'border-red-500' : ''}
-            />
-            {errors.incomeSource && (
-              <p className="text-sm text-red-500">{errors.incomeSource.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="sector">Sektör</Label>
-            <ParameterSelect
-              parameter="SEKTOR"
-              value={watch('sector')}
-              onValueChange={(value) => setValue('sector', value as any)}
-              placeholder="Çalışılan sektör seçin"
-              className={errors.sector ? 'border-red-500' : ''}
-            />
-            {errors.sector && <p className="text-sm text-red-500">{errors.sector.message}</p>}
-          </div>
+        {/* Sector */}
+        <div className="space-y-2">
+          <Label htmlFor="sector">Sektör</Label>
+          <ParameterSelect
+            parameter="SEKTOR"
+            value={(watch('sector') as unknown) as string}
+            onValueChange={(value) => setValue('sector', value as any)}
+            placeholder="Çalışılan sektör seçin"
+            className={errors.sector ? 'border-red-500' : ''}
+          />
+          {errors.sector && <p className="text-sm text-red-500">{errors.sector.message}</p>}
         </div>
 
         {/* Financial Status Checkboxes */}
@@ -111,23 +95,7 @@ export function FinancialInfoStep() {
               Borcu var
             </Label>
           </div>
-          {has_debt && (
-            <div className="ml-7 space-y-2">
-              <Label htmlFor="debtAmount">Borç Miktarı (TL)</Label>
-              <Input
-                id="debtAmount"
-                type="number"
-                min={0}
-                step={0.01}
-                {...register('debtAmount', { valueAsNumber: true })}
-                placeholder="0.00"
-                className={errors.debtAmount ? 'border-red-500' : ''}
-              />
-              {errors.debtAmount && (
-                <p className="text-sm text-red-500">{errors.debtAmount.message}</p>
-              )}
-            </div>
-          )}
+          {/* Debt amount field removed - not in schema */}
 
           <div className="flex items-center space-x-3">
             <Checkbox

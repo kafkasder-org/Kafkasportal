@@ -20,7 +20,7 @@ export default function BulkMessagingPage() {
 
   // Filter & Wizard State
   const [wizardStep, setWizardStep] = useState<WizardStep>('compose');
-  const [messageType, setMessageType] = useState<MessageType>('sms');
+  const [messageType, _setMessageType] = useState<MessageType>('sms');
   const [messageData, setMessageData] = useState<{ subject?: string; content: string }>({
     content: '',
   });
@@ -131,16 +131,6 @@ export default function BulkMessagingPage() {
     setWizardStep(step);
   };
 
-  const _handleStartOver = () => {
-    setWizardStep('compose');
-    setMessageType('sms');
-    setMessageData({ content: '' });
-    setSelectedRecipients([]);
-    setConfirmed(false);
-    setSendingProgress(0);
-    setSendingResults(undefined);
-  };
-
   return (
     <div className="space-y-6">
       {/* Demo Banner */}
@@ -167,13 +157,13 @@ export default function BulkMessagingPage() {
           <ComposeStep
             messageType={messageType}
             messageData={messageData}
-            onMessageTypeChange={setMessageType}
             onMessageChange={setMessageData}
           />
         )}
 
         {wizardStep === 'recipients' && (
           <RecipientsStep
+            messageType={messageType}
             selectedRecipients={selectedRecipients}
             onRecipientsChange={setSelectedRecipients}
           />

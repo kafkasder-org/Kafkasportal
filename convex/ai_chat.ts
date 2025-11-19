@@ -13,7 +13,7 @@ import { v } from 'convex/values';
 import { PersistentTextStreaming } from '@convex-dev/persistent-text-streaming';
 import { components } from './_generated/api';
 import type { StreamId } from '@convex-dev/persistent-text-streaming';
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 
 const persistentTextStreaming = new PersistentTextStreaming(components.persistentTextStreaming);
@@ -170,9 +170,11 @@ export const streamChat = httpAction(async (ctx, request) => {
       }
 
       // Configure OpenAI model with API key
-      const model = openai('gpt-4o-mini', {
+      // In @ai-sdk/openai v2.x, use createOpenAI to create provider with API key
+      const openai = createOpenAI({
         apiKey: apiKey,
       });
+      const model = openai('gpt-4o-mini');
 
       // Stream AI response using Vercel AI SDK
       const result = await streamText({
@@ -190,7 +192,7 @@ export const streamChat = httpAction(async (ctx, request) => {
             content: body.prompt,
           },
         ],
-        maxTokens: 1000,
+        maxOutputTokens: 1000,
         temperature: 0.7,
       });
 

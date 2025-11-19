@@ -1221,8 +1221,8 @@ export default defineSchema({
    * @description Logs for email and SMS communications
    */
   communication_logs: defineTable({
-    /** @type {'email'|'sms'} - Type of communication */
-    type: v.union(v.literal('email'), v.literal('sms')),
+    /** @type {'email'|'sms'|'whatsapp'} - Type of communication */
+    type: v.union(v.literal('email'), v.literal('sms'), v.literal('whatsapp')),
     /** @type {string} - Recipient email or phone number */
     to: v.string(),
     /** @type {string} - Email subject (for emails only) */

@@ -9,8 +9,9 @@ interface RateLimitOptions {
 }
 
 // Next.js route handler context type
+// In Next.js 16+, params is now a Promise
 interface RouteContext {
-  params?: Record<string, string | string[]>;
+  params?: Record<string, string | string[]> | Promise<Record<string, string | string[]>>;
 }
 
 export function withRateLimit(

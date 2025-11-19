@@ -5,7 +5,7 @@
  */
 
 import { Component, ReactNode, ErrorInfo } from 'react';
-import { logger } from '@/lib/logger';
+import logger from '@/lib/logger';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
