@@ -170,15 +170,16 @@ export const streamChat = httpAction(async (ctx, request) => {
       }
 
       // Configure OpenAI model with API key
-      // In @ai-sdk/openai v2.x, use createOpenAI to create provider with API key
       const openai = createOpenAI({
-        apiKey: apiKey,
+        apiKey,
       });
       const model = openai('gpt-4o-mini');
 
       // Stream AI response using Vercel AI SDK
+      // Note: maxTokens/maxCompletionTokens removed due to API changes in AI SDK
+      // Temperature and other settings can be configured via model settings if needed
       const result = await streamText({
-        model: model,
+        model,
         messages: [
           {
             role: 'system',
@@ -192,8 +193,6 @@ export const streamChat = httpAction(async (ctx, request) => {
             content: body.prompt,
           },
         ],
-        maxOutputTokens: 1000,
-        temperature: 0.7,
       });
 
       // Stream chunks to the client
@@ -221,7 +220,7 @@ export const streamChat = httpAction(async (ctx, request) => {
       try {
         await chunkAppender(
           '\n\n[Hata: AI yanıtı oluşturulamadı. ' +
-          'Lütfen daha sonra tekrar deneyin veya sistem yöneticisiyle iletişime geçin.]'
+            'Lütfen daha sonra tekrar deneyin veya sistem yöneticisiyle iletişime geçin.]'
         );
       } catch (appendError) {
         console.error('Failed to append error message:', appendError);

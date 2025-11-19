@@ -20,10 +20,13 @@ import { Calendar, CheckCircle, XCircle } from 'lucide-react';
 import { MeetingForm } from '@/components/forms/MeetingForm';
 
 // Lazy load heavy components
-const CalendarView = dynamic(() => import('@/components/meetings/CalendarView').then((m) => ({ default: m.CalendarView })), {
-  loading: () => <div className="p-8 text-center">Yükleniyor...</div>,
-  ssr: false,
-});
+const CalendarView = dynamic(
+  () => import('@/components/meetings/CalendarView').then((m) => ({ default: m.CalendarView })),
+  {
+    loading: () => <div className="p-8 text-center">Yükleniyor...</div>,
+    ssr: false,
+  }
+);
 
 // MeetingListView component is not implemented yet
 // const MeetingListView = dynamic(() => import('@/components/meetings/MeetingListView').then((m) => ({ default: m.MeetingListView })), {
@@ -56,6 +59,19 @@ export default function MeetingsPage() {
   const upcomingMeetings = meetings.filter((m) => new Date(m.meeting_date) > new Date()).length;
   const completedMeetings = meetings.filter((m) => m.status === 'completed').length;
   const cancelledMeetings = meetings.filter((m) => m.status === 'cancelled').length;
+
+  // TODO: Implement delete meeting functionality
+  // const deleteMeetingMutation = useMutation({
+  //   mutationFn: (meetingId: string) => meetingsApi.delete(meetingId),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['meetings'] });
+  //     setMeetingToDelete(null);
+  //     toast.success('Toplantı silindi');
+  //   },
+  //   onError: () => {
+  //     toast.error('Toplantı silinemedi');
+  //   },
+  // });
 
   return (
     <div className="space-y-6">
@@ -130,8 +146,8 @@ export default function MeetingsPage() {
           ) : viewMode === 'calendar' ? (
             <CalendarView
               meetings={meetings}
-              onMeetingClick={() => {}}
-              onDateClick={() => setShowCreateModal(true)}
+              onMeetingClick={setSelectedMeeting}
+              onDateClick={(_date) => setShowCreateModal(true)}
             />
           ) : (
             <div className="p-8 text-center text-muted-foreground">

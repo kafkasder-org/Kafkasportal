@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
       meeting_id: body.meeting_id as any,
       title: body.title as any,
       summary: body.summary as any,
+      description: (body.description as any) ?? '',
       owner: body.owner as any,
       created_by: body.created_by as any,
       status: (body.status as any) ?? 'acik',

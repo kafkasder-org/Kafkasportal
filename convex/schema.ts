@@ -552,7 +552,12 @@ export default defineSchema({
    */
   messages: defineTable({
     /** @type {'sms'|'email'|'internal'} - The type of the message. */
-    message_type: v.union(v.literal('sms'), v.literal('email'), v.literal('internal'), v.literal('whatsapp')),
+    message_type: v.union(
+      v.literal('sms'),
+      v.literal('email'),
+      v.literal('internal'),
+      v.literal('whatsapp')
+    ),
     /** @type {Id<'users'>} - The ID of the user who sent the message. */
     sender: v.id('users'),
     /** @type {Id<'users'>[]} - An array of user IDs for the recipients. */
@@ -1218,7 +1223,7 @@ export default defineSchema({
 
   /**
    * @collection communication_logs
-   * @description Logs for email and SMS communications
+   * @description Logs for email, SMS, and WhatsApp communications
    */
   communication_logs: defineTable({
     /** @type {'email'|'sms'|'whatsapp'} - Type of communication */

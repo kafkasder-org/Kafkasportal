@@ -8,10 +8,10 @@ interface RateLimitOptions {
   skipFailedRequests?: boolean;
 }
 
-// Next.js route handler context type
-// In Next.js 16+, params is now a Promise
+// Next.js 16 route handler context type
+// In Next.js 16, params is a Promise
 interface RouteContext {
-  params?: Record<string, string | string[]> | Promise<Record<string, string | string[]>>;
+  params: Promise<Record<string, string | string[]>>;
 }
 
 export function withRateLimit(
@@ -106,7 +106,7 @@ export const authRateLimit = (
   });
 
 export const dataModificationRateLimit = (
-  handler: (req: NextRequest) => Promise<NextResponse> | NextResponse
+  handler: (req: NextRequest, context?: RouteContext) => Promise<NextResponse> | NextResponse
 ) =>
   withRateLimit(handler, {
     maxRequests: parseInt(process.env.RATE_LIMIT_DATA_MODIFY_MAX || '50'),
@@ -117,7 +117,7 @@ export const dataModificationRateLimit = (
 export const mutationRateLimit = dataModificationRateLimit;
 
 export const readOnlyRateLimit = (
-  handler: (req: NextRequest) => Promise<NextResponse> | NextResponse
+  handler: (req: NextRequest, context?: RouteContext) => Promise<NextResponse> | NextResponse
 ) =>
   withRateLimit(handler, {
     maxRequests: parseInt(process.env.RATE_LIMIT_READ_MAX || '200'),
@@ -125,7 +125,7 @@ export const readOnlyRateLimit = (
   });
 
 export const uploadRateLimit = (
-  handler: (req: NextRequest) => Promise<NextResponse> | NextResponse
+  handler: (req: NextRequest, context?: RouteContext) => Promise<NextResponse> | NextResponse
 ) =>
   withRateLimit(handler, {
     maxRequests: parseInt(process.env.RATE_LIMIT_UPLOAD_MAX || '10'),
@@ -133,7 +133,7 @@ export const uploadRateLimit = (
   });
 
 export const searchRateLimit = (
-  handler: (req: NextRequest) => Promise<NextResponse> | NextResponse
+  handler: (req: NextRequest, context?: RouteContext) => Promise<NextResponse> | NextResponse
 ) =>
   withRateLimit(handler, {
     maxRequests: parseInt(process.env.RATE_LIMIT_SEARCH_MAX || '30'),
@@ -141,7 +141,7 @@ export const searchRateLimit = (
   });
 
 export const dashboardRateLimit = (
-  handler: (req: NextRequest) => Promise<NextResponse> | NextResponse
+  handler: (req: NextRequest, context?: RouteContext) => Promise<NextResponse> | NextResponse
 ) =>
   withRateLimit(handler, {
     maxRequests: parseInt(process.env.RATE_LIMIT_DASHBOARD_MAX || '60'),
@@ -149,7 +149,9 @@ export const dashboardRateLimit = (
   });
 
 // Generic API rate limiter with configurable options
-export const apiRateLimit = (handler: (req: NextRequest) => Promise<NextResponse> | NextResponse) =>
+export const apiRateLimit = (
+  handler: (req: NextRequest, context?: RouteContext) => Promise<NextResponse> | NextResponse
+) =>
   withRateLimit(handler, {
     maxRequests: parseInt(process.env.RATE_LIMIT_API_MAX || '100'),
     windowMs: parseInt(process.env.RATE_LIMIT_API_WINDOW || '900000'), // 100 requests per 15 minutes

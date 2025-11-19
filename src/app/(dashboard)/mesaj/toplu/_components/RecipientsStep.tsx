@@ -39,9 +39,7 @@ export function RecipientsStep({
             <Users className="h-5 w-5" />
             Seçili Alıcılar
           </CardTitle>
-          <CardDescription>
-            Toplam {selectedRecipients.length} alıcı seçili
-          </CardDescription>
+          <CardDescription>Toplam {selectedRecipients.length} alıcı seçili</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-blue-600">{selectedRecipients.length}</div>
