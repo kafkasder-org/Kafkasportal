@@ -88,7 +88,7 @@
     "framer-motion": "^12.23.24",
     "handlebars": "^4.7.8",
     "immer": "^10.2.0",
-    "isomorphic-dompurify": "^2.31.0",
+    "isomorphic-dompurify": "^2.32.0",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.552.0",
