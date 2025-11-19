@@ -1,11 +1,15 @@
 {
   "name": "Kafkasder Panel - Next.js + Convex",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bullseye",
-  
+
   // Features to add to the dev container
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    }
   },
 
   // Configure tool-specific properties
@@ -29,9 +33,7 @@
       }
     },
     "codespaces": {
-      "openFiles": [
-        "README.md"
-      ]
+      "openFiles": ["README.md"]
     }
   },
 
@@ -51,7 +53,7 @@
 
   // Commands to run after container creation
   "postCreateCommand": "npm install && npm run typecheck",
-  
+
   // Commands to run when attaching to the container
   "postAttachCommand": "echo 'Codespace hazır! npm run dev ile başlatabilirsiniz.'",
 
@@ -67,4 +69,3 @@
   // Update content command (runs when files change)
   "updateContentCommand": "npm install"
 }
-

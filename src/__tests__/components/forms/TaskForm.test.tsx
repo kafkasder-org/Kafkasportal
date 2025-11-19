@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
@@ -14,12 +14,10 @@ function MockTaskForm({
   onSuccess,
   onCancel,
   initialData,
-  taskId,
 }: {
   onSuccess?: () => void;
   onCancel?: () => void;
   initialData?: Record<string, unknown>;
-  taskId?: string;
 }) {
   return (
     <form
@@ -34,7 +32,7 @@ function MockTaskForm({
         <input
           id="title"
           type="text"
-          defaultValue={initialData?.title || ''}
+          defaultValue={(initialData?.title as string) || ''}
           required
           minLength={3}
           placeholder="Enter task title"
@@ -46,7 +44,7 @@ function MockTaskForm({
         <label htmlFor="description">Description</label>
         <textarea
           id="description"
-          defaultValue={initialData?.description || ''}
+          defaultValue={(initialData?.description as string) || ''}
           placeholder="Task description"
           data-testid="task-description-input"
         />
@@ -54,7 +52,11 @@ function MockTaskForm({
 
       <div>
         <label htmlFor="priority">Priority</label>
-        <select id="priority" defaultValue={initialData?.priority || 'normal'} data-testid="task-priority">
+        <select
+          id="priority"
+          defaultValue={(initialData?.priority as string) || 'normal'}
+          data-testid="task-priority"
+        >
           <option value="low">Low</option>
           <option value="normal">Normal</option>
           <option value="high">High</option>
@@ -64,7 +66,11 @@ function MockTaskForm({
 
       <div>
         <label htmlFor="status">Status</label>
-        <select id="status" defaultValue={initialData?.status || 'pending'} data-testid="task-status">
+        <select
+          id="status"
+          defaultValue={(initialData?.status as string) || 'pending'}
+          data-testid="task-status"
+        >
           <option value="pending">Pending</option>
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
@@ -76,7 +82,7 @@ function MockTaskForm({
         <input
           id="due_date"
           type="date"
-          defaultValue={initialData?.due_date || ''}
+          defaultValue={(initialData?.due_date as string) || ''}
           data-testid="task-due-date"
         />
       </div>

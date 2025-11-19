@@ -7,7 +7,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { useFileUpload } from '@/components/kumbara/hooks/useFileUpload';
 
 describe('useFileUpload', () => {
-  const createMockFile = (name: string, size = 1024, type = 'image/png'): File => {
+  const createMockFile = (name: string, _size = 1024, type = 'image/png'): File => {
     return new File(['test'], name, { type, lastModified: Date.now() });
   };
 

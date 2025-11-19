@@ -10,7 +10,7 @@ import { DonationDetailsSection } from '@/components/kumbara/sections/DonationDe
 import type { KumbaraCreateInput } from '@/lib/validations/kumbara';
 
 describe('DonationDetailsSection', () => {
-  const renderWithForm = (currentCurrency: 'TRY' | 'USD' | 'EUR' = 'TRY') => {
+  const useRenderWithForm = (currentCurrency: 'TRY' | 'USD' | 'EUR' = 'TRY') => {
     const methods = useForm<KumbaraCreateInput>({
       defaultValues: {
         donor_name: '',
@@ -39,12 +39,12 @@ describe('DonationDetailsSection', () => {
   };
 
   it('should render the section title', () => {
-    renderWithForm();
+    useRenderWithForm();
     expect(screen.getByText('Bağış Detayları')).toBeInTheDocument();
   });
 
   it('should render all required fields', () => {
-    renderWithForm();
+    useRenderWithForm();
 
     expect(screen.getByLabelText(/Tutar/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Para Birimi/i)).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should show required asterisk for all fields', () => {
-    renderWithForm();
+    useRenderWithForm();
 
     const amountLabel = screen.getByText(/Tutar/i).closest('label');
     expect(amountLabel).toHaveTextContent('*');
@@ -65,23 +65,23 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should display correct currency symbol for TRY', () => {
-    renderWithForm('TRY');
+    useRenderWithForm('TRY');
     expect(screen.getByText('₺')).toBeInTheDocument();
   });
 
   it('should display correct currency symbol for USD', () => {
-    renderWithForm('USD');
+    useRenderWithForm('USD');
     expect(screen.getByText('$')).toBeInTheDocument();
   });
 
   it('should display correct currency symbol for EUR', () => {
-    renderWithForm('EUR');
+    useRenderWithForm('EUR');
     expect(screen.getByText('€')).toBeInTheDocument();
   });
 
   it('should allow numeric input in amount field', async () => {
     const user = userEvent.setup();
-    const { methods } = renderWithForm();
+    const { methods } = useRenderWithForm();
 
     const input = screen.getByPlaceholderText('0.00');
     await user.clear(input);
@@ -92,20 +92,20 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should have step="0.01" for decimal amounts', () => {
-    renderWithForm();
+    useRenderWithForm();
     const input = screen.getByPlaceholderText('0.00') as HTMLInputElement;
     expect(input.step).toBe('0.01');
   });
 
   it('should have min="0.01" to prevent negative amounts', () => {
-    renderWithForm();
+    useRenderWithForm();
     const input = screen.getByPlaceholderText('0.00') as HTMLInputElement;
     expect(input.min).toBe('0.01');
   });
 
   it('should render currency select with all options', async () => {
     const user = userEvent.setup();
-    renderWithForm();
+    useRenderWithForm();
 
     const currencySelect = screen.getByTestId('currencySelect');
     expect(currencySelect).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe('DonationDetailsSection', () => {
 
   it('should render payment method select with all options', async () => {
     const user = userEvent.setup();
-    renderWithForm();
+    useRenderWithForm();
 
     const paymentSelect = screen.getByTestId('paymentMethodSelect');
     expect(paymentSelect).toBeInTheDocument();
@@ -134,27 +134,26 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should render in a 3-column grid layout', () => {
-    const { container } = renderWithForm();
+    const { container } = useRenderWithForm();
 
     const gridContainer = container.querySelector('.grid.grid-cols-3');
     expect(gridContainer).toBeInTheDocument();
   });
 
   it('should have money bag emoji in section header', () => {
-    renderWithForm();
+    useRenderWithForm();
     expect(screen.getByText('💰')).toBeInTheDocument();
   });
 
   it('should have green-themed styling', () => {
-    const { container } = renderWithForm();
+    const { container } = useRenderWithForm();
 
     const section = container.querySelector('.bg-green-50\\/50');
     expect(section).toBeInTheDocument();
   });
 
   it('should update currency symbol when currency changes', async () => {
-    const user = userEvent.setup();
-    const { rerender } = renderWithForm('TRY');
+    const { rerender } = useRenderWithForm('TRY');
 
     expect(screen.getByText('₺')).toBeInTheDocument();
 

@@ -109,7 +109,11 @@ export const convexBeneficiaries = {
     };
     return await convexHttp.mutation(api.beneficiaries.create, payload as any);
   },
-  update: async (id: Id<'beneficiaries'>, data: BeneficiaryUpdateInput, context: AuthContext = {}) => {
+  update: async (
+    id: Id<'beneficiaries'>,
+    data: BeneficiaryUpdateInput,
+    context: AuthContext = {}
+  ) => {
     const payload: UpdateMutationPayload<BeneficiaryUpdateInput> = {
       id,
       ...data,
@@ -404,19 +408,19 @@ export const convexPartners = {
       partnership_type?: 'donor' | 'supplier' | 'volunteer' | 'sponsor' | 'service_provider';
     }
   ) => {
-    return await convexHttp.query(api.partners.list, params || {});
+    return await convexHttp.query(api.partners.getPartners, params || {});
   },
   get: async (id: Id<'partners'>) => {
-    return await convexHttp.query(api.partners.get, { id });
+    return await convexHttp.query(api.partners.getPartnerById, { id });
   },
   create: async (data: PartnerCreateInput) => {
-    return await convexHttp.mutation(api.partners.create, data);
+    return await convexHttp.mutation(api.partners.createPartner, data);
   },
   update: async (id: Id<'partners'>, data: PartnerUpdateInput) => {
-    return await convexHttp.mutation(api.partners.update, { id, ...data });
+    return await convexHttp.mutation(api.partners.updatePartner, { id, ...data });
   },
   remove: async (id: Id<'partners'>) => {
-    return await convexHttp.mutation(api.partners.remove, { id });
+    return await convexHttp.mutation(api.partners.deletePartner, { id });
   },
 };
 

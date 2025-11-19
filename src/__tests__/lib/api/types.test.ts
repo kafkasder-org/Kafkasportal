@@ -8,19 +8,12 @@ import type {
   BeneficiaryCreateInput,
   BeneficiaryUpdateInput,
   DonationCreateInput,
-  DonationUpdateInput,
   TaskCreateInput,
-  TaskUpdateInput,
   MeetingCreateInput,
-  MeetingUpdateInput,
   UserCreateInput,
   UserUpdateInput,
-  AidApplicationCreateInput,
-  AidApplicationUpdateInput,
   FinanceRecordCreateInput,
-  FinanceRecordUpdateInput,
   PartnerCreateInput,
-  PartnerUpdateInput,
 } from '@/lib/api/types';
 
 describe('API Type Definitions', () => {
@@ -104,7 +97,15 @@ describe('API Type Definitions', () => {
     });
 
     it('should accept different payment methods', () => {
-      const paymentMethods = ['cash', 'check', 'credit_card', 'online', 'bank_transfer', 'sms', 'in_kind'];
+      const paymentMethods = [
+        'cash',
+        'check',
+        'credit_card',
+        'online',
+        'bank_transfer',
+        'sms',
+        'in_kind',
+      ];
 
       paymentMethods.forEach((method) => {
         const donation: DonationCreateInput = {
@@ -140,7 +141,12 @@ describe('API Type Definitions', () => {
     });
 
     it('should validate task priority levels', () => {
-      const priorities: Array<'low' | 'normal' | 'high' | 'urgent'> = ['low', 'normal', 'high', 'urgent'];
+      const priorities: Array<'low' | 'normal' | 'high' | 'urgent'> = [
+        'low',
+        'normal',
+        'high',
+        'urgent',
+      ];
 
       priorities.forEach((priority) => {
         const task: TaskCreateInput = {
@@ -173,7 +179,12 @@ describe('API Type Definitions', () => {
     });
 
     it('should accept different meeting types', () => {
-      const types: Array<'general' | 'committee' | 'board' | 'other'> = ['general', 'committee', 'board', 'other'];
+      const types: Array<'general' | 'committee' | 'board' | 'other'> = [
+        'general',
+        'committee',
+        'board',
+        'other',
+      ];
 
       types.forEach((type) => {
         const meeting: MeetingCreateInput = {
@@ -279,7 +290,9 @@ describe('API Type Definitions', () => {
       };
 
       // Valid statuses
-      expect(['pending', 'approved', 'completed', 'cancelled', 'rejected']).toContain(validDonation.status);
+      expect(['pending', 'approved', 'completed', 'cancelled', 'rejected']).toContain(
+        validDonation.status
+      );
     });
 
     it('should enforce required fields at type level', () => {
@@ -306,7 +319,7 @@ describe('API Type Definitions', () => {
       const updateWithMultiple: UserUpdateInput = {
         name: 'Jane Doe',
         email: 'jane@example.com',
-        role: 'staff',
+        role: 'admin',
       };
 
       expect(updateWithOne.name).toBe('Jane Doe');

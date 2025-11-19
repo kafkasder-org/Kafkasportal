@@ -65,12 +65,7 @@ describe('Form Validation Schemas', () => {
 
   describe('Turkish ID (TC No) Validation', () => {
     it('should validate 11-digit TC numbers', () => {
-      const validTcNos = [
-        '12345678901',
-        '98765432101',
-        '55555555555',
-        '10000000000',
-      ];
+      const validTcNos = ['12345678901', '98765432101', '55555555555', '10000000000'];
 
       validTcNos.forEach((tcNo) => {
         const result = tcNoSchema.safeParse(tcNo);
@@ -144,7 +139,7 @@ describe('Form Validation Schemas', () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        expect(result.error.errors.length).toBeGreaterThan(0);
+        expect(result.error.issues.length).toBeGreaterThan(0);
       }
     });
 
@@ -161,9 +156,9 @@ describe('Form Validation Schemas', () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        const errors = result.error.errors;
-        expect(errors.some((e) => e.code === 'too_small')).toBe(true);
-        expect(errors.some((e) => e.code === 'invalid_string')).toBe(true);
+        const errors = result.error.issues;
+        expect(errors.some((e: any) => e.code === 'too_small')).toBe(true);
+        expect(errors.some((e: any) => e.code === 'invalid_string')).toBe(true);
       }
     });
   });

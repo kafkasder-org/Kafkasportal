@@ -4,38 +4,13 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
 import { DonorInfoSection } from '@/components/kumbara/sections/DonorInfoSection';
 import type { KumbaraCreateInput } from '@/lib/validations/kumbara';
 
-// Wrapper component to provide form context
-function TestWrapper({ children }: { children: React.ReactNode }) {
-  const methods = useForm<KumbaraCreateInput>({
-    defaultValues: {
-      donor_name: '',
-      donor_phone: '',
-      donor_email: '',
-      receipt_number: '',
-      amount: 0,
-      currency: 'TRY',
-      donation_type: 'Kumbara',
-      donation_purpose: 'Kumbara Bağışı',
-      payment_method: 'Nakit',
-      kumbara_location: '',
-      kumbara_institution: '',
-      collection_date: new Date().toISOString().split('T')[0],
-      status: 'pending',
-      is_kumbara: true,
-      notes: '',
-    },
-  });
-
-  return <FormProvider {...methods}>{children}</FormProvider>;
-}
-
 describe('DonorInfoSection', () => {
-  const renderWithForm = () => {
+  const useRenderWithForm = () => {
     const methods = useForm<KumbaraCreateInput>({
       defaultValues: {
         donor_name: '',
@@ -66,12 +41,12 @@ describe('DonorInfoSection', () => {
   };
 
   it('should render the section title', () => {
-    renderWithForm();
+    useRenderWithForm();
     expect(screen.getByText('Bağışçı Bilgileri')).toBeInTheDocument();
   });
 
   it('should render all required form fields', () => {
-    renderWithForm();
+    useRenderWithForm();
 
     expect(screen.getByLabelText(/Bağışçı Adı/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Telefon/i)).toBeInTheDocument();
@@ -80,7 +55,7 @@ describe('DonorInfoSection', () => {
   });
 
   it('should show required asterisk for mandatory fields', () => {
-    renderWithForm();
+    useRenderWithForm();
 
     const donorNameLabel = screen.getByText(/Bağışçı Adı/i).closest('label');
     expect(donorNameLabel).toHaveTextContent('*');
@@ -93,7 +68,7 @@ describe('DonorInfoSection', () => {
   });
 
   it('should not show required asterisk for optional email field', () => {
-    renderWithForm();
+    useRenderWithForm();
 
     const emailLabel = screen.getByText(/E-posta/i).closest('label');
     expect(emailLabel?.textContent).not.toContain('*');
@@ -101,7 +76,7 @@ describe('DonorInfoSection', () => {
 
   it('should allow typing in donor name field', async () => {
     const user = userEvent.setup();
-    renderWithForm();
+    useRenderWithForm();
 
     const input = screen.getByPlaceholderText('Ahmet Yılmaz');
     await user.type(input, 'Test Donor');
@@ -111,7 +86,7 @@ describe('DonorInfoSection', () => {
 
   it('should allow typing in email field', async () => {
     const user = userEvent.setup();
-    renderWithForm();
+    useRenderWithForm();
 
     const input = screen.getByPlaceholderText('ornek@email.com');
     await user.type(input, 'test@example.com');
@@ -121,7 +96,7 @@ describe('DonorInfoSection', () => {
 
   it('should allow typing in receipt number field', async () => {
     const user = userEvent.setup();
-    renderWithForm();
+    useRenderWithForm();
 
     const input = screen.getByPlaceholderText('KB-2024-001');
     await user.type(input, 'KB-2025-999');
@@ -131,7 +106,7 @@ describe('DonorInfoSection', () => {
 
   it('should only allow numeric input in phone field', async () => {
     const user = userEvent.setup();
-    const { methods } = renderWithForm();
+    const { methods } = useRenderWithForm();
 
     const input = screen.getByPlaceholderText('5XX XXX XX XX');
     await user.type(input, 'abc123def456');
@@ -143,7 +118,7 @@ describe('DonorInfoSection', () => {
 
   it('should limit phone field to 11 characters', async () => {
     const user = userEvent.setup();
-    renderWithForm();
+    useRenderWithForm();
 
     const input = screen.getByPlaceholderText('5XX XXX XX XX') as HTMLInputElement;
     await user.type(input, '123456789012345'); // More than 11 digits
@@ -152,7 +127,7 @@ describe('DonorInfoSection', () => {
   });
 
   it('should have correct placeholders', () => {
-    renderWithForm();
+    useRenderWithForm();
 
     expect(screen.getByPlaceholderText('Ahmet Yılmaz')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('5XX XXX XX XX')).toBeInTheDocument();
@@ -161,14 +136,14 @@ describe('DonorInfoSection', () => {
   });
 
   it('should render in a grid layout with proper styling', () => {
-    const { container } = renderWithForm();
+    const { container } = useRenderWithForm();
 
     const gridContainer = container.querySelector('.grid.grid-cols-2');
     expect(gridContainer).toBeInTheDocument();
   });
 
   it('should have user icon emoji in section header', () => {
-    renderWithForm();
+    useRenderWithForm();
     expect(screen.getByText('👤')).toBeInTheDocument();
   });
 });

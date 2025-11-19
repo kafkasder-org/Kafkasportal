@@ -9,12 +9,12 @@ import { useCallback, useEffect, useRef, useState, useMemo, DependencyList } fro
  * Debounced callback hook
  * Delays function execution until specified time has passed without invocation
  */
-export function useDebounce<T extends (...args: any[]) => any>(
+export function useThrottle<T extends (...args: any[]) => any>(
   callback: T,
   delay: number,
   dependencies?: DependencyList
 ): T {
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   return useCallback(
     (...args: Parameters<T>) => {
@@ -39,7 +39,7 @@ export function useThrottle<T extends (...args: any[]) => any>(
   dependencies?: DependencyList
 ): T {
   const lastRunRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   return useCallback(
     (...args: Parameters<T>) => {
@@ -88,7 +88,7 @@ export function useDebouncedValue<T>(value: T, delay: number): T {
 export function useThrottledValue<T>(value: T, delay: number): T {
   const [throttledValue, setThrottledValue] = useState<T>(value);
   const lastRunRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     const now = Date.now();
@@ -184,7 +184,7 @@ export function useEffectAsync(
  * Syncs updates with browser repaint
  */
 export function useAnimationFrame(callback: (deltaTime: number) => void): void {
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(Date.now());
 
   const animate = useCallback(() => {
@@ -291,7 +291,7 @@ export function useSessionStorage<T>(key: string, initialValue: T): [T, (value: 
  * Returns previous value from previous render
  */
 export function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>();
+  const ref = useRef<T | null>(null);
 
   useEffect(() => {
     ref.current = value;

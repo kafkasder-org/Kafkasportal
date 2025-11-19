@@ -32,11 +32,7 @@ export class QueryCache<T = unknown> {
   /**
    * Get cached data or execute query
    */
-  async get<R>(
-    key: string,
-    queryFn: () => Promise<R>,
-    ttl?: number
-  ): Promise<R> {
+  async get<R>(key: string, queryFn: () => Promise<R>, ttl?: number): Promise<R> {
     // Check if data is in cache and still valid
     const cached = this.cache.get(key as any);
     if (cached && !this.isExpired(cached)) {
@@ -46,7 +42,7 @@ export class QueryCache<T = unknown> {
     // Check if request is already pending
     const pending = this.pendingRequests.get(key);
     if (pending) {
-      return (pending as any) as Promise<R>;
+      return pending as any as Promise<R>;
     }
 
     // Execute query and cache result
@@ -143,11 +139,10 @@ export class QueryCache<T = unknown> {
     entries: Array<{ key: string; expiresIn: number }>;
   } {
     const now = Date.now();
-    const entries = Array.from(this.cache.entries())
-      .map(([key, entry]) => ({
-        key,
-        expiresIn: Math.max(0, entry.ttl - (now - entry.timestamp)),
-      }));
+    const entries = Array.from(this.cache.entries()).map(([key, entry]) => ({
+      key,
+      expiresIn: Math.max(0, entry.ttl - (now - entry.timestamp)),
+    }));
 
     return {
       size: this.cache.size,
@@ -180,20 +175,16 @@ export class RequestDeduplicator {
   /**
    * Deduplicate request - returns same promise if request is in flight
    */
-  async execute<T>(
-    key: string,
-    fn: () => Promise<T>
-  ): Promise<T> {
+  async execute<T>(key: string, fn: () => Promise<T>): Promise<T> {
     // Return existing request if in flight
     if (this.pendingRequests.has(key)) {
       return this.pendingRequests.get(key)!;
     }
 
     // Execute request
-    const request = fn()
-      .finally(() => {
-        this.pendingRequests.delete(key);
-      });
+    const request = fn().finally(() => {
+      this.pendingRequests.delete(key);
+    });
 
     this.pendingRequests.set(key, request);
     return request;
@@ -295,7 +286,7 @@ export class BatchRequestManager<T = unknown> {
 /**
  * Create efficient API query configuration
  */
-export function createQueryConfig<T = unknown>(options?: {
+export function createQueryConfig(options?: {
   enabled?: boolean;
   staleTime?: number;
   cacheTime?: number;
