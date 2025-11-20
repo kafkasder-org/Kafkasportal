@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { convexDonations, normalizeQueryParams } from '@/lib/convex/api';
 import logger from '@/lib/logger';
 import type { DonationDocument, Document } from '@/types/database';
+import type { PaymentMethod } from '@/lib/api/types';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
 
@@ -105,7 +106,7 @@ async function createDonationHandler(request: NextRequest) {
       amount: validation.normalizedData.amount || 0,
       currency: (validation.normalizedData.currency || 'TRY') as 'TRY' | 'USD' | 'EUR',
       donation_type: validation.normalizedData.donation_type || '',
-      payment_method: validation.normalizedData.payment_method || '',
+      payment_method: (validation.normalizedData.payment_method || 'cash') as PaymentMethod,
       donation_purpose: validation.normalizedData.donation_purpose || '',
       notes: validation.normalizedData.notes,
       receipt_number: validation.normalizedData.receipt_number || '',

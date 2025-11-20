@@ -48,6 +48,7 @@ export interface CategoryBreakdownItem {
   amount: number;
   count: number;
   type: 'income' | 'expense';
+  [key: string]: unknown;
 }
 
 export interface DonationReportData {
@@ -79,6 +80,12 @@ export interface AidApplication {
   status?: string;
   request_date?: string;
   approved_amount?: number;
+  one_time_aid?: number;
+  regular_financial_aid?: number;
+  regular_food_aid?: number;
+  in_kind_aid?: number;
+  stage?: string;
+  application_date?: string;
 }
 
 /**

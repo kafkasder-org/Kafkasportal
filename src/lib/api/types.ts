@@ -36,6 +36,22 @@ export interface BeneficiaryUpdateInput extends Partial<BeneficiaryCreateInput> 
 // DONATION TYPES
 // ========================================
 
+export type PaymentMethod =
+  | 'cash'
+  | 'check'
+  | 'credit_card'
+  | 'online'
+  | 'bank_transfer'
+  | 'sms'
+  | 'in_kind'
+  | 'NAKIT'
+  | 'CEK_SENET'
+  | 'KREDI_KARTI'
+  | 'ONLINE'
+  | 'BANKA_HAVALESI'
+  | 'SMS'
+  | 'AYNI';
+
 export interface DonationCreateInput {
   donor_name: string;
   donor_phone: string;
@@ -43,7 +59,7 @@ export interface DonationCreateInput {
   amount: number;
   currency: 'TRY' | 'USD' | 'EUR';
   donation_type: string;
-  payment_method: string;
+  payment_method: PaymentMethod;
   donation_purpose: string;
   notes?: string;
   receipt_number: string;
@@ -135,10 +151,14 @@ export interface MeetingDecisionUpdateInput extends Partial<MeetingDecisionCreat
 export interface MeetingActionItemCreateInput {
   meeting_id: Id<'meetings'>;
   title: string;
-  assigned_to?: string;
+  assigned_to: Id<'users'>;
+  created_by: Id<'users'>;
+  decision_id?: Id<'meeting_decisions'>;
+  description?: string;
   due_date?: string;
-  status?: 'open' | 'in_progress' | 'completed' | 'cancelled';
-  priority?: 'low' | 'medium' | 'high';
+  status?: 'devam' | 'beklemede' | 'hazir' | 'iptal';
+  notes?: string[];
+  reminder_scheduled_at?: string;
   [key: string]: unknown;
 }
 
@@ -149,13 +169,14 @@ export interface MeetingActionItemUpdateInput extends Partial<MeetingActionItemC
 // ========================================
 
 export interface MessageCreateInput {
-  recipient_id?: string;
-  subject?: string;
+  message_type: 'sms' | 'email' | 'internal';
+  sender: Id<'users'>;
+  recipients: Id<'users'>[];
   content: string;
-  message_type: 'sms' | 'email' | 'whatsapp' | 'in_app';
-  status?: 'draft' | 'sent' | 'delivered' | 'failed';
-  sent_by?: string;
-  sent_at?: string;
+  status: 'draft' | 'sent' | 'failed';
+  is_bulk: boolean;
+  subject?: string;
+  template_id?: string;
   [key: string]: unknown;
 }
 
@@ -166,16 +187,40 @@ export interface MessageUpdateInput extends Partial<MessageCreateInput> {}
 // ========================================
 
 export interface UserCreateInput {
-  email: string;
   name: string;
-  role?: 'admin' | 'user' | 'viewer';
-  status?: 'active' | 'inactive' | 'suspended';
-  password_hash?: string;
+  email: string;
+  role: string;
+  permissions: string[];
+  passwordHash: string;
+  isActive: boolean;
+  phone?: string;
+  avatar?: string;
+  labels?: string[];
   [key: string]: unknown;
 }
 
 export interface UserUpdateInput extends Partial<UserCreateInput> {
   auth?: { userId: string; role: string };
+}
+
+// ========================================
+// WORKFLOW NOTIFICATION TYPES
+// ========================================
+
+export interface WorkflowNotificationCreateInput {
+  recipient: Id<'users'>;
+  category: 'meeting' | 'gorev' | 'rapor' | 'hatirlatma';
+  title: string;
+  triggered_by?: Id<'users'>;
+  body?: string;
+  status?: 'beklemede' | 'gonderildi' | 'okundu';
+  reference?: {
+    type: 'meeting_action_item' | 'meeting' | 'meeting_decision';
+    id: string;
+  };
+  metadata?: any;
+  created_at?: string;
+  [key: string]: unknown;
 }
 
 // ========================================
@@ -210,12 +255,15 @@ export interface FinanceRecordCreateInput {
   record_type: 'income' | 'expense';
   category: string;
   amount: number;
-  currency: string;
+  currency: 'TRY' | 'USD' | 'EUR';
   description: string;
   transaction_date: string;
+  created_by: Id<'users'>;
+  status: 'pending' | 'approved' | 'rejected';
   payment_method?: string;
   receipt_number?: string;
-  status?: 'pending' | 'approved' | 'rejected';
+  receipt_file_id?: string;
+  related_to?: string;
   [key: string]: unknown;
 }
 
@@ -229,13 +277,19 @@ export interface PartnerCreateInput {
   name: string;
   type: 'organization' | 'individual' | 'sponsor';
   partnership_type: 'donor' | 'supplier' | 'volunteer' | 'sponsor' | 'service_provider';
+  status: 'active' | 'inactive' | 'pending';
   contact_person?: string;
   email?: string;
   phone?: string;
   address?: string;
   website?: string;
   tax_number?: string;
-  status?: 'active' | 'inactive' | 'pending';
+  collaboration_start_date?: string;
+  collaboration_end_date?: string;
+  notes?: string;
+  total_contribution?: number;
+  contribution_count?: number;
+  logo_url?: string;
   [key: string]: unknown;
 }
 

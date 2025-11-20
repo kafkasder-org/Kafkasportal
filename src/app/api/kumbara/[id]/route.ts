@@ -3,6 +3,7 @@ import { convexDonations } from '@/lib/convex/api';
 import logger from '@/lib/logger';
 import { Id } from '@/convex/_generated/dataModel';
 import type { DonationDocument } from '@/types/database';
+import type { DonationUpdateInput, PaymentMethod } from '@/lib/api/types';
 
 /**
  * Validate kumbara donation update payload
@@ -131,7 +132,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Update donation in Convex
     if (validation.normalizedData) {
-      await convexDonations.update(id as Id<'donations'>, validation.normalizedData);
+      const { payment_method, ...restData } = validation.normalizedData;
+      const updateData: DonationUpdateInput = {
+        ...restData,
+        ...(payment_method && { payment_method: payment_method as PaymentMethod }),
+      };
+      await convexDonations.update(id as Id<'donations'>, updateData);
     }
 
     logger.info('Updated kumbara donation', {

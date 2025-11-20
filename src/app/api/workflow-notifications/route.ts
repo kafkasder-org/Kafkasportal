@@ -93,15 +93,17 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await convexWorkflowNotifications.create({
-      recipient: body.recipient,
-      triggered_by: body.triggered_by,
+      recipient: body.recipient as Id<'users'>,
+      triggered_by: body.triggered_by as Id<'users'> | undefined,
       category: (body.category as NotificationCategory) ?? 'meeting',
-      title: body.title,
-      body: body.body,
+      title: body.title as string,
+      body: body.body as string | undefined,
       status: (body.status as NotificationStatus) ?? 'beklemede',
-      reference: body.reference,
+      reference: body.reference as
+        | { type: 'meeting_action_item' | 'meeting' | 'meeting_decision'; id: string }
+        | undefined,
       metadata: body.metadata,
-      created_at: body.created_at,
+      created_at: body.created_at as string | undefined,
     });
 
     return NextResponse.json(

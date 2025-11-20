@@ -291,7 +291,7 @@ export function useSessionStorage<T>(key: string, initialValue: T): [T, (value: 
  * Returns previous value from previous render
  */
 export function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T | null>(null);
+  const ref = useRef<T | undefined>(undefined);
 
   useEffect(() => {
     ref.current = value;

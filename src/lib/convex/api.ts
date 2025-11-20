@@ -30,6 +30,7 @@ import type {
   FinanceRecordUpdateInput,
   PartnerCreateInput,
   PartnerUpdateInput,
+  WorkflowNotificationCreateInput,
   CreateMutationPayload,
   UpdateMutationPayload,
 } from '@/lib/api/types';
@@ -280,7 +281,7 @@ export const convexWorkflowNotifications = {
   get: async (id: Id<'workflow_notifications'>) => {
     return await convexHttp.query(api.workflow_notifications.get, { id });
   },
-  create: async (data: Record<string, unknown>) => {
+  create: async (data: WorkflowNotificationCreateInput) => {
     return await convexHttp.mutation(api.workflow_notifications.create, data);
   },
   markAsSent: async (id: Id<'workflow_notifications'>, sent_at?: string) => {
