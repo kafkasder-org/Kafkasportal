@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState, useMemo, DependencyList } fro
  * Debounced callback hook
  * Delays function execution until specified time has passed without invocation
  */
-export function useThrottle<T extends (...args: any[]) => any>(
+export function useDebounce<T extends (...args: any[]) => any>(
   callback: T,
   delay: number,
   dependencies?: DependencyList
