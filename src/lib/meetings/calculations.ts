@@ -122,7 +122,9 @@ export function getStatusColor(status: MeetingStatus): string {
 /**
  * Calculate meeting statistics
  */
-export function calculateMeetingStats(meetings: Array<{ startTime: string; endTime: string; status?: string }>): MeetingStatistics {
+export function calculateMeetingStats(
+  meetings: Array<{ startTime: string; endTime: string; status?: string }>
+): MeetingStatistics {
   const now = new Date();
 
   const upcoming = meetings.filter((m) => new Date(m.startTime) > now).length;

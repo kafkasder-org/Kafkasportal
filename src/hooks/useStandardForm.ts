@@ -180,7 +180,10 @@ export function useStandardForm<TFormData extends FieldValues, TResponse = unkno
 // ============================================================================
 
 interface CreateFormOptions<TFormData extends FieldValues, TResponse = unknown>
-  extends Omit<UseStandardFormOptions<TFormData, TResponse>, 'queryKey' | 'successMessage' | 'errorMessage'> {
+  extends Omit<
+    UseStandardFormOptions<TFormData, TResponse>,
+    'queryKey' | 'successMessage' | 'errorMessage'
+  > {
   entityName: string;
   queryKey: string | string[];
 }
@@ -201,7 +204,10 @@ export function useCreateForm<TFormData extends FieldValues, TResponse = unknown
 }
 
 interface UpdateFormOptions<TFormData extends FieldValues, TResponse = unknown>
-  extends Omit<UseStandardFormOptions<TFormData, TResponse>, 'queryKey' | 'successMessage' | 'errorMessage'> {
+  extends Omit<
+    UseStandardFormOptions<TFormData, TResponse>,
+    'queryKey' | 'successMessage' | 'errorMessage'
+  > {
   entityName: string;
   queryKey: string | string[];
 }
@@ -247,4 +253,3 @@ export function useDeleteForm<TResponse = unknown>(
     },
   });
 }
-

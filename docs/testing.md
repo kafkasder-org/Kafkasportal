@@ -58,6 +58,7 @@ The `e2e/example.spec.ts` file contains standalone tests that demonstrate Playwr
 - Testing basic browser interactions
 
 **Features demonstrated:**
+
 - Page navigation and assertions
 - Form inputs and validation
 - Button and element interactions
@@ -67,6 +68,7 @@ The `e2e/example.spec.ts` file contains standalone tests that demonstrate Playwr
 - Multiple viewport sizes
 
 **Run example tests:**
+
 ```bash
 npm run test:e2e:example
 # or
@@ -105,6 +107,7 @@ Tests for the standard form hook covering:
   - Dirty state tracking
 
 **Key Test Cases:**
+
 ```typescript
 - initializes form with provided default values
 - validates form data according to schema
@@ -159,6 +162,7 @@ Comprehensive type definition validation covering all 8 resources:
   - Status: active, inactive
 
 **Key Test Cases:**
+
 ```typescript
 - validates all Create input types
 - validates all Update input types (partial)
@@ -218,6 +222,7 @@ Complete CRUD operation testing for all resources:
   - Error recovery
 
 **Key Test Cases:**
+
 ```typescript
 - should create [resource] with required fields
 - should retrieve [resource] by ID
@@ -266,6 +271,7 @@ Comprehensive validation schema testing:
   - Multi-type support
 
 **Key Test Cases:**
+
 ```typescript
 - validates correct email addresses
 - rejects invalid email addresses
@@ -344,6 +350,7 @@ Test Files   4 passed (4)
 ### Target Coverage: 30%
 
 The new tests focus on high-value areas:
+
 - Core business logic (forms, API operations)
 - Type safety (API types, input validation)
 - Error handling (validation, API errors)
@@ -353,16 +360,20 @@ The new tests focus on high-value areas:
 ### Writing New Tests
 
 1. **Use Descriptive Names**
+
    ```typescript
    it('should create beneficiary with required fields', async () => {
      // ...
-   })
+   });
    ```
 
 2. **Arrange-Act-Assert Pattern**
+
    ```typescript
    // Arrange
-   const input = { /* ... */ };
+   const input = {
+     /* ... */
+   };
 
    // Act
    const result = await api.create(input);
@@ -372,11 +383,13 @@ The new tests focus on high-value areas:
    ```
 
 3. **Mock External Dependencies**
+
    ```typescript
    mockApiClient.beneficiaries.create.mockResolvedValue({ _id: 'ben_123' });
    ```
 
 4. **Test Error Paths**
+
    ```typescript
    mockApiClient.create.mockRejectedValue(new Error('Network error'));
    ```
@@ -401,6 +414,7 @@ The new tests focus on high-value areas:
 ### Pre-commit Hooks
 
 Tests run automatically via Husky on:
+
 - Code commits (linting + format)
 - Git push (validate changes)
 
@@ -415,6 +429,7 @@ Tests run automatically via Husky on:
 ### Issue: Tests timeout
 
 **Solution**: Increase timeout in vitest.config.ts
+
 ```typescript
 test: {
   testTimeout: 10000,  // 10 seconds
@@ -424,6 +439,7 @@ test: {
 ### Issue: "Module not found" errors
 
 **Solution**: Check vitest.config.ts alias configuration
+
 ```typescript
 alias: {
   '@': resolve(__dirname, './src'),
@@ -433,6 +449,7 @@ alias: {
 ### Issue: React hooks not working in tests
 
 **Solution**: Use `renderHook` from React Testing Library
+
 ```typescript
 import { renderHook, act } from '@testing-library/react';
 
@@ -484,6 +501,7 @@ When adding new features:
 ## Contact & Support
 
 For questions about testing:
+
 - Review TESTING_GUIDE.md (this file)
 - Check existing test examples
 - Run tests in watch mode: `npm run test`

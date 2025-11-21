@@ -68,7 +68,8 @@ export function useDeviceDetection(): DeviceInfo {
       'ontouchstart' in window ||
       navigator.maxTouchPoints > 0 ||
       // Legacy IE support - check if property exists before accessing
-      ('msMaxTouchPoints' in navigator && (navigator as Navigator & { msMaxTouchPoints: number }).msMaxTouchPoints > 0);
+      ('msMaxTouchPoints' in navigator &&
+        (navigator as Navigator & { msMaxTouchPoints: number }).msMaxTouchPoints > 0);
 
     return {
       deviceType,
@@ -95,7 +96,8 @@ export function useDeviceDetection(): DeviceInfo {
         'ontouchstart' in window ||
         navigator.maxTouchPoints > 0 ||
         // Legacy IE support - check if property exists before accessing
-        ('msMaxTouchPoints' in navigator && (navigator as Navigator & { msMaxTouchPoints: number }).msMaxTouchPoints > 0);
+        ('msMaxTouchPoints' in navigator &&
+          (navigator as Navigator & { msMaxTouchPoints: number }).msMaxTouchPoints > 0);
 
       setDeviceInfo({
         deviceType,

@@ -61,7 +61,9 @@ export function TransactionList({
           <div className="text-center text-muted-foreground py-12">
             <FileText className="h-12 w-12 mx-auto mb-4" />
             <p className="text-lg font-medium">Kayıt bulunamadı</p>
-            <p className="text-sm mt-2">Henüz kayıt eklenmemiş veya arama kriterlerinize uygun kayıt yok</p>
+            <p className="text-sm mt-2">
+              Henüz kayıt eklenmemiş veya arama kriterlerinize uygun kayıt yok
+            </p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -101,9 +103,7 @@ function TransactionRow({ record, onView, onEdit }: TransactionRowProps) {
               ) : (
                 <ArrowDownCircle className="h-5 w-5 text-red-600" />
               )}
-              <Badge className={statusInfo?.color}>
-                {statusInfo?.label}
-              </Badge>
+              <Badge className={statusInfo?.color}>{statusInfo?.label}</Badge>
             </div>
             <h3 className="font-semibold">{record.description}</h3>
             <span className="text-sm text-muted-foreground">
@@ -128,21 +128,11 @@ function TransactionRow({ record, onView, onEdit }: TransactionRowProps) {
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-1"
-            onClick={() => onView?.(record)}
-          >
+          <Button size="sm" variant="outline" className="gap-1" onClick={() => onView?.(record)}>
             <Eye className="h-4 w-4" />
             Görüntüle
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-1"
-            onClick={() => onEdit?.(record)}
-          >
+          <Button size="sm" variant="outline" className="gap-1" onClick={() => onEdit?.(record)}>
             <Edit className="h-4 w-4" />
             Düzenle
           </Button>

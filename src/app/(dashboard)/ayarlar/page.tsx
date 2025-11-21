@@ -197,9 +197,7 @@ export default function SettingsPage() {
                           </Badge>
                         )}
                       </CardTitle>
-                      <CardDescription className="mt-1">
-                        {category.description}
-                      </CardDescription>
+                      <CardDescription className="mt-1">{category.description}</CardDescription>
                     </div>
                   </div>
                   <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
@@ -247,8 +245,8 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Hassas bilgiler (şifreler, API key&apos;ler, token&apos;lar) şifreli olarak saklanır. Admin
-              ve Super Admin rolleri ile erişim kontrolü sağlanır. Tüm değişiklikler audit
+              Hassas bilgiler (şifreler, API key&apos;ler, token&apos;lar) şifreli olarak saklanır.
+              Admin ve Super Admin rolleri ile erişim kontrolü sağlanır. Tüm değişiklikler audit
               log&apos;da izlenir.
             </p>
           </CardContent>
@@ -279,8 +277,7 @@ export default function SettingsPage() {
             <div>
               <h4 className="font-medium mb-1">Güvenlik Önlemleri</h4>
               <p className="text-muted-foreground">
-                Şifre politikaları, oturum yönetimi ve 2FA ile sistemin güvenliğini maksimize
-                edin.
+                Şifre politikaları, oturum yönetimi ve 2FA ile sistemin güvenliğini maksimize edin.
               </p>
             </div>
           </div>

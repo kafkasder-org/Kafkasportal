@@ -5,7 +5,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, Eye } from 'lucide-react';
-import { calculateEstimatedSendTime, getMessageTypeIcon, getSmsMessageCount } from '@/lib/messages/calculations';
+import {
+  calculateEstimatedSendTime,
+  getMessageTypeIcon,
+  getSmsMessageCount,
+} from '@/lib/messages/calculations';
 
 interface PreviewStepProps {
   messageType: MessageType;
@@ -65,7 +69,8 @@ export function PreviewStep({
           {messageType === 'sms' && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <p className="text-sm text-blue-900">
-                📱 Bu mesaj <strong>{smsCount}</strong> SMS olarak gönderilecektir (160 karakter/SMS)
+                📱 Bu mesaj <strong>{smsCount}</strong> SMS olarak gönderilecektir (160
+                karakter/SMS)
               </p>
             </div>
           )}

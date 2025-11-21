@@ -196,9 +196,22 @@ export const navigationModules: NavigationModule[] = [
     subPages: [
       { name: 'Genel Ayarlar', href: '/ayarlar', description: 'Sistem ayarları ana sayfası' },
       { name: 'Tema Ayarları', href: '/ayarlar/tema', description: 'Renk ve tema özelleştirme' },
-      { name: 'Marka ve Organizasyon', href: '/ayarlar/marka', description: 'Logo ve kurumsal kimlik' },
-      { name: 'İletişim Ayarları', href: '/ayarlar/iletisim', description: 'Email, SMS, WhatsApp yapılandırması' },
-      { name: 'Güvenlik Ayarları', href: '/ayarlar/guvenlik', description: 'Şifre, oturum ve 2FA ayarları', permission: SPECIAL_PERMISSIONS.USERS_MANAGE },
+      {
+        name: 'Marka ve Organizasyon',
+        href: '/ayarlar/marka',
+        description: 'Logo ve kurumsal kimlik',
+      },
+      {
+        name: 'İletişim Ayarları',
+        href: '/ayarlar/iletisim',
+        description: 'Email, SMS, WhatsApp yapılandırması',
+      },
+      {
+        name: 'Güvenlik Ayarları',
+        href: '/ayarlar/guvenlik',
+        description: 'Şifre, oturum ve 2FA ayarları',
+        permission: SPECIAL_PERMISSIONS.USERS_MANAGE,
+      },
       { name: 'Parametreler', href: '/ayarlar/parametreler', description: 'Sistem parametreleri' },
     ],
   },

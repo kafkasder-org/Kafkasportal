@@ -81,9 +81,7 @@ export function FinancialMetrics({ stats, isLoading }: FinancialMetricsProps) {
           >
             {formatCurrency(stats.netIncome)}
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            {stats.approvedRecords} onaylı kayıt
-          </p>
+          <p className="text-xs text-muted-foreground mt-1">{stats.approvedRecords} onaylı kayıt</p>
         </CardContent>
       </Card>
 

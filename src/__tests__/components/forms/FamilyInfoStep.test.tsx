@@ -143,8 +143,8 @@ describe('FamilyInfoStep', () => {
     const { container } = renderWithForm();
 
     // Check for card-like structure (className patterns may vary)
-    const cardElement = container.querySelector('[class*="card"]') ||
-                        container.querySelector('[class*="border"]');
+    const cardElement =
+      container.querySelector('[class*="card"]') || container.querySelector('[class*="border"]');
     expect(cardElement).toBeInTheDocument();
   });
 });

@@ -8,12 +8,7 @@ const CACHE_NAME = `kafkasder-${CACHE_VERSION}`;
 const OFFLINE_PAGE = '/offline.html';
 
 // Assets to cache on install
-const PRECACHE_ASSETS = [
-  '/',
-  '/genel',
-  '/offline.html',
-  '/manifest.json',
-];
+const PRECACHE_ASSETS = ['/', '/genel', '/offline.html', '/manifest.json'];
 
 // Cache strategies
 const CACHE_FIRST_PATTERNS = [
@@ -23,15 +18,9 @@ const CACHE_FIRST_PATTERNS = [
   /\.(?:woff|woff2|ttf|otf)$/,
 ];
 
-const NETWORK_FIRST_PATTERNS = [
-  /\/api\//,
-  /\.convex\.cloud/,
-];
+const NETWORK_FIRST_PATTERNS = [/\/api\//, /\.convex\.cloud/];
 
-const STALE_WHILE_REVALIDATE_PATTERNS = [
-  /\/_next\/data\//,
-  /\.json$/,
-];
+const STALE_WHILE_REVALIDATE_PATTERNS = [/\/_next\/data\//, /\.json$/];
 
 /**
  * Install event - precache essential assets
@@ -40,15 +29,19 @@ self.addEventListener('install', (event) => {
   console.warn('[SW] Installing service worker...');
 
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.warn('[SW] Precaching assets');
-      return cache.addAll(PRECACHE_ASSETS);
-    }).then(() => {
-      console.warn('[SW] Service worker installed successfully');
-      return self.skipWaiting();
-    }).catch((error) => {
-      console.error('[SW] Precache failed:', error);
-    })
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.warn('[SW] Precaching assets');
+        return cache.addAll(PRECACHE_ASSETS);
+      })
+      .then(() => {
+        console.warn('[SW] Service worker installed successfully');
+        return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.error('[SW] Precache failed:', error);
+      })
   );
 });
 
@@ -59,19 +52,22 @@ self.addEventListener('activate', (event) => {
   console.warn('[SW] Activating service worker...');
 
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => {
-            console.warn('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
-      );
-    }).then(() => {
-      console.warn('[SW] Service worker activated');
-      return self.clients.claim();
-    })
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => name !== CACHE_NAME)
+            .map((name) => {
+              console.warn('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      })
+      .then(() => {
+        console.warn('[SW] Service worker activated');
+        return self.clients.claim();
+      })
   );
 });
 
@@ -176,14 +172,16 @@ async function staleWhileRevalidate(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
 
-  const fetchPromise = fetch(request).then((response) => {
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
-    return response;
-  }).catch(() => {
-    // Silently fail - we already have cached version
-  });
+  const fetchPromise = fetch(request)
+    .then((response) => {
+      if (response.ok) {
+        cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => {
+      // Silently fail - we already have cached version
+    });
 
   return cached || fetchPromise;
 }
@@ -222,9 +220,7 @@ self.addEventListener('push', (event) => {
     },
   };
 
-  event.waitUntil(
-    self.registration.showNotification(data.title || 'Kafkasder', options)
-  );
+  event.waitUntil(self.registration.showNotification(data.title || 'Kafkasder', options));
 });
 
 /**
@@ -235,9 +231,7 @@ self.addEventListener('notificationclick', (event) => {
 
   event.notification.close();
 
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/genel')
-  );
+  event.waitUntil(clients.openWindow(event.notification.data.url || '/genel'));
 });
 
 /**
@@ -252,8 +246,6 @@ self.addEventListener('message', (event) => {
 
   if (event.data && event.data.type === 'CACHE_URLS') {
     const urlsToCache = event.data.payload;
-    event.waitUntil(
-      caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
-    );
+    event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)));
   }
 });

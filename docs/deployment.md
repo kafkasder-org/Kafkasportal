@@ -26,11 +26,13 @@ npx convex deploy --yes
 ```
 
 This will:
+
 - Create a new Convex project (if first time)
 - Deploy your schema and functions
 - Generate a deployment URL
 
 **Important:** Copy the deployment URL that's displayed. It will look like:
+
 ```
 https://your-project-name-123.convex.cloud
 ```
@@ -40,6 +42,7 @@ You'll need this URL for Vercel configuration.
 ### 1.3 Note Your Convex URL
 
 Save the URL from the deployment output. You can also find it at:
+
 - Convex Dashboard: https://dashboard.convex.dev
 - Or run: `npx convex dashboard` to open your project
 
@@ -72,6 +75,7 @@ npx vercel link
 ```
 
 Follow the prompts:
+
 - Set up and deploy? **Yes**
 - Scope: Choose your account/team
 - Link to existing project? **No** (or Yes if you already created one)
@@ -81,6 +85,7 @@ Follow the prompts:
 ### 3.3 Set Environment Variables
 
 You can set environment variables via:
+
 - **Vercel Dashboard** (Recommended): https://vercel.com/dashboard → Your Project → Settings → Environment Variables
 - **CLI**: Using the commands below
 
@@ -118,6 +123,7 @@ npx vercel env add NODE_ENV production
 For full functionality, you may also want to configure:
 
 **Monitoring (Recommended for Production):**
+
 ```bash
 # Sentry Error Tracking
 npx vercel env add NEXT_PUBLIC_SENTRY_DSN production
@@ -125,6 +131,7 @@ npx vercel env add SENTRY_DSN production
 ```
 
 **Email Service (Optional):**
+
 ```bash
 npx vercel env add SMTP_HOST production
 npx vercel env add SMTP_PORT production
@@ -134,6 +141,7 @@ npx vercel env add SMTP_FROM production
 ```
 
 **SMS Service (Optional - Twilio):**
+
 ```bash
 npx vercel env add TWILIO_ACCOUNT_SID production
 npx vercel env add TWILIO_AUTH_TOKEN production
@@ -141,6 +149,7 @@ npx vercel env add TWILIO_PHONE_NUMBER production
 ```
 
 **AI Chat (Optional):**
+
 ```bash
 npx vercel env add OPENAI_API_KEY production
 ```
@@ -172,6 +181,7 @@ npx vercel --prod
 ```
 
 This will:
+
 - Build your Next.js application
 - Deploy to Vercel production
 - Output the deployment URL
@@ -179,11 +189,13 @@ This will:
 ### 4.2 Verify Deployment
 
 Once deployed, Vercel will output a URL like:
+
 ```
 https://kafkasder-panel.vercel.app
 ```
 
 Visit the URL and verify:
+
 1. ✅ Homepage loads
 2. ✅ No console errors
 3. ✅ Can access login page
@@ -219,6 +231,7 @@ chmod +x deploy.sh
 ### Issue: "Convex deployment failed"
 
 **Solution:**
+
 1. Check you're logged in: `npx convex login`
 2. Verify convex.config.ts exists in convex/ directory
 3. Check for TypeScript errors: `npm run typecheck`
@@ -226,6 +239,7 @@ chmod +x deploy.sh
 ### Issue: "Vercel build failed"
 
 **Solution:**
+
 1. Check environment variables are set correctly
 2. Ensure `NEXT_PUBLIC_CONVEX_URL` is set
 3. Review build logs in Vercel dashboard
@@ -234,6 +248,7 @@ chmod +x deploy.sh
 ### Issue: "Cannot connect to Convex"
 
 **Solution:**
+
 1. Verify `NEXT_PUBLIC_CONVEX_URL` is correct and includes `https://`
 2. Check Convex deployment status at dashboard.convex.dev
 3. Ensure Convex functions are deployed: `npx convex deploy`
@@ -241,6 +256,7 @@ chmod +x deploy.sh
 ### Issue: "CSRF token validation failed"
 
 **Solution:**
+
 1. Verify `CSRF_SECRET` is set and is at least 32 characters
 2. Ensure the secret is the same across all deployment environments
 3. Clear browser cache and cookies
@@ -248,6 +264,7 @@ chmod +x deploy.sh
 ### Issue: "Session expired immediately"
 
 **Solution:**
+
 1. Verify `SESSION_SECRET` is set correctly
 2. Check that secrets aren't being regenerated on each deployment
 3. Ensure environment variables are set for production environment
@@ -272,6 +289,7 @@ chmod +x deploy.sh
 ### GitHub Integration
 
 Vercel will automatically deploy:
+
 - **Production**: When you push to `main` branch
 - **Preview**: When you create a pull request
 

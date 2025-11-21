@@ -81,7 +81,9 @@ export function FamilyInfoStep() {
             {errors.orphan_children_count && (
               <p className="text-sm text-red-500">{errors.orphan_children_count.message}</p>
             )}
-            <p className="text-sm text-muted-foreground">Anne veya babası vefat etmiş çocuk sayısı</p>
+            <p className="text-sm text-muted-foreground">
+              Anne veya babası vefat etmiş çocuk sayısı
+            </p>
           </div>
         </div>
 

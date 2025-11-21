@@ -33,7 +33,11 @@ function generateCSVContent(records: FinanceRecord[]): string {
       record.currency,
       record.payment_method || '-',
       record.receipt_number || '-',
-      record.status === 'approved' ? 'Onaylandı' : record.status === 'pending' ? 'Beklemede' : 'Reddedildi',
+      record.status === 'approved'
+        ? 'Onaylandı'
+        : record.status === 'pending'
+          ? 'Beklemede'
+          : 'Reddedildi',
     ]),
   ];
 

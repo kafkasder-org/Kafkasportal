@@ -22,6 +22,7 @@ SKIP_WEBSERVER=true npx playwright test example
 ```
 
 This is useful for:
+
 - Verifying Playwright installation
 - Learning Playwright test patterns
 - Quick validation without building the app
@@ -39,6 +40,7 @@ npx playwright test
 ```
 
 The Playwright configuration will automatically:
+
 1. Build the Next.js application
 2. Start the development server
 3. Run the tests
@@ -94,6 +96,7 @@ test.describe('Feature Name', () => {
 ## Configuration
 
 See `playwright.config.cts` in the root directory for Playwright configuration including:
+
 - Browser settings
 - Timeouts
 - Test directory
@@ -122,6 +125,7 @@ npx playwright show-trace test-results/[test-path]/trace.zip
 ## CI/CD
 
 Tests automatically run in CI with:
+
 - Single worker for stability
 - Retry on failure (2 attempts)
 - Screenshot/video capture on failure

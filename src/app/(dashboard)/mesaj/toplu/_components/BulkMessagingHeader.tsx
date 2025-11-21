@@ -12,9 +12,7 @@ export function BulkMessagingHeader({ onShowHistory }: BulkMessagingHeaderProps)
     <div className="flex items-center justify-between">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Toplu Mesaj</h1>
-        <p className="text-muted-foreground mt-2">
-          Birden fazla alıcıya mesaj gönderin ve yönetin
-        </p>
+        <p className="text-muted-foreground mt-2">Birden fazla alıcıya mesaj gönderin ve yönetin</p>
       </div>
 
       <Button variant="outline" onClick={onShowHistory} className="gap-2">

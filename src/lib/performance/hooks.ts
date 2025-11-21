@@ -9,10 +9,7 @@ import { useCallback, useEffect, useRef, useState, useMemo, DependencyList } fro
  * Debounced callback hook
  * Delays function execution until specified time has passed without invocation
  */
-export function useDebounce<T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
-): T {
+export function useDebounce<T extends (...args: any[]) => any>(callback: T, delay: number): T {
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const callbackRef = useRef(callback);
 
@@ -38,10 +35,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
  * Throttled callback hook
  * Limits function execution to once every specified time period
  */
-export function useThrottle<T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
-): T {
+export function useThrottle<T extends (...args: any[]) => any>(callback: T, delay: number): T {
   const lastRunRef = useRef<number>(0);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const callbackRef = useRef(callback);
@@ -103,7 +97,7 @@ export function useThrottledValue<T>(value: T, delay: number): T {
 
   useEffect(() => {
     pendingValueRef.current = value;
-    
+
     const now = Date.now();
     const timeSinceLastRun = now - lastRunRef.current;
 
@@ -390,7 +384,7 @@ export function useAsync<T, E = Error>(
 
   useEffect(() => {
     mountedRef.current = true;
-    
+
     if (immediate) {
       // Defer execute to avoid cascading renders
       Promise.resolve().then(() => {

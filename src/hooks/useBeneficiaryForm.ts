@@ -160,11 +160,11 @@ export function useBeneficiaryForm(beneficiaryId: string): UseBeneficiaryFormRet
       // Merge name and surname into the name field for the backend
       // Ensure at least name exists (surname is optional)
       const fullName = `${data.name} ${data.surname || ''}`.trim();
-      
+
       if (!fullName) {
         throw new Error('Ad gerekli');
       }
-      
+
       const updateData = {
         ...data,
         name: fullName,
@@ -197,9 +197,12 @@ export function useBeneficiaryForm(beneficiaryId: string): UseBeneficiaryFormRet
   });
 
   // Form handlers with useCallback for optimization
-  const onSubmit = useCallback((data: FormValues): void => {
-    updateMutation.mutate(data);
-  }, [updateMutation]);
+  const onSubmit = useCallback(
+    (data: FormValues): void => {
+      updateMutation.mutate(data);
+    },
+    [updateMutation]
+  );
 
   const handleDelete = useCallback((): void => {
     if (confirm('Bu başvuru sahibini silmek istediğinizden emin misiniz?')) {

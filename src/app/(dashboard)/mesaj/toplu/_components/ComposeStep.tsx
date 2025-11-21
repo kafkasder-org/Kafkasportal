@@ -32,11 +32,7 @@ interface ComposeStepProps {
   onMessageChange: (data: { subject?: string; content: string }) => void;
 }
 
-export function ComposeStep({
-  messageType,
-  messageData,
-  onMessageChange,
-}: ComposeStepProps) {
+export function ComposeStep({ messageType, messageData, onMessageChange }: ComposeStepProps) {
   return (
     <div className="space-y-6">
       {/* Message Template Selector */}

@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
 import logger from '@/lib/logger';
-import { requireAuthenticatedUser, verifyCsrfToken, buildErrorResponse } from '@/lib/api/auth-utils';
+import {
+  requireAuthenticatedUser,
+  verifyCsrfToken,
+  buildErrorResponse,
+} from '@/lib/api/auth-utils';
 import { readOnlyRateLimit, dataModificationRateLimit } from '@/lib/rate-limit';
 
 /**

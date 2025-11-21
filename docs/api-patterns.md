@@ -122,10 +122,7 @@ return NextResponse.json({
 });
 
 // NEW
-return successResponse(
-  { beneficiaries, total },
-  `${total} kayıt bulundu`
-);
+return successResponse({ beneficiaries, total }, `${total} kayıt bulundu`);
 ```
 
 ### Step 4: Use parseBody for request parsing
@@ -165,7 +162,7 @@ if (!result.success) {
   return errorResponse(
     'Doğrulama hatası',
     400,
-    result.error.errors.map(e => e.message)
+    result.error.errors.map((e) => e.message)
   );
 }
 ```
@@ -174,13 +171,14 @@ if (!result.success) {
 
 ```typescript
 interface MiddlewareOptions {
-  requireModule?: string;      // Module name for access control
-  allowedMethods?: string[];    // GET, POST, PUT, PATCH, DELETE
-  rateLimit?: {                 // Optional rate limiting
+  requireModule?: string; // Module name for access control
+  allowedMethods?: string[]; // GET, POST, PUT, PATCH, DELETE
+  rateLimit?: {
+    // Optional rate limiting
     maxRequests: number;
-    windowMs: number;           // milliseconds
+    windowMs: number; // milliseconds
   };
-  requireAuth?: boolean;        // Additional auth check
+  requireAuth?: boolean; // Additional auth check
 }
 ```
 
@@ -267,7 +265,7 @@ export const POST = buildApiRoute({
     return errorResponse(
       'Doğrulama hatası',
       400,
-      validation.error.errors.map(e => e.message)
+      validation.error.errors.map((e) => e.message)
     );
   }
 
@@ -283,7 +281,7 @@ export const PATCH = buildApiRoute({
   requireModule: 'beneficiaries',
   allowedMethods: ['PATCH'],
 })(async (request) => {
-  const { id } = await params;  // Dynamic params
+  const { id } = await params; // Dynamic params
   const { data, error } = await parseBody<Partial<BeneficiaryInput>>(request);
   if (error) return errorResponse(error, 400);
 
@@ -312,6 +310,7 @@ export const DELETE = buildApiRoute({
 ### Before Middleware Refactoring
 
 Each route needed its own tests for:
+
 - Auth checks
 - Error handling
 - Validation
@@ -320,6 +319,7 @@ Each route needed its own tests for:
 ### After Middleware Refactoring
 
 Middleware is tested once centrally:
+
 - Route tests focus on business logic only
 - Error handling is guaranteed by middleware
 - Auth checks are guaranteed by middleware
@@ -341,6 +341,7 @@ describe('GET /api/beneficiaries', () => {
 ## Routes to Refactor (Priority Order)
 
 ### High Priority (Most Used)
+
 - [ ] `/api/beneficiaries/route.ts` - ~250 lines
 - [ ] `/api/donations/route.ts` - ~180 lines
 - [ ] `/api/messages/send-bulk` - ~150 lines
@@ -348,12 +349,14 @@ describe('GET /api/beneficiaries', () => {
 - [ ] `/api/meetings/route.ts` - ~140 lines
 
 ### Medium Priority
+
 - [ ] `/api/partners/route.ts` - ~100 lines
 - [ ] `/api/scholarships/route.ts` - ~130 lines
 - [ ] `/api/users/route.ts` - ~110 lines
 - [ ] `/api/analytics/route.ts` - ~80 lines
 
 ### Low Priority (System/Webhook Routes)
+
 - [ ] `/api/health/route.ts`
 - [ ] `/api/csrf/route.ts`
 - [ ] `/api/webhooks/*`
@@ -387,6 +390,7 @@ refactor(api): standardize beneficiaries route with middleware
 ## Questions?
 
 Refer to:
+
 - `src/lib/api/middleware.ts` - Middleware implementations
 - `src/lib/api/route-helpers.ts` - Response helpers
 - `src/app/api/beneficiaries/_example-refactored.ts` - Working example

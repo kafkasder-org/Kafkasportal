@@ -92,7 +92,7 @@ export function ServiceWorkerRegister() {
       deferredPrompt = e as BeforeInstallPromptEvent;
 
       // Show custom install button/toast
-      toast.info('Kafkasder\'i ana ekrana ekleyin', {
+      toast.info("Kafkasder'i ana ekrana ekleyin", {
         description: 'Daha hızlı erişim için uygulamayı yükleyin',
         duration: 15000,
         action: {

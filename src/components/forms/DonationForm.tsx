@@ -103,11 +103,7 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
   };
 
   // ✅ Use useStandardForm hook (mimariye uygun!)
-  const {
-    form,
-    handleSubmit,
-    isSubmitting,
-  } = useStandardForm<DonationFormData, DonationDocument>({
+  const { form, handleSubmit, isSubmitting } = useStandardForm<DonationFormData, DonationDocument>({
     defaultValues: {
       currency: 'TRY',
       amount: 0,
@@ -221,7 +217,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                       void validateField('donor_name', e.target.value);
                     }
                   }}
-                  aria-describedby={form.formState.errors.donor_name ? 'donor_name-error' : undefined}
+                  aria-describedby={
+                    form.formState.errors.donor_name ? 'donor_name-error' : undefined
+                  }
                   aria-invalid={!!form.formState.errors.donor_name}
                   disabled={isSubmitting}
                 />
@@ -261,7 +259,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                     }
                   }}
                   maxLength={14}
-                  aria-describedby={form.formState.errors.donor_phone ? 'donor_phone-error' : undefined}
+                  aria-describedby={
+                    form.formState.errors.donor_phone ? 'donor_phone-error' : undefined
+                  }
                   aria-invalid={!!form.formState.errors.donor_phone}
                   disabled={isSubmitting}
                 />
@@ -285,7 +285,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                     void validateField('donor_email', e.target.value);
                   }
                 }}
-                aria-describedby={form.formState.errors.donor_email ? 'donor_email-error' : undefined}
+                aria-describedby={
+                  form.formState.errors.donor_email ? 'donor_email-error' : undefined
+                }
                 aria-invalid={!!form.formState.errors.donor_email}
                 disabled={isSubmitting}
               />
@@ -357,7 +359,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                   }}
                   disabled={isSubmitting}
                 >
-                  <SelectTrigger aria-describedby={form.formState.errors.currency ? 'currency-error' : undefined}>
+                  <SelectTrigger
+                    aria-describedby={form.formState.errors.currency ? 'currency-error' : undefined}
+                  >
                     <SelectValue placeholder="Para birimi seçin" />
                   </SelectTrigger>
                   <SelectContent>
@@ -385,7 +389,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                       void validateField('receipt_number', e.target.value);
                     }
                   }}
-                  aria-describedby={form.formState.errors.receipt_number ? 'receipt_number-error' : undefined}
+                  aria-describedby={
+                    form.formState.errors.receipt_number ? 'receipt_number-error' : undefined
+                  }
                   aria-invalid={!!form.formState.errors.receipt_number}
                   disabled={isSubmitting}
                 />
@@ -410,7 +416,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                       void validateField('donation_type', e.target.value);
                     }
                   }}
-                  aria-describedby={form.formState.errors.donation_type ? 'donation_type-error' : undefined}
+                  aria-describedby={
+                    form.formState.errors.donation_type ? 'donation_type-error' : undefined
+                  }
                   aria-invalid={!!form.formState.errors.donation_type}
                   disabled={isSubmitting}
                 />
@@ -432,7 +440,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                   disabled={isSubmitting}
                 >
                   <SelectTrigger
-                    aria-describedby={form.formState.errors.payment_method ? 'payment_method-error' : undefined}
+                    aria-describedby={
+                      form.formState.errors.payment_method ? 'payment_method-error' : undefined
+                    }
                   >
                     <SelectValue placeholder="Ödeme yöntemi seçin" />
                   </SelectTrigger>
@@ -465,7 +475,9 @@ export function DonationForm({ onSuccess, onCancel }: DonationFormProps) {
                     void validateField('donation_purpose', e.target.value);
                   }
                 }}
-                aria-describedby={form.formState.errors.donation_purpose ? 'donation_purpose-error' : undefined}
+                aria-describedby={
+                  form.formState.errors.donation_purpose ? 'donation_purpose-error' : undefined
+                }
                 aria-invalid={!!form.formState.errors.donation_purpose}
                 disabled={isSubmitting}
               />

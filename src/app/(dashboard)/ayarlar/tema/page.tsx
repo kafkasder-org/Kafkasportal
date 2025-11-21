@@ -33,7 +33,9 @@ export default function ThemeSettingsPage() {
 
   const handleThemeModeChange = async (mode: 'light' | 'dark' | 'auto') => {
     setThemeMode(mode);
-    toast.success(`Tema modu ${mode === 'light' ? 'Açık' : mode === 'dark' ? 'Koyu' : 'Otomatik'} olarak ayarlandı`);
+    toast.success(
+      `Tema modu ${mode === 'light' ? 'Açık' : mode === 'dark' ? 'Koyu' : 'Otomatik'} olarak ayarlandı`
+    );
   };
 
   const handlePresetChange = async (presetName: string) => {
@@ -199,9 +201,7 @@ export default function ThemeSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Hazır Tema Paketleri</CardTitle>
-              <CardDescription>
-                Önceden tasarlanmış renk paletlerinden birini seçin
-              </CardDescription>
+              <CardDescription>Önceden tasarlanmış renk paletlerinden birini seçin</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -294,9 +294,7 @@ export default function ThemeSettingsPage() {
                 <Sparkles className="w-5 h-5" />
                 Özel Renk Paleti
               </CardTitle>
-              <CardDescription>
-                Kendi renk paletinizi oluşturun ve kaydedin
-              </CardDescription>
+              <CardDescription>Kendi renk paletinizi oluşturun ve kaydedin</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

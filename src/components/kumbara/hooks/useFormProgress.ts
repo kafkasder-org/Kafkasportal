@@ -11,7 +11,10 @@ interface UseFormProgressOptions<T extends FieldValues> {
   requiredFieldNames: readonly (keyof T)[];
 }
 
-export function useFormProgress<T extends FieldValues>({ control, requiredFieldNames }: UseFormProgressOptions<T>) {
+export function useFormProgress<T extends FieldValues>({
+  control,
+  requiredFieldNames,
+}: UseFormProgressOptions<T>) {
   const watchedFields = useWatch({
     control,
     name: requiredFieldNames as any,

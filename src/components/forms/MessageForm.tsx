@@ -19,7 +19,18 @@ import { Badge } from '@/components/ui/badge';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { convexApiClient as api } from '@/lib/api/convex-api-client';
 import { useAuthStore } from '@/stores/authStore';
-import { Loader2, X, MessageSquare, Mail, Users, Send, Save, Phone, AtSign, MessageCircle } from 'lucide-react';
+import {
+  Loader2,
+  X,
+  MessageSquare,
+  Mail,
+  Users,
+  Send,
+  Save,
+  Phone,
+  AtSign,
+  MessageCircle,
+} from 'lucide-react';
 import {
   messageSchema,
   type MessageFormData,

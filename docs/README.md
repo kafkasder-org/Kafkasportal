@@ -4,10 +4,10 @@ Bu klasor projenin tum teknik dokumantasyonunu icerir.
 
 ## Icerik
 
-| Dosya | Aciklama |
-|-------|----------|
-| [deployment.md](./deployment.md) | Vercel ve Convex deployment rehberi |
-| [testing.md](./testing.md) | Test altyapisi ve yazim rehberi |
+| Dosya                                | Aciklama                                       |
+| ------------------------------------ | ---------------------------------------------- |
+| [deployment.md](./deployment.md)     | Vercel ve Convex deployment rehberi            |
+| [testing.md](./testing.md)           | Test altyapisi ve yazim rehberi                |
 | [api-patterns.md](./api-patterns.md) | API route standartlari ve middleware kullanimi |
 
 ## Hizli Erisim
@@ -63,30 +63,34 @@ npm run vercel:prod      # Vercel'e deploy et
 
 ### Teknoloji Yigini
 
-| Kategori | Teknoloji |
-|----------|-----------|
-| **Frontend** | Next.js 16, React 19, TypeScript |
-| **Backend** | Convex (serverless database) |
-| **Styling** | Tailwind CSS 4, Radix UI |
-| **State** | Zustand (client), TanStack Query (server) |
-| **Forms** | React Hook Form + Zod |
-| **Testing** | Vitest (unit), Playwright (E2E) |
-| **Deployment** | Vercel + Convex Cloud |
+| Kategori       | Teknoloji                                 |
+| -------------- | ----------------------------------------- |
+| **Frontend**   | Next.js 16, React 19, TypeScript          |
+| **Backend**    | Convex (serverless database)              |
+| **Styling**    | Tailwind CSS 4, Radix UI                  |
+| **State**      | Zustand (client), TanStack Query (server) |
+| **Forms**      | React Hook Form + Zod                     |
+| **Testing**    | Vitest (unit), Playwright (E2E)           |
+| **Deployment** | Vercel + Convex Cloud                     |
 
 ### Mimari Prensipler
 
 #### 1. Convex-First Backend
+
 Convex birincil backend'dir. Next.js API route'lari sadece proxy gorevindedir:
+
 - Tum veritabani islemleri `convex/` klasorunde
 - API route'lari rate limiting, CSRF ve auth middleware saglar
 - Real-time updates Convex tarafindan yonetilir
 
 #### 2. Type-Safe Her Sey
+
 - TypeScript strict mode aktif
 - Zod ile runtime validation
 - Convex argument validators zorunlu
 
 #### 3. Guvenlik Oncelikli
+
 - CSRF korumasi tum mutation endpoint'lerinde
 - Rate limiting endpoint bazinda yapilandirilir
 - Input sanitization (DOMPurify)

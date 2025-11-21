@@ -131,7 +131,10 @@ export function formatPhoneNumber(phone: string): string {
 /**
  * Calculate estimated send time
  */
-export function calculateEstimatedSendTime(recipientCount: number, delayPerMessage: number = 100): string {
+export function calculateEstimatedSendTime(
+  recipientCount: number,
+  delayPerMessage: number = 100
+): string {
   const totalMs = recipientCount * delayPerMessage;
   const seconds = Math.floor((totalMs / 1000) % 60);
   const minutes = Math.floor((totalMs / (1000 * 60)) % 60);

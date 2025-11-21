@@ -87,7 +87,7 @@ export default function CommunicationSettingsPage() {
 
     // Create a stable key from the data
     const dataKey = JSON.stringify(settingsData.data);
-    
+
     // Skip if data hasn't changed
     if (previousDataKeyRef.current === dataKey) {
       return;
@@ -318,9 +318,7 @@ export default function CommunicationSettingsPage() {
                       id="smtp-password"
                       type="password"
                       value={emailForm.smtpPassword}
-                      onChange={(e) =>
-                        setEmailForm({ ...emailForm, smtpPassword: e.target.value })
-                      }
+                      onChange={(e) => setEmailForm({ ...emailForm, smtpPassword: e.target.value })}
                       placeholder="••••••••"
                       required
                     />
@@ -378,9 +376,7 @@ export default function CommunicationSettingsPage() {
                       id="reply-to"
                       type="email"
                       value={emailForm.replyToEmail}
-                      onChange={(e) =>
-                        setEmailForm({ ...emailForm, replyToEmail: e.target.value })
-                      }
+                      onChange={(e) => setEmailForm({ ...emailForm, replyToEmail: e.target.value })}
                       placeholder="info@kafkasder.org"
                     />
                   </div>
@@ -388,11 +384,7 @@ export default function CommunicationSettingsPage() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-4 border-t">
-                  <Button
-                    type="submit"
-                    disabled={updateMutation.isPending}
-                    className="flex-1"
-                  >
+                  <Button type="submit" disabled={updateMutation.isPending} className="flex-1">
                     {updateMutation.isPending ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -464,9 +456,7 @@ export default function CommunicationSettingsPage() {
                     <Input
                       id="twilio-sid"
                       value={smsForm.twilioAccountSid}
-                      onChange={(e) =>
-                        setSmsForm({ ...smsForm, twilioAccountSid: e.target.value })
-                      }
+                      onChange={(e) => setSmsForm({ ...smsForm, twilioAccountSid: e.target.value })}
                       placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
                       required
                     />
@@ -526,11 +516,7 @@ export default function CommunicationSettingsPage() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-4 border-t">
-                  <Button
-                    type="submit"
-                    disabled={updateMutation.isPending}
-                    className="flex-1"
-                  >
+                  <Button type="submit" disabled={updateMutation.isPending} className="flex-1">
                     {updateMutation.isPending ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -672,11 +658,7 @@ export default function CommunicationSettingsPage() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-4 border-t">
-                  <Button
-                    type="submit"
-                    disabled={updateMutation.isPending}
-                    className="flex-1"
-                  >
+                  <Button type="submit" disabled={updateMutation.isPending} className="flex-1">
                     {updateMutation.isPending ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />

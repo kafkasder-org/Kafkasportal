@@ -28,7 +28,9 @@ interface PiggyBankInfoSectionProps {
   control: Control<KumbaraCreateInput>;
 }
 
-export const PiggyBankInfoSection = memo(function PiggyBankInfoSection({ control }: PiggyBankInfoSectionProps) {
+export const PiggyBankInfoSection = memo(function PiggyBankInfoSection({
+  control,
+}: PiggyBankInfoSectionProps) {
   return (
     <div className="space-y-2 p-2 bg-blue-50/50 dark:bg-blue-900/10 rounded-md border border-blue-200 dark:border-blue-900/30">
       <div className="flex items-center gap-1.5">

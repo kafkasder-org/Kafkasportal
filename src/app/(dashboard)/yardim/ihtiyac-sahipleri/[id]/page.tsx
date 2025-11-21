@@ -2,7 +2,17 @@
 
 import React, { use } from 'react';
 import { useBeneficiaryForm } from '@/hooks/useBeneficiaryForm';
-import { ArrowLeft, Save, Trash2, User, AlertCircle, Loader2, MapPin, Heart, FileText } from 'lucide-react';
+import {
+  ArrowLeft,
+  Save,
+  Trash2,
+  User,
+  AlertCircle,
+  Loader2,
+  MapPin,
+  Heart,
+  FileText,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -136,7 +146,12 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
               <div className="space-y-2">
                 <Label htmlFor="email">E-posta</Label>
-                <Input id="email" type="email" {...form.register('email')} placeholder="E-posta adresi" />
+                <Input
+                  id="email"
+                  type="email"
+                  {...form.register('email')}
+                  placeholder="E-posta adresi"
+                />
                 {form.formState.errors.email && (
                   <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
                 )}
@@ -160,12 +175,20 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
               <div className="space-y-2">
                 <Label htmlFor="marital_status">Medeni Durum</Label>
-                <Input id="marital_status" {...form.register('marital_status')} placeholder="Medeni durum" />
+                <Input
+                  id="marital_status"
+                  {...form.register('marital_status')}
+                  placeholder="Medeni durum"
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="education_status">Eğitim Durumu</Label>
-                <Input id="education_status" {...form.register('education_status')} placeholder="Eğitim durumu" />
+                <Input
+                  id="education_status"
+                  {...form.register('education_status')}
+                  placeholder="Eğitim durumu"
+                />
               </div>
 
               <div className="space-y-2">
@@ -186,7 +209,12 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="address">Adres</Label>
-                <Textarea id="address" {...form.register('address')} placeholder="Tam adres" rows={3} />
+                <Textarea
+                  id="address"
+                  {...form.register('address')}
+                  placeholder="Tam adres"
+                  rows={3}
+                />
                 {form.formState.errors.address && (
                   <p className="text-sm text-red-500">{form.formState.errors.address.message}</p>
                 )}
@@ -212,13 +240,19 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
                 <Label htmlFor="neighborhood">Mahalle</Label>
                 <Input id="neighborhood" {...form.register('neighborhood')} placeholder="Mahalle" />
                 {form.formState.errors.neighborhood && (
-                  <p className="text-sm text-red-500">{form.formState.errors.neighborhood.message}</p>
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.neighborhood.message}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="postal_code">Posta Kodu</Label>
-                <Input id="postal_code" {...form.register('postal_code')} placeholder="Posta kodu" />
+                <Input
+                  id="postal_code"
+                  {...form.register('postal_code')}
+                  placeholder="Posta kodu"
+                />
               </div>
             </CardContent>
           </Card>
@@ -239,22 +273,38 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
 
               <div className="space-y-2">
                 <Label htmlFor="chronic_disease">Kronik Hastalık</Label>
-                <Input id="chronic_disease" {...form.register('chronic_disease')} placeholder="Kronik hastalık varsa belirtiniz" />
+                <Input
+                  id="chronic_disease"
+                  {...form.register('chronic_disease')}
+                  placeholder="Kronik hastalık varsa belirtiniz"
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="disease_category">Hastalık Kategorisi</Label>
-                <Input id="disease_category" {...form.register('disease_category')} placeholder="Hastalık kategorisi" />
+                <Input
+                  id="disease_category"
+                  {...form.register('disease_category')}
+                  placeholder="Hastalık kategorisi"
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="disability_status">Engellilik Durumu</Label>
-                <Input id="disability_status" {...form.register('disability_status')} placeholder="Engellilik durumu" />
+                <Input
+                  id="disability_status"
+                  {...form.register('disability_status')}
+                  placeholder="Engellilik durumu"
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="disability_percentage">Engellilik Oranı (%)</Label>
-                <Input id="disability_percentage" {...form.register('disability_percentage')} placeholder="Engellilik oranı" />
+                <Input
+                  id="disability_percentage"
+                  {...form.register('disability_percentage')}
+                  placeholder="Engellilik oranı"
+                />
               </div>
             </CardContent>
           </Card>
@@ -270,7 +320,11 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
             <CardContent>
               <div className="space-y-2">
                 <Label htmlFor="contact_preference">İletişim Tercihi</Label>
-                <Input id="contact_preference" {...form.register('contact_preference')} placeholder="Tercih edilen iletişim yöntemi" />
+                <Input
+                  id="contact_preference"
+                  {...form.register('contact_preference')}
+                  placeholder="Tercih edilen iletişim yöntemi"
+                />
               </div>
             </CardContent>
           </Card>

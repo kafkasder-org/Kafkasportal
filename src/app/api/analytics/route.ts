@@ -64,10 +64,7 @@ async function postAnalyticsHandler(request: NextRequest) {
       service: 'analytics',
     });
 
-    return NextResponse.json(
-      { success: false, error: 'Failed to track event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Failed to track event' }, { status: 500 });
   }
 }
 

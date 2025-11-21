@@ -3,7 +3,11 @@ import { getConvexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import logger from '@/lib/logger';
-import { requireAuthenticatedUser, verifyCsrfToken, buildErrorResponse } from '@/lib/api/auth-utils';
+import {
+  requireAuthenticatedUser,
+  verifyCsrfToken,
+  buildErrorResponse,
+} from '@/lib/api/auth-utils';
 
 /**
  * GET /api/storage/[fileId]
@@ -91,10 +95,7 @@ async function deleteFileHandler(
 
 // Export handlers with rate limiting
 // Next.js 15 requires async params, so we wrap the handlers manually
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ fileId: string }> }
-) {
+export async function GET(request: NextRequest, context: { params: Promise<{ fileId: string }> }) {
   // Rate limiting can be added here if needed
   return getFileHandler(request, context);
 }

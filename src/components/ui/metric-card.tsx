@@ -114,8 +114,7 @@ const variantStyles: Record<
     icon: 'text-slate-600 bg-slate-100',
   },
   gradient: {
-    container:
-      'bg-gradient-to-br from-blue-500 to-purple-600 text-white border-0 hover:shadow-xl',
+    container: 'bg-gradient-to-br from-blue-500 to-purple-600 text-white border-0 hover:shadow-xl',
     title: 'text-blue-50',
     value: 'text-white',
     icon: 'text-white bg-white/20',
@@ -127,8 +126,7 @@ const variantStyles: Record<
     icon: 'text-slate-600 bg-slate-100',
   },
   glass: {
-    container:
-      'bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/20',
+    container: 'bg-white/10 backdrop-blur-lg border border-white/20 hover:bg-white/20',
     title: 'text-slate-700',
     value: 'text-slate-900',
     icon: 'text-slate-600 bg-white/50',
@@ -274,9 +272,7 @@ export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <p className={cn('font-medium mb-1', sizeStyle.title, styles.title)}>{title}</p>
-            {description && (
-              <p className={cn('text-xs opacity-75', styles.title)}>{description}</p>
-            )}
+            {description && <p className={cn('text-xs opacity-75', styles.title)}>{description}</p>}
           </div>
 
           {Icon && (
@@ -289,9 +285,7 @@ export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(
         <div className="space-y-3">
           {/* Main Value */}
           <div className="flex items-baseline gap-2">
-            {prefix && (
-              <span className={cn('text-lg font-semibold', styles.value)}>{prefix}</span>
-            )}
+            {prefix && <span className={cn('text-lg font-semibold', styles.value)}>{prefix}</span>}
             <span className={cn('font-bold tracking-tight', sizeStyle.value, styles.value)}>
               {formattedValue}
             </span>
@@ -420,10 +414,8 @@ interface ComparisonMetricCardProps extends Omit<MetricCardProps, 'trend'> {
 export const ComparisonMetricCard = forwardRef<HTMLDivElement, ComparisonMetricCardProps>(
   ({ value, previousValue, comparisonLabel = 'Önceki dönem', ...props }, ref) => {
     const difference = value - previousValue;
-    const percentChange =
-      previousValue !== 0 ? Math.abs((difference / previousValue) * 100) : 0;
-    const direction: TrendDirection =
-      difference > 0 ? 'up' : difference < 0 ? 'down' : 'neutral';
+    const percentChange = previousValue !== 0 ? Math.abs((difference / previousValue) * 100) : 0;
+    const direction: TrendDirection = difference > 0 ? 'up' : difference < 0 ? 'down' : 'neutral';
 
     return (
       <MetricCard

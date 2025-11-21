@@ -11,11 +11,7 @@ import { z } from 'zod';
 export const donationSchema = z.object({
   donor_name: z.string().min(2, 'Donör adı en az 2 karakter olmalıdır'),
   donor_phone: z.string().min(10, 'Geçerli bir telefon numarası girin'),
-  donor_email: z
-    .string()
-    .email('Geçerli bir email adresi girin')
-    .optional()
-    .or(z.literal('')),
+  donor_email: z.string().email('Geçerli bir email adresi girin').optional().or(z.literal('')),
   amount: z.number().min(1, "Tutar 0'dan büyük olmalıdır"),
   currency: z.enum(['TRY', 'USD', 'EUR']),
   donation_type: z.string().min(2, 'Bağış türü belirtin'),

@@ -180,7 +180,10 @@ export function withCors(allowedOrigins: string[] = ['http://localhost:3000']) {
 
       // Add CORS headers
       response.headers.set('Access-Control-Allow-Origin', origin || '*');
-      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+      response.headers.set(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+      );
       response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
       return response;
@@ -215,10 +218,7 @@ export function withMethodCheck(allowedMethods: string[]) {
   return (handler: RouteHandler): RouteHandler => {
     return async (request, params) => {
       if (!allowedMethods.includes(request.method)) {
-        return errorResponse(
-          `${request.method} method bu endpoint'te desteklenmiyor`,
-          405
-        );
+        return errorResponse(`${request.method} method bu endpoint'te desteklenmiyor`, 405);
       }
 
       return await handler(request, params);
@@ -230,11 +230,7 @@ export function withMethodCheck(allowedMethods: string[]) {
  * Helper to get client ID for rate limiting
  */
 function getClientId(request: NextRequest): string {
-  return (
-    request.headers.get('x-forwarded-for') ||
-    request.headers.get('x-real-ip') ||
-    'unknown'
-  );
+  return request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
 }
 
 /**

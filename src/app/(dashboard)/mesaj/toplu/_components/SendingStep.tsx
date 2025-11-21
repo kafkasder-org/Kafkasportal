@@ -52,9 +52,7 @@ export function SendingStep({ progress, result, isCompleted, isFailed }: Sending
       </Card>
 
       {/* Results Card */}
-      {isCompleted && result && (
-        <SendingResultsCard result={result} isFailed={isFailed} />
-      )}
+      {isCompleted && result && <SendingResultsCard result={result} isFailed={isFailed} />}
     </div>
   );
 }

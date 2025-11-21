@@ -85,14 +85,14 @@ npm run vercel:prod      # Vercel deploy
 
 ## Dokumantasyon
 
-| Dosya | Icerik |
-|-------|--------|
-| [docs/](./docs/) | Teknik dokumantasyon |
-| [docs/deployment.md](./docs/deployment.md) | Deployment rehberi |
-| [docs/testing.md](./docs/testing.md) | Test rehberi |
-| [docs/api-patterns.md](./docs/api-patterns.md) | API standartlari |
-| [CONTRIBUTING.md](./CONTRIBUTING.md) | Katki rehberi |
-| [SECURITY.md](./SECURITY.md) | Guvenlik politikasi |
+| Dosya                                          | Icerik               |
+| ---------------------------------------------- | -------------------- |
+| [docs/](./docs/)                               | Teknik dokumantasyon |
+| [docs/deployment.md](./docs/deployment.md)     | Deployment rehberi   |
+| [docs/testing.md](./docs/testing.md)           | Test rehberi         |
+| [docs/api-patterns.md](./docs/api-patterns.md) | API standartlari     |
+| [CONTRIBUTING.md](./CONTRIBUTING.md)           | Katki rehberi        |
+| [SECURITY.md](./SECURITY.md)                   | Guvenlik politikasi  |
 
 ## Teknoloji Yigini
 

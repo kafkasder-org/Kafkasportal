@@ -34,23 +34,27 @@ Thank you for your interest in contributing to Kafkasder Panel! This document pr
 1. **Fork the repository**
 
 2. **Clone your fork**
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/Kafkasder-panel.git
    cd Kafkasder-panel
    ```
 
 3. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 4. **Set up environment variables**
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your values
    ```
 
 5. **Start development servers**
+
    ```bash
    # Terminal 1: Convex backend
    npm run convex:dev
@@ -75,6 +79,7 @@ Example: `feat/add-user-profile-page`
 ### Making Changes
 
 1. Create a new branch from `main`
+
    ```bash
    git checkout -b feat/your-feature-name
    ```
@@ -82,6 +87,7 @@ Example: `feat/add-user-profile-page`
 2. Make your changes
 
 3. Run tests and linting
+
    ```bash
    npm run test:run
    npm run lint
@@ -91,6 +97,7 @@ Example: `feat/add-user-profile-page`
 4. Commit your changes (see [Commit Guidelines](#commit-guidelines))
 
 5. Push to your fork
+
    ```bash
    git push origin feat/your-feature-name
    ```
@@ -133,6 +140,7 @@ src/
 - Use TypeScript for props
 
 Example:
+
 ```tsx
 interface ButtonProps {
   label: string;
@@ -203,6 +211,7 @@ test(hooks): add tests for useDebounce hook
 ### PR Title Format
 
 Follow the same format as commit messages:
+
 ```
 feat(auth): add 2FA authentication
 ```
@@ -211,20 +220,24 @@ feat(auth): add 2FA authentication
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Manual testing completed
 - [ ] E2E tests (if applicable)
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -268,6 +281,7 @@ npm run test:e2e
 - Test edge cases and error scenarios
 
 Example:
+
 ```typescript
 import { describe, it, expect } from 'vitest';
 import { formatCurrency } from '@/lib/format';
@@ -292,6 +306,7 @@ describe('formatCurrency', () => {
 - Explain "why" not just "what"
 
 Example:
+
 ```typescript
 /**
  * Formats a date according to Turkish locale
@@ -323,4 +338,3 @@ By contributing, you agree that your contributions will be licensed under the MI
 ---
 
 Thank you for contributing to Kafkasder Panel! 🎉
-

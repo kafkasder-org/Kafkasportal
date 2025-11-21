@@ -85,7 +85,9 @@ export function BulkMessagingWizard({
           {currentStep !== WIZARD_STEPS.SENDING ? (
             <Button
               onClick={
-                currentStep === WIZARD_STEPS.PREVIEW ? onSend : () => onStepChange(getNextStep(currentStep))
+                currentStep === WIZARD_STEPS.PREVIEW
+                  ? onSend
+                  : () => onStepChange(getNextStep(currentStep))
               }
               disabled={!canGoNext || isSending}
               className="gap-2"
@@ -119,8 +121,16 @@ interface WizardProgressIndicatorProps {
   isSending: boolean;
 }
 
-function WizardProgressIndicator({ currentStep, isSending: _isSending }: WizardProgressIndicatorProps) {
-  const steps: WizardStep[] = [WIZARD_STEPS.COMPOSE, WIZARD_STEPS.RECIPIENTS, WIZARD_STEPS.PREVIEW, WIZARD_STEPS.SENDING];
+function WizardProgressIndicator({
+  currentStep,
+  isSending: _isSending,
+}: WizardProgressIndicatorProps) {
+  const steps: WizardStep[] = [
+    WIZARD_STEPS.COMPOSE,
+    WIZARD_STEPS.RECIPIENTS,
+    WIZARD_STEPS.PREVIEW,
+    WIZARD_STEPS.SENDING,
+  ];
   const currentIndex = steps.indexOf(currentStep);
 
   return (
@@ -141,9 +151,7 @@ function WizardProgressIndicator({ currentStep, isSending: _isSending }: WizardP
           </div>
 
           {/* Step Label */}
-          <div className="ml-2 text-sm font-medium hidden sm:inline">
-            {STEP_TITLES[step]}
-          </div>
+          <div className="ml-2 text-sm font-medium hidden sm:inline">{STEP_TITLES[step]}</div>
 
           {/* Connector Line */}
           {index < steps.length - 1 && (
@@ -160,13 +168,23 @@ function WizardProgressIndicator({ currentStep, isSending: _isSending }: WizardP
 }
 
 function getPreviousStep(step: WizardStep): WizardStep {
-  const steps: WizardStep[] = [WIZARD_STEPS.COMPOSE, WIZARD_STEPS.RECIPIENTS, WIZARD_STEPS.PREVIEW, WIZARD_STEPS.SENDING];
+  const steps: WizardStep[] = [
+    WIZARD_STEPS.COMPOSE,
+    WIZARD_STEPS.RECIPIENTS,
+    WIZARD_STEPS.PREVIEW,
+    WIZARD_STEPS.SENDING,
+  ];
   const index = steps.indexOf(step);
   return index > 0 ? steps[index - 1] : step;
 }
 
 function getNextStep(step: WizardStep): WizardStep {
-  const steps: WizardStep[] = [WIZARD_STEPS.COMPOSE, WIZARD_STEPS.RECIPIENTS, WIZARD_STEPS.PREVIEW, WIZARD_STEPS.SENDING];
+  const steps: WizardStep[] = [
+    WIZARD_STEPS.COMPOSE,
+    WIZARD_STEPS.RECIPIENTS,
+    WIZARD_STEPS.PREVIEW,
+    WIZARD_STEPS.SENDING,
+  ];
   const index = steps.indexOf(step);
   return index < steps.length - 1 ? steps[index + 1] : step;
 }

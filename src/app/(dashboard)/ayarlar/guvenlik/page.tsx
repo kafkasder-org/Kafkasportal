@@ -34,7 +34,12 @@ export default function SecuritySettingsPage() {
   const queryClient = useQueryClient();
 
   // Fetch security settings
-  const { data: settingsData, isLoading, isError, error } = useQuery({
+  const {
+    data: settingsData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ['security-settings'],
     queryFn: async () => {
       const response = await fetch('/api/security');
@@ -207,9 +212,7 @@ export default function SecuritySettingsPage() {
               <AlertTriangle className="w-5 h-5" />
               Hata Oluştu
             </CardTitle>
-            <CardDescription>
-              Güvenlik ayarları yüklenirken bir hata oluştu
-            </CardDescription>
+            <CardDescription>Güvenlik ayarları yüklenirken bir hata oluştu</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
@@ -677,9 +680,7 @@ export default function SecuritySettingsPage() {
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label htmlFor="audit-log">Audit Log (Denetim Kaydı)</Label>
-                      <p className="text-xs text-muted-foreground">
-                        Tüm önemli işlemleri kaydet
-                      </p>
+                      <p className="text-xs text-muted-foreground">Tüm önemli işlemleri kaydet</p>
                     </div>
                     <Switch
                       id="audit-log"
@@ -723,9 +724,7 @@ export default function SecuritySettingsPage() {
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label htmlFor="brute-force">Brute Force Koruması</Label>
-                      <p className="text-xs text-muted-foreground">
-                        Otomatik saldırı tespiti
-                      </p>
+                      <p className="text-xs text-muted-foreground">Otomatik saldırı tespiti</p>
                     </div>
                     <Switch
                       id="brute-force"

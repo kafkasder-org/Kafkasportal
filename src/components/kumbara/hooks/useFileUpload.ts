@@ -11,7 +11,10 @@ interface UseFileUploadOptions<T extends FieldValues> {
   fieldName: Path<T>;
 }
 
-export function useFileUpload<T extends FieldValues>({ setValue, fieldName }: UseFileUploadOptions<T>) {
+export function useFileUpload<T extends FieldValues>({
+  setValue,
+  fieldName,
+}: UseFileUploadOptions<T>) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
 

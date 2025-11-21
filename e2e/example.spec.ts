@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Example Playwright Test Suite
- * 
+ *
  * This file demonstrates basic Playwright test patterns and serves as a
  * quick validation that Playwright is correctly installed and configured.
- * 
+ *
  * Run with: SKIP_WEBSERVER=true npx playwright test example
- * 
+ *
  * Note: These tests are self-contained and don't require external network access
  * or a running application server, making them ideal for quick validation.
  * The SKIP_WEBSERVER flag prevents Playwright from trying to start the Next.js
@@ -17,7 +17,9 @@ import { test, expect } from '@playwright/test';
 test.describe('Example Test Suite - Basic Page Interactions', () => {
   test('basic test example - verify page title', async ({ page }) => {
     // Create a simple HTML page with a title
-    await page.goto('data:text/html,<html><head><title>Example Test Page</title></head><body><h1>Test Page</h1></body></html>');
+    await page.goto(
+      'data:text/html,<html><head><title>Example Test Page</title></head><body><h1>Test Page</h1></body></html>'
+    );
 
     // Expect the page to have the correct title
     await expect(page).toHaveTitle('Example Test Page');
@@ -25,7 +27,9 @@ test.describe('Example Test Suite - Basic Page Interactions', () => {
 
   test('basic test example - verify heading visibility', async ({ page }) => {
     // Create a page with various heading levels
-    await page.goto('data:text/html,<html><body><h1>Main Heading</h1><h2>Subheading</h2><p>Paragraph content</p></body></html>');
+    await page.goto(
+      'data:text/html,<html><body><h1>Main Heading</h1><h2>Subheading</h2><p>Paragraph content</p></body></html>'
+    );
 
     // Verify headings are visible
     await expect(page.getByRole('heading', { name: 'Main Heading', level: 1 })).toBeVisible();

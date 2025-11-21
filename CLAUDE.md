@@ -37,11 +37,13 @@ npm run vercel:prod            # Vercel production deploy
 ### Convex-First Backend
 
 Convex birincil backend'dir (Next.js API routes degil):
+
 - Tum veritabani islemleri `convex/` klasorunde
 - `convex/schema.ts` - Veritabani semasi
 - Her kaynak icin ayri dosya: `users.ts`, `beneficiaries.ts`, `donations.ts` vb.
 
 **Convex function syntax (zorunlu):**
+
 ```typescript
 export const list = query({
   args: { status: v.optional(v.string()) },
@@ -54,6 +56,7 @@ export const list = query({
 ### API Routes
 
 `src/app/api/` - Convex'e ince proxy katmani. Sorumluluklar:
+
 - HTTP routing ve method validation
 - Auth middleware
 - Rate limiting ve CSRF korumasi
@@ -94,6 +97,7 @@ src/app/
 ### ZORUNLU
 
 1. **console.log YASAK** - `src/lib/logger.ts` kullan:
+
    ```typescript
    import { logger } from '@/lib/logger';
    logger.info('User logged in', { userId });
@@ -103,6 +107,7 @@ src/app/
 2. **TypeScript strict mode** - `any` tipi kullanma
 
 3. **Zod validation** - Tum inputlar validate edilmeli:
+
    ```typescript
    import { beneficiarySchema } from '@/lib/validations/beneficiary';
    const result = beneficiarySchema.safeParse(data);
@@ -119,11 +124,12 @@ src/app/
 ## Yeni Kaynak Ekleme
 
 1. **Schema** - `convex/schema.ts`
+
    ```typescript
    myResource: defineTable({
      name: v.string(),
      status: v.string(),
-   }).index('by_status', ['status'])
+   }).index('by_status', ['status']);
    ```
 
 2. **Convex Functions** - `convex/[resource].ts`
@@ -131,6 +137,7 @@ src/app/
 3. **API Route** - `src/app/api/[resource]/route.ts`
 
 4. **API Client** - `src/lib/api/crud-factory.ts`
+
    ```typescript
    export const myResource = createApiClient<MyResource>('myResource');
    ```
@@ -196,24 +203,26 @@ Test dosyalari: `src/__tests__/`, E2E: `e2e/`
 
 ## Onemli Dosyalar
 
-| Dosya | Aciklama |
-|-------|----------|
-| `convex/schema.ts` | Veritabani semasi |
-| `next.config.ts` | Next.js config |
-| `src/lib/api/crud-factory.ts` | API client factory |
-| `src/lib/validations/` | Zod validation semalari |
-| `src/hooks/useStandardForm.ts` | Form hook |
-| `src/stores/authStore.ts` | Auth state |
+| Dosya                          | Aciklama                |
+| ------------------------------ | ----------------------- |
+| `convex/schema.ts`             | Veritabani semasi       |
+| `next.config.ts`               | Next.js config          |
+| `src/lib/api/crud-factory.ts`  | API client factory      |
+| `src/lib/validations/`         | Zod validation semalari |
+| `src/hooks/useStandardForm.ts` | Form hook               |
+| `src/stores/authStore.ts`      | Auth state              |
 
 ## Debugging
 
 **Convex baglanti sorunu:**
+
 ```bash
 # NEXT_PUBLIC_CONVEX_URL ayarli mi kontrol et
 npm run convex:dev
 ```
 
 **Build hatalari:**
+
 ```bash
 npm run clean:all
 npm install
@@ -221,6 +230,7 @@ npm run build
 ```
 
 **Type hatalari:**
+
 ```bash
 npm run typecheck
 ```

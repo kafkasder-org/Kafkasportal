@@ -245,7 +245,10 @@ export class TimeoutError extends AppError {
  * Database error
  */
 export class DatabaseError extends AppError {
-  constructor(message = 'Database operation failed', options?: { context?: Record<string, unknown> }) {
+  constructor(
+    message = 'Database operation failed',
+    options?: { context?: Record<string, unknown> }
+  ) {
     super(message, ErrorCode.DATABASE_ERROR, {
       severity: ErrorSeverity.CRITICAL,
       statusCode: 500,

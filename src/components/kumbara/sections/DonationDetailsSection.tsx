@@ -23,7 +23,10 @@ interface DonationDetailsSectionProps {
   currentCurrency: 'TRY' | 'USD' | 'EUR';
 }
 
-export const DonationDetailsSection = memo(function DonationDetailsSection({ control, currentCurrency }: DonationDetailsSectionProps) {
+export const DonationDetailsSection = memo(function DonationDetailsSection({
+  control,
+  currentCurrency,
+}: DonationDetailsSectionProps) {
   const { getCurrencySymbol } = useCurrencyFormat();
 
   return (

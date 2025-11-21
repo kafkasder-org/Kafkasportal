@@ -15,7 +15,7 @@ jobs:
     if: |
       github.event.pull_request.base.ref == 'main' &&
       github.event.pull_request.draft == false
-    
+
     permissions:
       contents: write
       pull-requests: write
@@ -33,21 +33,21 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            
+
             const labels = pr.labels.map(l => l.name);
             const author = pr.user.login;
             const title = pr.title.toLowerCase();
-            
+
             // Check if PR should be auto-merged
             const hasAutoMergeLabel = labels.includes('auto-merge') || labels.includes('claude');
             const isClaudePR = author === 'Vadalov' || title.includes('claude') || labels.includes('claude');
             const shouldAutoMerge = hasAutoMergeLabel || isClaudePR;
-            
+
             core.setOutput('should_merge', shouldAutoMerge);
             core.setOutput('author', author);
             core.setOutput('title', pr.title);
             core.setOutput('labels', labels.join(','));
-            
+
             if (shouldAutoMerge) {
               core.info(`✅ Auto-merge enabled for PR by ${author}`);
             } else {
@@ -75,35 +75,35 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            
+
             // Check if already merged
             if (pr.merged === true) {
               core.info('ℹ️ PR is already merged');
               core.setOutput('can_merge', 'false');
               return;
             }
-            
+
             // Check if PR is open
             if (pr.state !== 'open') {
               core.setFailed(`PR is not open (state: ${pr.state})`);
               core.setOutput('can_merge', 'false');
               return;
             }
-            
+
             // Check mergeability
             if (pr.mergeable === false) {
               core.warning('⚠️ PR is not mergeable (may have conflicts)');
               core.setOutput('can_merge', 'false');
               return;
             }
-            
+
             // Check status checks
             const { data: statuses } = await github.rest.repos.getCombinedStatusForRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: pr.head.sha
             });
-            
+
             const failingStatuses = statuses.statuses.filter(s => s.state === 'failure' || s.state === 'error');
             if (failingStatuses.length > 0) {
               const criticalChecks = ['CI Pipeline', 'build', 'test', 'lint', 'typecheck'];
@@ -117,7 +117,7 @@ jobs:
                 return;
               }
             }
-            
+
             core.info('✅ PR is ready to merge');
             core.setOutput('can_merge', 'true');
 
@@ -163,4 +163,3 @@ jobs:
                 throw error;
               }
             }
-

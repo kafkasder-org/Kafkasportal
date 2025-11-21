@@ -194,9 +194,7 @@ function LogoUploader({
             </Button>
           )}
 
-          <p className="text-xs text-muted-foreground">
-            PNG, JPG, WEBP, SVG • Maks. 5MB
-          </p>
+          <p className="text-xs text-muted-foreground">PNG, JPG, WEBP, SVG • Maks. 5MB</p>
         </div>
       </div>
     </div>
@@ -231,7 +229,7 @@ export default function BrandingSettingsPage() {
 
   // Initialize form data from branding once it loads
   const [isInitialized, setIsInitialized] = useState(false);
-  
+
   useEffect(() => {
     if (branding && !isInitialized) {
       // Defer state update to avoid cascading renders
@@ -411,9 +409,7 @@ export default function BrandingSettingsPage() {
                   <Input
                     id="organizationName"
                     value={formData.organizationName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, organizationName: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
                     placeholder="Kafkasder"
                     required
                   />
@@ -506,11 +502,7 @@ export default function BrandingSettingsPage() {
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pt-4 border-t">
-                  <Button
-                    type="submit"
-                    disabled={updateMutation.isPending}
-                    className="flex-1"
-                  >
+                  <Button type="submit" disabled={updateMutation.isPending} className="flex-1">
                     {updateMutation.isPending ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -547,7 +539,9 @@ export default function BrandingSettingsPage() {
             <CardContent className="space-y-4">
               <div className="p-6 border rounded-lg bg-muted/20">
                 <div className="space-y-3">
-                  <h3 className="text-2xl font-bold">{formData.organizationName || 'Organizasyon Adı'}</h3>
+                  <h3 className="text-2xl font-bold">
+                    {formData.organizationName || 'Organizasyon Adı'}
+                  </h3>
                   <p className="text-muted-foreground italic">{formData.slogan || 'Slogan'}</p>
                   <div className="pt-3 space-y-1 text-sm border-t">
                     {formData.contactEmail && (

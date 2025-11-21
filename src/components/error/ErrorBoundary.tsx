@@ -140,7 +140,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 </Button>
 
                 <Button
-                  onClick={() => window.location.href = '/'}
+                  onClick={() => (window.location.href = '/')}
                   variant="outline"
                   size="sm"
                   className="flex-1"

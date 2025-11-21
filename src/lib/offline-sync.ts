@@ -44,7 +44,9 @@ async function initDB(): Promise<IDBDatabase> {
 /**
  * Save a mutation to offline queue
  */
-export async function queueOfflineMutation(mutation: Omit<OfflineMutation, 'id' | 'timestamp'>): Promise<void> {
+export async function queueOfflineMutation(
+  mutation: Omit<OfflineMutation, 'id' | 'timestamp'>
+): Promise<void> {
   try {
     const db = await initDB();
     const transaction = db.transaction([STORE_NAME], 'readwrite');
@@ -188,9 +190,8 @@ export async function getOfflineStats(): Promise<{
 
   return {
     pendingCount: mutations.length,
-    oldestMutation: mutations.length > 0
-      ? new Date(Math.min(...mutations.map((m) => m.timestamp)))
-      : undefined,
+    oldestMutation:
+      mutations.length > 0 ? new Date(Math.min(...mutations.map((m) => m.timestamp))) : undefined,
     totalSize: new Blob([JSON.stringify(mutations)]).size,
   };
 }

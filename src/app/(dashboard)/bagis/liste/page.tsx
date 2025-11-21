@@ -155,9 +155,7 @@ export default function DonationsPage() {
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogTitle>Yeni Bağış Ekle</DialogTitle>
-            <DialogDescription>
-              Bağış bilgilerini girerek yeni kayıt oluşturun
-            </DialogDescription>
+            <DialogDescription>Bağış bilgilerini girerek yeni kayıt oluşturun</DialogDescription>
             <DonationForm
               onSuccess={() => {
                 setShowCreateForm(false);

@@ -203,11 +203,7 @@ export const SkeletonAvatar = memo(function SkeletonAvatar({
   return <Skeleton variant="circular" className={sizeClasses[size]} />;
 });
 
-export const SkeletonButton = memo(function SkeletonButton({
-  className,
-}: {
-  className?: string;
-}) {
+export const SkeletonButton = memo(function SkeletonButton({ className }: { className?: string }) {
   return <Skeleton className={cn('h-9 w-24 rounded-md', className)} />;
 });
 

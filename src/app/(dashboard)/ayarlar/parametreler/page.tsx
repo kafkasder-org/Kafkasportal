@@ -67,7 +67,9 @@ export default function ParametersPage() {
     queryFn: async () => {
       const result = await parametersApi.getAllParameters();
       if (!result.success) {
-        throw new Error(result.error instanceof Error ? result.error.message : 'Parametreler alınamadı');
+        throw new Error(
+          result.error instanceof Error ? result.error.message : 'Parametreler alınamadı'
+        );
       }
       return result;
     },

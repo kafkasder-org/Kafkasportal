@@ -63,7 +63,9 @@ export function FinancialInfoStep() {
               placeholder="Çalışma durumu seçin"
               className={errors.workStatus ? 'border-red-500' : ''}
             />
-            {errors.workStatus && <p className="text-sm text-red-500">{errors.workStatus.message}</p>}
+            {errors.workStatus && (
+              <p className="text-sm text-red-500">{errors.workStatus.message}</p>
+            )}
           </div>
         </div>
 
@@ -72,7 +74,7 @@ export function FinancialInfoStep() {
           <Label htmlFor="sector">Sektör</Label>
           <ParameterSelect
             parameter="SEKTOR"
-            value={(watch('sector') as unknown) as string}
+            value={watch('sector') as unknown as string}
             onValueChange={(value) => setValue('sector', value as any)}
             placeholder="Çalışılan sektör seçin"
             className={errors.sector ? 'border-red-500' : ''}

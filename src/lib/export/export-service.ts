@@ -49,7 +49,9 @@ export interface CSVExportOptions<T = Record<string, unknown>> {
 /**
  * Export data to PDF format
  */
-export async function exportToPDF<T = Record<string, unknown>>(options: PDFExportOptions<T>): Promise<void> {
+export async function exportToPDF<T = Record<string, unknown>>(
+  options: PDFExportOptions<T>
+): Promise<void> {
   const {
     title = 'Rapor',
     subtitle,
@@ -127,7 +129,9 @@ export async function exportToPDF<T = Record<string, unknown>>(options: PDFExpor
 
   // Add footer
   if (includeFooter) {
-    const pageCount = (doc as typeof doc & { internal: { getNumberOfPages: () => number } }).internal.getNumberOfPages();
+    const pageCount = (
+      doc as typeof doc & { internal: { getNumberOfPages: () => number } }
+    ).internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
@@ -148,7 +152,9 @@ export async function exportToPDF<T = Record<string, unknown>>(options: PDFExpor
 /**
  * Export data to Excel format using exceljs (secure alternative to xlsx)
  */
-export async function exportToExcel<T = Record<string, unknown>>(options: ExcelExportOptions<T>): Promise<void> {
+export async function exportToExcel<T = Record<string, unknown>>(
+  options: ExcelExportOptions<T>
+): Promise<void> {
   const {
     title = 'Rapor',
     filename = `${title}_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`,
@@ -181,7 +187,7 @@ export async function exportToExcel<T = Record<string, unknown>>(options: ExcelE
   data.forEach((row) => {
     const rowData = columns.map((col) => {
       const value = row[col.key];
-      return col.formatter ? col.formatter(value) : value ?? '';
+      return col.formatter ? col.formatter(value) : (value ?? '');
     });
     worksheet.addRow(rowData);
   });
@@ -201,7 +207,7 @@ export async function exportToExcel<T = Record<string, unknown>>(options: ExcelE
       return col.key === columns[0].key ? 'TOPLAM' : '';
     });
     const totalRowIndex = worksheet.addRow(totalRow);
-    
+
     // Style total row
     const totalRowObj = worksheet.getRow(totalRowIndex.number);
     totalRowObj.font = { bold: true };
@@ -220,12 +226,12 @@ export async function exportToExcel<T = Record<string, unknown>>(options: ExcelE
 
   // Generate Excel file buffer
   const buffer = await workbook.xlsx.writeBuffer();
-  
+
   // Create blob and trigger download
   const blob = new Blob([buffer], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   });
-  
+
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -240,7 +246,9 @@ export async function exportToExcel<T = Record<string, unknown>>(options: ExcelE
 /**
  * Export data to CSV format
  */
-export async function exportToCSV<T = Record<string, unknown>>(options: CSVExportOptions<T>): Promise<void> {
+export async function exportToCSV<T = Record<string, unknown>>(
+  options: CSVExportOptions<T>
+): Promise<void> {
   const {
     filename = `export_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.csv`,
     columns,

@@ -9,7 +9,10 @@ import type { FieldValues, UseFormReturn, FieldPath } from 'react-hook-form';
 /**
  * Base form field props that all form fields should extend
  */
-export interface BaseFormFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>> {
+export interface BaseFormFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> {
   /**
    * Field name/path in the form
    */
@@ -39,8 +42,10 @@ export interface BaseFormFieldProps<T extends FieldValues = FieldValues, K exten
 /**
  * Text input field props
  */
-export interface TextFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>>
-  extends BaseFormFieldProps<T, K> {
+export interface TextFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> extends BaseFormFieldProps<T, K> {
   /**
    * Input type (text, email, password, etc)
    */
@@ -62,8 +67,10 @@ export interface TextFieldProps<T extends FieldValues = FieldValues, K extends F
 /**
  * Select dropdown field props
  */
-export interface SelectFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>>
-  extends BaseFormFieldProps<T, K> {
+export interface SelectFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> extends BaseFormFieldProps<T, K> {
   /**
    * Available options
    */
@@ -88,8 +95,10 @@ export interface SelectFieldProps<T extends FieldValues = FieldValues, K extends
 /**
  * Textarea field props
  */
-export interface TextareaFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>>
-  extends BaseFormFieldProps<T, K> {
+export interface TextareaFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> extends BaseFormFieldProps<T, K> {
   /**
    * Placeholder text
    */
@@ -107,8 +116,10 @@ export interface TextareaFieldProps<T extends FieldValues = FieldValues, K exten
 /**
  * Date picker field props
  */
-export interface DateFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>>
-  extends BaseFormFieldProps<T, K> {
+export interface DateFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> extends BaseFormFieldProps<T, K> {
   /**
    * Minimum date
    */
@@ -130,8 +141,10 @@ export interface DateFieldProps<T extends FieldValues = FieldValues, K extends F
 /**
  * Checkbox field props
  */
-export interface CheckboxFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>>
-  extends BaseFormFieldProps<T, K> {
+export interface CheckboxFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> extends BaseFormFieldProps<T, K> {
   /**
    * Checkbox label (instead of external label)
    */
@@ -141,8 +154,10 @@ export interface CheckboxFieldProps<T extends FieldValues = FieldValues, K exten
 /**
  * Radio group field props
  */
-export interface RadioFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>>
-  extends BaseFormFieldProps<T, K> {
+export interface RadioFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> extends BaseFormFieldProps<T, K> {
   /**
    * Available options
    */
@@ -159,8 +174,10 @@ export interface RadioFieldProps<T extends FieldValues = FieldValues, K extends 
 /**
  * File upload field props
  */
-export interface FileFieldProps<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>>
-  extends BaseFormFieldProps<T, K> {
+export interface FileFieldProps<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> extends BaseFormFieldProps<T, K> {
   /**
    * Accepted file types
    */
@@ -354,7 +371,10 @@ export interface FormFieldWrapperProps {
 /**
  * Dynamic form field configuration
  */
-export interface DynamicFormFieldConfig<T extends FieldValues = FieldValues, K extends FieldPath<T> = FieldPath<T>> {
+export interface DynamicFormFieldConfig<
+  T extends FieldValues = FieldValues,
+  K extends FieldPath<T> = FieldPath<T>,
+> {
   /**
    * Field name
    */
@@ -458,15 +478,7 @@ export interface FormValidationError {
   /**
    * Error type
    */
-  type?:
-    | 'required'
-    | 'minLength'
-    | 'maxLength'
-    | 'pattern'
-    | 'validate'
-    | 'min'
-    | 'max'
-    | 'custom';
+  type?: 'required' | 'minLength' | 'maxLength' | 'pattern' | 'validate' | 'min' | 'max' | 'custom';
 }
 
 /**
