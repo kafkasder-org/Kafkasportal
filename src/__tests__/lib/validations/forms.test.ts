@@ -158,7 +158,7 @@ describe('Form Validation Schemas', () => {
       if (!result.success) {
         const errors = result.error.issues;
         expect(errors.some((e: any) => e.code === 'too_small')).toBe(true);
-        expect(errors.some((e: any) => e.code === 'invalid_string')).toBe(true);
+        expect(errors.some((e: any) => e.code === 'invalid_format')).toBe(true);
       }
     });
   });

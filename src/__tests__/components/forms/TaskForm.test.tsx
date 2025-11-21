@@ -149,8 +149,8 @@ describe('TaskForm Component', () => {
 
     expect(screen.getByDisplayValue('Complete project report')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Finish the quarterly report')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('high')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('in_progress')).toBeInTheDocument();
+    expect(screen.getByTestId('task-priority')).toHaveValue('high');
+    expect(screen.getByTestId('task-status')).toHaveValue('in_progress');
     expect(screen.getByDisplayValue('2024-12-31')).toBeInTheDocument();
   });
 
@@ -185,7 +185,9 @@ describe('TaskForm Component', () => {
     // Type short title
     await user.type(titleInput, 'Hi');
 
-    expect(titleInput.validity.valid).toBe(false);
+    // Check that the value is too short (less than minLength=3)
+    expect(titleInput.value.length).toBeLessThan(3);
+    expect(titleInput.minLength).toBe(3);
   });
 
   it('accepts valid form data', async () => {

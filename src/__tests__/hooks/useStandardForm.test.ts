@@ -5,8 +5,10 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useStandardForm } from '@/hooks/useStandardForm';
 import { z } from 'zod';
+import { createElement, type ReactNode } from 'react';
 
 // Test schema
 const testSchema = z.object({
@@ -16,6 +18,18 @@ const testSchema = z.object({
 });
 
 type TestFormData = z.infer<typeof testSchema>;
+
+// Create wrapper with QueryClient
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+  return ({ children }: { children: ReactNode }) =>
+    createElement(QueryClientProvider, { client: queryClient }, children);
+}
 
 describe('useStandardForm', () => {
   const mockMutationFn = vi.fn();
@@ -34,25 +48,29 @@ describe('useStandardForm', () => {
       age: 25,
     };
 
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-        defaultValues,
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+          defaultValues,
+        }),
+      { wrapper: createWrapper() }
     );
 
     expect(result.current.form.getValues()).toEqual(defaultValues);
   });
 
   it('returns correct form state properties', () => {
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+        }),
+      { wrapper: createWrapper() }
     );
 
     expect(result.current).toHaveProperty('form');
@@ -66,12 +84,14 @@ describe('useStandardForm', () => {
   });
 
   it('validates form data according to schema', async () => {
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+        }),
+      { wrapper: createWrapper() }
     );
 
     // Set invalid email
@@ -84,12 +104,14 @@ describe('useStandardForm', () => {
   });
 
   it('clears errors when valid data is entered', async () => {
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+        }),
+      { wrapper: createWrapper() }
     );
 
     // Set invalid then valid email
@@ -111,17 +133,19 @@ describe('useStandardForm', () => {
   it('calls mutation function with form data on submit', async () => {
     mockMutationFn.mockResolvedValue('success');
 
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-        defaultValues: {
-          name: 'John',
-          email: 'john@example.com',
-          age: 25,
-        },
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+          defaultValues: {
+            name: 'John',
+            email: 'john@example.com',
+            age: 25,
+          },
+        }),
+      { wrapper: createWrapper() }
     );
 
     await act(async () => {
@@ -140,18 +164,20 @@ describe('useStandardForm', () => {
   it('resets form on successful submission when resetOnSuccess is true', async () => {
     mockMutationFn.mockResolvedValue('success');
 
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-        defaultValues: {
-          name: 'John',
-          email: 'john@example.com',
-          age: 25,
-        },
-        resetOnSuccess: true,
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+          defaultValues: {
+            name: 'John',
+            email: 'john@example.com',
+            age: 25,
+          },
+          resetOnSuccess: true,
+        }),
+      { wrapper: createWrapper() }
     );
 
     // Modify form
@@ -174,18 +200,20 @@ describe('useStandardForm', () => {
   it('does not reset form when resetOnSuccess is false', async () => {
     mockMutationFn.mockResolvedValue('success');
 
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-        defaultValues: {
-          name: 'John',
-          email: 'john@example.com',
-          age: 25,
-        },
-        resetOnSuccess: false,
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+          defaultValues: {
+            name: 'John',
+            email: 'john@example.com',
+            age: 25,
+          },
+          resetOnSuccess: false,
+        }),
+      { wrapper: createWrapper() }
     );
 
     // Modify form
@@ -209,18 +237,20 @@ describe('useStandardForm', () => {
     const responseData = 'success-response';
     mockMutationFn.mockResolvedValue(responseData);
 
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-        onSuccess: mockOnSuccess,
-        defaultValues: {
-          name: 'John',
-          email: 'john@example.com',
-          age: 25,
-        },
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+          onSuccess: mockOnSuccess,
+          defaultValues: {
+            name: 'John',
+            email: 'john@example.com',
+            age: 25,
+          },
+        }),
+      { wrapper: createWrapper() }
     );
 
     await act(async () => {
@@ -239,18 +269,20 @@ describe('useStandardForm', () => {
       name: data.name.toUpperCase(),
     }));
 
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-        transformData: transformFn,
-        defaultValues: {
-          name: 'john',
-          email: 'john@example.com',
-          age: 25,
-        },
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+          transformData: transformFn,
+          defaultValues: {
+            name: 'john',
+            email: 'john@example.com',
+            age: 25,
+          },
+        }),
+      { wrapper: createWrapper() }
     );
 
     await act(async () => {
@@ -268,17 +300,19 @@ describe('useStandardForm', () => {
   });
 
   it('manually resets form via reset() function', async () => {
-    const { result } = renderHook(() =>
-      useStandardForm<TestFormData, string>({
-        schema: testSchema,
-        mutationFn: mockMutationFn,
-        queryKey: ['test'],
-        defaultValues: {
-          name: 'John',
-          email: 'john@example.com',
-          age: 25,
-        },
-      })
+    const { result } = renderHook(
+      () =>
+        useStandardForm<TestFormData, string>({
+          schema: testSchema,
+          mutationFn: mockMutationFn,
+          queryKey: ['test'],
+          defaultValues: {
+            name: 'John',
+            email: 'john@example.com',
+            age: 25,
+          },
+        }),
+      { wrapper: createWrapper() }
     );
 
     await act(async () => {

@@ -5,46 +5,66 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider, UseFormReturn } from 'react-hook-form';
 import { DonationDetailsSection } from '@/components/kumbara/sections/DonationDetailsSection';
 import type { KumbaraCreateInput } from '@/lib/validations/kumbara';
 
-describe('DonationDetailsSection', () => {
-  const useRenderWithForm = (currentCurrency: 'TRY' | 'USD' | 'EUR' = 'TRY') => {
-    const methods = useForm<KumbaraCreateInput>({
-      defaultValues: {
-        donor_name: '',
-        donor_phone: '',
-        amount: 0,
-        currency: currentCurrency,
-        payment_method: 'Nakit',
-        donation_type: 'Kumbara',
-        donation_purpose: 'Kumbara Bağışı',
-        kumbara_location: '',
-        kumbara_institution: '',
-        collection_date: new Date().toISOString().split('T')[0],
-        status: 'pending',
-        is_kumbara: true,
-        notes: '',
-      },
-    });
+// Wrapper component to properly use React hooks
+function TestWrapper({ 
+  children, 
+  currentCurrency = 'TRY' 
+}: { 
+  children: (methods: UseFormReturn<KumbaraCreateInput>) => React.ReactNode;
+  currentCurrency?: 'TRY' | 'USD' | 'EUR';
+}) {
+  const methods = useForm<KumbaraCreateInput>({
+    defaultValues: {
+      donor_name: '',
+      donor_phone: '',
+      amount: 0,
+      currency: currentCurrency,
+      payment_method: 'Nakit',
+      donation_type: 'Kumbara',
+      donation_purpose: 'Kumbara Bağışı',
+      kumbara_location: '',
+      kumbara_institution: '',
+      collection_date: new Date().toISOString().split('T')[0],
+      status: 'pending',
+      is_kumbara: true,
+      notes: '',
+    },
+  });
 
+  return (
+    <FormProvider {...methods}>
+      {children(methods)}
+    </FormProvider>
+  );
+}
+
+describe('DonationDetailsSection', () => {
+  const renderWithForm = (currentCurrency: 'TRY' | 'USD' | 'EUR' = 'TRY') => {
+    let methods: UseFormReturn<KumbaraCreateInput> | null = null;
+    
     const result = render(
-      <FormProvider {...methods}>
-        <DonationDetailsSection control={methods.control} currentCurrency={currentCurrency} />
-      </FormProvider>
+      <TestWrapper currentCurrency={currentCurrency}>
+        {(m) => {
+          methods = m;
+          return <DonationDetailsSection control={m.control} currentCurrency={currentCurrency} />;
+        }}
+      </TestWrapper>
     );
 
-    return { ...result, methods };
+    return { ...result, methods: methods! };
   };
 
   it('should render the section title', () => {
-    useRenderWithForm();
+    renderWithForm();
     expect(screen.getByText('Bağış Detayları')).toBeInTheDocument();
   });
 
   it('should render all required fields', () => {
-    useRenderWithForm();
+    renderWithForm();
 
     expect(screen.getByLabelText(/Tutar/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Para Birimi/i)).toBeInTheDocument();
@@ -52,7 +72,7 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should show required asterisk for all fields', () => {
-    useRenderWithForm();
+    renderWithForm();
 
     const amountLabel = screen.getByText(/Tutar/i).closest('label');
     expect(amountLabel).toHaveTextContent('*');
@@ -65,23 +85,23 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should display correct currency symbol for TRY', () => {
-    useRenderWithForm('TRY');
+    renderWithForm('TRY');
     expect(screen.getByText('₺')).toBeInTheDocument();
   });
 
   it('should display correct currency symbol for USD', () => {
-    useRenderWithForm('USD');
+    renderWithForm('USD');
     expect(screen.getByText('$')).toBeInTheDocument();
   });
 
   it('should display correct currency symbol for EUR', () => {
-    useRenderWithForm('EUR');
+    renderWithForm('EUR');
     expect(screen.getByText('€')).toBeInTheDocument();
   });
 
   it('should allow numeric input in amount field', async () => {
     const user = userEvent.setup();
-    const { methods } = useRenderWithForm();
+    const { methods } = renderWithForm();
 
     const input = screen.getByPlaceholderText('0.00');
     await user.clear(input);
@@ -92,20 +112,20 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should have step="0.01" for decimal amounts', () => {
-    useRenderWithForm();
+    renderWithForm();
     const input = screen.getByPlaceholderText('0.00') as HTMLInputElement;
     expect(input.step).toBe('0.01');
   });
 
   it('should have min="0.01" to prevent negative amounts', () => {
-    useRenderWithForm();
+    renderWithForm();
     const input = screen.getByPlaceholderText('0.00') as HTMLInputElement;
     expect(input.min).toBe('0.01');
   });
 
   it('should render currency select with all options', async () => {
     const user = userEvent.setup();
-    useRenderWithForm();
+    renderWithForm();
 
     const currencySelect = screen.getByTestId('currencySelect');
     expect(currencySelect).toBeInTheDocument();
@@ -120,7 +140,7 @@ describe('DonationDetailsSection', () => {
 
   it('should render payment method select with all options', async () => {
     const user = userEvent.setup();
-    useRenderWithForm();
+    renderWithForm();
 
     const paymentSelect = screen.getByTestId('paymentMethodSelect');
     expect(paymentSelect).toBeInTheDocument();
@@ -134,26 +154,26 @@ describe('DonationDetailsSection', () => {
   });
 
   it('should render in a 3-column grid layout', () => {
-    const { container } = useRenderWithForm();
+    const { container } = renderWithForm();
 
     const gridContainer = container.querySelector('.grid.grid-cols-3');
     expect(gridContainer).toBeInTheDocument();
   });
 
   it('should have money bag emoji in section header', () => {
-    useRenderWithForm();
+    renderWithForm();
     expect(screen.getByText('💰')).toBeInTheDocument();
   });
 
   it('should have green-themed styling', () => {
-    const { container } = useRenderWithForm();
+    const { container } = renderWithForm();
 
     const section = container.querySelector('.bg-green-50\\/50');
     expect(section).toBeInTheDocument();
   });
 
   it('should update currency symbol when currency changes', async () => {
-    const { rerender } = useRenderWithForm('TRY');
+    const { rerender } = renderWithForm('TRY');
 
     expect(screen.getByText('₺')).toBeInTheDocument();
 
