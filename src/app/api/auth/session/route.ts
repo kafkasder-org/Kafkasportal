@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import logger from '@/lib/logger';
+import { parseAuthSession } from '@/lib/auth/session';
 
 /**
  * GET /api/auth/session
@@ -10,8 +11,9 @@ export async function GET(_request: NextRequest) {
   try {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get('auth-session');
+    const parsedSession = parseAuthSession(sessionCookie?.value);
 
-    if (!sessionCookie) {
+    if (!parsedSession) {
       return NextResponse.json(
         {
           success: false,
@@ -21,9 +23,8 @@ export async function GET(_request: NextRequest) {
       );
     }
 
-    // Parse and validate session
-    const sessionData = JSON.parse(sessionCookie.value);
-    const expiresAt = new Date(sessionData.expire);
+    // Validate expiration
+    const expiresAt = new Date(parsedSession.expire || '');
 
     // Check expiration
     if (expiresAt <= new Date()) {
@@ -43,8 +44,8 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        userId: sessionData.userId,
-        expiresAt: sessionData.expire,
+        userId: parsedSession.userId,
+        expiresAt: parsedSession.expire,
       },
     });
   } catch (_error: unknown) {

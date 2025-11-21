@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { generateCsrfToken } from '@/lib/csrf';
 import logger from '@/lib/logger';
+import { serializeSessionCookie } from '@/lib/auth/session';
 
 /**
  * GET /api/auth/dev-login
@@ -40,26 +41,31 @@ export async function GET(request: NextRequest) {
     }
 
     const cookieStore = await cookies();
+    const sessionSecret = process.env.SESSION_SECRET;
+    if (!sessionSecret || sessionSecret.length < 16) {
+      logger.error('Dev login blocked: SESSION_SECRET missing or too short');
+      return NextResponse.json(
+        { success: false, error: 'SESSION_SECRET eksik. Lütfen .env.local yapılandırın.' },
+        { status: 500 }
+      );
+    }
 
     const expireTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 saat
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
-    // Session cookie (HttpOnly)
-    cookieStore.set(
-      'auth-session',
-      JSON.stringify({
-        sessionId,
-        userId: user,
-        expire: expireTime.toISOString(),
-      }),
-      {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: 'strict',
-        maxAge: 24 * 60 * 60,
-        path: '/',
-      }
-    );
+    // Session cookie (HttpOnly, signed)
+    const signedSession = serializeSessionCookie({
+      sessionId,
+      userId: user,
+      expire: expireTime.toISOString(),
+    });
+    cookieStore.set('auth-session', signedSession, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60,
+      path: '/',
+    });
 
     // CSRF token cookie (client-readable)
     const csrfToken = generateCsrfToken();

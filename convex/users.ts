@@ -1,5 +1,6 @@
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
+import { requireIdentity } from './authz';
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
 
@@ -12,6 +13,7 @@ export const list = query({
     cursor: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const limit = Math.min(args.limit ?? 50, 100);
     let users;
 
@@ -66,6 +68,7 @@ export const list = query({
 export const get = query({
   args: { id: v.id('users') },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     return await ctx.db.get(args.id);
   },
 });
@@ -73,6 +76,7 @@ export const get = query({
 export const getByEmail = query({
   args: { email: v.string() },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const normalized = normalizeEmail(args.email);
     return await ctx.db
       .query('users')
@@ -94,6 +98,7 @@ export const create = mutation({
     labels: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const normalizedEmail = normalizeEmail(args.email);
 
     const existingUser = await ctx.db
@@ -135,6 +140,7 @@ export const update = mutation({
     labels: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const { id, ...updates } = args;
     const user = await ctx.db.get(id);
     if (!user) {
@@ -209,6 +215,7 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id('users') },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const user = await ctx.db.get(args.id);
     if (!user) {
       throw new Error('Kullanıcı bulunamadı');

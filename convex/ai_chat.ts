@@ -15,6 +15,7 @@ import { components } from './_generated/api';
 import type { StreamId } from '@convex-dev/persistent-text-streaming';
 import { createOpenAI } from '@ai-sdk/openai';
 import { streamText } from 'ai';
+import { requireIdentity } from './authz';
 
 const persistentTextStreaming = new PersistentTextStreaming(components.persistentTextStreaming);
 
@@ -32,6 +33,7 @@ export const createChat = mutation({
     title: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     // Create a stream using the component
     const streamId = await persistentTextStreaming.createStream(ctx);
 
@@ -58,6 +60,7 @@ export const getChat = query({
     chatId: v.id('ai_chats'),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     return await ctx.db.get(args.chatId);
   },
 });
@@ -71,6 +74,7 @@ export const getChatBody = query({
     streamId: StreamIdValidator,
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     return await persistentTextStreaming.getStreamBody(ctx, args.streamId as StreamId);
   },
 });
@@ -84,6 +88,7 @@ export const listChats = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const chats = await ctx.db
       .query('ai_chats')
       .withIndex('by_user_id', (q) => q.eq('user_id', args.user_id))
@@ -103,6 +108,7 @@ export const updateChatStatus = mutation({
     status: v.union(v.literal('pending'), v.literal('completed'), v.literal('error')),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     await ctx.db.patch(args.chatId, {
       status: args.status,
       updated_at: Date.now(),
@@ -118,6 +124,7 @@ export const deleteChat = mutation({
     chatId: v.id('ai_chats'),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     await ctx.db.delete(args.chatId);
   },
 });
@@ -133,6 +140,11 @@ export const deleteChat = mutation({
  * Body: { streamId: string, prompt: string }
  */
 export const streamChat = httpAction(async (ctx, request) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
   const body = (await request.json()) as {
     streamId: string;
     prompt: string;

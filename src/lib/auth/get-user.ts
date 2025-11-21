@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 import { convexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { parseAuthSession } from './session';
 
 /**
  * Get current user ID from auth session
@@ -27,9 +28,8 @@ export async function getCurrentUserId(request?: NextRequest): Promise<Id<'users
       return null;
     }
 
-    const sessionData = JSON.parse(sessionCookie);
-
-    if (!sessionData.userId) {
+    const sessionData = parseAuthSession(sessionCookie);
+    if (!sessionData?.userId) {
       return null;
     }
 

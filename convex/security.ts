@@ -5,12 +5,14 @@
 
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
+import { requireIdentity } from './authz';
 
 /**
  * Get all security settings
  */
 export const getSecuritySettings = query({
   handler: async (ctx) => {
+    await requireIdentity(ctx);
     const settings = await ctx.db
       .query('system_settings')
       .withIndex('by_category', (q) => q.eq('category', 'security'))
@@ -42,6 +44,7 @@ export const updatePasswordPolicy = mutation({
     lockoutDuration: v.optional(v.number()), // minutes
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const updates = [];
 
     for (const [key, value] of Object.entries(args)) {
@@ -93,6 +96,7 @@ export const updateSessionSettings = mutation({
     enableSessionMonitoring: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const updates = [];
 
     for (const [key, value] of Object.entries(args)) {
@@ -143,6 +147,7 @@ export const update2FASettings = mutation({
     gracePeriod: v.optional(v.number()), // days before 2FA becomes required
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const updates = [];
 
     for (const [key, value] of Object.entries(args)) {
@@ -197,6 +202,7 @@ export const updateGeneralSecurity = mutation({
     suspiciousActivityThreshold: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const updates = [];
 
     for (const [key, value] of Object.entries(args)) {
@@ -256,7 +262,11 @@ export const seedDefaultSecurity = mutation({
       // Session Management
       { key: 'sessionTimeout', value: 120, label: 'Session Timeout (minutes)' },
       { key: 'maxConcurrentSessions', value: 3, label: 'Max Concurrent Sessions Per User' },
-      { key: 'requireReauthForSensitive', value: true, label: 'Require Re-auth for Sensitive Actions' },
+      {
+        key: 'requireReauthForSensitive',
+        value: true,
+        label: 'Require Re-auth for Sensitive Actions',
+      },
       { key: 'rememberMeDuration', value: 30, label: 'Remember Me Duration (days)' },
       { key: 'enableSessionMonitoring', value: true, label: 'Enable Session Monitoring' },
 

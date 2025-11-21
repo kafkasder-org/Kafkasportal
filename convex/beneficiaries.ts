@@ -1,5 +1,6 @@
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
+import { requireIdentity } from './authz';
 
 const isValidTcNumber = (value: string): boolean => /^\d{11}$/.test(value);
 
@@ -13,6 +14,7 @@ export const list = query({
     search: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     let beneficiaries;
 
     if (args.search) {
@@ -64,6 +66,7 @@ export const list = query({
 export const get = query({
   args: { id: v.id('beneficiaries') },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     return await ctx.db.get(args.id);
   },
 });
@@ -73,6 +76,7 @@ export const get = query({
 export const getByTcNo = query({
   args: { tc_no: v.string() },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     if (!isValidTcNumber(args.tc_no)) {
       throw new Error('Invalid TC number format');
     }
@@ -148,6 +152,7 @@ export const create = mutation({
     approved_at: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const payload = args;
 
     if (!isValidTcNumber(payload.tc_no)) {
@@ -183,6 +188,7 @@ export const update = mutation({
     // Add other optional fields as needed
   },
   handler: async (ctx, args) => {
+    await requireIdentity(ctx);
     const { id, ...rawUpdates } = args;
     const updates = { ...rawUpdates };
     const beneficiary = await ctx.db.get(id);

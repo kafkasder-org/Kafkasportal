@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
+import { createHmac, timingSafeEqual } from 'crypto';
 import type { Id } from '@/convex/_generated/dataModel';
 import { convexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
@@ -21,14 +22,32 @@ export interface SessionUser {
   labels?: string[];
 }
 
-/**
- * Parse serialized session cookie safely.
- */
-export function parseAuthSession(cookieValue?: string): AuthSession | null {
-  if (!cookieValue) {
+const getSessionSecret = (): string | null => {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret || secret.length < 16) {
     return null;
   }
+  return secret;
+};
 
+const signPayload = (payload: string, secret: string): string => {
+  return createHmac('sha256', secret).update(payload).digest('hex');
+};
+
+const safeEqual = (a: string, b: string): boolean => {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) {
+    return false;
+  }
+  return timingSafeEqual(bufA, bufB);
+};
+
+/**
+ * Legacy JSON parser kept for backward compatibility with old cookies.
+ */
+const parseLegacySession = (cookieValue?: string): AuthSession | null => {
+  if (!cookieValue) return null;
   try {
     const parsed = JSON.parse(cookieValue) as AuthSession;
     if (!parsed?.sessionId || !parsed?.userId) {
@@ -38,6 +57,52 @@ export function parseAuthSession(cookieValue?: string): AuthSession | null {
   } catch {
     return null;
   }
+};
+
+/**
+ * Serialize & sign session using HMAC (base64url.payload + signature).
+ */
+export const serializeSessionCookie = (session: AuthSession): string => {
+  const secret = getSessionSecret();
+  if (!secret) {
+    throw new Error('SESSION_SECRET is missing or too short');
+  }
+  const payload = Buffer.from(JSON.stringify(session)).toString('base64url');
+  const signature = signPayload(payload, secret);
+  return `${payload}.${signature}`;
+};
+
+/**
+ * Parse serialized session cookie safely with signature verification.
+ * Falls back to legacy JSON sessions for existing cookies.
+ */
+export function parseAuthSession(cookieValue?: string): AuthSession | null {
+  if (!cookieValue) {
+    return null;
+  }
+
+  // Signed format: payload.signature
+  const [payload, signature] = cookieValue.split('.');
+  const secret = getSessionSecret();
+
+  if (payload && signature && secret) {
+    try {
+      const expectedSig = signPayload(payload, secret);
+      if (!safeEqual(signature, expectedSig)) {
+        return null;
+      }
+      const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as AuthSession;
+      if (!parsed?.sessionId || !parsed?.userId) {
+        return null;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  // Legacy JSON (unsigned) fallback
+  return parseLegacySession(cookieValue);
 }
 
 /**

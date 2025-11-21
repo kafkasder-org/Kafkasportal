@@ -6,6 +6,7 @@ import logger from '@/lib/logger';
 import { convexHttp } from '@/lib/convex/server';
 import { api } from '@/convex/_generated/api';
 import { verifyPassword } from '@/lib/auth/password';
+import { serializeSessionCookie } from '@/lib/auth/session';
 import {
   isAccountLocked,
   getRemainingLockoutTime,
@@ -153,30 +154,40 @@ export const POST = authRateLimit(async (request: NextRequest) => {
     // Generate CSRF token
     const csrfToken = generateCsrfToken();
 
-    // Set session cookies
+    // Ensure SESSION_SECRET is configured (required for signed cookies)
+    const sessionSecret = process.env.SESSION_SECRET;
+    if (!sessionSecret || sessionSecret.length < 16) {
+      logger.error('SESSION_SECRET missing or too short');
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Sunucu yapılandırması eksik (SESSION_SECRET)',
+        },
+        { status: 500 }
+      );
+    }
+
+    // Set session cookies (signed)
 
     // Create session
     const expireTime = new Date(
       Date.now() + (rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000)
     );
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    const signedSession = serializeSessionCookie({
+      sessionId,
+      userId: user._id,
+      expire: expireTime.toISOString(),
+    });
 
     // Session cookie (HttpOnly)
-    cookieStore.set(
-      'auth-session',
-      JSON.stringify({
-        sessionId,
-        userId: user._id,
-        expire: expireTime.toISOString(),
-      }),
-      {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60,
-        path: '/',
-      }
-    );
+    cookieStore.set('auth-session', signedSession, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60,
+      path: '/',
+    });
 
     // CSRF token cookie
     cookieStore.set('csrf-token', csrfToken, {
