@@ -2,6 +2,8 @@
 
 Dernek Yönetim Sistemi - Next.js 16 + Convex
 
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Vadalov/Kafkasder-panel?utm_source=oss&utm_medium=github&utm_campaign=Vadalov%2FKafkasder-panel&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
 Modern, güvenli ve ölçeklenebilir dernek yönetim platformu.
 
 ## 🚀 Özellikler
@@ -293,4 +295,3 @@ MIT License - Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 - [GitHub Repository](https://github.com/Vadalov/Kafkasder-panel)
 - [Security Advisories](https://github.com/Vadalov/Kafkasder-panel/security)
 - [Issues](https://github.com/Vadalov/Kafkasder-panel/issues)
-
