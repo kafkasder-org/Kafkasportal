@@ -29,6 +29,7 @@
     "health:check": "curl http://localhost:3000/api/health?detailed=true",
     "convex:dev": "convex dev",
     "convex:deploy": "convex deploy",
+    "appwrite:setup": "tsx scripts/appwrite-setup.ts",
     "deploy:vercel": "vercel --prod",
     "validate:deploy": "node -e \"fetch(process.env.DEPLOY_URL + '/api/health').then(r => r.json()).then(console.log)\"",
     "vercel:prod": "vercel --prod",
