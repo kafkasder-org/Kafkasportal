@@ -89,15 +89,16 @@ npm run vercel:prod      # Vercel deploy
 
 ## Dokumantasyon
 
-| Dosya                                          | Icerik                  |
-| ---------------------------------------------- | ----------------------- |
-| [docs/](./docs/)                               | Teknik dokumantasyon    |
-| [docs/setup.md](./docs/setup.md)               | Kurulum rehberi         |
-| [docs/deployment.md](./docs/deployment.md)     | Deployment rehberi      |
-| [docs/testing.md](./docs/testing.md)           | Test rehberi            |
-| [docs/api-patterns.md](./docs/api-patterns.md) | API standartlari        |
-| [CONTRIBUTING.md](./CONTRIBUTING.md)           | Katki rehberi           |
-| [CLAUDE.md](./CLAUDE.md)                       | AI asistanlari için ref |
+| Dosya                                          | Icerik                       |
+| ---------------------------------------------- | ---------------------------- |
+| **[PRD.md](./PRD.md)**                         | **Ürün Gereksinimleri Dokümanı** |
+| [docs/](./docs/)                               | Teknik dokumantasyon         |
+| [docs/setup.md](./docs/setup.md)               | Kurulum rehberi              |
+| [docs/deployment.md](./docs/deployment.md)     | Deployment rehberi           |
+| [docs/testing.md](./docs/testing.md)           | Test rehberi                 |
+| [docs/api-patterns.md](./docs/api-patterns.md) | API standartlari             |
+| [CONTRIBUTING.md](./CONTRIBUTING.md)           | Katki rehberi                |
+| [CLAUDE.md](./CLAUDE.md)                       | AI asistanlari için ref      |
 
 ## Teknoloji Yigini
 
