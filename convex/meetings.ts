@@ -9,6 +9,10 @@ export const list = query({
     status: v.optional(v.string()),
     organizer: v.optional(v.id('users')),
   },
+  returns: v.object({
+    documents: v.array(v.any()),
+    total: v.number(),
+  }),
   handler: async (ctx, args) => {
     let meetings;
 
@@ -42,6 +46,7 @@ export const list = query({
 // Get meeting by ID
 export const get = query({
   args: { id: v.id('meetings') },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -71,6 +76,7 @@ export const create = mutation({
     agenda: v.optional(v.string()),
     notes: v.optional(v.string()),
   },
+  returns: v.id('meetings'),
   handler: async (ctx, args) => {
     return await ctx.db.insert('meetings', args);
   },
@@ -96,6 +102,7 @@ export const update = mutation({
     agenda: v.optional(v.string()),
     notes: v.optional(v.string()),
   },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     const meeting = await ctx.db.get(id);
@@ -110,6 +117,7 @@ export const update = mutation({
 // Delete meeting
 export const remove = mutation({
   args: { id: v.id('meetings') },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const meeting = await ctx.db.get(args.id);
     if (!meeting) {
@@ -125,6 +133,12 @@ export const getCategorizedMeetings = query({
   args: {
     userId: v.id('users'),
   },
+  returns: v.object({
+    invitations: v.array(v.any()),
+    participating: v.array(v.any()),
+    informed: v.array(v.any()),
+    open: v.array(v.any()),
+  }),
   handler: async (ctx, args) => {
     const allMeetings = await ctx.db.query('meetings').withIndex('by_meeting_date').collect();
 
@@ -175,6 +189,7 @@ export const acceptInvitation = mutation({
     meetingId: v.id('meetings'),
     userId: v.id('users'),
   },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const meeting = await ctx.db.get(args.meetingId);
     if (!meeting) {
@@ -194,6 +209,7 @@ export const declineInvitation = mutation({
     meetingId: v.id('meetings'),
     userId: v.id('users'),
   },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const meeting = await ctx.db.get(args.meetingId);
     if (!meeting) {

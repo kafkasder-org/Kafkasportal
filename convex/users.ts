@@ -12,6 +12,12 @@ export const list = query({
     limit: v.optional(v.number()),
     cursor: v.optional(v.string()),
   },
+  returns: v.object({
+    documents: v.array(v.any()),
+    total: v.number(),
+    continueCursor: v.union(v.string(), v.null()),
+    isDone: v.boolean(),
+  }),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
     const limit = Math.min(args.limit ?? 50, 100);
@@ -67,6 +73,7 @@ export const list = query({
 
 export const get = query({
   args: { id: v.id('users') },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
     return await ctx.db.get(args.id);
@@ -75,6 +82,7 @@ export const get = query({
 
 export const getByEmail = query({
   args: { email: v.string() },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
     const normalized = normalizeEmail(args.email);
@@ -97,6 +105,7 @@ export const create = mutation({
     avatar: v.optional(v.string()),
     labels: v.optional(v.array(v.string())),
   },
+  returns: v.id('users'),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
     const normalizedEmail = normalizeEmail(args.email);
@@ -139,6 +148,7 @@ export const update = mutation({
     avatar: v.optional(v.string()),
     labels: v.optional(v.array(v.string())),
   },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
     const { id, ...updates } = args;
@@ -214,6 +224,7 @@ export const update = mutation({
 
 export const remove = mutation({
   args: { id: v.id('users') },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     await requireIdentity(ctx);
     const user = await ctx.db.get(args.id);

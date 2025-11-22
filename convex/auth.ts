@@ -8,6 +8,23 @@ import { v } from 'convex/values';
  */
 export const getCurrentUser = query({
   args: { userId: v.optional(v.id('users')) },
+  returns: v.union(
+    v.null(),
+    v.object({
+      _id: v.id('users'),
+      _creationTime: v.number(),
+      name: v.string(),
+      email: v.string(),
+      role: v.string(),
+      permissions: v.optional(v.array(v.string())),
+      isActive: v.boolean(),
+      phone: v.optional(v.string()),
+      avatar: v.optional(v.string()),
+      labels: v.optional(v.array(v.string())),
+      createdAt: v.optional(v.string()),
+      lastLogin: v.optional(v.string()),
+    })
+  ),
   handler: async (ctx, args) => {
     if (!args.userId) {
       return null;
@@ -33,6 +50,24 @@ export const getCurrentUser = query({
  */
 export const getUserByEmail = query({
   args: { email: v.string() },
+  returns: v.union(
+    v.null(),
+    v.object({
+      _id: v.id('users'),
+      _creationTime: v.number(),
+      name: v.string(),
+      email: v.string(),
+      role: v.string(),
+      permissions: v.optional(v.array(v.string())),
+      passwordHash: v.optional(v.string()),
+      isActive: v.boolean(),
+      phone: v.optional(v.string()),
+      avatar: v.optional(v.string()),
+      labels: v.optional(v.array(v.string())),
+      createdAt: v.optional(v.string()),
+      lastLogin: v.optional(v.string()),
+    })
+  ),
   handler: async (ctx, args) => {
     const user = await ctx.db
       .query('users')
@@ -53,6 +88,7 @@ export const getUserByEmail = query({
  */
 export const updateLastLogin = mutation({
   args: { userId: v.id('users') },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
     if (!user) {
@@ -73,6 +109,7 @@ export const updateLastLogin = mutation({
  */
 export const logout = mutation({
   args: {},
+  returns: v.object({ success: v.boolean() }),
   handler: async (_ctx) => {
     // Session is managed in Next.js cookies, nothing to do here
     return { success: true };

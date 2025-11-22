@@ -10,6 +10,10 @@ export const list = query({
     donor_email: v.optional(v.string()),
     is_kumbara: v.optional(v.boolean()),
   },
+  returns: v.object({
+    documents: v.array(v.any()),
+    total: v.number(),
+  }),
   handler: async (ctx, args) => {
     let donations;
 
@@ -57,6 +61,7 @@ export const list = query({
 // Get donation by ID
 export const get = query({
   args: { id: v.id('donations') },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -65,6 +70,7 @@ export const get = query({
 // Get donation by receipt number
 export const getByReceiptNumber = query({
   args: { receipt_number: v.string() },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     return await ctx.db
       .query('donations')
@@ -116,6 +122,7 @@ export const create = mutation({
     route_distance: v.optional(v.number()),
     route_duration: v.optional(v.number()),
   },
+  returns: v.id('donations'),
   handler: async (ctx, args) => {
     return await ctx.db.insert('donations', args);
   },
@@ -131,6 +138,7 @@ export const update = mutation({
     amount: v.optional(v.number()),
     notes: v.optional(v.string()),
   },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     const donation = await ctx.db.get(id);
@@ -145,6 +153,7 @@ export const update = mutation({
 // Delete donation
 export const remove = mutation({
   args: { id: v.id('donations') },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const donation = await ctx.db.get(args.id);
     if (!donation) {

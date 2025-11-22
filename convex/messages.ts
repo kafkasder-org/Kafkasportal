@@ -12,6 +12,10 @@ export const list = query({
     message_type: v.optional(v.union(v.literal('sms'), v.literal('email'), v.literal('internal'))),
     search: v.optional(v.string()),
   },
+  returns: v.object({
+    documents: v.array(v.any()),
+    total: v.number(),
+  }),
   handler: async (ctx, args) => {
     const limit = Math.min(args.limit ?? 50, 100);
     const skip = Math.max(args.skip ?? 0, 0);
@@ -74,6 +78,7 @@ export const list = query({
 // Get message by ID
 export const get = query({
   args: { id: v.id('messages') },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -91,6 +96,7 @@ export const create = mutation({
     is_bulk: v.boolean(),
     template_id: v.optional(v.string()),
   },
+  returns: v.id('messages'),
   handler: async (ctx, args) => {
     const messageId = await ctx.db.insert('messages', {
       ...args,
@@ -109,6 +115,7 @@ export const update = mutation({
     status: v.optional(v.union(v.literal('draft'), v.literal('sent'), v.literal('failed'))),
     sent_at: v.optional(v.string()),
   },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     const message = await ctx.db.get(id);
@@ -129,6 +136,7 @@ export const update = mutation({
 // Delete message
 export const remove = mutation({
   args: { id: v.id('messages') },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const message = await ctx.db.get(args.id);
     if (!message) {

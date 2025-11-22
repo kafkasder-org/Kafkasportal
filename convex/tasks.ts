@@ -10,6 +10,10 @@ export const list = query({
     assigned_to: v.optional(v.id('users')),
     created_by: v.optional(v.id('users')),
   },
+  returns: v.object({
+    documents: v.array(v.any()),
+    total: v.number(),
+  }),
   handler: async (ctx, args) => {
     let tasks;
 
@@ -48,6 +52,7 @@ export const list = query({
 // Get task by ID
 export const get = query({
   args: { id: v.id('tasks') },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -77,6 +82,7 @@ export const create = mutation({
     tags: v.optional(v.array(v.string())),
     is_read: v.boolean(),
   },
+  returns: v.id('tasks'),
   handler: async (ctx, args) => {
     return await ctx.db.insert('tasks', args);
   },
@@ -104,6 +110,7 @@ export const update = mutation({
     completed_at: v.optional(v.string()),
     is_read: v.optional(v.boolean()),
   },
+  returns: v.union(v.null(), v.any()),
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     const task = await ctx.db.get(id);
@@ -124,6 +131,7 @@ export const update = mutation({
 // Delete task
 export const remove = mutation({
   args: { id: v.id('tasks') },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const task = await ctx.db.get(args.id);
     if (!task) {
