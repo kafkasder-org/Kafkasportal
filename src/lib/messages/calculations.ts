@@ -93,42 +93,6 @@ export function getMessageTypeIcon(type: MessageType): string {
 }
 
 /**
- * Estimate SMS cost (based on message count)
- */
-export function estimateSmsCost(messageCount: number, costPerSms: number = 0.5): number {
-  return messageCount * costPerSms;
-}
-
-/**
- * Calculate number of SMS messages needed (160 chars per SMS)
- */
-export function getSmsMessageCount(content: string): number {
-  const smsLength = 160;
-  const messageLength = content.length;
-  return Math.ceil(messageLength / smsLength);
-}
-
-/**
- * Format phone number for display
- */
-export function formatPhoneNumber(phone: string): string {
-  // Remove non-digits
-  const cleaned = phone.replace(/\D/g, '');
-
-  // Turkish format: +90 (5XX) XXX-XXXX
-  if (cleaned.startsWith('90') && cleaned.length === 12) {
-    return `+90 (${cleaned.slice(2, 5)}) ${cleaned.slice(5, 8)}-${cleaned.slice(8)}`;
-  }
-
-  // Generic format
-  if (cleaned.length >= 10) {
-    return `+${cleaned.slice(0, -10)}${cleaned.slice(-10)}`;
-  }
-
-  return phone;
-}
-
-/**
  * Calculate estimated send time
  */
 export function calculateEstimatedSendTime(

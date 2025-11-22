@@ -189,21 +189,6 @@ export function normalizePhoneNumber(phone: string): string {
 }
 
 /**
- * Format phone number for display
- */
-export function formatPhoneNumber(phone: string): string {
-  const normalized = normalizePhoneNumber(phone);
-  const digits = normalized.replace(/\D/g, '');
-
-  if (digits.length === 12) {
-    // +90XXXXXXXXXX -> +90 (XXX) XXX-XXXX
-    return `+${digits.substring(0, 2)} (${digits.substring(2, 5)}) ${digits.substring(5, 8)}-${digits.substring(8)}`;
-  }
-
-  return phone;
-}
-
-/**
  * Normalize email address
  */
 export function normalizeEmail(email: string): string {

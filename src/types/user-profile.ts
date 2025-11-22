@@ -388,29 +388,6 @@ export function calculateAge(birthDate: string): number | null {
 }
 
 /**
- * Format phone number for display (Turkish format)
- */
-export function formatPhoneNumber(phone: string): string {
-  const cleaned = phone.replace(/\D/g, '');
-
-  if (cleaned.startsWith('90')) {
-    // International format: +90 (XXX) XXX XX XX
-    const match = cleaned.match(/^90(\d{3})(\d{3})(\d{2})(\d{2})$/);
-    if (match) {
-      return `+90 (${match[1]}) ${match[2]} ${match[3]} ${match[4]}`;
-    }
-  } else if (cleaned.startsWith('0') && cleaned.length === 11) {
-    // Local format: 0XXX XXX XX XX
-    const match = cleaned.match(/^0(\d{3})(\d{3})(\d{2})(\d{2})$/);
-    if (match) {
-      return `0${match[1]} ${match[2]} ${match[3]} ${match[4]}`;
-    }
-  }
-
-  return phone;
-}
-
-/**
  * Get primary emergency contact
  */
 export function getPrimaryEmergencyContact(

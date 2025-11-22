@@ -8,8 +8,9 @@ import { AlertCircle, Eye } from 'lucide-react';
 import {
   calculateEstimatedSendTime,
   getMessageTypeIcon,
-  getSmsMessageCount,
+  type MessageType,
 } from '@/lib/messages/calculations';
+import { getSmsMessageCount } from '@/lib/validations/message';
 
 interface PreviewStepProps {
   messageType: MessageType;
