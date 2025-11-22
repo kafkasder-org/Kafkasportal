@@ -27,17 +27,21 @@ Modern, guvenli ve olceklenebilir dernek yonetim platformu.
 
 ### Kurulum
 
+Detayli kurulum icin [docs/setup.md](./docs/setup.md) dosyasina bakin.
+
+Hizli baslangic:
+
 ```bash
 # Repo'yu klonla
-git clone https://github.com/Vadalov/Kafkasder-panel.git
-cd Kafkasder-panel
+git clone https://github.com/kafkasder-org/Kafkasportal.git
+cd Kafkasportal
 
 # Bagimliliklari yukle
 npm install
 
 # Environment variables ayarla
 cp .env.example .env.local
-# .env.local dosyasini duzenle
+# .env.local dosyasini duzenle (Convex URL, secrets vb.)
 
 # Convex ve Next.js'i baslat (ayri terminallerde)
 npm run convex:dev
@@ -85,14 +89,15 @@ npm run vercel:prod      # Vercel deploy
 
 ## Dokumantasyon
 
-| Dosya                                          | Icerik               |
-| ---------------------------------------------- | -------------------- |
-| [docs/](./docs/)                               | Teknik dokumantasyon |
-| [docs/deployment.md](./docs/deployment.md)     | Deployment rehberi   |
-| [docs/testing.md](./docs/testing.md)           | Test rehberi         |
-| [docs/api-patterns.md](./docs/api-patterns.md) | API standartlari     |
-| [CONTRIBUTING.md](./CONTRIBUTING.md)           | Katki rehberi        |
-| [SECURITY.md](./SECURITY.md)                   | Guvenlik politikasi  |
+| Dosya                                          | Icerik                  |
+| ---------------------------------------------- | ----------------------- |
+| [docs/](./docs/)                               | Teknik dokumantasyon    |
+| [docs/setup.md](./docs/setup.md)               | Kurulum rehberi         |
+| [docs/deployment.md](./docs/deployment.md)     | Deployment rehberi      |
+| [docs/testing.md](./docs/testing.md)           | Test rehberi            |
+| [docs/api-patterns.md](./docs/api-patterns.md) | API standartlari        |
+| [CONTRIBUTING.md](./CONTRIBUTING.md)           | Katki rehberi           |
+| [CLAUDE.md](./CLAUDE.md)                       | AI asistanlari için ref |
 
 ## Teknoloji Yigini
 

@@ -10,10 +10,10 @@ import { DonationDetailsSection } from '@/components/kumbara/sections/DonationDe
 import type { KumbaraCreateInput } from '@/lib/validations/kumbara';
 
 // Wrapper component to properly use React hooks
-function TestWrapper({ 
-  children, 
-  currentCurrency = 'TRY' 
-}: { 
+function TestWrapper({
+  children,
+  currentCurrency = 'TRY',
+}: {
   children: (methods: UseFormReturn<KumbaraCreateInput>) => React.ReactNode;
   currentCurrency?: 'TRY' | 'USD' | 'EUR';
 }) {
@@ -35,17 +35,13 @@ function TestWrapper({
     },
   });
 
-  return (
-    <FormProvider {...methods}>
-      {children(methods)}
-    </FormProvider>
-  );
+  return <FormProvider {...methods}>{children(methods)}</FormProvider>;
 }
 
 describe('DonationDetailsSection', () => {
   const renderWithForm = (currentCurrency: 'TRY' | 'USD' | 'EUR' = 'TRY') => {
     let methods: UseFormReturn<KumbaraCreateInput> | null = null;
-    
+
     const result = render(
       <TestWrapper currentCurrency={currentCurrency}>
         {(m) => {

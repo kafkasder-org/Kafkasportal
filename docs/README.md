@@ -6,6 +6,7 @@ Bu klasor projenin tum teknik dokumantasyonunu icerir.
 
 | Dosya                                | Aciklama                                       |
 | ------------------------------------ | ---------------------------------------------- |
+| [setup.md](./setup.md)               | Yerel ortam kurulum rehberi (YENİ!)            |
 | [deployment.md](./deployment.md)     | Vercel ve Convex deployment rehberi            |
 | [testing.md](./testing.md)           | Test altyapisi ve yazim rehberi                |
 | [api-patterns.md](./api-patterns.md) | API route standartlari ve middleware kullanimi |
