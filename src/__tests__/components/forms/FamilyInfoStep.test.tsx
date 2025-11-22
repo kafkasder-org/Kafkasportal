@@ -86,7 +86,9 @@ describe('FamilyInfoStep', () => {
     const user = userEvent.setup();
     renderWithForm();
 
-    const input = screen.getByRole('spinbutton', { name: /Aile Birey Sayısı/i }) as HTMLInputElement;
+    const input = screen.getByRole('spinbutton', {
+      name: /Aile Birey Sayısı/i,
+    }) as HTMLInputElement;
     await user.clear(input);
     await user.type(input, '5');
 
@@ -108,7 +110,9 @@ describe('FamilyInfoStep', () => {
     const user = userEvent.setup();
     renderWithForm();
 
-    const input = screen.getByRole('spinbutton', { name: /Aile Birey Sayısı/i }) as HTMLInputElement;
+    const input = screen.getByRole('spinbutton', {
+      name: /Aile Birey Sayısı/i,
+    }) as HTMLInputElement;
     await user.clear(input);
     await user.type(input, '0');
 
@@ -136,7 +140,9 @@ describe('FamilyInfoStep', () => {
 
     expect((container.querySelector('#familyMemberCount') as HTMLInputElement)?.value).toBe('6');
     expect((container.querySelector('#children_count') as HTMLInputElement)?.value).toBe('2');
-    expect((container.querySelector('#orphan_children_count') as HTMLInputElement)?.value).toBe('1');
+    expect((container.querySelector('#orphan_children_count') as HTMLInputElement)?.value).toBe(
+      '1'
+    );
     expect((container.querySelector('#elderly_count') as HTMLInputElement)?.value).toBe('2');
     expect((container.querySelector('#disabled_count') as HTMLInputElement)?.value).toBe('0');
   });

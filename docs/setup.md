@@ -87,6 +87,7 @@ npm run convex:dev
 ```
 
 İlk çalıştırmada:
+
 1. Convex CLI sizi login olmaya yönlendirecek
 2. Tarayıcıda açılan sayfadan hesabınıza giriş yapın
 3. Proje seçin veya yeni proje oluşturun
@@ -151,6 +152,7 @@ npm run lint:fix
 ### Pre-commit Hook
 
 Husky pre-commit hook otomatik olarak:
+
 - Değiştirilen dosyaları lint ve format eder
 - TypeScript tip kontrolü yapar
 
@@ -181,6 +183,7 @@ npm start
 **Sorun**: "Failed to connect to Convex"
 
 **Çözüm**:
+
 - `.env.local` dosyasında `NEXT_PUBLIC_CONVEX_URL` ayarlı mı kontrol edin
 - `npm run convex:dev` çalışıyor mu kontrol edin
 - Convex dashboard'da deployment aktif mi kontrol edin
@@ -190,6 +193,7 @@ npm start
 **Sorun**: "Port 3000 is already in use"
 
 **Çözüm**:
+
 ```bash
 # Portu öldür
 kill -9 $(lsof -ti:3000)
@@ -203,6 +207,7 @@ PORT=3001 npm run dev
 **Sorun**: "Cannot find module..."
 
 **Çözüm**:
+
 ```bash
 # Node modules'u sıfırla
 rm -rf node_modules package-lock.json
@@ -214,6 +219,7 @@ npm install
 **Sorun**: Type errors after git pull
 
 **Çözüm**:
+
 ```bash
 # Dependencies'i güncelle
 npm install
@@ -276,6 +282,7 @@ Tüm detaylar için `.env.example` dosyasına bakın.
 ### VS Code
 
 Önerilen eklentiler (workspace'de tanımlı):
+
 - ESLint
 - Prettier
 - TypeScript

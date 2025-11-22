@@ -10,7 +10,11 @@ import { DonorInfoSection } from '@/components/kumbara/sections/DonorInfoSection
 import type { KumbaraCreateInput } from '@/lib/validations/kumbara';
 
 // Wrapper component to properly use React hooks
-function TestWrapper({ children }: { children: (methods: UseFormReturn<KumbaraCreateInput>) => React.ReactNode }) {
+function TestWrapper({
+  children,
+}: {
+  children: (methods: UseFormReturn<KumbaraCreateInput>) => React.ReactNode;
+}) {
   const methods = useForm<KumbaraCreateInput>({
     defaultValues: {
       donor_name: '',
@@ -31,17 +35,13 @@ function TestWrapper({ children }: { children: (methods: UseFormReturn<KumbaraCr
     },
   });
 
-  return (
-    <FormProvider {...methods}>
-      {children(methods)}
-    </FormProvider>
-  );
+  return <FormProvider {...methods}>{children(methods)}</FormProvider>;
 }
 
 describe('DonorInfoSection', () => {
   const renderWithForm = () => {
     let methods: UseFormReturn<KumbaraCreateInput> | null = null;
-    
+
     const result = render(
       <TestWrapper>
         {(m) => {
