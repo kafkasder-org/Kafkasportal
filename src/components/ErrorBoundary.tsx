@@ -75,7 +75,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
           <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-10 w-10 text-red-500"
                   fill="none"

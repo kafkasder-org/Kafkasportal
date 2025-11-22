@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use } from 'react';
+import { use } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, AlertCircle, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -109,24 +109,34 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
   }
 
   // Convert beneficiary data to form data format
+  // Split name into firstName and lastName
+  const nameParts = (beneficiary.name || '').split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+
   const initialData: Partial<BeneficiaryFormData> = {
-    name: beneficiary.name || '',
-    tc_no: beneficiary.tc_no || '',
-    phone: beneficiary.phone || '',
-    email: beneficiary.email || '',
-    address: beneficiary.address || '',
-    city: beneficiary.city || '',
-    district: beneficiary.district || '',
-    neighborhood: beneficiary.neighborhood || '',
-    birth_date: beneficiary.birth_date || '',
-    gender: beneficiary.gender || '',
-    marital_status: beneficiary.marital_status || '',
-    education_status: beneficiary.education_status || '',
-    occupation: beneficiary.occupation || '',
-    family_size: beneficiary.family_size || 1,
-    income_level: beneficiary.income_level || '',
-    notes: beneficiary.notes || '',
+    firstName,
+    lastName,
+    identityNumber: beneficiary.tc_no || undefined,
+    mobilePhone: beneficiary.phone || undefined,
+    email: beneficiary.email || undefined,
+    address: beneficiary.address || undefined,
+    city: beneficiary.city as any,
+    district: beneficiary.district || undefined,
+    neighborhood: beneficiary.neighborhood || undefined,
+    birthDate: beneficiary.birth_date || undefined,
+    gender: beneficiary.gender as any,
+    maritalStatus: beneficiary.marital_status as any,
+    educationStatus: beneficiary.education_level as any,
+    occupation: beneficiary.occupation || undefined,
+    familyMemberCount: beneficiary.family_size || 1,
+    notes: beneficiary.notes || undefined,
     mernisCheck: false,
+    nationality: 'Türkiye',
+    category: 'GENEL' as any,
+    fundRegion: 'TR' as any,
+    fileConnection: 'DERNEK' as any,
+    fileNumber: beneficiary.tc_no || 'AUTO',
   };
 
   return (
@@ -145,11 +155,7 @@ export default function BeneficiaryDetailPage({ params }: { params: Promise<{ id
             <p className="text-muted-foreground">İhtiyaç Sahibi Detayları</p>
           </div>
         </div>
-        <Button
-          variant="destructive"
-          onClick={handleDelete}
-          disabled={deleteMutation.isPending}
-        >
+        <Button variant="destructive" onClick={handleDelete} disabled={deleteMutation.isPending}>
           <Trash2 className="h-4 w-4 mr-2" />
           {deleteMutation.isPending ? 'Siliniyor...' : 'Sil'}
         </Button>

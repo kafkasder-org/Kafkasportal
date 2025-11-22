@@ -5,12 +5,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, Eye } from 'lucide-react';
-import {
-  calculateEstimatedSendTime,
-  getMessageTypeIcon,
-  type MessageType,
-} from '@/lib/messages/calculations';
+import { calculateEstimatedSendTime, getMessageTypeIcon } from '@/lib/messages/calculations';
 import { getSmsMessageCount } from '@/lib/validations/message';
+
+type MessageType = 'sms' | 'email' | 'whatsapp';
 
 interface PreviewStepProps {
   messageType: MessageType;
@@ -62,7 +60,7 @@ export function PreviewStep({
           <div>
             <span className="text-sm font-medium">İçerik:</span>
             <div className="mt-2 p-4 bg-muted rounded-lg border">
-              <p className="text-sm whitespace-pre-wrap break-words">{messageData.content}</p>
+              <p className="text-sm whitespace-pre-wrap wrap-break-word">{messageData.content}</p>
             </div>
           </div>
 
@@ -98,7 +96,7 @@ export function PreviewStep({
 
           {recipientCount > 100 && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-yellow-700 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="h-4 w-4 text-yellow-700 mt-0.5 shrink-0" />
               <p className="text-sm text-yellow-900">
                 Çok sayıda alıcıya mesaj gönderme işlemi biraz zaman alabilir
               </p>
@@ -130,5 +128,3 @@ function getMessageTypeLabel(type: MessageType): string {
   };
   return labels[type] || type;
 }
-
-type MessageType = 'sms' | 'email' | 'whatsapp';

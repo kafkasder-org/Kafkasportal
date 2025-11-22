@@ -3,7 +3,7 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
 import { Suspense } from 'react';
 import { LoadingOverlay } from './loading-overlay';
-import { ErrorBoundary } from './error-boundary';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import logger from '@/lib/logger';
 
 interface SuspenseBoundaryProps {
