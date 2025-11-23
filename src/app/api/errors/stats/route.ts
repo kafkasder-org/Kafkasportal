@@ -8,6 +8,7 @@ import { appwriteErrors } from '@/lib/appwrite/api';
 import { createLogger } from '@/lib/logger';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit } from '@/lib/rate-limit';
+import { ErrorSeverity } from '@/lib/errors/AppError';
 
 const logger = createLogger('api:errors:stats');
 
@@ -52,24 +53,34 @@ async function getErrorStatsHandler(request: NextRequest) {
 
     const errors = allErrors.data || [];
     
+    // Type guard for error objects
+    interface ErrorRecord {
+      severity?: string;
+      category?: string;
+      status?: string;
+      occurrence_count?: number;
+    }
+    
     // Calculate statistics
     const stats = {
       total: errors.length,
       by_severity: {
-        critical: errors.filter((e: any) => e.severity === 'critical').length,
-        high: errors.filter((e: any) => e.severity === 'high').length,
-        medium: errors.filter((e: any) => e.severity === 'medium').length,
-        low: errors.filter((e: any) => e.severity === 'low').length,
+        critical: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.CRITICAL).length,
+        high: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.HIGH).length,
+        medium: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.MEDIUM).length,
+        low: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.LOW).length,
       },
-      by_category: errors.reduce((acc: any, e: any) => {
-        acc[e.category] = (acc[e.category] || 0) + 1;
+      by_category: errors.reduce((acc: Record<string, number>, e: ErrorRecord) => {
+        const category = e.category || 'unknown';
+        acc[category] = (acc[category] || 0) + 1;
         return acc;
       }, {}),
-      by_status: errors.reduce((acc: any, e: any) => {
-        acc[e.status] = (acc[e.status] || 0) + 1;
+      by_status: errors.reduce((acc: Record<string, number>, e: ErrorRecord) => {
+        const status = e.status || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
         return acc;
       }, {}),
-      total_occurrences: errors.reduce((sum: number, e: any) => sum + (e.occurrence_count || 1), 0),
+      total_occurrences: errors.reduce((sum: number, e: ErrorRecord) => sum + (e.occurrence_count || 1), 0),
     };
 
     return NextResponse.json({

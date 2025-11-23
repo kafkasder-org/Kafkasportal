@@ -72,15 +72,15 @@ export default function ScholarshipApplicationsPage() {
 
   // Update application mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: Id<'scholarship_applications'>; data: any }) =>
+    mutationFn: ({ id, data }: { id: Id<'scholarship_applications'>; data: Partial<{ status: string; reviewed_at: string; [key: string]: unknown }> }) =>
       scholarshipApplicationsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['scholarship-applications'] });
       toast.success('Başvuru güncellendi');
       setIsDetailDialogOpen(false);
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Başvuru güncellenirken hata oluştu');
+    onError: (error: Error | { message?: string }) => {
+      toast.error(error instanceof Error ? error.message : error.message || 'Başvuru güncellenirken hata oluştu');
     },
   });
 
@@ -92,7 +92,7 @@ export default function ScholarshipApplicationsPage() {
     if (!search) return applications;
     const searchLower = search.toLowerCase();
     return applications.filter(
-      (app: any) =>
+      (app: { applicant_name?: string; university?: string; department?: string; applicant_email?: string; [key: string]: unknown }) =>
         app.applicant_name?.toLowerCase().includes(searchLower) ||
         app.university?.toLowerCase().includes(searchLower) ||
         app.department?.toLowerCase().includes(searchLower) ||
@@ -103,10 +103,10 @@ export default function ScholarshipApplicationsPage() {
   // Statistics
   const stats = useMemo(() => {
     const total = applications.length;
-    const submitted = applications.filter((a: any) => a.status === 'submitted').length;
-    const underReview = applications.filter((a: any) => a.status === 'under_review').length;
-    const approved = applications.filter((a: any) => a.status === 'approved').length;
-    const rejected = applications.filter((a: any) => a.status === 'rejected').length;
+    const submitted = applications.filter((a: { status?: string; [key: string]: unknown }) => a.status === 'submitted').length;
+    const underReview = applications.filter((a: { status?: string; [key: string]: unknown }) => a.status === 'under_review').length;
+    const approved = applications.filter((a: { status?: string; [key: string]: unknown }) => a.status === 'approved').length;
+    const rejected = applications.filter((a: { status?: string; [key: string]: unknown }) => a.status === 'rejected').length;
 
     return { total, submitted, underReview, approved, rejected };
   }, [applications]);
@@ -115,15 +115,15 @@ export default function ScholarshipApplicationsPage() {
     updateMutation.mutate({
       id: applicationId,
       data: {
-        status: newStatus as any,
+        status: newStatus,
         reviewed_at: new Date().toISOString(),
       },
     });
   };
 
   const getScholarshipTitle = (scholarshipId: string) => {
-    const scholarship = scholarships.find((s: any) => s._id === scholarshipId);
-    return scholarship?.title || 'Bilinmeyen Program';
+    const scholarship = scholarships.find((s: { _id: string; title?: string; [key: string]: unknown }) => s._id === scholarshipId);
+    return scholarship && 'title' in scholarship ? scholarship.title : 'Bilinmeyen Program';
   };
 
   return (
@@ -217,7 +217,7 @@ export default function ScholarshipApplicationsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tüm Programlar</SelectItem>
-                {scholarships.map((scholarship: any) => (
+                {scholarships.map((scholarship: { _id: string; title: string; [key: string]: unknown }) => (
                   <SelectItem key={scholarship._id} value={scholarship._id}>
                     {scholarship.title}
                   </SelectItem>
@@ -259,7 +259,7 @@ export default function ScholarshipApplicationsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredApplications.map((application: any) => {
+                {filteredApplications.map((application: { status?: string; [key: string]: unknown }) => {
                   const statusInfo =
                     STATUS_LABELS[application.status as keyof typeof STATUS_LABELS];
                   const StatusIcon = statusInfo.icon;

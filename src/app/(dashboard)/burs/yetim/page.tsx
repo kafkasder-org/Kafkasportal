@@ -77,7 +77,7 @@ export default function OrphansPage() {
       });
 
       // Filter for orphans only
-      const orphans = response.data?.filter((app: any) => app.is_orphan === true) || [];
+      const orphans = response.data?.filter((app: { is_orphan?: boolean; [key: string]: unknown }) => app.is_orphan === true) || [];
 
       return {
         ...response,
@@ -108,7 +108,7 @@ export default function OrphansPage() {
     if (!search) return orphans;
     const searchLower = search.toLowerCase();
     return orphans.filter(
-      (orphan: any) =>
+      (orphan: { applicant_name?: string; university?: string; applicant_phone?: string; [key: string]: unknown }) =>
         orphan.applicant_name?.toLowerCase().includes(searchLower) ||
         orphan.university?.toLowerCase().includes(searchLower) ||
         orphan.applicant_phone?.includes(search)
@@ -118,11 +118,11 @@ export default function OrphansPage() {
   // Statistics
   const stats = useMemo(() => {
     const total = orphans.length;
-    const active = orphans.filter((o: any) => o.status === 'approved').length;
+    const active = orphans.filter((o: { status?: string; [key: string]: unknown }) => o.status === 'approved').length;
     const pending = orphans.filter(
-      (o: any) => o.status === 'under_review' || o.status === 'submitted'
+      (o: { status?: string; [key: string]: unknown }) => o.status === 'under_review' || o.status === 'submitted'
     ).length;
-    const totalSupport = orphans.reduce((sum: number, o: any) => {
+    const totalSupport = orphans.reduce((sum: number, o: { status?: string; [key: string]: unknown }) => {
       // We would need to get payments for each to calculate real total
       // For now just count approved ones
       return sum + (o.status === 'approved' ? 1 : 0);
@@ -131,7 +131,7 @@ export default function OrphansPage() {
     return { total, active, pending, totalSupport };
   }, [orphans]);
 
-  const handleViewDetails = (orphan: any) => {
+  const handleViewDetails = (orphan: { _id: string; [key: string]: unknown }) => {
     setSelectedOrphan(orphan);
     setIsDetailDialogOpen(true);
   };
@@ -139,9 +139,9 @@ export default function OrphansPage() {
   // Calculate total paid for an orphan
   const getTotalPaid = (applicationId: string) => {
     const orphanPayments = payments.filter(
-      (p: any) => p.application_id === applicationId && p.status === 'paid'
+      (p: { application_id?: string; status?: string; [key: string]: unknown }) => p.application_id === applicationId && p.status === 'paid'
     );
-    return orphanPayments.reduce((sum: number, p: any) => sum + p.amount, 0);
+    return orphanPayments.reduce((sum: number, p: { amount?: number; [key: string]: unknown }) => sum + (p.amount || 0), 0);
   };
 
   return (
@@ -267,7 +267,7 @@ export default function OrphansPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrphans.map((orphan: any) => {
+                {filteredOrphans.map((orphan: { status?: string; _id: string; [key: string]: unknown }) => {
                   const statusInfo = STATUS_LABELS[orphan.status as keyof typeof STATUS_LABELS];
 
                   return (
@@ -460,7 +460,7 @@ export default function OrphansPage() {
                 <div>
                   <h3 className="font-semibold mb-3">Ödeme Geçmişi</h3>
                   <div className="space-y-2">
-                    {payments.map((payment: any) => (
+                    {payments.map((payment: { _id: string; amount?: number; payment_date?: string; status?: string; [key: string]: unknown }) => (
                       <div
                         key={payment._id}
                         className="flex items-center justify-between p-3 bg-slate-50 rounded-lg text-sm"

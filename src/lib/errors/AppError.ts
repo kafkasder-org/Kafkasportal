@@ -3,6 +3,8 @@
  * Provides typed error handling across the application
  */
 
+import logger from '@/lib/logger';
+
 /**
  * Error severity levels
  */
@@ -376,15 +378,14 @@ export class ErrorHandler {
    * Log error for debugging
    */
   static log(error: AppError): void {
-    const timestamp = new Date().toISOString();
-    const logMessage = `[${timestamp}] ${error.name}: ${error.message}`;
+    const logMessage = `${error.name}: ${error.message}`;
 
     if (error.severity === ErrorSeverity.CRITICAL) {
-      console.error(logMessage, error.toJSON());
+      logger.error(logMessage, error, error.toJSON());
     } else if (error.severity === ErrorSeverity.HIGH) {
-      console.warn(logMessage, error.toJSON());
+      logger.warn(logMessage, error, error.toJSON());
     } else {
-      console.warn(logMessage, error.toJSON());
+      logger.warn(logMessage, error, error.toJSON());
     }
   }
 }

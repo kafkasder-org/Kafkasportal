@@ -311,7 +311,7 @@ export default function PartnersPage() {
                     <Label htmlFor="create-type">Tür</Label>
                     <Select
                       value={formData.type}
-                      onValueChange={(value: any) =>
+                      onValueChange={(value: Partner['type']) =>
                         setFormData((prev) => ({ ...prev, type: value }))
                       }
                     >
@@ -329,7 +329,7 @@ export default function PartnersPage() {
                     <Label htmlFor="create-partnership-type">İşbirliği Türü</Label>
                     <Select
                       value={formData.partnership_type}
-                      onValueChange={(value: any) =>
+                      onValueChange={(value: Partner['partnership_type']) =>
                         setFormData((prev) => ({ ...prev, partnership_type: value }))
                       }
                     >
@@ -376,7 +376,7 @@ export default function PartnersPage() {
                     <Label htmlFor="create-status">Durum</Label>
                     <Select
                       value={formData.status}
-                      onValueChange={(value: any) =>
+                      onValueChange={(value: Partner['status']) =>
                         setFormData((prev) => ({ ...prev, status: value }))
                       }
                     >

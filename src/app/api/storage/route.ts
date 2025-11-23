@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Map documents to include URL
-    const documents = response.documents.map((doc: any) => {
+    const documents = response.documents.map((doc: { $id?: string; _id?: string; url?: string; storageId?: string; [key: string]: unknown }) => {
       const docId = doc.$id || doc._id || '';
       return {
         ...doc,

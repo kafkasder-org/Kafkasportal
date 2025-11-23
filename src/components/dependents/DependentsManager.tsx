@@ -309,7 +309,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
         </div>
       ) : dependents && dependents.length > 0 ? (
         <div className="space-y-2">
-          {dependents.map((dependent: any) => (
+          {dependents.map((dependent: { _id: string; [key: string]: unknown }) => (
             <Card key={dependent._id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">

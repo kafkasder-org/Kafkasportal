@@ -161,7 +161,7 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
                   <Label>Para Birimi</Label>
                   <Select
                     value={formData.currency}
-                    onValueChange={(v: any) => setFormData({ ...formData, currency: v })}
+                    onValueChange={(v: 'TRY' | 'USD' | 'EUR') => setFormData({ ...formData, currency: v })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -177,7 +177,7 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
                   <Label>Durum</Label>
                   <Select
                     value={formData.status}
-                    onValueChange={(v: any) => setFormData({ ...formData, status: v })}
+                    onValueChange={(v: 'active' | 'inactive' | 'closed') => setFormData({ ...formData, status: v })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -227,7 +227,7 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
         </div>
       ) : accounts && accounts.length > 0 ? (
         <div className="space-y-2">
-          {accounts.map((account: any) => (
+          {accounts.map((account: { _id: string; bankName: string; accountHolder: string; iban: string; currency: string; status: string; notes?: string; [key: string]: unknown }) => (
             <Card key={account._id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">

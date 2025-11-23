@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState, useMemo, DependencyList } from 'react';
+import logger from '@/lib/logger';
 
 /**
  * Debounced callback hook
@@ -261,7 +262,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error);
+      logger.error(`Error reading localStorage key "${key}"`, error as Error);
       return initialValue;
     }
   });
@@ -272,7 +273,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
         setStoredValue(value);
         window.localStorage.setItem(key, JSON.stringify(value));
       } catch (error) {
-        console.error(`Error setting localStorage key "${key}":`, error);
+        logger.error(`Error setting localStorage key "${key}"`, error as Error);
       }
     },
     [key]
@@ -291,7 +292,7 @@ export function useSessionStorage<T>(key: string, initialValue: T): [T, (value: 
       const item = window.sessionStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.error(`Error reading sessionStorage key "${key}":`, error);
+      logger.error(`Error reading sessionStorage key "${key}"`, error as Error);
       return initialValue;
     }
   });
@@ -302,7 +303,7 @@ export function useSessionStorage<T>(key: string, initialValue: T): [T, (value: 
         setStoredValue(value);
         window.sessionStorage.setItem(key, JSON.stringify(value));
       } catch (error) {
-        console.error(`Error setting sessionStorage key "${key}":`, error);
+        logger.error(`Error setting sessionStorage key "${key}"`, error as Error);
       }
     },
     [key]
@@ -414,7 +415,7 @@ export function useCopyToClipboard(): {
 
   const copy = useCallback(async (text: string) => {
     if (!navigator?.clipboard) {
-      console.error('Clipboard API not available');
+      logger.error('Clipboard API not available');
       return false;
     }
 
@@ -428,7 +429,7 @@ export function useCopyToClipboard(): {
 
       return true;
     } catch (error) {
-      console.error('Failed to copy:', error);
+      logger.error('Failed to copy', error as Error);
       return false;
     }
   }, []);

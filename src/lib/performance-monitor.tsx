@@ -282,19 +282,19 @@ export const useFPSMonitor = (enabled = true) => {
 };
 
 export const perfLog = {
-  info: (message: string, data?: any) => {
+  info: (message: string, data?: Record<string, unknown>) => {
     if (process.env.NODE_ENV === 'development') {
       logger.info(`[PERF] ${message}`, data);
     }
   },
 
-  warn: (message: string, data?: any) => {
+  warn: (message: string, data?: Record<string, unknown>) => {
     if (process.env.NODE_ENV === 'development') {
       logger.warn(`[PERF] ${message}`, data);
     }
   },
 
-  error: (message: string, data?: any) => {
-    logger.error(`[PERF] ${message}`, data);
+  error: (message: string, data?: Error | Record<string, unknown>) => {
+    logger.error(`[PERF] ${message}`, data instanceof Error ? data : undefined, data instanceof Error ? undefined : data);
   },
 };

@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import logger from '@/lib/logger';
 
 // Stub types for backward compatibility
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,7 +39,7 @@ export function useRealtimeQuery<Query extends FunctionReference<'query'>>(
   // Stub implementation - Convex removed
   // TODO: Implement with Appwrite Realtime
   useEffect(() => {
-    console.warn('useRealtimeQuery is deprecated. Please migrate to Appwrite Realtime API.');
+    logger.warn('useRealtimeQuery is deprecated. Please migrate to Appwrite Realtime API.');
   }, []);
 
   return undefined;
@@ -58,7 +59,7 @@ export function useRealtimeList<Query extends FunctionReference<'query'>>(
   // Stub implementation - Convex removed
   // TODO: Implement with Appwrite Realtime
   useEffect(() => {
-    console.warn('useRealtimeList is deprecated. Please migrate to Appwrite Realtime API.');
+    logger.warn('useRealtimeList is deprecated. Please migrate to Appwrite Realtime API.');
   }, []);
 
   return undefined;

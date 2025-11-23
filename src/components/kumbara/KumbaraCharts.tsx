@@ -36,10 +36,16 @@ interface PaymentData {
   method: string;
   value: number;
   count: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; payload?: PaymentData }>;
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="rounded-lg border bg-background p-4 shadow-md">
@@ -192,7 +198,7 @@ export function KumbaraCharts() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ method, percent }: any) =>
+                label={({ method, percent }: { method: string; percent?: number }) =>
                   `${method}: ${((percent || 0) * 100).toFixed(0)}%`
                 }
                 outerRadius={80}

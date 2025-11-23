@@ -218,7 +218,7 @@ export interface WorkflowNotificationCreateInput {
     type: 'meeting_action_item' | 'meeting' | 'meeting_decision';
     id: string;
   };
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   created_at?: string;
   [key: string]: unknown;
 }

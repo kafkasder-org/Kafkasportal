@@ -10,6 +10,7 @@ import { mutationRateLimit } from '@/lib/rate-limit';
 import { appwriteStorage, appwriteSystemSettings } from '@/lib/appwrite/api';
 import { appwriteConfig } from '@/lib/appwrite/config';
 import { ID } from 'appwrite';
+import logger from '@/lib/logger';
 
 async function uploadLogoHandler(request: NextRequest) {
   try {
@@ -180,7 +181,7 @@ async function deleteLogoHandler(request: NextRequest) {
         await storage.deleteFile(bucketId, logoSetting.value.storageId);
       } catch (error) {
         // Log but don't fail if file doesn't exist
-        console.warn('Failed to delete logo file from storage:', error);
+        logger.warn('Failed to delete logo file from storage', error as Error);
       }
     }
 
