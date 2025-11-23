@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexBeneficiaries } from '@/lib/convex/api';
+import { appwriteBeneficiaries } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { BeneficiaryFormData } from '@/types/beneficiary';
 import { extractParams } from '@/lib/api/route-helpers';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 /**
@@ -81,7 +80,7 @@ async function getBeneficiaryHandler(
   try {
     await requireModuleAccess('beneficiaries');
 
-    const beneficiary = await convexBeneficiaries.get(id as Id<'beneficiaries'>);
+    const beneficiary = await appwriteBeneficiaries.get(id);
 
     if (!beneficiary) {
       return NextResponse.json(
@@ -134,7 +133,7 @@ async function updateBeneficiaryHandler(
       );
     }
 
-    const updated = await convexBeneficiaries.update(id as Id<'beneficiaries'>, body, {
+    const updated = await appwriteBeneficiaries.update(id, body, {
       auth: { userId: user.id, role: user.role ?? 'Personel' },
     });
 
@@ -184,7 +183,7 @@ async function deleteBeneficiaryHandler(
     await verifyCsrfToken(request);
     await requireModuleAccess('beneficiaries');
 
-    await convexBeneficiaries.remove(id as Id<'beneficiaries'>);
+    await appwriteBeneficiaries.remove(id);
 
     return NextResponse.json({
       success: true,

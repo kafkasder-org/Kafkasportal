@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexTasks, normalizeQueryParams } from '@/lib/convex/api';
+import { appwriteTasks, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 import { parseBody } from '@/lib/api/route-helpers';
 import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
@@ -48,10 +47,10 @@ async function getTasksHandler(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
 
-    const response = await convexTasks.list({
+    const response = await appwriteTasks.list({
       ...params,
-      assigned_to: searchParams.get('assigned_to') as Id<'users'> | undefined,
-      created_by: searchParams.get('created_by') as Id<'users'> | undefined,
+      assigned_to: searchParams.get('assigned_to') || undefined,
+      created_by: searchParams.get('created_by') || undefined,
     });
 
     return NextResponse.json({
@@ -97,8 +96,8 @@ async function createTaskHandler(request: NextRequest) {
     const taskData = {
       title: validation.normalizedData.title || '',
       description: validation.normalizedData.description,
-      assigned_to: validation.normalizedData.assigned_to as Id<'users'> | undefined,
-      created_by: validation.normalizedData.created_by as Id<'users'>,
+      assigned_to: validation.normalizedData.assigned_to as string | undefined,
+      created_by: validation.normalizedData.created_by as string,
       priority: (validation.normalizedData.priority || 'normal') as
         | 'low'
         | 'normal'
@@ -115,7 +114,7 @@ async function createTaskHandler(request: NextRequest) {
       is_read: validation.normalizedData.is_read ?? false,
     };
 
-    const response = await convexTasks.create(taskData as any);
+    const response = await appwriteTasks.create(taskData as any);
 
     return NextResponse.json(
       { success: true, data: response, message: 'Görev başarıyla oluşturuldu' },

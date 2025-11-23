@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMeetingActionItems } from '@/lib/convex/api';
+import { appwriteMeetingActionItems } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 type ActionStatus = 'beklemede' | 'devam' | 'hazir' | 'iptal';
@@ -11,7 +10,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     await requireModuleAccess('workflow');
 
     const { id } = await params;
-    const actionItem = await convexMeetingActionItems.get(id as Id<'meeting_action_items'>);
+    const actionItem = await appwriteMeetingActionItems.get(id as string);
     if (!actionItem) {
       return NextResponse.json(
         { success: false, error: 'Toplantı görevi bulunamadı' },
@@ -49,7 +48,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     body = (await request.json()) as Record<string, unknown>;
     const { id } = await params;
 
-    const response = await convexMeetingActionItems.update(id as Id<'meeting_action_items'>, body);
+    const response = await appwriteMeetingActionItems.update(id as string, body);
 
     return NextResponse.json({
       success: true,
@@ -87,7 +86,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const { id } = await params;
 
     const status = body?.status as ActionStatus | undefined;
-    const changed_by = body?.changed_by as Id<'users'> | undefined;
+    const changed_by = body?.changed_by as string | undefined;
 
     if (!status || !['beklemede', 'devam', 'hazir', 'iptal'].includes(status)) {
       return NextResponse.json({ success: false, error: 'Geçersiz durum' }, { status: 400 });
@@ -100,7 +99,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       );
     }
 
-    const response = await convexMeetingActionItems.updateStatus(id as Id<'meeting_action_items'>, {
+    const response = await appwriteMeetingActionItems.updateStatus(id as string, {
       status,
       changed_by,
       note: body?.note as string | undefined,
@@ -141,7 +140,7 @@ export async function DELETE(
     await requireModuleAccess('workflow');
 
     const { id } = await params;
-    await convexMeetingActionItems.remove(id as Id<'meeting_action_items'>);
+    await appwriteMeetingActionItems.remove(id as string);
 
     return NextResponse.json({
       success: true,

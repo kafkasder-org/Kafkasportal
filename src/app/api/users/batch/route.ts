@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexUsers } from '@/lib/convex/api';
+import { appwriteUsers } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit } from '@/lib/rate-limit';
 
@@ -46,7 +45,7 @@ async function batchGetUsersHandler(request: NextRequest) {
 
     // Fetch users in parallel
     const userPromises = user_ids.map((id: string) =>
-      convexUsers.get(id as Id<'users'>).catch(() => null)
+      appwriteUsers.get(id).catch(() => null)
     );
 
     const users = await Promise.all(userPromises);

@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteStorage, appwriteFiles } from '@/lib/appwrite/api';
+import { appwriteConfig } from '@/lib/appwrite/config';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { uploadRateLimit } from '@/lib/rate-limit';
+import { ID } from 'appwrite';
 import logger from '@/lib/logger';
 
 /**
  * POST /api/storage/upload
- * Upload files to Convex storage
+ * Upload files to Appwrite storage
  * Requires authentication - prevents file bomb attacks and unauthorized uploads
  *
  * SECURITY CRITICAL: File upload without auth = major vulnerability
@@ -53,47 +54,45 @@ async function uploadFileHandler(request: NextRequest) {
       );
     }
 
-    // Get Convex client
-    const convex = getConvexHttp();
+    // Get authenticated user
+    const { user } = await requireAuthenticatedUser();
 
-    // Generate upload URL
-    const uploadUrl = await convex.mutation(api.documents.generateUploadUrl, {});
+    // Get bucket ID from config
+    const bucketId = appwriteConfig.buckets[bucket as keyof typeof appwriteConfig.buckets] || bucket;
 
-    // Upload file to Convex storage
-    const uploadResponse = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': file.type },
-      body: await file.arrayBuffer(),
-    });
+    // Generate unique file ID
+    const fileId = ID.unique();
 
-    if (!uploadResponse.ok) {
-      throw new Error('Dosya yükleme başarısız');
-    }
+    // Upload file to Appwrite storage
+    const storageFile = await appwriteStorage.uploadFile(
+      bucketId,
+      fileId,
+      file,
+      [`user:${user.id}`] // Set permissions
+    );
 
-    // Get storage ID from response
-    // Convex storage returns the storage ID as a JSON string
-    const storageId = await uploadResponse.json();
-
-    // Create document metadata
+    // Create document metadata in files collection
     if (beneficiaryId) {
-      await convex.mutation(api.documents.createDocument, {
+      await appwriteFiles.create({
         fileName: file.name,
         fileSize: file.size,
         fileType: file.type,
         bucket,
-        storageId: storageId as any,
-        beneficiaryId: beneficiaryId as any,
+        storageId: storageFile.$id,
+        beneficiaryId,
         documentType,
+        uploadedBy: user.id,
       });
     }
 
     return NextResponse.json({
       success: true,
       data: {
-        fileId: storageId,
+        fileId: storageFile.$id,
         fileName: file.name,
         fileSize: file.size,
         fileType: file.type,
+        url: appwriteStorage.getFileView(bucketId, storageFile.$id),
       },
     });
   } catch (error) {

@@ -3,8 +3,7 @@ import { generateCsrfToken, validateCsrfToken } from '@/lib/csrf';
 import { cookies } from 'next/headers';
 import { authRateLimit } from '@/lib/rate-limit';
 import logger from '@/lib/logger';
-import { convexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteUsers } from '@/lib/appwrite/api';
 import { verifyPassword } from '@/lib/auth/password';
 import { serializeSessionCookie } from '@/lib/auth/session';
 import {
@@ -17,9 +16,9 @@ import {
 
 /**
  * POST /api/auth/login
- * Handle user login with Convex authentication
+ * Handle user login with Appwrite authentication
  *
- * Looks up user in Convex users collection and verifies password
+ * Looks up user in Appwrite users collection and verifies password
  */
 export const POST = authRateLimit(async (request: NextRequest) => {
   let email: string | undefined;
@@ -69,9 +68,15 @@ export const POST = authRateLimit(async (request: NextRequest) => {
       );
     }
 
-    // Convex-based authentication
-    // Look up user by email in Convex
-    const user = await convexHttp.query(api.auth.getUserByEmail, { email: email.toLowerCase() });
+    // Appwrite-based authentication
+    // Look up user by email in Appwrite
+    const usersResponse = await appwriteUsers.list({
+      search: email.toLowerCase(),
+      limit: 1,
+    });
+    const user = usersResponse.documents?.find(
+      (u) => u.email?.toLowerCase() === email.toLowerCase()
+    );
 
     if (!user) {
       // Record failed attempt
@@ -138,15 +143,16 @@ export const POST = authRateLimit(async (request: NextRequest) => {
     // Record successful login (clears failed attempts)
     recordLoginAttempt(email, true);
 
+    const userId = user.$id || user._id || '';
     const userData = {
-      id: user._id,
+      id: userId,
       email: user.email,
       name: user.name,
       role: user.role || 'Personel',
       permissions: Array.isArray(user.permissions) ? user.permissions : [],
       isActive: user.isActive,
-      createdAt: user._creationTime,
-      updatedAt: user._creationTime,
+      createdAt: user.$createdAt || user._creationTime || new Date().toISOString(),
+      updatedAt: user.$updatedAt || user._updatedAt || new Date().toISOString(),
       phone: user.phone,
       labels: user.labels ?? [],
     };
@@ -176,7 +182,7 @@ export const POST = authRateLimit(async (request: NextRequest) => {
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
     const signedSession = serializeSessionCookie({
       sessionId,
-      userId: user._id,
+      userId: userId,
       expire: expireTime.toISOString(),
     });
 
@@ -200,17 +206,19 @@ export const POST = authRateLimit(async (request: NextRequest) => {
 
     // Update last login time
     try {
-      await convexHttp.mutation(api.auth.updateLastLogin, { userId: user._id });
+      await appwriteUsers.update(userId, {
+        lastLogin: new Date().toISOString(),
+      });
     } catch (_error) {
       // Log but don't fail login if this fails
       logger.warn('Failed to update last login time', {
         error: _error,
-        userId: user._id,
+        userId: userId,
       });
     }
 
     logger.info('User logged in successfully', {
-      userId: user._id,
+      userId: userId,
       email: `${email?.substring(0, 3)}***`,
       role: userData.role,
     });

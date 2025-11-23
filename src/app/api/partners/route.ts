@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexPartners, normalizeQueryParams } from '@/lib/convex/api';
+import { appwritePartners, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
@@ -99,7 +99,7 @@ async function getPartnersHandler(request: NextRequest) {
     if (searchParams.get('partnership_type'))
       filters.partnership_type = searchParams.get('partnership_type') || undefined;
 
-    const response = await convexPartners.list({
+    const response = await appwritePartners.list({
       limit: params.limit,
       skip: params.skip,
       search: params.search,
@@ -190,7 +190,7 @@ async function createPartnerHandler(request: NextRequest) {
       logo_url: body.logo_url,
     };
 
-    const response = await convexPartners.create(partnerData);
+    const response = await appwritePartners.create(partnerData);
 
     return NextResponse.json(
       {

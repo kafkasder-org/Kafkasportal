@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import { appwriteFiles, appwriteStorage } from '@/lib/appwrite/api';
+import { appwriteConfig } from '@/lib/appwrite/config';
 import logger from '@/lib/logger';
 import {
   requireAuthenticatedUser,
@@ -25,25 +24,22 @@ async function getFileHandler(
     await requireAuthenticatedUser();
 
     const { fileId } = await params;
-    const convex = getConvexHttp();
 
-    // Get file by storageId using existing query
-    const file = await convex.query(api.documents.getFileByStorageId, {
-      storageId: fileId as Id<'_storage'>, // storageId is already an Id type in the query
-    });
+    // Get file metadata from files collection
+    const file = await appwriteFiles.getByStorageId(fileId);
 
     if (!file) {
       return NextResponse.json({ success: false, error: 'Dosya bulunamadı' }, { status: 404 });
     }
 
-    // Redirect to the file URL from Convex storage
-    if (!file.url) {
-      return NextResponse.json(
-        { success: false, error: "Dosya URL'si bulunamadı" },
-        { status: 500 }
-      );
-    }
-    return NextResponse.redirect(file.url);
+    // Get bucket ID
+    const bucket = (file.bucket as string) || 'documents';
+    const bucketId = appwriteConfig.buckets[bucket as keyof typeof appwriteConfig.buckets] || bucket;
+
+    // Generate file view URL from Appwrite storage
+    const fileUrl = appwriteStorage.getFileView(bucketId, fileId);
+
+    return NextResponse.redirect(fileUrl);
   } catch (error) {
     const authError = buildErrorResponse(error);
     if (authError) {
@@ -74,12 +70,25 @@ async function deleteFileHandler(
     await requireAuthenticatedUser();
 
     const { fileId } = await params;
-    const convex = getConvexHttp();
 
-    // Delete document
-    await convex.mutation(api.documents.deleteDocument, {
-      documentId: fileId as Id<'files'>,
-    });
+    // Get file metadata to find bucket
+    const file = await appwriteFiles.getByStorageId(fileId);
+
+    if (!file) {
+      return NextResponse.json({ success: false, error: 'Dosya bulunamadı' }, { status: 404 });
+    }
+
+    // Get bucket ID
+    const bucket = (file.bucket as string) || 'documents';
+    const bucketId = appwriteConfig.buckets[bucket as keyof typeof appwriteConfig.buckets] || bucket;
+
+    // Delete file from Appwrite storage
+    await appwriteStorage.deleteFile(bucketId, fileId);
+
+    // Delete file metadata from files collection
+    if (file.$id || file._id) {
+      await appwriteFiles.remove(file.$id || file._id || '');
+    }
 
     return NextResponse.json({ success: true, message: 'Dosya başarıyla silindi' });
   } catch (error) {

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexWorkflowNotifications, normalizeQueryParams } from '@/lib/convex/api';
-import { Id } from '@/convex/_generated/dataModel';
+import { appwriteWorkflowNotifications, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
@@ -42,11 +41,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
 
-    const recipient = searchParams.get('recipient') as Id<'users'> | undefined;
+    const recipient = searchParams.get('recipient') || undefined;
     const status = searchParams.get('status') as NotificationStatus | undefined;
     const category = searchParams.get('category') as NotificationCategory | undefined;
 
-    const response = await convexWorkflowNotifications.list({
+    const response = await appwriteWorkflowNotifications.list({
       ...(params as Record<string, unknown>),
       recipient,
       status,
@@ -92,9 +91,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await convexWorkflowNotifications.create({
-      recipient: body.recipient as Id<'users'>,
-      triggered_by: body.triggered_by as Id<'users'> | undefined,
+    const response = await appwriteWorkflowNotifications.create({
+      recipient: body.recipient as string,
+      triggered_by: body.triggered_by as string | undefined,
       category: (body.category as NotificationCategory) ?? 'meeting',
       title: body.title as string,
       body: body.body as string | undefined,

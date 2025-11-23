@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexDonations } from '@/lib/convex/api';
+import { appwriteDonations } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import QRCode from 'qrcode';
 import type { DonationDocument } from '@/types/database';
@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
     const offset = (pageNum - 1) * limitNum;
 
     // Fetch donations - only kumbara donations
-    const result = await convexDonations.list({
+    const result = await appwriteDonations.list({
       is_kumbara: true, // Only fetch kumbara donations
       limit: limitNum,
       skip: offset,
@@ -285,7 +285,7 @@ export async function GET_STATS(request: NextRequest) {
     const type = searchParams.get('type') || 'overview';
 
     // Fetch all kumbara donations for stats calculation
-    const result = await convexDonations.list({
+    const result = await appwriteDonations.list({
       is_kumbara: true, // Only fetch kumbara donations
       limit: 10000, // Get all records for stats
     });
@@ -484,7 +484,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create donation in Convex
-    const donationId = await convexDonations.create((validation.normalizedData || {}) as any);
+    const donationId = await appwriteDonations.create((validation.normalizedData || {}) as any);
 
     // Generate QR code for the kumbara
     const qrCode = await generateKumbaraQR({

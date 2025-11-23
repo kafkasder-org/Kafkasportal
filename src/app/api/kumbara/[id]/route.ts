@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexDonations } from '@/lib/convex/api';
+import { appwriteDonations } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import type { DonationDocument } from '@/types/database';
 import type { DonationUpdateInput, PaymentMethod } from '@/lib/api/types';
 
@@ -55,7 +54,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     }
 
     // Fetch donation from Convex
-    const donation = await convexDonations.get(id as Id<'donations'>);
+    const donation = await appwriteDonations.get(id as string);
 
     if (!donation) {
       return NextResponse.json(
@@ -102,7 +101,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // First, check if donation exists and is a kumbara donation
-    const existingDonation = await convexDonations.get(id as Id<'donations'>);
+    const existingDonation = await appwriteDonations.get(id as string);
     if (!existingDonation) {
       return NextResponse.json(
         { success: false, error: 'Kumbara bağışı bulunamadı' },
@@ -137,7 +136,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         ...restData,
         ...(payment_method && { payment_method: payment_method as PaymentMethod }),
       };
-      await convexDonations.update(id as Id<'donations'>, updateData);
+      await appwriteDonations.update(id as string, updateData);
     }
 
     logger.info('Updated kumbara donation', {
@@ -177,7 +176,7 @@ export async function DELETE(
     }
 
     // First, check if donation exists and is a kumbara donation
-    const existingDonation = await convexDonations.get(id as Id<'donations'>);
+    const existingDonation = await appwriteDonations.get(id as string);
     if (!existingDonation) {
       return NextResponse.json(
         { success: false, error: 'Kumbara bağışı bulunamadı' },
@@ -193,7 +192,7 @@ export async function DELETE(
     }
 
     // Delete donation from Convex
-    await convexDonations.remove(id as Id<'donations'>);
+    await appwriteDonations.remove(id as string);
 
     logger.info('Deleted kumbara donation', {
       donationId: id,

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMeetingDecisions } from '@/lib/convex/api';
+import { appwriteMeetingDecisions } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -9,7 +8,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const { id } = await params;
     await requireModuleAccess('workflow');
 
-    const decision = await convexMeetingDecisions.get(id as Id<'meeting_decisions'>);
+    const decision = await appwriteMeetingDecisions.get(id as string);
     if (!decision) {
       return NextResponse.json(
         { success: false, error: 'Toplantı kararı bulunamadı' },
@@ -47,7 +46,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     body = (await request.json()) as Record<string, unknown>;
     const { id } = await params;
 
-    const response = await convexMeetingDecisions.update(id as Id<'meeting_decisions'>, body);
+    const response = await appwriteMeetingDecisions.update(id as string, body);
 
     return NextResponse.json({
       success: true,
@@ -84,7 +83,7 @@ export async function DELETE(
     await requireModuleAccess('workflow');
 
     const { id } = await params;
-    await convexMeetingDecisions.remove(id as Id<'meeting_decisions'>);
+    await appwriteMeetingDecisions.remove(id as string);
 
     return NextResponse.json({
       success: true,

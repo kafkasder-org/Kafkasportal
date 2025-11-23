@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMeetings } from '@/lib/convex/api';
+import { appwriteMeetings } from '@/lib/appwrite/api';
 import { extractParams } from '@/lib/api/route-helpers';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 function validateMeetingUpdate(data: Record<string, unknown>): {
@@ -30,7 +29,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   try {
     await requireModuleAccess('workflow');
 
-    const meeting = await convexMeetings.get(id as Id<'meetings'>);
+    const meeting = await appwriteMeetings.get(id);
 
     if (!meeting) {
       return NextResponse.json({ success: false, error: 'Toplantı bulunamadı' }, { status: 404 });
@@ -77,18 +76,18 @@ async function updateMeetingHandler(
       );
     }
 
-    const meetingData: Parameters<typeof convexMeetings.update>[1] = {
+    const meetingData: Parameters<typeof appwriteMeetings.update>[1] = {
       title: body.title as string | undefined,
       description: body.description as string | undefined,
       meeting_date: body.meeting_date as string | undefined,
       location: body.location as string | undefined,
-      participants: body.participants as Id<'users'>[] | undefined,
+      participants: body.participants as string[] | undefined,
       status: body.status as 'scheduled' | 'ongoing' | 'completed' | 'cancelled' | undefined,
       agenda: body.agenda as string | undefined,
       notes: body.notes as string | undefined,
     };
 
-    const updated = await convexMeetings.update(id as Id<'meetings'>, meetingData);
+    const updated = await appwriteMeetings.update(id, meetingData);
 
     return NextResponse.json({
       success: true,
@@ -131,7 +130,7 @@ async function deleteMeetingHandler(
     await verifyCsrfToken(request);
     await requireModuleAccess('workflow');
 
-    await convexMeetings.remove(id as Id<'meetings'>);
+    await appwriteMeetings.remove(id);
 
     return NextResponse.json({
       success: true,

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMessages } from '@/lib/convex/api';
+import { appwriteMessages } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { extractParams } from '@/lib/api/route-helpers';
-import { Id } from '@/convex/_generated/dataModel';
 
 function validateMessageUpdate(data: Record<string, unknown>): {
   isValid: boolean;
@@ -27,7 +26,7 @@ function validateMessageUpdate(data: Record<string, unknown>): {
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await extractParams(params);
   try {
-    const message = await convexMessages.get(id as Id<'messages'>);
+    const message = await appwriteMessages.get(id);
 
     if (!message) {
       return NextResponse.json({ success: false, error: 'Mesaj bulunamadı' }, { status: 404 });
@@ -66,14 +65,14 @@ async function updateMessageHandler(
       );
     }
 
-    const messageData: Parameters<typeof convexMessages.update>[1] = {
+    const messageData: Parameters<typeof appwriteMessages.update>[1] = {
       subject: body.subject as string | undefined,
       content: body.content as string | undefined,
       status: body.status as 'draft' | 'sent' | 'failed' | undefined,
       sent_at: body.sent_at as string | undefined,
     };
 
-    const updated = await convexMessages.update(id as Id<'messages'>, messageData);
+    const updated = await appwriteMessages.update(id, messageData);
 
     return NextResponse.json({
       success: true,
@@ -108,7 +107,7 @@ async function deleteMessageHandler(
 ) {
   const { id } = await extractParams(params);
   try {
-    await convexMessages.remove(id as Id<'messages'>);
+    await appwriteMessages.remove(id);
 
     return NextResponse.json({
       success: true,
@@ -141,19 +140,17 @@ async function sendMessageHandler(
   const { id } = await extractParams(params);
   try {
     // Get message details
-    const message = await convexMessages.get(id as Id<'messages'>);
+    const message = await appwriteMessages.get(id);
 
     if (!message) {
       return NextResponse.json({ success: false, error: 'Mesaj bulunamadı' }, { status: 404 });
     }
 
     // Get recipient user details (phone/email)
-    const { getConvexHttp } = await import('@/lib/convex/server');
-    const { api } = await import('@/convex/_generated/api');
-    const convexHttp = getConvexHttp();
+    const { appwriteUsers } = await import('@/lib/appwrite/api');
 
     const recipients = await Promise.all(
-      message.recipients.map((userId) => convexHttp.query(api.users.get, { id: userId }))
+      message.recipients.map((userId) => appwriteUsers.get(userId))
     );
 
     let sendResult: { success: boolean; error?: string } = { success: false };
@@ -207,7 +204,7 @@ async function sendMessageHandler(
     }
 
     // Update message status
-    const updated = await convexMessages.update(id as Id<'messages'>, {
+    const updated = await appwriteMessages.update(id, {
       status: sendResult.success ? 'sent' : 'failed',
       sent_at: sendResult.success ? new Date().toISOString() : undefined,
     });

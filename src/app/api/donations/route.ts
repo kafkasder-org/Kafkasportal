@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexDonations, normalizeQueryParams } from '@/lib/convex/api';
+import { appwriteDonations, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import type { DonationDocument, Document } from '@/types/database';
 import type { PaymentMethod } from '@/lib/api/types';
@@ -56,7 +56,7 @@ async function getDonationsHandler(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
 
-    const response = await convexDonations.list({
+    const response = await appwriteDonations.list({
       ...params,
       donor_email: searchParams.get('donor_email') || undefined,
     });
@@ -117,7 +117,7 @@ async function createDonationHandler(request: NextRequest) {
         | 'cancelled',
     };
 
-    const response = await convexDonations.create(donationData);
+    const response = await appwriteDonations.create(donationData);
 
     return NextResponse.json(
       { success: true, data: response, message: 'Bağış başarıyla oluşturuldu' },

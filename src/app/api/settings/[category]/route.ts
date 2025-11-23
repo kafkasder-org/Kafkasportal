@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteSystemSettings } from '@/lib/appwrite/api';
+import { requireAuthenticatedUser } from '@/lib/api/auth-utils';
 import logger from '@/lib/logger';
 
 // GET - Get settings for a specific category
@@ -10,11 +10,8 @@ export async function GET(
 ) {
   try {
     const { category } = await params;
-    const convex = getConvexHttp();
 
-    const settings = await convex.query(api.system_settings.getSettingsByCategory, {
-      category,
-    });
+    const settings = await appwriteSystemSettings.getByCategory(category);
 
     return NextResponse.json({
       success: true,
@@ -43,11 +40,8 @@ export async function POST(
       return NextResponse.json({ error: 'Geçersiz ayarlar formatı' }, { status: 400 });
     }
 
-    const convex = getConvexHttp();
-    await convex.mutation(api.system_settings.updateSettings, {
-      category,
-      settings,
-    });
+    const { user } = await requireAuthenticatedUser();
+    await appwriteSystemSettings.updateSettings(category, settings, user.id);
 
     return NextResponse.json({
       success: true,

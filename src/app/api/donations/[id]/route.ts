@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexDonations } from '@/lib/convex/api';
+import { appwriteDonations } from '@/lib/appwrite/api';
 import { extractParams } from '@/lib/api/route-helpers';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 function validateDonationUpdate(data: Record<string, unknown>): {
@@ -53,7 +52,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   try {
     await requireModuleAccess('donations');
 
-    const donation = await convexDonations.get(id as Id<'donations'>);
+    const donation = await appwriteDonations.get(id);
 
     if (!donation) {
       return NextResponse.json({ success: false, error: 'Bağış bulunamadı' }, { status: 404 });
@@ -100,13 +99,13 @@ async function updateDonationHandler(
       );
     }
 
-    const donationData: Parameters<typeof convexDonations.update>[1] = {
+    const donationData: Parameters<typeof appwriteDonations.update>[1] = {
       status: body.status as 'pending' | 'completed' | 'cancelled' | undefined,
       amount: body.amount as number | undefined,
       notes: body.notes as string | undefined,
     };
 
-    const updated = await convexDonations.update(id as Id<'donations'>, donationData);
+    const updated = await appwriteDonations.update(id, donationData);
 
     return NextResponse.json({
       success: true,
@@ -149,7 +148,7 @@ async function deleteDonationHandler(
     await verifyCsrfToken(request);
     await requireModuleAccess('donations');
 
-    await convexDonations.remove(id as Id<'donations'>);
+    await appwriteDonations.remove(id);
 
     return NextResponse.json({
       success: true,

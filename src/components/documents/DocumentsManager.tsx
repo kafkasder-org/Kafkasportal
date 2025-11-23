@@ -7,21 +7,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import logger from '@/lib/logger';
 import { toast } from 'sonner';
-import { convex } from '@/lib/convex/client';
-import { api as convexApi } from '@/convex/_generated/api';
 
 interface DocumentsManagerProps {
   beneficiaryId: string;
 }
 
 interface Document {
-  _id: string;
+  _id?: string;
+  $id?: string;
   fileName: string;
   fileSize: number;
   fileType: string;
   document_type?: string;
   uploadedAt: string;
   url?: string;
+  storageId?: string;
 }
 
 export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
@@ -29,27 +29,22 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
-  // Check if Convex is available
-  const isConvexReady = !!convex;
-
   // Fetch documents - Optimized with caching and immediate UI
-  const { data: documents, isLoading } = useQuery({
+  const { data: documentsResponse, isLoading } = useQuery({
     queryKey: ['documents', beneficiaryId],
     queryFn: async () => {
-      if (!convex) {
-        return [];
-      }
       try {
-        const docs = await convex.query(convexApi.documents.getBeneficiaryDocuments, {
-          beneficiaryId: beneficiaryId as any,
-        });
-        return docs as Document[];
+        const response = await fetch(
+          `/api/storage?beneficiaryId=${beneficiaryId}&bucket=documents`
+        );
+        const json = await response.json();
+        return json.data || [];
       } catch (_error) {
         logger.error('Document fetch failed', { error: _error });
         return [];
       }
     },
-    enabled: !!beneficiaryId && isConvexReady,
+    enabled: !!beneficiaryId,
     staleTime: 1000 * 60 * 5, // 5 minutes - data is fresh for 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes - keep in cache for 10 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus
@@ -57,22 +52,28 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
     placeholderData: [], // Show empty state immediately
   });
 
+  const documents = documentsResponse || [];
+
   // Delete mutation
   const deleteMutation = useMutation({
-    mutationFn: async (documentId: string) => {
-      if (!convex) {
-        throw new Error('Convex client not initialized');
-      }
-      await convex.mutation(convexApi.documents.deleteDocument, {
-        documentId: documentId as any,
+    mutationFn: async (fileId: string) => {
+      const response = await fetch(`/api/storage/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Dosya silinemedi');
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents', beneficiaryId] });
       toast.success('Doküman başarıyla silindi');
     },
-    onError: () => {
-      toast.error('Doküman silinirken bir hata oluştu');
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : 'Doküman silinirken bir hata oluştu');
     },
   });
 
@@ -221,8 +222,9 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
         ) : documents && documents.length > 0 ? (
           documents.map((doc) => {
             const Icon = getFileIcon(doc.fileType);
+            const docId = doc.$id || doc._id || doc.storageId || '';
             return (
-              <Card key={doc._id} className="hover:shadow-md transition-shadow">
+              <Card key={docId} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -251,7 +253,7 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          deleteMutation.mutate(doc._id);
+                          deleteMutation.mutate(doc.storageId || docId);
                         }}
                         disabled={deleteMutation.isPending}
                         className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"

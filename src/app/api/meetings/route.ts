@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMeetings, normalizeQueryParams } from '@/lib/convex/api';
+import { appwriteMeetings, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 function validateMeeting(data: Record<string, unknown>): {
@@ -45,9 +44,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
 
-    const response = await convexMeetings.list({
+    const response = await appwriteMeetings.list({
       ...params,
-      organizer: searchParams.get('organizer') as Id<'users'> | undefined,
+      organizer: searchParams.get('organizer') || undefined,
     });
 
     return NextResponse.json({
@@ -92,8 +91,8 @@ async function createMeetingHandler(request: NextRequest) {
       description: validation.normalizedData.description as string | undefined,
       meeting_date: validation.normalizedData.meeting_date as string,
       location: validation.normalizedData.location as string | undefined,
-      organizer: validation.normalizedData.organizer as Id<'users'>,
-      participants: (validation.normalizedData.participants as Id<'users'>[]) || [],
+      organizer: validation.normalizedData.organizer as string,
+      participants: (validation.normalizedData.participants as string[]) || [],
       status: (validation.normalizedData.status || 'scheduled') as
         | 'scheduled'
         | 'ongoing'
@@ -108,7 +107,7 @@ async function createMeetingHandler(request: NextRequest) {
       notes: validation.normalizedData.notes as string | undefined,
     };
 
-    const response = await convexMeetings.create(meetingData);
+    const response = await appwriteMeetings.create(meetingData);
 
     return NextResponse.json(
       { success: true, data: response, message: 'Toplantı başarıyla oluşturuldu' },

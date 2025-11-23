@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexBeneficiaries, normalizeQueryParams } from '@/lib/convex/api';
+import { appwriteBeneficiaries, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
@@ -75,7 +75,7 @@ async function getBeneficiariesHandler(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
 
-    const response = await convexBeneficiaries.list({
+    const response = await appwriteBeneficiaries.list({
       ...params,
       city: searchParams.get('city') || undefined,
     });
@@ -187,7 +187,7 @@ async function createBeneficiaryHandler(request: NextRequest) {
       approved_at: body.approved_at,
     };
 
-    const response = await convexBeneficiaries.create(beneficiaryData as any, {
+    const response = await appwriteBeneficiaries.create(beneficiaryData as any, {
       auth: { userId: user.id, role: user.role ?? 'Personel' },
     });
 

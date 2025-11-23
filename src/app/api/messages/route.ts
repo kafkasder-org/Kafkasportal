@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMessages, normalizeQueryParams } from '@/lib/convex/api';
+import { appwriteMessages, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { buildErrorResponse, verifyCsrfToken, requireModuleAccess } from '@/lib/api/auth-utils';
 
 function validateMessage(data: Record<string, unknown>): {
@@ -43,12 +42,12 @@ export async function GET(request: NextRequest) {
     const { user } = await requireModuleAccess('messages');
 
     currentUserId = user.id;
-    const authenticatedUserId = user.id as Id<'users'>;
+    const authenticatedUserId = user.id;
     const tab = searchParams.get('tab');
     const canViewAllMessages = user.permissions.includes('users:manage');
 
-    const parseUserIdParam = (value: string | null): Id<'users'> | undefined =>
-      value && value.length > 0 ? (value as Id<'users'>) : undefined;
+    const parseUserIdParam = (value: string | null): string | undefined =>
+      value && value.length > 0 ? value : undefined;
 
     const requestedSender = parseUserIdParam(searchParams.get('sender'));
     const requestedRecipient = parseUserIdParam(searchParams.get('recipient'));
@@ -68,21 +67,21 @@ export async function GET(request: NextRequest) {
 
     if (tab === 'inbox') {
       // Inbox: messages where current user is recipient
-      response = await convexMessages.list({
+      response = await appwriteMessages.list({
         ...params,
         recipient: authenticatedUserId,
         message_type: 'internal',
       });
     } else if (tab === 'sent') {
       // Sent: messages where current user is sender
-      response = await convexMessages.list({
+      response = await appwriteMessages.list({
         ...params,
         sender: authenticatedUserId,
         message_type: 'internal',
       });
     } else if (tab === 'drafts') {
       // Drafts: draft messages where current user is sender
-      response = await convexMessages.list({
+      response = await appwriteMessages.list({
         ...params,
         sender: authenticatedUserId,
         status: 'draft',
@@ -93,7 +92,7 @@ export async function GET(request: NextRequest) {
       const senderFilter = canViewAllMessages ? requestedSender : authenticatedUserId;
       const recipientFilter = canViewAllMessages ? requestedRecipient : undefined;
 
-      response = await convexMessages.list({
+      response = await appwriteMessages.list({
         ...params,
         sender: senderFilter,
         recipient: recipientFilter,
@@ -145,8 +144,8 @@ async function createMessageHandler(request: NextRequest) {
 
     const messageData = {
       message_type: validation.normalizedData.message_type as 'sms' | 'email' | 'internal',
-      sender: user.id as Id<'users'>,
-      recipients: validation.normalizedData.recipients as Id<'users'>[],
+      sender: user.id,
+      recipients: validation.normalizedData.recipients as string[],
       subject: validation.normalizedData.subject as string | undefined,
       content: validation.normalizedData.content as string,
       status: (validation.normalizedData.status || 'draft') as 'draft' | 'sent' | 'failed',
@@ -161,7 +160,7 @@ async function createMessageHandler(request: NextRequest) {
       );
     }
 
-    const response = await convexMessages.create(messageData as any);
+    const response = await appwriteMessages.create(messageData as any);
 
     return NextResponse.json(
       { success: true, data: response, message: 'Mesaj taslağı oluşturuldu' },

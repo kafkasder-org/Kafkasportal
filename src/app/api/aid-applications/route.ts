@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexAidApplications, normalizeQueryParams } from '@/lib/convex/api';
+import { appwriteAidApplications, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { requireModuleAccess, verifyCsrfToken, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit, dataModificationRateLimit } from '@/lib/rate-limit';
 
@@ -47,10 +46,10 @@ async function getAidApplicationsHandler(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
 
-    const response = await convexAidApplications.list({
+    const response = await appwriteAidApplications.list({
       ...params,
       stage: searchParams.get('stage') || undefined,
-      beneficiary_id: searchParams.get('beneficiary_id') as Id<'beneficiaries'> | undefined,
+      beneficiary_id: searchParams.get('beneficiary_id') || undefined,
     });
 
     return NextResponse.json({
@@ -104,7 +103,7 @@ async function createApplicationHandler(request: NextRequest) {
       application_date: (body.application_date as string) || new Date().toISOString(),
       applicant_type: (body.applicant_type as 'person' | 'organization' | 'partner') || 'person',
       applicant_name: body.applicant_name as string,
-      beneficiary_id: body.beneficiary_id as Id<'beneficiaries'> | undefined,
+      beneficiary_id: body.beneficiary_id as string | undefined,
       one_time_aid: body.one_time_aid as number | undefined,
       regular_financial_aid: body.regular_financial_aid as number | undefined,
       regular_food_aid: body.regular_food_aid as number | undefined,
@@ -118,7 +117,7 @@ async function createApplicationHandler(request: NextRequest) {
       priority: body.priority as 'low' | 'normal' | 'high' | 'urgent' | undefined,
     };
 
-    const response = await convexAidApplications.create(applicationData);
+    const response = await appwriteAidApplications.create(applicationData);
 
     return NextResponse.json(
       { success: true, data: response, message: 'Başvuru oluşturuldu' },

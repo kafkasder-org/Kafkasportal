@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexTasks } from '@/lib/convex/api';
+import { appwriteTasks } from '@/lib/appwrite/api';
 import { extractParams } from '@/lib/api/route-helpers';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 function validateTaskUpdate(data: Record<string, unknown>): { isValid: boolean; errors: string[] } {
@@ -30,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   try {
     await requireModuleAccess('workflow');
 
-    const task = await convexTasks.get(id as Id<'tasks'>);
+    const task = await appwriteTasks.get(id);
 
     if (!task) {
       return NextResponse.json({ success: false, error: 'Görev bulunamadı' }, { status: 404 });
@@ -74,10 +73,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       );
     }
 
-    const taskData: Parameters<typeof convexTasks.update>[1] = {
+    const taskData: Parameters<typeof appwriteTasks.update>[1] = {
       title: body.title as string | undefined,
       description: body.description as string | undefined,
-      assigned_to: body.assigned_to as Id<'users'> | undefined,
+      assigned_to: body.assigned_to as string | undefined,
       priority: body.priority as 'low' | 'normal' | 'high' | 'urgent' | undefined,
       status: body.status as 'pending' | 'in_progress' | 'completed' | 'cancelled' | undefined,
       due_date: body.due_date as string | undefined,
@@ -85,7 +84,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       is_read: body.is_read as boolean | undefined,
     };
 
-    const updated = await convexTasks.update(id as Id<'tasks'>, taskData);
+    const updated = await appwriteTasks.update(id, taskData);
 
     return NextResponse.json({
       success: true,
@@ -128,7 +127,7 @@ export async function DELETE(
     await verifyCsrfToken(request);
     await requireModuleAccess('workflow');
 
-    await convexTasks.remove(id as Id<'tasks'>);
+    await appwriteTasks.remove(id);
 
     return NextResponse.json({
       success: true,

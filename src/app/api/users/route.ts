@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexUsers } from '@/lib/convex/api';
+import { appwriteUsers } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { hashPassword, validatePasswordStrength } from '@/lib/auth/password';
 import {
@@ -136,7 +136,7 @@ async function getUsersHandler(request: NextRequest) {
             ? false
             : undefined;
 
-    const response = await convexUsers.list({
+    const response = await appwriteUsers.list({
       search,
       role: role && role.length > 0 ? role : undefined,
       isActive,
@@ -201,7 +201,7 @@ async function createUserHandler(request: NextRequest) {
 
     const passwordHash = await hashPassword(validation.data.password as string);
 
-    const response = await convexUsers.create({
+    const response = await appwriteUsers.create({
       name: validation.data.name,
       email: validation.data.email,
       role: validation.data.role as any,

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexWorkflowNotifications } from '@/lib/convex/api';
+import { appwriteWorkflowNotifications } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
 type NotificationStatus = 'beklemede' | 'gonderildi' | 'okundu';
@@ -11,7 +10,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     await requireModuleAccess('workflow');
 
     const { id } = await params;
-    const notification = await convexWorkflowNotifications.get(id as Id<'workflow_notifications'>);
+    const notification = await appwriteWorkflowNotifications.get(id as string);
     if (!notification) {
       return NextResponse.json({ success: false, error: 'Bildirim bulunamadı' }, { status: 404 });
     }
@@ -58,13 +57,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     let response;
 
     if (status === 'gonderildi') {
-      response = await convexWorkflowNotifications.markAsSent(
-        id as Id<'workflow_notifications'>,
+      response = await appwriteWorkflowNotifications.markAsSent(
+        id as string,
         (body.sent_at as string | undefined) ?? undefined
       );
     } else if (status === 'okundu') {
-      response = await convexWorkflowNotifications.markAsRead(
-        id as Id<'workflow_notifications'>,
+      response = await appwriteWorkflowNotifications.markAsRead(
+        id as string,
         (body.read_at as string | undefined) ?? undefined
       );
     }
@@ -101,7 +100,7 @@ export async function DELETE(
     await requireModuleAccess('workflow');
 
     const { id } = await params;
-    await convexWorkflowNotifications.remove(id as Id<'workflow_notifications'>);
+    await appwriteWorkflowNotifications.remove(id as string);
 
     return NextResponse.json({
       success: true,

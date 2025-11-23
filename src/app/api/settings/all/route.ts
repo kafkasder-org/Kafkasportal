@@ -7,8 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit } from '@/lib/rate-limit';
-import { fetchQuery } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteSystemSettings } from '@/lib/appwrite/api';
 
 async function getAllSettingsHandler(_request: NextRequest) {
   try {
@@ -28,8 +27,8 @@ async function getAllSettingsHandler(_request: NextRequest) {
       );
     }
 
-    // Fetch all settings from Convex
-    const settings = await fetchQuery(api.settings.getAllSettings);
+    // Fetch all settings from Appwrite
+    const settings = await appwriteSystemSettings.getAll();
 
     return NextResponse.json({
       success: true,

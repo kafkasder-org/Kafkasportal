@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexPartners } from '@/lib/convex/api';
+import { appwritePartners } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 
 interface PartnerData {
   name?: string;
@@ -82,8 +81,7 @@ async function getPartnerHandler(
 ) {
   try {
     const { id } = await params;
-    const partnerId = id as Id<'partners'>;
-    const partner = await convexPartners.get(partnerId);
+    const partner = await appwritePartners.get(id);
 
     if (!partner) {
       return NextResponse.json({ success: false, error: 'Partner bulunamadı' }, { status: 404 });
@@ -134,7 +132,6 @@ async function updatePartnerHandler(
     }
 
     const { id } = await params;
-    const partnerId = id as Id<'partners'>;
 
     // Prepare update data
     const updateData: Record<string, unknown> = {};
@@ -167,7 +164,7 @@ async function updatePartnerHandler(
       updateData.contribution_count = body.contribution_count;
     if (body.logo_url !== undefined) updateData.logo_url = body.logo_url;
 
-    const response = await convexPartners.update(partnerId, updateData);
+    const response = await appwritePartners.update(id, updateData);
 
     return NextResponse.json({
       success: true,
@@ -198,15 +195,14 @@ async function deletePartnerHandler(
 ) {
   try {
     const { id } = await params;
-    const partnerId = id as Id<'partners'>;
 
     // Check if partner exists
-    const partner = await convexPartners.get(partnerId);
+    const partner = await appwritePartners.get(id);
     if (!partner) {
       return NextResponse.json({ success: false, error: 'Partner bulunamadı' }, { status: 404 });
     }
 
-    await convexPartners.remove(partnerId);
+    await appwritePartners.remove(id);
 
     return NextResponse.json({
       success: true,

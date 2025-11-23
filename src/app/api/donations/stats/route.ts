@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexDonations } from '@/lib/convex/api';
+import { appwriteDonations } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { requireModuleAccess, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit } from '@/lib/rate-limit';
@@ -34,7 +34,7 @@ async function getDonationStatsHandler(request: NextRequest) {
     const type = searchParams.get('type') || 'overview';
 
     // Fetch all donations for stats calculation
-    const result = await convexDonations.list({
+    const result = await appwriteDonations.list({
       limit: 10000, // Get all records for stats
     });
 

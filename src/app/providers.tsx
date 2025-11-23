@@ -3,13 +3,11 @@
 import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ConvexProvider } from 'convex/react';
 import { Toaster } from 'sonner';
 import { useAuthStore } from '@/stores/authStore';
 import { useState } from 'react';
 import { createOptimizedQueryClient, cacheUtils } from '@/lib/cache-config';
 import { persistentCache } from '@/lib/persistent-cache';
-import { convex, shouldUseConvex } from '@/lib/convex/client';
 import { initGlobalErrorHandlers } from '@/lib/global-error-handler';
 import { initErrorTracker } from '@/lib/error-tracker';
 import { SettingsProvider } from '@/contexts/settings-context';
@@ -97,34 +95,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // Removed hydration check - let the app render immediately
   // The store will handle hydration internally
 
-  // Render with or without Convex depending on availability
-  // Type guard: ensure convex is not null before using it
-  if (shouldUseConvex() && convex !== null) {
-    // TypeScript now knows convex is not null in this block
-    return (
-      <ConvexProvider client={convex}>
-        <QueryClientProvider client={queryClient}>
-          <SuspenseBoundary
-            loadingVariant="pulse"
-            fullscreen={true}
-            loadingText="Uygulama yükleniyor..."
-            onSuspend={() => {
-              // Suspended state
-            }}
-            onResume={() => {
-              // Resumed state
-            }}
-          >
-            <SettingsProvider>{children}</SettingsProvider>
-          </SuspenseBoundary>
-          <Toaster position="top-right" richColors />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </ConvexProvider>
-    );
-  }
-
-  // Render without Convex (e.g., during build or when not configured)
+  // Render with Appwrite (no Convex dependency)
   return (
     <QueryClientProvider client={queryClient}>
       <SuspenseBoundary
@@ -138,7 +109,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           // Resumed state
         }}
       >
-        {children}
+        <SettingsProvider>{children}</SettingsProvider>
       </SuspenseBoundary>
       <Toaster position="top-right" richColors />
       <ReactQueryDevtools initialIsOpen={false} />

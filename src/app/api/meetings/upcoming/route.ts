@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMeetings } from '@/lib/convex/api';
+import { appwriteMeetings } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 
 /**
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all meetings and filter by date range
-    const response = await convexMeetings.list({});
+    const response = await appwriteMeetings.list({});
 
     // Filter meetings within date range
     const upcomingMeetings = (response.documents || []).filter((meeting) => {

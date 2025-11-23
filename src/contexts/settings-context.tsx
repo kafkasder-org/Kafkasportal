@@ -7,8 +7,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { useQuery as useConvexQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
+import { useQuery } from '@tanstack/react-query';
 
 // Setting value types
 export type SettingValue = string | number | boolean | object | null;
@@ -115,10 +114,37 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   });
   const [resolvedThemeMode, setResolvedThemeMode] = useState<'light' | 'dark'>('light');
 
-  // Fetch all settings from Convex
-  const allSettings = useConvexQuery(api.settings.getAllSettings);
-  const themePresets = useConvexQuery(api.settings.getThemePresets) ?? [];
-  const defaultTheme = useConvexQuery(api.settings.getDefaultTheme);
+  // Fetch all settings from Appwrite API
+  const { data: allSettingsData } = useQuery({
+    queryKey: ['settings', 'all'],
+    queryFn: async () => {
+      const response = await fetch('/api/settings/all');
+      const json = await response.json();
+      return json.data || {};
+    },
+  });
+
+  const { data: themePresetsData } = useQuery({
+    queryKey: ['theme-presets'],
+    queryFn: async () => {
+      // TODO: Create theme presets API route
+      // For now, return empty array
+      return [];
+    },
+  });
+
+  const { data: defaultThemeData } = useQuery({
+    queryKey: ['theme-presets', 'default'],
+    queryFn: async () => {
+      // TODO: Create default theme API route
+      // For now, return null
+      return null;
+    },
+  });
+
+  const allSettings = allSettingsData;
+  const themePresets = themePresetsData ?? [];
+  const defaultTheme = defaultThemeData;
 
   const isLoading = allSettings === undefined || themePresets === undefined;
 

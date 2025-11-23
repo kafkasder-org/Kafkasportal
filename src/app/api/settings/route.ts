@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteSystemSettings } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import {
   requireAuthenticatedUser,
@@ -26,15 +25,12 @@ async function getSettingsHandler(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
-    const convex = getConvexHttp();
 
     let settings;
     if (category) {
-      settings = await convex.query(api.system_settings.getSettingsByCategory, {
-        category,
-      });
+      settings = await appwriteSystemSettings.getByCategory(category);
     } else {
-      settings = await convex.query(api.system_settings.getSettings, {});
+      settings = await appwriteSystemSettings.getAll();
     }
 
     return NextResponse.json({
@@ -83,11 +79,7 @@ async function postSettingsHandler(request: NextRequest) {
       );
     }
 
-    const convex = getConvexHttp();
-    await convex.mutation(api.system_settings.updateSettings, {
-      category,
-      settings,
-    });
+    await appwriteSystemSettings.updateSettings(category, settings, user.id);
 
     return NextResponse.json({
       success: true,
@@ -135,15 +127,14 @@ async function putSettingsHandler(request: NextRequest) {
       );
     }
 
-    const convex = getConvexHttp();
-
     // Update each category
     for (const [category, categorySettings] of Object.entries(settings)) {
       if (categorySettings && typeof categorySettings === 'object') {
-        await convex.mutation(api.system_settings.updateSettings, {
+        await appwriteSystemSettings.updateSettings(
           category,
-          settings: categorySettings as Record<string, unknown>,
-        });
+          categorySettings as Record<string, unknown>,
+          user.id
+        );
       }
     }
 
@@ -186,10 +177,7 @@ async function deleteSettingsHandler(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 
-    const convex = getConvexHttp();
-    await convex.mutation(api.system_settings.resetSettings, {
-      category: category || undefined,
-    });
+    await appwriteSystemSettings.resetSettings(category || undefined, user.id);
 
     return NextResponse.json({
       success: true,

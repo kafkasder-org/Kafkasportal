@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexMeetingDecisions, normalizeQueryParams } from '@/lib/convex/api';
-import { Id } from '@/convex/_generated/dataModel';
+import { appwriteMeetingDecisions, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 
@@ -36,11 +35,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
 
-    const meeting_id = searchParams.get('meeting_id') as Id<'meetings'> | undefined;
-    const owner = searchParams.get('owner') as Id<'users'> | undefined;
+    const meeting_id = searchParams.get('meeting_id') || undefined;
+    const owner = searchParams.get('owner') || undefined;
     const status = searchParams.get('status') as 'acik' | 'devam' | 'kapatildi' | undefined;
 
-    const response = await convexMeetingDecisions.list({
+    const response = await appwriteMeetingDecisions.list({
       ...(params as Record<string, unknown>),
       meeting_id,
       owner,
@@ -86,7 +85,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await convexMeetingDecisions.create({
+    const response = await appwriteMeetingDecisions.create({
       meeting_id: body.meeting_id as any,
       title: body.title as any,
       summary: body.summary as any,

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from 'convex/react';
-import { api } from '@/convex/_generated/api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { convexApiClient } from '@/lib/api/convex-api-client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,48 +12,87 @@ import { Bell, Check, CheckCheck, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { Id } from '@/convex/_generated/dataModel';
 import { cn } from '@/lib/utils';
-import { useRealtimeQuery, useRealtimeList } from '@/hooks/useRealtimeQuery';
 
 interface NotificationCenterProps {
-  userId: Id<'users'>;
+  userId: string;
 }
 
 export function NotificationCenter({ userId }: NotificationCenterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
 
-  // Fetch unread count with real-time updates
-  const unreadCount = useRealtimeQuery(
-    api.workflow_notifications.getUnreadCount,
-    {
-      recipient: userId,
-    },
-    {
-      notifyOnChange: true,
-      changeMessage: 'Yeni bildiriminiz var',
-      skipInitial: true,
-    }
-  );
+  const queryClient = useQueryClient();
 
-  // Fetch recent notifications with real-time list monitoring
-  const allNotifications = useRealtimeList(
-    api.workflow_notifications.getRecent,
-    {
-      recipient: userId,
-      limit: 50,
+  // Fetch notifications
+  const { data: notificationsResponse } = useQuery({
+    queryKey: ['workflow-notifications', userId],
+    queryFn: async () => {
+      const response = await convexApiClient.workflowNotifications.getNotifications({
+        filters: { recipient: userId },
+        limit: 50,
+      });
+      return response;
     },
-    {
-      itemName: 'bildirim',
-      skipInitial: true,
-    }
-  );
+    refetchInterval: 30000, // Poll every 30 seconds for updates
+  });
+
+  const allNotifications = notificationsResponse?.data || [];
+
+  // Calculate unread count
+  const unreadCount = allNotifications.filter(
+    (notification) => notification.status !== 'okundu'
+  ).length;
 
   // Mutations
-  const markAsRead = useMutation(api.workflow_notifications.markAsRead);
-  const markAllAsRead = useMutation(api.workflow_notifications.markAllAsRead);
-  const deleteNotification = useMutation(api.workflow_notifications.remove);
+  const markAsReadMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await convexApiClient.workflowNotifications.markNotificationRead(id);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workflow-notifications', userId] });
+      toast.success('Bildirim okundu olarak işaretlendi');
+    },
+    onError: () => {
+      toast.error('Bildirim güncellenemedi');
+    },
+  });
+
+  const markAllAsReadMutation = useMutation({
+    mutationFn: async () => {
+      // Mark all unread notifications as read
+      const unreadNotifications = allNotifications.filter(
+        (n) => n.status !== 'okundu'
+      );
+      await Promise.all(
+        unreadNotifications.map((n) =>
+          convexApiClient.workflowNotifications.markNotificationRead(n.$id || n._id)
+        )
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workflow-notifications', userId] });
+      toast.success('Tüm bildirimler okundu olarak işaretlendi');
+    },
+    onError: () => {
+      toast.error('Bildirimler güncellenemedi');
+    },
+  });
+
+  const deleteNotificationMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await convexApiClient.workflowNotifications.deleteNotification(id);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workflow-notifications', userId] });
+      toast.success('Bildirim silindi');
+    },
+    onError: () => {
+      toast.error('Bildirim silinemedi');
+    },
+  });
 
   // Filter notifications based on active tab
   const filteredNotifications = allNotifications?.filter((notification) => {
@@ -63,30 +102,16 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
     return true;
   });
 
-  const handleMarkAsRead = async (notificationId: Id<'workflow_notifications'>) => {
-    try {
-      await markAsRead({ id: notificationId });
-    } catch (_error) {
-      toast.error('Bildirim güncellenemedi');
-    }
+  const handleMarkAsRead = async (notificationId: string) => {
+    markAsReadMutation.mutate(notificationId);
   };
 
   const handleMarkAllAsRead = async () => {
-    try {
-      await markAllAsRead({ recipient: userId });
-      toast.success('Tüm bildirimler okundu olarak işaretlendi');
-    } catch (_error) {
-      toast.error('Bildirimler güncellenemedi');
-    }
+    markAllAsReadMutation.mutate();
   };
 
-  const handleDelete = async (notificationId: Id<'workflow_notifications'>) => {
-    try {
-      await deleteNotification({ id: notificationId });
-      toast.success('Bildirim silindi');
-    } catch (_error) {
-      toast.error('Bildirim silinemedi');
-    }
+  const handleDelete = async (notificationId: string) => {
+    deleteNotificationMutation.mutate(notificationId);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -168,66 +193,73 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
             <ScrollArea className="h-[500px]">
               {filteredNotifications && filteredNotifications.length > 0 ? (
                 <div className="divide-y">
-                  {filteredNotifications.map((notification) => (
-                    <div
-                      key={notification._id}
-                      className={cn(
-                        'p-4 hover:bg-muted/50 transition-colors',
-                        notification.status !== 'okundu' && 'bg-blue-50/50'
-                      )}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 mt-1">
-                          <span className="text-2xl">{getCategoryIcon(notification.category)}</span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1">
-                              <p className="font-medium text-sm">{notification.title}</p>
-                              {notification.body && (
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {notification.body}
-                                </p>
-                              )}
-                              <div className="flex items-center gap-2 mt-2">
-                                <Badge
-                                  variant="secondary"
-                                  className={cn('text-xs', getCategoryColor(notification.category))}
-                                >
-                                  {notification.category}
-                                </Badge>
-                                <span className="text-xs text-muted-foreground">
-                                  {format(new Date(notification.created_at), 'dd MMM yyyy, HH:mm', {
-                                    locale: tr,
-                                  })}
-                                </span>
+                  {filteredNotifications.map((notification) => {
+                    const notificationId = notification.$id || notification._id || '';
+                    return (
+                      <div
+                        key={notificationId}
+                        className={cn(
+                          'p-4 hover:bg-muted/50 transition-colors',
+                          notification.status !== 'okundu' && 'bg-blue-50/50'
+                        )}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 mt-1">
+                            <span className="text-2xl">{getCategoryIcon(notification.category)}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1">
+                                <p className="font-medium text-sm">{notification.title}</p>
+                                {notification.body && (
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {notification.body}
+                                  </p>
+                                )}
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Badge
+                                    variant="secondary"
+                                    className={cn('text-xs', getCategoryColor(notification.category))}
+                                  >
+                                    {notification.category}
+                                  </Badge>
+                                  <span className="text-xs text-muted-foreground">
+                                    {format(
+                                      new Date(notification.created_at || notification.$createdAt),
+                                      'dd MMM yyyy, HH:mm',
+                                      {
+                                        locale: tr,
+                                      }
+                                    )}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-1 flex-shrink-0">
-                              {notification.status !== 'okundu' && (
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                {notification.status !== 'okundu' && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() => handleMarkAsRead(notificationId)}
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+                                )}
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-7 w-7"
-                                  onClick={() => handleMarkAsRead(notification._id)}
+                                  className="h-7 w-7 text-destructive hover:text-destructive"
+                                  onClick={() => handleDelete(notificationId)}
                                 >
-                                  <Check className="h-4 w-4" />
+                                  <Trash2 className="h-4 w-4" />
                                 </Button>
-                              )}
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7 text-destructive hover:text-destructive"
-                                onClick={() => handleDelete(notification._id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 px-4">

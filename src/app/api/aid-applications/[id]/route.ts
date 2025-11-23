@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { convexAidApplications } from '@/lib/convex/api';
+import { appwriteAidApplications } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { extractParams } from '@/lib/api/route-helpers';
-import { Id } from '@/convex/_generated/dataModel';
 
 function validateApplicationUpdate(data: Record<string, unknown>): {
   isValid: boolean;
@@ -27,7 +26,7 @@ function validateApplicationUpdate(data: Record<string, unknown>): {
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await extractParams(params);
   try {
-    const application = await convexAidApplications.get(id as Id<'aid_applications'>);
+    const application = await appwriteAidApplications.get(id);
 
     if (!application) {
       return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
@@ -83,15 +82,15 @@ async function _updateApplicationHandler(
       service_referral: body.service_referral as number | undefined,
       description: body.description as string | undefined,
       notes: body.notes as string | undefined,
-      processed_by: body.processed_by as Id<'users'> | undefined,
+      processed_by: body.processed_by as string | undefined,
       processed_at: body.processed_at as string | undefined,
-      approved_by: body.approved_by as Id<'users'> | undefined,
+      approved_by: body.approved_by as string | undefined,
       approved_at: body.approved_at as string | undefined,
       completed_at: body.completed_at as string | undefined,
     };
 
-    const updated = await convexAidApplications.update(
-      id as Id<'aid_applications'>,
+    const updated = await appwriteAidApplications.update(
+      id,
       applicationData
     );
 
@@ -128,7 +127,7 @@ async function _deleteApplicationHandler(
 ) {
   const { id } = await extractParams(params);
   try {
-    await convexAidApplications.remove(id as Id<'aid_applications'>);
+    await appwriteAidApplications.remove(id);
 
     return NextResponse.json({
       success: true,

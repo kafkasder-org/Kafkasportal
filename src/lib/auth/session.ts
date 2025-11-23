@@ -1,9 +1,7 @@
 import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { createHmac, timingSafeEqual } from 'crypto';
-import type { Id } from '@/convex/_generated/dataModel';
-import { convexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteUsers } from '@/lib/appwrite/api';
 import { MODULE_PERMISSIONS, SPECIAL_PERMISSIONS, type PermissionValue } from '@/types/permissions';
 
 export interface AuthSession {
@@ -136,7 +134,7 @@ export async function getAuthSessionFromCookies(): Promise<AuthSession | null> {
 }
 
 /**
- * Fetch the authenticated Convex user associated with the session.
+ * Fetch the authenticated Appwrite user associated with the session.
  */
 export async function getUserFromSession(session: AuthSession | null): Promise<SessionUser | null> {
   if (!session || isSessionExpired(session)) {
@@ -208,9 +206,7 @@ export async function getUserFromSession(session: AuthSession | null): Promise<S
   }
 
   try {
-    const user = await convexHttp.query(api.users.get, {
-      id: session.userId as Id<'users'>,
-    });
+    const user = await appwriteUsers.get(session.userId);
 
     if (!user || !user.isActive) {
       return null;
@@ -235,8 +231,9 @@ export async function getUserFromSession(session: AuthSession | null): Promise<S
       effectivePermissions = Array.from(withAdmin);
     }
 
+    const userId = user.$id || user._id || session.userId;
     return {
-      id: user._id,
+      id: userId,
       email: user.email || '',
       name: user.name || '',
       role: roleString || 'Personel',

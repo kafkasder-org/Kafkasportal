@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
-import { convexUsers } from '@/lib/convex/api';
+import { appwriteUsers } from '@/lib/appwrite/api';
 import { InputSanitizer } from '@/lib/security';
 import { extractParams } from '@/lib/api/route-helpers';
-import { Id } from '@/convex/_generated/dataModel';
 import { hashPassword, validatePasswordStrength } from '@/lib/auth/password';
 import {
   buildErrorResponse,
@@ -37,7 +36,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       );
     }
 
-    const user = await convexUsers.get(id as Id<'users'>);
+    const user = await appwriteUsers.get(id);
 
     if (!user) {
       return NextResponse.json({ success: false, error: 'Kullanıcı bulunamadı' }, { status: 404 });
@@ -119,7 +118,7 @@ async function updateUserHandler(
       passwordHash = await hashPassword(body.password.trim());
     }
 
-    const userData: Parameters<typeof convexUsers.update>[1] = {
+    const userData: Parameters<typeof appwriteUsers.update>[1] = {
       name: typeof body.name === 'string' ? body.name.trim() : undefined,
       email: typeof body.email === 'string' ? body.email.trim().toLowerCase() : undefined,
       role: typeof body.role === 'string' ? (body.role.trim() as any) : undefined,
@@ -136,7 +135,7 @@ async function updateUserHandler(
       ...(passwordHash && { passwordHash }),
     };
 
-    const updated = await convexUsers.update(id as Id<'users'>, userData);
+    const updated = await appwriteUsers.update(id, userData);
 
     return NextResponse.json({
       success: true,
@@ -185,7 +184,7 @@ async function deleteUserHandler(
       );
     }
 
-    await convexUsers.remove(id as Id<'users'>);
+    await appwriteUsers.remove(id);
 
     return NextResponse.json({
       success: true,

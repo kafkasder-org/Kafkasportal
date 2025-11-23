@@ -5,14 +5,21 @@
 
 import type { PermissionValue } from '@/types/permissions';
 
-// Base Convex Document type
+// Base Document type (supports both Convex and Appwrite)
 export interface Document {
-  _id: string;
-  _creationTime: string;
-  _updatedAt: string;
+  // Convex fields (legacy support)
+  _id?: string;
+  _creationTime?: number;
+  _updatedAt?: number;
+  // Appwrite fields
+  $id?: string;
+  $createdAt?: string;
+  $updatedAt?: string;
   $permissions?: string[];
-  _collectionId: string;
-  _databaseId: string;
+  $collectionId?: string;
+  $databaseId?: string;
+  // Common fields
+  id?: string; // Fallback for compatibility
 }
 
 // Generic API response wrapper
