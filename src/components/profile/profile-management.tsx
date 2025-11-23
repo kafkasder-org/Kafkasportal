@@ -143,7 +143,7 @@ export function ProfileManagement({
     setHasChanges(true);
   };
 
-  const updateEmergencyContact = (index: number, field: keyof EmergencyContact, value: any) => {
+  const updateEmergencyContact = (index: number, field: keyof EmergencyContact, value: EmergencyContact[keyof EmergencyContact]) => {
     const updated = [...emergencyContacts];
     updated[index] = { ...updated[index], [field]: value };
     setEmergencyContacts(updated);

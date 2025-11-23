@@ -3,6 +3,7 @@
 import { toast } from 'sonner';
 import type { FinanceRecord } from '@/lib/financial/calculations';
 import { formatTransactionDate } from '@/lib/financial/calculations';
+import logger from '@/lib/logger';
 
 /**
  * Generate CSV content from financial records
@@ -90,7 +91,7 @@ export function useExportFinancialData() {
         toast.info('XLSX dışa aktarma özelliği yakında eklenecektir');
       }
     } catch (error) {
-      console.error('Export failed:', error);
+      logger.error('Export failed', error as Error);
       toast.error('Dışa aktarma işlemi başarısız oldu');
     }
   };

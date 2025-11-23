@@ -125,7 +125,7 @@ export function RecipientSelector({
             }
           }
         });
-        return Array.from(uniqueDonors.values()).filter((donor: any) => {
+        return Array.from(uniqueDonors.values()).filter((donor: { contact?: string; [key: string]: unknown }) => {
           if (messageType === 'sms' && !donor.contact) return false;
           if (messageType === 'email') return false; // Donations don't have email
           if (messageType === 'internal') return false;

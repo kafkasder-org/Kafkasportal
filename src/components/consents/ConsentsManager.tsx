@@ -104,9 +104,10 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
   });
 
   const getStatusBadge = (status: string) => {
+    type IconComponent = React.ComponentType<{ className?: string }>;
     const variants: Record<
       string,
-      { variant: 'default' | 'secondary' | 'destructive'; icon: any }
+      { variant: 'default' | 'secondary' | 'destructive'; icon: IconComponent }
     > = {
       active: { variant: 'default', icon: CheckCircle2 },
       revoked: { variant: 'destructive', icon: XCircle },
@@ -211,7 +212,7 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
                 <Label>Durum</Label>
                 <Select
                   value={formData.status}
-                  onValueChange={(v: any) => setFormData({ ...formData, status: v })}
+                  onValueChange={(v: 'active' | 'revoked' | 'expired') => setFormData({ ...formData, status: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -258,7 +259,7 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
         </div>
       ) : consents && consents.length > 0 ? (
         <div className="space-y-2">
-          {consents.map((consent: any) => (
+          {consents.map((consent: { _id: string; consentType: string; consentText: string; status: string; signedAt: string; signedBy: string; expiresAt?: string; notes?: string; [key: string]: unknown }) => (
             <Card key={consent._id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">

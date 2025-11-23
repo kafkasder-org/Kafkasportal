@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import QRCodeLib from 'qrcode';
+import logger from '@/lib/logger';
 
 interface WhatsAppStatus {
   isReady: boolean;
@@ -63,7 +64,7 @@ export default function WhatsAppConnectionPage() {
           light: '#ffffff',
         },
       }).catch((error) => {
-        console.error('QR code rendering failed:', error);
+        logger.error('QR code rendering failed', error as Error);
       });
     }
   }, [qrCode]);
@@ -98,7 +99,7 @@ export default function WhatsAppConnectionPage() {
         setQrCode(null);
       }
     } catch (error) {
-      console.error('Failed to fetch WhatsApp status:', error);
+      logger.error('Failed to fetch WhatsApp status', error as Error);
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +121,7 @@ export default function WhatsAppConnectionPage() {
         setQrCode(data.qrCode);
       }
     } catch (error) {
-      console.error('Failed to fetch QR code:', error);
+      logger.error('Failed to fetch QR code', error as Error);
     }
   };
 
