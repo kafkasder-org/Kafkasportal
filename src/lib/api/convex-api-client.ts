@@ -1,11 +1,11 @@
 'use client';
 
 /**
- * Convex API Client
+ * Legacy API Client
  *
- * Client-side wrapper that calls Next.js API routes which internally use Convex.
+ * Client-side wrapper that calls Next.js API routes which internally use Appwrite.
  * This provides a clean interface for components to use while keeping the actual
- * Convex implementation hidden behind API routes.
+ * Appwrite implementation hidden behind API routes.
  *
  * @deprecated Use the new CRUD factory from './crud-factory' for better DRY principle
  */
@@ -61,7 +61,7 @@ export {
 };
 
 /**
- * Generic API client for making requests to Convex API routes
+ * Generic API client for making requests to Appwrite API routes
  * Internal use only - not exported to avoid HMR conflicts
  */
 async function apiRequest<T>(

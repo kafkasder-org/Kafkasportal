@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-// Mock Convex API for testing
+// Mock Appwrite API for testing (legacy file name kept for backward compatibility)
 export const api = {
   auth: {
     getUserByEmail: vi.fn(),
@@ -42,8 +42,8 @@ export const api = {
     list: vi.fn(),
     create: vi.fn(),
   },
-  // Add other Convex API functions as needed
+  // Add other Appwrite API functions as needed
 };
 
-const convexApiMock = { api };
-export default convexApiMock;
+const appwriteApiMock = { api };
+export default appwriteApiMock;

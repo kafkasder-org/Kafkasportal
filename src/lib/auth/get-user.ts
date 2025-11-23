@@ -1,8 +1,5 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
-// convexHttp removed
-// api removed
-// Id removed
 import { parseAuthSession } from './session';
 import { appwriteServerAuth } from '@/lib/appwrite/auth';
 

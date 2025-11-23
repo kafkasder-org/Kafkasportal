@@ -33,7 +33,7 @@ import type {
   WorkflowNotificationCreateInput,
 } from '@/lib/api/types';
 import logger from '@/lib/logger';
-import { Databases, InputFile } from 'node-appwrite';
+import { Databases } from 'node-appwrite';
 
 export interface AppwriteQueryParams {
   limit?: number;
@@ -1296,6 +1296,9 @@ export const appwriteStorage = {
     }
 
     try {
+      // Dynamically import InputFile to avoid middleware issues
+      const { InputFile } = await import('node-appwrite');
+      
       const fileBuffer = file instanceof File ? await file.arrayBuffer() : file;
       // Handle Buffer properly for node-appwrite
       const inputFile = InputFile.fromBuffer(
@@ -1445,6 +1448,144 @@ export const appwriteSecurityEvents = {
 };
 
 /**
+ * Consents API
+ */
+export const appwriteConsents = {
+  list: async (params?: AppwriteQueryParams & { beneficiary_id?: string }) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.consents;
+    const queries = buildQueries(params);
+
+    if (params?.beneficiary_id) {
+      queries.push(Query.equal('beneficiary_id', params.beneficiary_id));
+    }
+
+    try {
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      return {
+        documents: response.documents,
+        total: response.total,
+      };
+    } catch (error) {
+      logger.error('Failed to list consents', { error });
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    return await getDocument('consents', id);
+  },
+  create: async (data: Record<string, unknown>) => {
+    const createData: Record<string, unknown> = {
+      ...data,
+      createdAt: new Date().toISOString(),
+    };
+    return await createDocument('consents', createData);
+  },
+  update: async (id: string, data: Record<string, unknown>) => {
+    const updateData: Record<string, unknown> = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    return await updateDocument('consents', id, updateData);
+  },
+  remove: async (id: string) => {
+    return await deleteDocument('consents', id);
+  },
+};
+
+/**
+ * Dependents API
+ */
+export const appwriteDependents = {
+  list: async (params?: AppwriteQueryParams & { beneficiary_id?: string }) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.dependents;
+    const queries = buildQueries(params);
+
+    if (params?.beneficiary_id) {
+      queries.push(Query.equal('beneficiary_id', params.beneficiary_id));
+    }
+
+    try {
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      return {
+        documents: response.documents,
+        total: response.total,
+      };
+    } catch (error) {
+      logger.error('Failed to list dependents', { error });
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    return await getDocument('dependents', id);
+  },
+  create: async (data: Record<string, unknown>) => {
+    const createData: Record<string, unknown> = {
+      ...data,
+      createdAt: new Date().toISOString(),
+    };
+    return await createDocument('dependents', createData);
+  },
+  update: async (id: string, data: Record<string, unknown>) => {
+    const updateData: Record<string, unknown> = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    return await updateDocument('dependents', id, updateData);
+  },
+  remove: async (id: string) => {
+    return await deleteDocument('dependents', id);
+  },
+};
+
+/**
+ * Bank Accounts API
+ */
+export const appwriteBankAccounts = {
+  list: async (params?: AppwriteQueryParams & { beneficiary_id?: string }) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.bankAccounts;
+    const queries = buildQueries(params);
+
+    if (params?.beneficiary_id) {
+      queries.push(Query.equal('beneficiary_id', params.beneficiary_id));
+    }
+
+    try {
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      return {
+        documents: response.documents,
+        total: response.total,
+      };
+    } catch (error) {
+      logger.error('Failed to list bank accounts', { error });
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    return await getDocument('bankAccounts', id);
+  },
+  create: async (data: Record<string, unknown>) => {
+    const createData: Record<string, unknown> = {
+      ...data,
+      createdAt: new Date().toISOString(),
+    };
+    return await createDocument('bankAccounts', createData);
+  },
+  update: async (id: string, data: Record<string, unknown>) => {
+    const updateData: Record<string, unknown> = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    return await updateDocument('bankAccounts', id, updateData);
+  },
+  remove: async (id: string) => {
+    return await deleteDocument('bankAccounts', id);
+  },
+};
+
+/**
  * Parameters API
  */
 export const appwriteParameters = {
@@ -1462,6 +1603,194 @@ export const appwriteParameters = {
   },
   remove: async (id: string) => {
     return await deleteDocument('parameters', id);
+  },
+};
+
+/**
+ * Scholarships API
+ */
+export const appwriteScholarships = {
+  list: async (params?: AppwriteQueryParams & { category?: string; isActive?: boolean }) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.scholarships;
+    const queries = buildQueries(params);
+
+    if (params?.category) {
+      queries.push(Query.equal('category', params.category));
+    }
+    if (params?.isActive !== undefined) {
+      queries.push(Query.equal('is_active', params.isActive));
+    }
+
+    try {
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      return {
+        documents: response.documents,
+        total: response.total,
+      };
+    } catch (error) {
+      logger.error('Failed to list scholarships', { error });
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    return await getDocument('scholarships', id);
+  },
+  create: async (data: Record<string, unknown>) => {
+    const createData: Record<string, unknown> = {
+      ...data,
+      createdAt: new Date().toISOString(),
+    };
+    return await createDocument('scholarships', createData);
+  },
+  update: async (id: string, data: Record<string, unknown>) => {
+    const updateData: Record<string, unknown> = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    return await updateDocument('scholarships', id, updateData);
+  },
+  remove: async (id: string) => {
+    return await deleteDocument('scholarships', id);
+  },
+  getStatistics: async (scholarshipId?: string) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.scholarshipApplications;
+    const queries: string[] = [];
+
+    if (scholarshipId) {
+      queries.push(Query.equal('scholarship_id', scholarshipId));
+    }
+
+    try {
+      const [all, approved, pending, rejected] = await Promise.all([
+        databases.listDocuments(appwriteConfig.databaseId, collectionId, queries),
+        databases.listDocuments(appwriteConfig.databaseId, collectionId, [...queries, Query.equal('status', 'approved')]),
+        databases.listDocuments(appwriteConfig.databaseId, collectionId, [...queries, Query.equal('status', 'pending')]),
+        databases.listDocuments(appwriteConfig.databaseId, collectionId, [...queries, Query.equal('status', 'rejected')]),
+      ]);
+
+      return {
+        total_applications: all.total,
+        approved: approved.total,
+        pending: pending.total,
+        rejected: rejected.total,
+      };
+    } catch (error) {
+      logger.error('Failed to get scholarship statistics', { error });
+      throw error;
+    }
+  },
+};
+
+/**
+ * Scholarship Applications API
+ */
+export const appwriteScholarshipApplications = {
+  list: async (params?: AppwriteQueryParams & { scholarship_id?: string; status?: string; tc_no?: string }) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.scholarshipApplications;
+    const queries = buildQueries(params);
+
+    if (params?.scholarship_id) {
+      queries.push(Query.equal('scholarship_id', params.scholarship_id));
+    }
+    if (params?.status) {
+      queries.push(Query.equal('status', params.status));
+    }
+    if (params?.tc_no) {
+      queries.push(Query.equal('applicant_tc_no', params.tc_no));
+    }
+
+    try {
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      return {
+        documents: response.documents,
+        total: response.total,
+      };
+    } catch (error) {
+      logger.error('Failed to list scholarship applications', { error });
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    return await getDocument('scholarshipApplications', id);
+  },
+  create: async (data: Record<string, unknown>) => {
+    const createData: Record<string, unknown> = {
+      ...data,
+      status: data.status || 'draft',
+      createdAt: new Date().toISOString(),
+    };
+    return await createDocument('scholarshipApplications', createData);
+  },
+  update: async (id: string, data: Record<string, unknown>) => {
+    const updateData: Record<string, unknown> = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    return await updateDocument('scholarshipApplications', id, updateData);
+  },
+  remove: async (id: string) => {
+    return await deleteDocument('scholarshipApplications', id);
+  },
+  submit: async (id: string) => {
+    const updateData: Record<string, unknown> = {
+      status: 'submitted',
+      submitted_at: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return await updateDocument('scholarshipApplications', id, updateData);
+  },
+};
+
+/**
+ * Scholarship Payments API
+ */
+export const appwriteScholarshipPayments = {
+  list: async (params?: AppwriteQueryParams & { application_id?: string; status?: string }) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.scholarshipPayments;
+    const queries = buildQueries(params);
+
+    if (params?.application_id) {
+      queries.push(Query.equal('application_id', params.application_id));
+    }
+    if (params?.status) {
+      queries.push(Query.equal('status', params.status));
+    }
+
+    try {
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      return {
+        documents: response.documents,
+        total: response.total,
+      };
+    } catch (error) {
+      logger.error('Failed to list scholarship payments', { error });
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    return await getDocument('scholarshipPayments', id);
+  },
+  create: async (data: Record<string, unknown>) => {
+    const createData: Record<string, unknown> = {
+      ...data,
+      status: data.status || 'pending',
+      createdAt: new Date().toISOString(),
+    };
+    return await createDocument('scholarshipPayments', createData);
+  },
+  update: async (id: string, data: Record<string, unknown>) => {
+    const updateData: Record<string, unknown> = {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    };
+    return await updateDocument('scholarshipPayments', id, updateData);
+  },
+  remove: async (id: string) => {
+    return await deleteDocument('scholarshipPayments', id);
   },
 };
 

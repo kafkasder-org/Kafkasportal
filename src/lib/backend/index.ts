@@ -44,7 +44,6 @@ export interface UnifiedCrudOperations<T> {
  */
 export async function createUnifiedCrud<T>(
   entityName: string,
-  _convexEntityName?: string,
   appwriteCollectionName?: string
 ): Promise<UnifiedCrudOperations<T>> {
   // Always use Appwrite

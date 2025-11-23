@@ -35,8 +35,6 @@ function testBackendProvider() {
   
   if (provider === 'appwrite') {
     addResult('Backend Provider', 'pass', `Using Appwrite (${provider})`);
-  } else if (provider === 'convex') {
-    addResult('Backend Provider', 'warn', `Still using Convex (${provider}). Set NEXT_PUBLIC_BACKEND_PROVIDER=appwrite`);
   } else {
     addResult('Backend Provider', 'fail', `Unknown provider: ${provider}`);
   }
@@ -78,53 +76,9 @@ function testAppwriteConfig() {
   return { endpoint, projectId, databaseId, apiKey };
 }
 
-// Test 3: Convex Configuration
-function testConvexConfig() {
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-  
-  if (convexUrl) {
-    addResult('Convex URL', 'warn', `Convex still configured (${convexUrl}). Can be removed if fully migrated.`);
-  } else {
-    addResult('Convex URL', 'pass', 'Convex not configured (expected if using Appwrite)');
-  }
-  
-  return convexUrl;
-}
+// Test 3: Legacy Convex Configuration (removed - no longer needed)
 
-// Test 4: Check for Convex imports in codebase
-function testConvexUsage() {
-  try {
-    // Check for common Convex patterns
-    const patterns = [
-      { pattern: "from 'convex", description: "Direct Convex imports" },
-      { pattern: "useQuery.*api\\.", description: "Convex useQuery hooks" },
-      { pattern: "useMutation.*api\\.", description: "Convex useMutation hooks" },
-      { pattern: "convexHttp", description: "Convex HTTP client" },
-    ];
-
-    patterns.forEach(({ pattern, description }) => {
-      try {
-        const result = execSync(
-          `grep -r "${pattern}" src/app src/components src/lib --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l`,
-          { encoding: 'utf-8', stdio: 'pipe' }
-        ).trim();
-        
-        const count = parseInt(result) || 0;
-        
-        if (count > 0) {
-          addResult(description, 'warn', `Found ${count} instances. May need migration to Appwrite.`);
-        } else {
-          addResult(description, 'pass', `No instances found`);
-        }
-      } catch (error) {
-        // Pattern not found is OK
-        addResult(description, 'pass', `No instances found`);
-      }
-    });
-  } catch (error) {
-    addResult('Convex Usage Check', 'warn', 'Could not check Convex usage (grep not available)');
-  }
-}
+// Test 4: Check for legacy Convex imports (removed - migration complete)
 
 // Test 5: Appwrite Library Check
 function testAppwriteLibrary() {
@@ -189,9 +143,6 @@ async function main() {
   const appwriteConfig = testAppwriteConfig();
   console.log('');
   
-  testConvexConfig();
-  console.log('');
-  
   testAppwriteLibrary();
   console.log('');
   
@@ -199,9 +150,6 @@ async function main() {
   console.log('');
   
   testUnifiedBackend();
-  console.log('');
-  
-  testConvexUsage();
   console.log('');
   
   // Summary
@@ -228,11 +176,8 @@ async function main() {
       console.log('   Please fix the failed checks above.');
     }
   } else {
-    console.log('\n⚠️  Backend is still using Convex.');
-    console.log('   To switch to Appwrite:');
-    console.log('   1. Set NEXT_PUBLIC_BACKEND_PROVIDER=appwrite in .env.local');
-    console.log('   2. Configure Appwrite credentials');
-    console.log('   3. Run this test again');
+    console.log('\n⚠️  Backend provider is not set to Appwrite.');
+    console.log('   Set NEXT_PUBLIC_BACKEND_PROVIDER=appwrite in .env.local');
   }
   
   console.log(`\n${  '='.repeat(50)  }\n`);

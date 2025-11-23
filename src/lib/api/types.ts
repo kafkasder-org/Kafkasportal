@@ -332,11 +332,11 @@ export type UpdateMutationPayload<T extends { [key: string]: unknown }> = T & {
 };
 
 // ========================================
-// CONVEX RESPONSE TYPES
+// API RESPONSE TYPES
 // ========================================
 
 /**
- * Standard response from Convex HTTP API
+ * Standard response from Appwrite HTTP API
  */
 export interface ConvexListResponse<T> {
   documents?: T[];

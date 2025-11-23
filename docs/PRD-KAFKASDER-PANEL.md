@@ -793,8 +793,6 @@ npm run dev
 # Production Build
 npm run build
 
-# Vercel Deploy
-npm run vercel:prod
 
 # Appwrite Setup
 npm run appwrite:setup

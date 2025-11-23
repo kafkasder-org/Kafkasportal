@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useQuery } from 'convex/react';
-import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
+import { useQuery } from '@tanstack/react-query';
 import logger from '@/lib/logger';
-import { api } from '@/convex/_generated/api';
+import { appwriteFinanceRecords } from '@/lib/appwrite/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -58,49 +57,121 @@ function FinancialDashboardPageContent() {
     to: endOfMonth(new Date()),
   });
 
-  // Fetch dashboard metrics with real-time updates
-  const metrics = useRealtimeQuery(
-    api.finance_records.getDashboardMetrics,
-    {
-      startDate: dateRange.from?.toISOString(),
-      endDate: dateRange.to?.toISOString(),
+  // Fetch dashboard metrics
+  const { data: metrics } = useQuery({
+    queryKey: ['finance-metrics', dateRange.from, dateRange.to],
+    queryFn: async () => {
+      // TODO: Create API endpoint for dashboard metrics
+      // For now, fetch all records and calculate metrics
+      const response = await appwriteFinanceRecords.list({
+        limit: 1000,
+      });
+      const records = response.documents || [];
+      
+      const filtered = records.filter((r: { date?: string; [key: string]: unknown }) => {
+        if (!r.date) return false;
+        const recordDate = new Date(r.date);
+        return (!dateRange.from || recordDate >= dateRange.from) && 
+               (!dateRange.to || recordDate <= dateRange.to);
+      });
+
+      const income = filtered
+        .filter((r: { type?: string; [key: string]: unknown }) => r.type === 'income')
+        .reduce((sum: number, r: { amount?: number; [key: string]: unknown }) => sum + (r.amount || 0), 0);
+      
+      const expenses = filtered
+        .filter((r: { type?: string; [key: string]: unknown }) => r.type === 'expense')
+        .reduce((sum: number, r: { amount?: number; [key: string]: unknown }) => sum + (r.amount || 0), 0);
+
+      return {
+        totalIncome: income,
+        totalExpenses: expenses,
+        netIncome: income - expenses,
+        recordCount: filtered.length,
+      };
     },
-    {
-      notifyOnChange: true,
-      changeMessage: 'Finansal veriler güncellendi',
-      skipInitial: true,
-    }
-  );
+    enabled: !!dateRange.from && !!dateRange.to,
+  });
 
   // Fetch monthly data for charts
-  const monthlyData = useQuery(api.finance_records.getMonthlyData, { months: 12 });
+  const { data: monthlyData } = useQuery({
+    queryKey: ['finance-monthly'],
+    queryFn: async () => {
+      // TODO: Create API endpoint for monthly data
+      const response = await appwriteFinanceRecords.list({ limit: 1000 });
+      const records = response.documents || [];
+      
+      // Group by month
+      const monthly: Record<string, { income: number; expenses: number }> = {};
+      records.forEach((r: { date?: string; type?: string; amount?: number; [key: string]: unknown }) => {
+        if (!r.date) return;
+        const date = new Date(r.date);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthly[monthKey]) {
+          monthly[monthKey] = { income: 0, expenses: 0 };
+        }
+        if (r.type === 'income') {
+          monthly[monthKey].income += r.amount || 0;
+        } else if (r.type === 'expense') {
+          monthly[monthKey].expenses += r.amount || 0;
+        }
+      });
 
-  // Fetch category breakdown with real-time monitoring
-  const incomeByCategory = useRealtimeQuery(
-    api.finance_records.getCategoryBreakdown,
-    {
-      recordType: 'income',
-      startDate: dateRange.from?.toISOString(),
-      endDate: dateRange.to?.toISOString(),
+      return Object.entries(monthly)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .slice(-12)
+        .map(([month, data]) => ({ month, income: data.income, expenses: data.expenses }));
     },
-    {
-      notifyOnChange: false,
-      skipInitial: true,
-    }
-  );
+  });
 
-  const expensesByCategory = useRealtimeQuery(
-    api.finance_records.getCategoryBreakdown,
-    {
-      recordType: 'expense',
-      startDate: dateRange.from?.toISOString(),
-      endDate: dateRange.to?.toISOString(),
+  // Fetch category breakdown
+  const { data: incomeByCategory } = useQuery({
+    queryKey: ['finance-income-category', dateRange.from, dateRange.to],
+    queryFn: async () => {
+      const response = await appwriteFinanceRecords.list({ limit: 1000 });
+      const records = response.documents || [];
+      
+      const filtered = records.filter((r: { date?: string; type?: string; [key: string]: unknown }) => {
+        if (r.type !== 'income' || !r.date) return false;
+        const recordDate = new Date(r.date);
+        return (!dateRange.from || recordDate >= dateRange.from) && 
+               (!dateRange.to || recordDate <= dateRange.to);
+      });
+
+      const byCategory: Record<string, number> = {};
+      filtered.forEach((r: { category?: string; amount?: number; [key: string]: unknown }) => {
+        const cat = r.category || 'Diğer';
+        byCategory[cat] = (byCategory[cat] || 0) + (r.amount || 0);
+      });
+
+      return Object.entries(byCategory).map(([name, value]) => ({ name, value }));
     },
-    {
-      notifyOnChange: false,
-      skipInitial: true,
-    }
-  );
+    enabled: !!dateRange.from && !!dateRange.to,
+  });
+
+  const { data: expensesByCategory } = useQuery({
+    queryKey: ['finance-expense-category', dateRange.from, dateRange.to],
+    queryFn: async () => {
+      const response = await appwriteFinanceRecords.list({ limit: 1000 });
+      const records = response.documents || [];
+      
+      const filtered = records.filter((r: { date?: string; type?: string; [key: string]: unknown }) => {
+        if (r.type !== 'expense' || !r.date) return false;
+        const recordDate = new Date(r.date);
+        return (!dateRange.from || recordDate >= dateRange.from) && 
+               (!dateRange.to || recordDate <= dateRange.to);
+      });
+
+      const byCategory: Record<string, number> = {};
+      filtered.forEach((r: { category?: string; amount?: number; [key: string]: unknown }) => {
+        const cat = r.category || 'Diğer';
+        byCategory[cat] = (byCategory[cat] || 0) + (r.amount || 0);
+      });
+
+      return Object.entries(byCategory).map(([name, value]) => ({ name, value }));
+    },
+    enabled: !!dateRange.from && !!dateRange.to,
+  });
 
   // Fetch all records for table view
 
@@ -109,7 +180,7 @@ function FinancialDashboardPageContent() {
     if (!monthlyData) return [];
     let cumulativeIncome = 0;
     let cumulativeExpenses = 0;
-    return monthlyData.map((item) => {
+    return monthlyData.map((item: { month: string; income: number; expenses: number }) => {
       cumulativeIncome += item.income;
       cumulativeExpenses += item.expenses;
       return {
@@ -231,13 +302,8 @@ function FinancialDashboardPageContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {metrics ? formatCurrency(metrics.totalIncome) : '...'}
+              {metrics ? formatCurrency(metrics.totalIncome || 0) : '...'}
             </div>
-            {metrics && metrics.pendingIncome > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {metrics.pendingIncome} bekleyen işlem
-              </p>
-            )}
           </CardContent>
         </Card>
 
@@ -248,13 +314,8 @@ function FinancialDashboardPageContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {metrics ? formatCurrency(metrics.totalExpenses) : '...'}
+              {metrics ? formatCurrency(metrics.totalExpenses || 0) : '...'}
             </div>
-            {metrics && metrics.pendingExpenses > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {metrics.pendingExpenses} bekleyen işlem
-              </p>
-            )}
           </CardContent>
         </Card>
 
@@ -267,10 +328,10 @@ function FinancialDashboardPageContent() {
             <div
               className={cn(
                 'text-2xl font-bold',
-                metrics && metrics.netBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                metrics && (metrics.netIncome || 0) >= 0 ? 'text-green-600' : 'text-red-600'
               )}
             >
-              {metrics ? formatCurrency(metrics.netBalance) : '...'}
+              {metrics ? formatCurrency(metrics.netIncome || 0) : '...'}
             </div>
           </CardContent>
         </Card>
@@ -388,7 +449,7 @@ function FinancialDashboardPageContent() {
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {(incomeByCategory || []).map((_, index) => (
+                    {(incomeByCategory || []).map((_item: unknown, index: number) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
@@ -422,7 +483,7 @@ function FinancialDashboardPageContent() {
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {(expensesByCategory || []).map((_, index) => (
+                    {(expensesByCategory || []).map((_item: unknown, index: number) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>

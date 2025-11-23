@@ -7,9 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { convex } from '@/lib/convex/client';
-import { api as convexApi } from '@/convex/_generated/api';
-import type { Id } from '@/convex/_generated/dataModel';
+import { appwriteDependents } from '@/lib/appwrite/api';
 import {
   Dialog,
   DialogContent,
@@ -52,35 +50,34 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
     notes: '',
   });
 
-  const { data: dependents, isLoading } = useQuery({
+  const { data: dependentsData, isLoading } = useQuery({
     queryKey: ['dependents', beneficiaryId],
     queryFn: async () => {
-      if (!convex) return [];
-      return await convex.query(convexApi.dependents.getBeneficiaryDependents, {
-        beneficiaryId: beneficiaryId as any,
-      });
+      const response = await appwriteDependents.list({ beneficiary_id: beneficiaryId });
+      return response.documents || [];
     },
-    enabled: !!beneficiaryId && !!convex,
+    enabled: !!beneficiaryId,
     placeholderData: [],
   });
 
+  const dependents = dependentsData || [];
+
   const createMutation = useMutation({
     mutationFn: async () => {
-      if (!convex) throw new Error('Convex not initialized');
-      return await convex.mutation(convexApi.dependents.createDependent, {
-        beneficiaryId: beneficiaryId as any,
+      return await appwriteDependents.create({
+        beneficiary_id: beneficiaryId,
         name: formData.name,
         relationship: formData.relationship,
-        birthDate: formData.birthDate || undefined,
+        birth_date: formData.birthDate || undefined,
         gender: formData.gender || undefined,
-        tcNo: formData.tcNo || undefined,
+        tc_no: formData.tcNo || undefined,
         phone: formData.phone || undefined,
-        educationLevel: formData.educationLevel || undefined,
+        education_level: formData.educationLevel || undefined,
         occupation: formData.occupation || undefined,
-        healthStatus: formData.healthStatus || undefined,
-        hasDisability: formData.hasDisability,
-        disabilityDetail: formData.disabilityDetail || undefined,
-        monthlyIncome: formData.monthlyIncome ? parseFloat(formData.monthlyIncome) : undefined,
+        health_status: formData.healthStatus || undefined,
+        has_disability: formData.hasDisability,
+        disability_detail: formData.disabilityDetail || undefined,
+        monthly_income: formData.monthlyIncome ? parseFloat(formData.monthlyIncome) : undefined,
         notes: formData.notes || undefined,
       });
     },
@@ -109,10 +106,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
 
   const deleteMutation = useMutation({
     mutationFn: async (dependentId: string) => {
-      if (!convex) throw new Error('Convex not initialized');
-      return await convex.mutation(convexApi.dependents.deleteDependent, {
-        dependentId: dependentId as Id<'dependents'>,
-      });
+      return await appwriteDependents.remove(dependentId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dependents', beneficiaryId] });
@@ -309,8 +303,10 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
         </div>
       ) : dependents && dependents.length > 0 ? (
         <div className="space-y-2">
-          {dependents.map((dependent: { _id: string; [key: string]: unknown }) => (
-            <Card key={dependent._id} className="hover:shadow-md transition-shadow">
+          {dependents.map((dependent: { _id?: string; $id?: string; [key: string]: unknown }) => {
+            const dependentId = dependent._id || dependent.$id || '';
+            return (
+            <Card key={dependentId} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -340,7 +336,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => deleteMutation.mutate(dependent._id)}
+                    onClick={() => deleteMutation.mutate(dependentId)}
                     disabled={deleteMutation.isPending}
                     className="text-red-600 hover:text-red-700"
                   >
@@ -349,7 +345,8 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          );
+          })}
         </div>
       ) : (
         <Card>

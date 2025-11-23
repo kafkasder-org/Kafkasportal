@@ -44,7 +44,7 @@ async function getAuditLogsHandler(request: NextRequest) {
       filters,
     });
 
-    const logs = response.data || [];
+    const logs = response.documents || [];
 
     return NextResponse.json({
       success: true,

@@ -7,6 +7,8 @@ import {
 } from '@/lib/api/auth-utils';
 import { uploadRateLimit, readOnlyRateLimit, dataModificationRateLimit } from '@/lib/rate-limit';
 import { ID } from 'appwrite';
+import { appwriteStorage } from '@/lib/appwrite/api';
+import { appwriteConfig } from '@/lib/appwrite/config';
 
 /**
  * POST /api/upload
@@ -21,8 +23,7 @@ async function postUploadHandler(_request: NextRequest) {
     await requireAuthenticatedUser();
 
     // Generate a unique file ID for the upload
-    // Note: Appwrite doesn't have a separate "generate upload URL" step like Convex
-    // The upload happens directly via the SDK or REST API
+    // Appwrite upload happens directly via the SDK or REST API
     const fileId = ID.unique();
 
     // Return the file ID that can be used for direct upload
@@ -73,26 +74,13 @@ async function getUploadHandler(request: NextRequest) {
       );
     }
 
-    const convex = getConvexHttp();
-
-    // Get download URL from Convex
-    const downloadUrl = await convex.query(api.storage.getFileUrl, {
-      storageId: storageId as Id<'_storage'>,
-    });
-
-    if (!downloadUrl) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Dosya bulunamadı',
-        },
-        { status: 404 }
-      );
-    }
+    // Get download URL from Appwrite Storage
+    const bucketId = appwriteConfig.buckets.documents;
+    const downloadUrl = appwriteStorage.getFileView(bucketId, storageId);
 
     return NextResponse.json({
       success: true,
-      url: downloadUrl,
+      url: downloadUrl.toString(),
     });
   } catch (error) {
     const authError = buildErrorResponse(error);
@@ -139,12 +127,9 @@ async function deleteUploadHandler(request: NextRequest) {
       );
     }
 
-    const convex = getConvexHttp();
-
-    // Delete file from Convex
-    await convex.action(api.storage.deleteFile, {
-      storageId: storageId as Id<'_storage'>,
-    });
+    // Delete file from Appwrite Storage
+    const bucketId = appwriteConfig.buckets.documents;
+    await appwriteStorage.deleteFile(bucketId, storageId);
 
     return NextResponse.json({
       success: true,

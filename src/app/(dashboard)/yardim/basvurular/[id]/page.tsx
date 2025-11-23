@@ -304,26 +304,30 @@ export default function AidApplicationDetailPage({ params }: { params: Promise<{
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Kayıt Tarihi</p>
                 <p className="text-base">
-                  {new Date(application._creationTime).toLocaleDateString('tr-TR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {application._creationTime 
+                    ? new Date(application._creationTime).toLocaleDateString('tr-TR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : '-'}
                 </p>
               </div>
 
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Son Güncelleme</p>
                 <p className="text-base">
-                  {new Date(application._updatedAt).toLocaleDateString('tr-TR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {application._updatedAt 
+                    ? new Date(application._updatedAt).toLocaleDateString('tr-TR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : '-'}
                 </p>
               </div>
 

@@ -2,8 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Providers } from './providers';
 import { lazyLoadComponent } from '@/lib/performance';
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import { Analytics } from '@vercel/analytics/react';
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import { NetworkStatusIndicator } from '@/components/pwa/NetworkStatusIndicator';
 
@@ -81,12 +79,6 @@ export default function RootLayout({
           {children}
         </Providers>
         <NetworkStatusIndicator />
-        {process.env.NODE_ENV === 'production' && (
-          <>
-            <SpeedInsights />
-            <Analytics />
-          </>
-        )}
       </body>
     </html>
   );

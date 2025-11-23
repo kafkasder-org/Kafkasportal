@@ -85,7 +85,18 @@ export default function DonationReportsPage() {
     queryFn: () => api.donations.getDonations({ limit: 1000 }),
   });
 
-  const donations: DonationReport[] = (donationsData?.data as DonationReport[]) || [];
+  const donations: DonationReport[] = useMemo(() => {
+    const data = (donationsData?.data || []) as unknown as Array<Record<string, unknown>>;
+    return data.map((d) => {
+      const doc = d as { _creationTime?: number; $createdAt?: string; createdAt?: string; [key: string]: unknown };
+      return {
+        ...doc,
+        _creationTime: doc._creationTime 
+          ? new Date(doc._creationTime).toISOString() 
+          : (doc.$createdAt || doc.createdAt || new Date().toISOString()),
+      };
+    }) as DonationReport[];
+  }, [donationsData]);
 
   // Process data based on filters
   const reportData: ReportData | null = useMemo(() => {

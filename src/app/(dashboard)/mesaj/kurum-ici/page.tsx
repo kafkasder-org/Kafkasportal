@@ -99,7 +99,7 @@ export default function InternalMessagingPage() {
   const users = usersResponse?.data || [];
 
   // Memoize messages IDs to prevent infinite loop
-  const messagesIds = useMemo(() => messages.map((m) => m._id).join(','), [messages]);
+  const messagesIds = useMemo(() => messages.map((m) => m._id || m.$id || '').join(','), [messages]);
   const prevMessagesIdsRef = useRef<string>('');
 
   // Calculate stats
@@ -365,18 +365,18 @@ export default function InternalMessagingPage() {
                   <div className="space-y-2">
                     {messages.map((message) => (
                       <Card
-                        key={message._id}
+                        key={message._id || message.$id || ''}
                         className={`cursor-pointer transition-colors hover:bg-blue-50 ${
-                          selectedMessages.includes(message._id) ? 'bg-blue-50 border-blue-200' : ''
+                          selectedMessages.includes(message._id || message.$id || '') ? 'bg-blue-50 border-blue-200' : ''
                         }`}
                         onClick={() => handleMessageClick(message)}
                       >
                         <CardContent className="p-4">
                           <div className="flex items-start gap-3">
                             <Checkbox
-                              checked={selectedMessages.includes(message._id)}
+                              checked={selectedMessages.includes(message._id || message.$id || '')}
                               onClick={(event) => event.stopPropagation()}
-                              onCheckedChange={() => handleMessageSelect(message._id)}
+                              onCheckedChange={() => handleMessageSelect(message._id || message.$id || '')}
                             />
                             <div className="flex-1">
                               <div className="flex items-start justify-between">
@@ -400,9 +400,7 @@ export default function InternalMessagingPage() {
                                     <div className="flex items-center gap-1">
                                       <Calendar className="h-3 w-3" />
                                       <span>
-                                        {new Date(message._creationTime).toLocaleDateString(
-                                          'tr-TR'
-                                        )}
+                                        {message._creationTime ? new Date(message._creationTime).toLocaleDateString('tr-TR') : message.$createdAt ? new Date(message.$createdAt).toLocaleDateString('tr-TR') : '-'}
                                       </span>
                                     </div>
                                   </div>
@@ -413,7 +411,7 @@ export default function InternalMessagingPage() {
                                     size="sm"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleDeleteMessage(message._id);
+                                      handleDeleteMessage(message._id || message.$id || '');
                                     }}
                                     className="text-red-600 hover:text-red-700"
                                   >
@@ -504,7 +502,7 @@ export default function InternalMessagingPage() {
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
                                 <span>
-                                  {new Date(message._creationTime).toLocaleDateString('tr-TR')}
+                                  {message._creationTime ? new Date(message._creationTime).toLocaleDateString('tr-TR') : message.$createdAt ? new Date(message.$createdAt).toLocaleDateString('tr-TR') : '-'}
                                 </span>
                               </div>
                             </div>
@@ -560,7 +558,7 @@ export default function InternalMessagingPage() {
                                 <Calendar className="h-3 w-3" />
                                 <span>
                                   Son değişiklik:{' '}
-                                  {new Date(message._updatedAt).toLocaleDateString('tr-TR')}
+                                  {message._updatedAt ? new Date(message._updatedAt).toLocaleDateString('tr-TR') : message.$updatedAt ? new Date(message.$updatedAt).toLocaleDateString('tr-TR') : '-'}
                                 </span>
                               </div>
                             </div>
@@ -571,7 +569,7 @@ export default function InternalMessagingPage() {
                               size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleDeleteMessage(message._id);
+                                handleDeleteMessage(message._id || message.$id || '');
                               }}
                               className="text-red-600 hover:text-red-700"
                             >
@@ -622,7 +620,7 @@ export default function InternalMessagingPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleDeleteMessage(selectedMessage._id)}
+                    onClick={() => handleDeleteMessage(selectedMessage._id || selectedMessage.$id || '')}
                     className="text-red-600 hover:text-red-700"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -647,7 +645,7 @@ export default function InternalMessagingPage() {
                   <Calendar className="h-4 w-4" />
                   <span>
                     <strong>Tarih:</strong>{' '}
-                    {new Date(selectedMessage._creationTime).toLocaleString('tr-TR')}
+                    {selectedMessage._creationTime ? new Date(selectedMessage._creationTime).toLocaleString('tr-TR') : selectedMessage.$createdAt ? new Date(selectedMessage.$createdAt).toLocaleString('tr-TR') : '-'}
                   </span>
                 </div>
                 {selectedMessage.sent_at && (

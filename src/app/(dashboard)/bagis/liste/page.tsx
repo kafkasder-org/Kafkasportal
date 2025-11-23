@@ -102,7 +102,7 @@ export default function DonationsPage() {
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <span className="font-medium">
-            {new Date(item._creationTime).toLocaleDateString('tr-TR')}
+            {item._creationTime ? new Date(item._creationTime).toLocaleDateString('tr-TR') : item.$createdAt ? new Date(item.$createdAt).toLocaleDateString('tr-TR') : '-'}
           </span>
         </div>
       ),

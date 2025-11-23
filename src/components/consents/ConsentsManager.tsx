@@ -7,9 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { convex } from '@/lib/convex/client';
-import { api as convexApi } from '@/convex/_generated/api';
-import type { Id } from '@/convex/_generated/dataModel';
+import { appwriteConsents } from '@/lib/appwrite/api';
 import {
   Dialog,
   DialogContent,
@@ -46,29 +44,28 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
     notes: '',
   });
 
-  const { data: consents, isLoading } = useQuery({
+  const { data: consentsData, isLoading } = useQuery({
     queryKey: ['consents', beneficiaryId],
     queryFn: async () => {
-      if (!convex) return [];
-      return await convex.query(convexApi.consents.getBeneficiaryConsents, {
-        beneficiaryId: beneficiaryId as Id<'beneficiaries'>,
-      });
+      const response = await appwriteConsents.list({ beneficiary_id: beneficiaryId });
+      return response.documents || [];
     },
-    enabled: !!beneficiaryId && !!convex,
+    enabled: !!beneficiaryId,
     placeholderData: [],
   });
 
+  const consents = consentsData || [];
+
   const createMutation = useMutation({
     mutationFn: async () => {
-      if (!convex) throw new Error('Convex not initialized');
-      return await convex.mutation(convexApi.consents.createConsent, {
-        beneficiaryId: beneficiaryId as any,
-        consentType: formData.consentType,
-        consentText: formData.consentText,
+      return await appwriteConsents.create({
+        beneficiary_id: beneficiaryId,
+        consent_type: formData.consentType,
+        consent_text: formData.consentText,
         status: formData.status,
-        signedAt: formData.signedAt,
-        signedBy: formData.signedBy || undefined,
-        expiresAt: formData.expiresAt || undefined,
+        signed_at: formData.signedAt,
+        signed_by: formData.signedBy || undefined,
+        expires_at: formData.expiresAt || undefined,
         notes: formData.notes || undefined,
       });
     },
@@ -91,10 +88,7 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
 
   const deleteMutation = useMutation({
     mutationFn: async (consentId: string) => {
-      if (!convex) throw new Error('Convex not initialized');
-      return await convex.mutation(convexApi.consents.deleteConsent, {
-        consentId: consentId as Id<'consents'>,
-      });
+      return await appwriteConsents.remove(consentId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['consents', beneficiaryId] });
@@ -259,23 +253,25 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
         </div>
       ) : consents && consents.length > 0 ? (
         <div className="space-y-2">
-          {consents.map((consent: { _id: string; consentType: string; consentText: string; status: string; signedAt: string; signedBy: string; expiresAt?: string; notes?: string; [key: string]: unknown }) => (
-            <Card key={consent._id} className="hover:shadow-md transition-shadow">
+          {consents.map((consent: { _id?: string; $id?: string; consent_type?: string; consent_text?: string; status?: string; signed_at?: string; signed_by?: string; expires_at?: string; notes?: string; [key: string]: unknown }) => {
+            const consentId = consent._id || consent.$id || '';
+            return (
+            <Card key={consentId} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <FileSignature className="h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">
-                        {getConsentTypeLabel(consent.consent_type)}
+                        {getConsentTypeLabel(consent.consent_type || '')}
                       </span>
-                      {getStatusBadge(consent.status)}
+                      {getStatusBadge(consent.status || '')}
                     </div>
                     <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                      {consent.consent_text}
+                      {consent.consent_text || ''}
                     </p>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span>İmza: {new Date(consent.signed_at).toLocaleDateString('tr-TR')}</span>
+                      <span>İmza: {consent.signed_at ? new Date(consent.signed_at).toLocaleDateString('tr-TR') : '-'}</span>
                       {consent.expires_at && (
                         <span>
                           Bitiş: {new Date(consent.expires_at).toLocaleDateString('tr-TR')}
@@ -287,7 +283,7 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => deleteMutation.mutate(consent._id)}
+                    onClick={() => deleteMutation.mutate(consentId)}
                     disabled={deleteMutation.isPending}
                     className="text-red-600 hover:text-red-700"
                   >
@@ -296,7 +292,8 @@ export function ConsentsManager({ beneficiaryId }: ConsentsManagerProps) {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          );
+          })}
         </div>
       ) : (
         <Card>

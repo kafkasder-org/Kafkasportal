@@ -36,8 +36,7 @@
       "@/hooks/*": ["./src/hooks/*"],
       "@/stores/*": ["./src/stores/*"],
       "@/types/*": ["./src/types/*"],
-      "@/data/*": ["./src/data/*"],
-      "@/convex/*": ["./convex/*"]
+      "@/data/*": ["./src/data/*"]
     }
   },
   "include": [

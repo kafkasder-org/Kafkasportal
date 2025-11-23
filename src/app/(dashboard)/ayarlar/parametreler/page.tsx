@@ -68,7 +68,7 @@ export default function ParametersPage() {
       const result = await parametersApi.getAllParameters();
       if (!result.success) {
         throw new Error(
-          result.error instanceof Error ? result.error.message : 'Parametreler alınamadı'
+          typeof result.error === 'string' ? result.error : 'Parametreler alınamadı'
         );
       }
       return result;

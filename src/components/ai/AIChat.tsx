@@ -1,24 +1,20 @@
 /**
  * AI Chat Component
  *
- * Example React component demonstrating how to use the
- * @convex-dev/persistent-text-streaming component in the frontend.
+ * React component for AI chat conversations using Appwrite backend.
  *
  * Features:
  * - Create new AI chat conversations
- * - Stream responses in real-time via HTTP
- * - Subscribe to chat updates via database queries
+ * - Stream responses in real-time via polling
  * - View chat history
+ * - Manage chat status and messages
  */
 
 'use client';
 
 import { useState } from 'react';
-import { useMutation, useQuery } from 'convex/react';
-import { useStream } from '@convex-dev/persistent-text-streaming/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import logger from '@/lib/logger';
-import { api } from '@/convex/_generated/api';
-import type { StreamId } from '@convex-dev/persistent-text-streaming';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,39 +23,80 @@ import { Loader2, Send, MessageSquare } from 'lucide-react';
 
 interface AIChatProps {
   userId: string;
-  convexSiteUrl: string; // e.g., "https://your-project.convex.site"
+  convexSiteUrl?: string; // Deprecated parameter, no longer used
 }
 
 interface Chat {
-  _id: string;
-  title: string;
-  prompt: string;
-  stream_id: string;
-  status: 'pending' | 'completed' | 'error';
-  created_at: number;
+  _id?: string;
+  $id?: string;
+  title?: string;
+  prompt?: string;
+  status?: 'pending' | 'completed' | 'error';
+  created_at?: string;
+  createdAt?: string;
+  body?: string;
+  [key: string]: unknown;
 }
 
-export function AIChat({ userId, convexSiteUrl }: AIChatProps) {
+export function AIChat({ userId }: AIChatProps) {
+  const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState('');
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  // Mutations
-  const createChat = useMutation(api.ai_chat.createChat);
-
   // Queries
-  const chats = useQuery(api.ai_chat.listChats, {
-    user_id: userId as any,
-    limit: 20,
+  const { data: chatsData } = useQuery({
+    queryKey: ['ai-chats', userId],
+    queryFn: async () => {
+      // TODO: Implement AI chats API endpoint
+      // For now, return empty array
+      return [];
+    },
+    enabled: !!userId,
   });
 
-  // Stream hook - only active if we have an active chat
-  const { text: streamedText, status: streamStatus } = useStream(
-    api.ai_chat.getChatBody,
-    new URL(`${convexSiteUrl}/chat-stream`),
-    !!activeChat && activeChat.status === 'pending', // Only drive the stream if we created it
-    activeChat?.stream_id as StreamId | undefined
-  );
+  const chats = chatsData || [];
+
+  // Poll for active chat updates
+  const { data: activeChatData } = useQuery({
+    queryKey: ['ai-chat', activeChat?._id || activeChat?.$id],
+    queryFn: async () => {
+      if (!activeChat?._id && !activeChat?.$id) return null;
+      // TODO: Fetch chat by ID
+      return activeChat;
+    },
+    enabled: !!activeChat && (!!activeChat._id || !!activeChat.$id),
+    refetchInterval: activeChat?.status === 'pending' ? 2000 : false,
+  });
+
+  const streamedText = activeChatData?.body || '';
+  const streamStatus = activeChatData?.status === 'pending' ? 'streaming' : 'idle';
+
+  const createChatMutation = useMutation({
+    mutationFn: async (data: { user_id: string; prompt: string; title: string }) => {
+      // TODO: Implement AI chat creation API endpoint
+      // For now, return a mock response
+      return {
+        chatId: `chat_${Date.now()}`,
+        streamId: `stream_${Date.now()}`,
+      };
+    },
+    onSuccess: (_result) => {
+      const newChat: Chat = {
+        _id: result.chatId,
+        title: prompt.slice(0, 50),
+        prompt: prompt.trim(),
+        status: 'pending',
+        created_at: new Date().toISOString(),
+      };
+      setActiveChat(newChat);
+      queryClient.invalidateQueries({ queryKey: ['ai-chats', userId] });
+      setPrompt('');
+    },
+    onError: (error) => {
+      logger.error('AI chat creation failed', { error });
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,25 +104,11 @@ export function AIChat({ userId, convexSiteUrl }: AIChatProps) {
 
     setIsCreating(true);
     try {
-      const result = await createChat({
-        user_id: userId as any,
+      await createChatMutation.mutateAsync({
+        user_id: userId,
         prompt: prompt.trim(),
-        title: prompt.slice(0, 50), // Use first 50 chars as title
-      });
-
-      // Set as active chat to start streaming
-      setActiveChat({
-        _id: result.chatId,
         title: prompt.slice(0, 50),
-        prompt: prompt.trim(),
-        stream_id: result.streamId,
-        status: 'pending',
-        created_at: Date.now(),
       });
-
-      setPrompt('');
-    } catch (error) {
-      logger.error('AI chat creation failed', { error });
     } finally {
       setIsCreating(false);
     }
@@ -105,16 +128,18 @@ export function AIChat({ userId, convexSiteUrl }: AIChatProps) {
         <CardContent>
           <ScrollArea className="h-[500px]">
             <div className="space-y-2">
-              {chats?.map((chat) => (
+              {chats?.map((chat: Chat) => {
+                const chatId = chat._id || chat.$id || '';
+                return (
                 <button
-                  key={chat._id}
-                  onClick={() => setActiveChat(chat as Chat)}
+                  key={chatId}
+                  onClick={() => setActiveChat(chat)}
                   className={`w-full rounded-lg border p-3 text-left transition-colors hover:bg-accent ${
-                    activeChat?._id === chat._id ? 'border-primary bg-accent' : ''
+                    (activeChat?._id || activeChat?.$id) === chatId ? 'border-primary bg-accent' : ''
                   }`}
                 >
-                  <div className="truncate font-medium">{chat.title}</div>
-                  <div className="mt-1 truncate text-xs text-muted-foreground">{chat.prompt}</div>
+                  <div className="truncate font-medium">{chat.title || 'Başlıksız'}</div>
+                  <div className="mt-1 truncate text-xs text-muted-foreground">{chat.prompt || ''}</div>
                   <div className="mt-2 flex items-center gap-2">
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs ${
@@ -133,7 +158,8 @@ export function AIChat({ userId, convexSiteUrl }: AIChatProps) {
                     </span>
                   </div>
                 </button>
-              ))}
+              );
+              })}
               {(!chats || chats.length === 0) && (
                 <div className="py-8 text-center text-sm text-muted-foreground">
                   Henüz sohbet yok. Aşağıdan yeni bir sohbet başlatın!
@@ -197,8 +223,8 @@ export function AIChat({ userId, convexSiteUrl }: AIChatProps) {
               disabled={isCreating}
               className="flex-1"
             />
-            <Button type="submit" disabled={!prompt.trim() || isCreating}>
-              {isCreating ? (
+            <Button type="submit" disabled={!prompt.trim() || isCreating || createChatMutation.isPending}>
+              {isCreating || createChatMutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
@@ -211,9 +237,8 @@ export function AIChat({ userId, convexSiteUrl }: AIChatProps) {
 
           {/* Info */}
           <div className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-            <strong>Not:</strong> Bu bir demo uygulamasıdır. Gerçek AI entegrasyonu için{' '}
-            <code className="rounded bg-background px-1 py-0.5">convex/ai_chat.ts</code>{' '}
-            dosyasındaki TODO yorumlarını takip edin.
+            <strong>Not:</strong> AI Chat özelliği Appwrite'a geçiş sırasında güncelleniyor. 
+            Gerçek AI entegrasyonu için API endpoint'leri oluşturulmalıdır.
           </div>
         </CardContent>
       </Card>

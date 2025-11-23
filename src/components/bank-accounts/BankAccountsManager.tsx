@@ -7,9 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { convex } from '@/lib/convex/client';
-import { api as convexApi } from '@/convex/_generated/api';
-import type { Id } from '@/convex/_generated/dataModel';
+import { appwriteBankAccounts } from '@/lib/appwrite/api';
 import {
   Dialog,
   DialogContent,
@@ -45,32 +43,31 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
     notes: '',
   });
 
-  const { data: accounts, isLoading } = useQuery({
+  const { data: accountsData, isLoading } = useQuery({
     queryKey: ['bank-accounts', beneficiaryId],
     queryFn: async () => {
-      if (!convex) return [];
-      return await convex.query(convexApi.bank_accounts.getBeneficiaryBankAccounts, {
-        beneficiaryId: beneficiaryId as any,
-      });
+      const response = await appwriteBankAccounts.list({ beneficiary_id: beneficiaryId });
+      return response.documents || [];
     },
-    enabled: !!beneficiaryId && !!convex,
+    enabled: !!beneficiaryId,
     placeholderData: [],
   });
 
+  const accounts = accountsData || [];
+
   const createMutation = useMutation({
     mutationFn: async () => {
-      if (!convex) throw new Error('Convex not initialized');
-      return await convex.mutation(convexApi.bank_accounts.createBankAccount, {
-        beneficiaryId: beneficiaryId as any,
-        bankName: formData.bankName,
-        accountHolder: formData.accountHolder,
-        accountNumber: '', // Empty default
+      return await appwriteBankAccounts.create({
+        beneficiary_id: beneficiaryId,
+        bank_name: formData.bankName,
+        account_holder: formData.accountHolder,
+        account_number: '', // Empty default
         iban: formData.iban || undefined,
-        branchName: undefined,
-        branchCode: undefined,
-        accountType: 'checking', // Default to checking
+        branch_name: undefined,
+        branch_code: undefined,
+        account_type: 'checking', // Default to checking
         currency: formData.currency,
-        isPrimary: false, // Default to false
+        is_primary: false, // Default to false
         status: formData.status,
         notes: formData.notes || undefined,
       });
@@ -93,10 +90,7 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
 
   const deleteMutation = useMutation({
     mutationFn: async (accountId: string) => {
-      if (!convex) throw new Error('Convex not initialized');
-      return await convex.mutation(convexApi.bank_accounts.deleteBankAccount, {
-        accountId: accountId as Id<'bank_accounts'>,
-      });
+      return await appwriteBankAccounts.remove(accountId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bank-accounts', beneficiaryId] });
@@ -227,8 +221,10 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
         </div>
       ) : accounts && accounts.length > 0 ? (
         <div className="space-y-2">
-          {accounts.map((account: { _id: string; bankName: string; accountHolder: string; iban: string; currency: string; status: string; notes?: string; [key: string]: unknown }) => (
-            <Card key={account._id} className="hover:shadow-md transition-shadow">
+          {accounts.map((account: { _id?: string; $id?: string; bank_name?: string; account_holder?: string; iban?: string; currency?: string; status?: string; notes?: string; [key: string]: unknown }) => {
+            const accountId = account._id || account.$id || '';
+            return (
+            <Card key={accountId} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -252,7 +248,7 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => deleteMutation.mutate(account._id)}
+                    onClick={() => deleteMutation.mutate(accountId)}
                     disabled={deleteMutation.isPending}
                     className="text-red-600 hover:text-red-700"
                   >
@@ -261,7 +257,8 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
                 </div>
               </CardContent>
             </Card>
-          ))}
+          );
+          })}
         </div>
       ) : (
         <Card>

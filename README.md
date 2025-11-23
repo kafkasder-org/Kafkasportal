@@ -71,7 +71,6 @@ npm run test:backend     # Backend durum kontrolu
 
 # Build & Deploy
 npm run build            # Production build
-npm run vercel:prod      # Vercel deploy
 ```
 
 ## Proje Yapisi
@@ -108,17 +107,18 @@ npm run vercel:prod      # Vercel deploy
 ## Teknoloji Yigini
 
 - **Frontend**: Next.js 16, React 19, TypeScript
-- **Backend**: Convex (serverless database)
+- **Backend**: Appwrite (self-hosted or cloud)
 - **UI**: Radix UI + Tailwind CSS 4
 - **State**: Zustand + TanStack Query
 - **Testing**: Vitest + Playwright
-- **Deployment**: Vercel + Convex Cloud
+- **Deployment**: Appwrite Cloud
 
 ## Environment Variables
 
 ```env
 # Zorunlu
-NEXT_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+NEXT_PUBLIC_APPWRITE_PROJECT_ID=your-project-id
 CSRF_SECRET=your-32-char-secret
 SESSION_SECRET=your-32-char-secret
 

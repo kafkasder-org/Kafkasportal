@@ -198,7 +198,7 @@ self.addEventListener('sync', (event) => {
 });
 
 async function syncOfflineData() {
-  // TODO: Implement offline data sync with Convex
+  // TODO: Implement offline data sync with Appwrite
   console.warn('[SW] Syncing offline data...');
 }
 

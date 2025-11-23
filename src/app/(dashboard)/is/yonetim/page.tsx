@@ -373,7 +373,7 @@ export default function WorkManagementPage() {
                             size="sm"
                             onClick={() =>
                               updateStatusMutation.mutate({
-                                id: item._id,
+                                id: item._id || item.$id || '',
                                 status: 'hazir',
                                 note: 'Görev tamamlandı olarak işaretlendi',
                               })

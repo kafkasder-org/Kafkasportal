@@ -38,7 +38,7 @@ async function getDonationStatsHandler(request: NextRequest) {
       limit: 10000, // Get all records for stats
     });
 
-    const donations = result.documents;
+    const donations = result.documents as DonationDocument[];
 
     if (type === 'monthly') {
       // Calculate monthly stats for charts

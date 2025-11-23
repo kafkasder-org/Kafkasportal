@@ -87,11 +87,11 @@ async function uploadLogoHandler(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadedFile = await storage.createFile(
+    const uploadedFile = await storage.uploadFile(
       bucketId,
       fileId,
       buffer,
-      [ID.write('*')] // Public read
+      ['read("any")'] // Public read
     );
 
     const storageId = uploadedFile.$id;
@@ -181,7 +181,7 @@ async function deleteLogoHandler(request: NextRequest) {
         await storage.deleteFile(bucketId, logoSetting.value.storageId);
       } catch (error) {
         // Log but don't fail if file doesn't exist
-        logger.warn('Failed to delete logo file from storage', error as Error);
+        logger.warn('Failed to delete logo file from storage', { error });
       }
     }
 

@@ -74,7 +74,7 @@ export default function UsersPage() {
   const users = useMemo<UsersTableItem[]>(
     () =>
       (data?.data ?? []).map((user) => ({
-        _id: user._id,
+        _id: user._id || user.$id || '',
         name: user.name,
         email: user.email,
         role: user.role,

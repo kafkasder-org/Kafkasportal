@@ -7,7 +7,7 @@ Kafkasder Panel projesini yerel ortamınızda çalıştırmak için adım adım 
 - **Node.js**: >= 20.9.0 (Önerilen: 20.x LTS)
 - **npm**: >= 9.0.0
 - **Git**: Versiyon kontrolü için
-- **Convex Hesabı**: [dashboard.convex.dev](https://dashboard.convex.dev) üzerinden ücretsiz oluşturabilirsiniz
+- **Appwrite Hesabı**: [cloud.appwrite.io](https://cloud.appwrite.io) üzerinden ücretsiz oluşturabilirsiniz veya self-hosted kurabilirsiniz
 
 ## Hızlı Başlangıç
 
@@ -49,8 +49,11 @@ cp .env.example .env.local
 Minimum gerekli ayarlar için `.env.local` dosyasını düzenleyin:
 
 ```env
-# ZORUNLU - Convex Backend
-NEXT_PUBLIC_CONVEX_URL=https://your-project.convex.cloud
+# ZORUNLU - Appwrite Backend
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+NEXT_PUBLIC_APPWRITE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_APPWRITE_DATABASE_ID=your-database-id
+APPWRITE_API_KEY=your-api-key
 
 # ZORUNLU - Güvenlik (32+ karakter)
 CSRF_SECRET=your-csrf-secret-min-32-chars-replace-me
@@ -61,12 +64,13 @@ FIRST_ADMIN_EMAIL=admin@example.com
 FIRST_ADMIN_PASSWORD=YourSecurePassword123!
 ```
 
-#### Convex URL Nasıl Alınır?
+#### Appwrite Kurulumu
 
-1. [dashboard.convex.dev](https://dashboard.convex.dev) adresine gidin
+1. [cloud.appwrite.io](https://cloud.appwrite.io) adresine gidin veya self-hosted kurulum yapın
 2. Yeni bir proje oluşturun (ücretsiz)
-3. "Settings" > "URL & Deploy Key" bölümünden deployment URL'inizi alın
-4. URL'yi `.env.local` dosyasına yapıştırın
+3. "Settings" > "API Keys" bölümünden API key oluşturun
+4. Database ve Collection'ları oluşturun (veya `npm run appwrite:setup` komutunu kullanın)
+5. Bilgileri `.env.local` dosyasına yapıştırın
 
 #### Güvenli Secret Oluşturma
 
@@ -78,19 +82,18 @@ openssl rand -base64 32
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
-### 5. Convex'i Başlatın
+### 5. Appwrite Database Kurulumu
 
-Yeni bir terminal açın ve Convex backend'ini başlatın:
+Appwrite database ve collection'larını otomatik olarak oluşturun:
 
 ```bash
-npm run convex:dev
+npm run appwrite:setup
 ```
 
-İlk çalıştırmada:
-
-1. Convex CLI sizi login olmaya yönlendirecek
-2. Tarayıcıda açılan sayfadan hesabınıza giriş yapın
-3. Proje seçin veya yeni proje oluşturun
+Bu komut:
+1. Appwrite database'ini oluşturur
+2. Gerekli collection'ları oluşturur
+3. Index'leri ve permission'ları ayarlar
 
 ### 6. Next.js Development Server'ı Başlatın
 
@@ -240,7 +243,10 @@ npm run build
 ### Zorunlu (Development)
 
 ```env
-NEXT_PUBLIC_CONVEX_URL=https://...   # Convex deployment URL
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+NEXT_PUBLIC_APPWRITE_PROJECT_ID=...   # Appwrite project ID
+NEXT_PUBLIC_APPWRITE_DATABASE_ID=...  # Appwrite database ID
+APPWRITE_API_KEY=...                  # Appwrite API key
 CSRF_SECRET=...                      # 32+ karakter
 SESSION_SECRET=...                   # 32+ karakter
 FIRST_ADMIN_EMAIL=...               # İlk admin email

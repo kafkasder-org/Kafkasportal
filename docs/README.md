@@ -12,7 +12,6 @@ Bu klasor projenin tum teknik dokumantasyonunu icerir.
 | [claude-desktop-mcp-setup.md](./claude-desktop-mcp-setup.md) | Claude Desktop MCP yapılandırması (YENİ) |
 | [appwrite-mcp-guide.md](./appwrite-mcp-guide.md) | Appwrite MCP kullanim kilavuzu                 |
 | [github-mcp-server.md](./github-mcp-server.md) | GitHub MCP sunucusu kullanim kilavuzu             |
-| [deployment.md](./deployment.md)               | Vercel ve Convex deployment rehberi               |
 | [testing.md](./testing.md)                     | Test altyapisi ve yazim rehberi                   |
 | [api-patterns.md](./api-patterns.md)           | API route standartlari ve middleware kullanimi    |
 
@@ -63,8 +62,6 @@ npm run test:e2e         # E2E testleri
 
 # Build & Deploy
 npm run build            # Production build
-npm run convex:deploy    # Convex'i deploy et
-npm run vercel:prod      # Vercel'e deploy et
 ```
 
 ### Teknoloji Yigini
@@ -77,7 +74,7 @@ npm run vercel:prod      # Vercel'e deploy et
 | **State**      | Zustand (client), TanStack Query (server) |
 | **Forms**      | React Hook Form + Zod                     |
 | **Testing**    | Vitest (unit), Playwright (E2E)           |
-| **Deployment** | Vercel + Convex Cloud                     |
+| **Deployment** | Appwrite Cloud                     |
 
 ### Mimari Prensipler
 
@@ -152,7 +149,6 @@ await beneficiaries.delete(id);
 
 ## Daha Fazla Bilgi
 
-- [Deployment Rehberi](./deployment.md)
 - [Test Rehberi](./testing.md)
 - [API Patterns](./api-patterns.md)
 - [Contributing](../CONTRIBUTING.md)

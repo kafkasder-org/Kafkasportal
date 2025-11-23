@@ -9,8 +9,6 @@ import { KPICard } from '@/components/ui/kpi-card';
 import { CurrencyWidget } from '@/components/ui/currency-widget';
 import { PageLayout } from '@/components/layouts/PageLayout';
 import { DemoBanner } from '@/components/ui/demo-banner';
-// useQuery removed
-import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 // api removed
 import {
   Users,

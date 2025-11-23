@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Id } from '@/convex/_generated/dataModel';
 import { scholarshipApplicationsApi, scholarshipPaymentsApi } from '@/lib/api/scholarships';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -45,9 +44,10 @@ export default function OrphansPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrphan, setSelectedOrphan] = useState<{
-    _id: string;
-    applicant_name: string;
-    status: string;
+    _id?: string;
+    $id?: string;
+    applicant_name?: string;
+    status?: string;
     priority_score?: number;
     applicant_phone?: string;
     applicant_email?: string;
@@ -63,6 +63,7 @@ export default function OrphansPage() {
     monthly_income?: number;
     family_income?: number;
     essay?: string;
+    [key: string]: unknown;
   } | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
@@ -87,13 +88,13 @@ export default function OrphansPage() {
     initialData: { success: false, data: [], total: 0, error: null },
   });
 
-  // Get payments for selected orphaeeeeeeeeeeeeeeeeen
+  // Get payments for selected orphan
   const { data: paymentsData } = useQuery({
     queryKey: ['orphan-payments', selectedOrphan?._id],
     queryFn: () =>
       selectedOrphan
         ? scholarshipPaymentsApi.list({
-            application_id: selectedOrphan._id as Id<'scholarship_applications'>,
+            application_id: selectedOrphan._id,
           })
         : Promise.resolve({ success: false, data: [], total: 0, error: null }),
     enabled: !!selectedOrphan,
@@ -131,8 +132,8 @@ export default function OrphansPage() {
     return { total, active, pending, totalSupport };
   }, [orphans]);
 
-  const handleViewDetails = (orphan: { _id: string; [key: string]: unknown }) => {
-    setSelectedOrphan(orphan);
+  const handleViewDetails = (orphan: { _id?: string; $id?: string; [key: string]: unknown }) => {
+    setSelectedOrphan({ ...orphan, _id: orphan._id || orphan.$id || '' } as typeof selectedOrphan);
     setIsDetailDialogOpen(true);
   };
 
@@ -267,38 +268,42 @@ export default function OrphansPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrphans.map((orphan: { status?: string; _id: string; [key: string]: unknown }) => {
+                {filteredOrphans.map((orphan: { status?: string; _id?: string; $id?: string; [key: string]: unknown }) => {
                   const statusInfo = STATUS_LABELS[orphan.status as keyof typeof STATUS_LABELS];
+                  const orphanId = orphan._id || orphan.$id || '';
+                  const applicantEmail = typeof orphan.applicant_email === 'string' ? orphan.applicant_email : null;
+                  const gradeLevel = typeof orphan.grade_level === 'string' ? orphan.grade_level : null;
+                  const hasDisability = Boolean(orphan.has_disability);
 
                   return (
-                    <TableRow key={orphan._id}>
+                    <TableRow key={orphanId}>
                       <TableCell>
                         <div>
                           <div className="font-medium flex items-center gap-2">
                             <Heart className="h-4 w-4 text-red-500" />
-                            {orphan.applicant_name}
+                            {String(orphan.applicant_name || '-')}
                           </div>
-                          <div className="text-sm text-slate-500">{orphan.applicant_phone}</div>
-                          {orphan.applicant_email && (
-                            <div className="text-xs text-slate-400">{orphan.applicant_email}</div>
+                          <div className="text-sm text-slate-500">{typeof orphan.applicant_phone === 'string' ? orphan.applicant_phone : '-'}</div>
+                          {applicantEmail && (
+                            <div className="text-xs text-slate-400">{applicantEmail}</div>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="text-sm font-medium">{orphan.university || '-'}</div>
-                          <div className="text-xs text-slate-500">{orphan.department || '-'}</div>
-                          {orphan.grade_level && (
+                          <div className="text-sm font-medium">{typeof orphan.university === 'string' ? orphan.university : '-'}</div>
+                          <div className="text-xs text-slate-500">{typeof orphan.department === 'string' ? orphan.department : '-'}</div>
+                          {gradeLevel && (
                             <div className="text-xs text-slate-400">
-                              {orphan.grade_level}. Sınıf
+                              {gradeLevel}. Sınıf
                             </div>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          <div>Kardeş: {orphan.sibling_count || 0}</div>
-                          {orphan.has_disability && (
+                          <div>Kardeş: {typeof orphan.sibling_count === 'number' ? orphan.sibling_count : 0}</div>
+                          {hasDisability && (
                             <Badge variant="outline" className="mt-1 text-xs">
                               Engelli
                             </Badge>
@@ -306,7 +311,7 @@ export default function OrphansPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {orphan.gpa ? (
+                        {orphan.gpa && typeof orphan.gpa === 'number' ? (
                           <span className="font-medium">{orphan.gpa.toFixed(2)}</span>
                         ) : (
                           '-'
@@ -317,9 +322,9 @@ export default function OrphansPage() {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm text-slate-600">
-                          {orphan.submitted_at
+                          {orphan.submitted_at && typeof orphan.submitted_at === 'string'
                             ? new Date(orphan.submitted_at).toLocaleDateString('tr-TR')
-                            : orphan.created_at
+                            : orphan.created_at && typeof orphan.created_at === 'string'
                               ? new Date(orphan.created_at).toLocaleDateString('tr-TR')
                               : '-'}
                         </div>
@@ -460,17 +465,21 @@ export default function OrphansPage() {
                 <div>
                   <h3 className="font-semibold mb-3">Ödeme Geçmişi</h3>
                   <div className="space-y-2">
-                    {payments.map((payment: { _id: string; amount?: number; payment_date?: string; status?: string; [key: string]: unknown }) => (
+                    {payments.map((payment: { _id?: string; $id?: string; amount?: number; payment_date?: string; status?: string; [key: string]: unknown }) => {
+                      const paymentId = payment._id || payment.$id || '';
+                      const amount = payment.amount || 0;
+                      const paymentDate = payment.payment_date && typeof payment.payment_date === 'string' ? payment.payment_date : '';
+                      return (
                       <div
-                        key={payment._id}
+                        key={paymentId}
                         className="flex items-center justify-between p-3 bg-slate-50 rounded-lg text-sm"
                       >
                         <div>
                           <div className="font-medium">
-                            ₺{payment.amount.toLocaleString('tr-TR')}
+                            ₺{amount.toLocaleString('tr-TR')}
                           </div>
                           <div className="text-xs text-slate-500">
-                            {new Date(payment.payment_date).toLocaleDateString('tr-TR')}
+                            {paymentDate ? new Date(paymentDate).toLocaleDateString('tr-TR') : '-'}
                           </div>
                         </div>
                         <Badge
@@ -483,11 +492,12 @@ export default function OrphansPage() {
                           {payment.status === 'paid' ? 'Ödendi' : 'Beklemede'}
                         </Badge>
                       </div>
-                    ))}
+                    );
+                    })}
                     <div className="pt-2 border-t">
                       <div className="flex justify-between font-semibold">
                         <span>Toplam Ödeme:</span>
-                        <span>₺{getTotalPaid(selectedOrphan._id).toLocaleString('tr-TR')}</span>
+                        <span>₺{getTotalPaid(selectedOrphan._id || selectedOrphan.$id || '').toLocaleString('tr-TR')}</span>
                       </div>
                     </div>
                   </div>

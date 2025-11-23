@@ -112,7 +112,7 @@ export default function StudentsPage() {
 
   const memoizedStudents: StudentRecord[] = useMemo(() => {
     const normalized: StudentRecord[] = applications.map((application) => ({
-      _id: application._id,
+      _id: application._id || application.$id || '',
       applicant_name: application.applicant_name,
       applicant_tc_no: '',
       applicant_phone: '',

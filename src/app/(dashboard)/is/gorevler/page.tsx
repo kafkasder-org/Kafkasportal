@@ -361,7 +361,7 @@ export default function TasksPage() {
                 <SelectItem value="unassigned">Atanmamış</SelectItem>
                 {users && users.length > 0 ? (
                   users.map((user: UserDocument) => (
-                    <SelectItem key={user._id} value={user._id}>
+                    <SelectItem key={user._id || user.$id || ''} value={user._id || user.$id || ''}>
                       {user.name || 'İsimsiz Kullanıcı'}
                     </SelectItem>
                   ))
@@ -503,7 +503,7 @@ export default function TasksPage() {
                           <div>
                             <span className="text-muted-foreground">Oluşturulma:</span>
                             <span className="font-medium ml-1">
-                              {new Date(task._creationTime).toLocaleDateString('tr-TR')}
+                              {task._creationTime ? new Date(task._creationTime).toLocaleDateString('tr-TR') : task.$createdAt ? new Date(task.$createdAt).toLocaleDateString('tr-TR') : '-'}
                             </span>
                           </div>
                         </div>
@@ -537,7 +537,7 @@ export default function TasksPage() {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteTask(task._id);
+                            handleDeleteTask(task._id || task.$id || '');
                           }}
                           className="text-red-600 hover:text-red-700"
                         >

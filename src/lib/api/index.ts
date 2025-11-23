@@ -1,12 +1,13 @@
 /**
  * API Client Index
  *
- * Re-exports the Convex API client for backward compatibility.
+ * Re-exports Appwrite API clients for backward compatibility.
  * Components can import from '@/lib/api' instead of '@/lib/api/convex-api-client'
+ * Note: convex-api-client.ts is a legacy file name but now uses Appwrite backend
  */
 
 import { convexApiClient } from './convex-api-client';
-import { convexSystemSettings } from '@/lib/convex/api';
+import { appwriteSystemSettings, appwriteParameters } from '@/lib/appwrite/api';
 import type {
   AidApplicationDocument,
   CreateDocumentData,
@@ -14,7 +15,6 @@ import type {
   ConvexResponse,
   QueryParams,
 } from '@/types/database';
-import type { Id } from '@/convex/_generated/dataModel';
 
 // Export as default for backward compatibility
 const api = convexApiClient;
@@ -23,19 +23,16 @@ export default api;
 export { convexApiClient as api };
 export type { ConvexResponse, QueryParams, CreateDocumentData, UpdateDocumentData };
 
-// Placeholder API exports - tam implementation için bkz: docs/TODO.md #4
-// TODO: Bu API'leri ya tam implement et ya da kullanan componentlerden kaldır
+// Parameters API - Migrated to Appwrite
 export const parametersApi = {
   getAllParameters: async () => {
     try {
-      const settings = await convexSystemSettings.getAll();
-      const flattened = Object.entries(settings).flatMap(([category, entries]) =>
-        Object.entries(entries as Record<string, unknown>).map(([key, value]) => ({
-          category,
-          key,
-          value,
-        }))
-      );
+      const response = await appwriteParameters.list();
+      const flattened = (response.documents || []).map((doc: { category?: string; key?: string; value?: unknown; [key: string]: unknown }) => ({
+        category: doc.category || '',
+        key: doc.key || '',
+        value: doc.value,
+      }));
 
       return {
         success: true,
@@ -44,7 +41,7 @@ export const parametersApi = {
         error: null,
       };
     } catch (error) {
-      return { success: false, data: [], total: 0, error };
+      return { success: false, data: [], total: 0, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   },
   getParametersByCategory: async (category?: string) => {
@@ -53,16 +50,18 @@ export const parametersApi = {
     }
 
     try {
-      const settings = await convexSystemSettings.getByCategory(category);
-      const items = Object.entries(settings as Record<string, unknown>).map(([key, value]) => ({
-        category,
-        key,
-        value,
-      }));
+      const response = await appwriteParameters.list();
+      const items = (response.documents || [])
+        .filter((doc: { category?: string; [key: string]: unknown }) => doc.category === category)
+        .map((doc: { category?: string; key?: string; value?: unknown; [key: string]: unknown }) => ({
+          category: doc.category || category,
+          key: doc.key || '',
+          value: doc.value,
+        }));
 
       return { success: true, data: items, error: null };
     } catch (error) {
-      return { success: false, data: [], error };
+      return { success: false, data: [], error: error instanceof Error ? error.message : 'Unknown error' };
     }
   },
   createParameter: async (data?: {
@@ -76,35 +75,35 @@ export const parametersApi = {
     }
 
     try {
-      await convexSystemSettings.updateSetting(
-        data.category,
-        data.key,
-        data.value,
-        data.updatedBy as Id<'users'> | undefined
-      );
+      await appwriteParameters.create({
+        category: data.category,
+        key: data.key,
+        value: data.value,
+        updated_by: data.updatedBy,
+      });
       return { success: true, error: null };
     } catch (error) {
-      return { success: false, error };
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   },
   updateParameter: async (
-    _id: string | undefined,
+    id: string | undefined,
     data?: { category?: string; key?: string; value?: unknown; updatedBy?: string }
   ) => {
-    if (!data?.category || !data?.key) {
-      return { success: false, error: 'Kategori ve anahtar gereklidir' };
+    if (!id || !data?.category || !data?.key) {
+      return { success: false, error: 'ID, kategori ve anahtar gereklidir' };
     }
 
     try {
-      await convexSystemSettings.updateSetting(
-        data.category,
-        data.key,
-        data.value,
-        data.updatedBy as Id<'users'> | undefined
-      );
+      await appwriteParameters.update(id, {
+        category: data.category,
+        key: data.key,
+        value: data.value,
+        updated_by: data.updatedBy,
+      });
       return { success: true, error: null };
     } catch (error) {
-      return { success: false, error };
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   },
   deleteParameter: async (data?: { category?: string; key?: string; updatedBy?: string }) => {
@@ -113,15 +112,19 @@ export const parametersApi = {
     }
 
     try {
-      await convexSystemSettings.updateSetting(
-        data.category,
-        data.key,
-        null,
-        data.updatedBy as Id<'users'> | undefined
+      // Find parameter by category and key, then delete
+      const response = await appwriteParameters.list();
+      const param = (response.documents || []).find(
+        (doc: { category?: string; key?: string; [key: string]: unknown }) =>
+          doc.category === data.category && doc.key === data.key
       );
+      
+      if (param && (param._id || param.$id)) {
+        await appwriteParameters.remove(param._id || param.$id || '');
+      }
       return { success: true, error: null };
     } catch (error) {
-      return { success: false, error };
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   },
 };

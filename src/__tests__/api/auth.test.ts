@@ -6,13 +6,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-// Mock Convex functions
-vi.mock('@/lib/convex/server', () => ({
-  convexHttp: {
-    query: vi.fn(),
-    mutation: vi.fn(),
-  },
-}));
+// Mock Appwrite functions (legacy mock removed - no longer needed)
 
 vi.mock('@/lib/auth/password', () => ({
   verifyPassword: vi.fn().mockResolvedValue(true),
@@ -96,9 +90,6 @@ describe('Auth API Routes', () => {
 
     it('should reject invalid email format', async () => {
       const { POST } = await import('@/app/api/auth/login/route');
-      const { convexHttp } = await import('@/lib/convex/server');
-
-      vi.mocked(convexHttp.query).mockResolvedValue(null);
 
       const request = new NextRequest('http://localhost/api/auth/login', {
         method: 'POST',
@@ -115,9 +106,6 @@ describe('Auth API Routes', () => {
 
     it('should reject non-existent user', async () => {
       const { POST } = await import('@/app/api/auth/login/route');
-      const { convexHttp } = await import('@/lib/convex/server');
-
-      vi.mocked(convexHttp.query).mockResolvedValue(null);
 
       const request = new NextRequest('http://localhost/api/auth/login', {
         method: 'POST',
@@ -134,15 +122,19 @@ describe('Auth API Routes', () => {
     });
 
     it('should reject inactive user', async () => {
-      const { POST } = await import('@/app/api/auth/login/route');
-      const { convexHttp } = await import('@/lib/convex/server');
+      // Mock Appwrite user query
+      vi.mock('@/lib/appwrite/api', () => ({
+        appwriteUsers: {
+          getByEmail: vi.fn().mockResolvedValue({
+            _id: 'user-id',
+            email: 'test@example.com',
+            isActive: false,
+            passwordHash: 'hashed-password',
+          }),
+        },
+      }));
 
-      vi.mocked(convexHttp.query).mockResolvedValue({
-        _id: 'user-id',
-        email: 'test@example.com',
-        isActive: false,
-        passwordHash: 'hashed-password',
-      });
+      const { POST } = await import('@/app/api/auth/login/route');
 
       const request = new NextRequest('http://localhost/api/auth/login', {
         method: 'POST',

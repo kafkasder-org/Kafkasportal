@@ -7,8 +7,6 @@ import { z } from 'zod';
 
 // Client-side (public) environment variables schema
 const clientEnvSchema = z.object({
-  // Convex Configuration (Required in production)
-  NEXT_PUBLIC_CONVEX_URL: z.string().url('Invalid Convex URL').optional(),
   NEXT_PUBLIC_APP_NAME: z.string().optional().default('Dernek Yönetim Sistemi'),
   NEXT_PUBLIC_APP_VERSION: z.string().optional().default('1.0.0'),
   NEXT_PUBLIC_ENABLE_REALTIME: z
@@ -86,7 +84,6 @@ export type ServerEnv = z.infer<typeof serverEnvSchema>;
 export function validateClientEnv(): ClientEnv {
   try {
     return clientEnvSchema.parse({
-      NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
       NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
       NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
       NEXT_PUBLIC_ENABLE_REALTIME: process.env.NEXT_PUBLIC_ENABLE_REALTIME,
@@ -121,7 +118,6 @@ export function validateServerEnv(): ServerEnv {
 
     return serverEnvSchema.parse({
       // Client vars
-      NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
       NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
       NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
       NEXT_PUBLIC_ENABLE_REALTIME: process.env.NEXT_PUBLIC_ENABLE_REALTIME,

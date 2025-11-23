@@ -12,9 +12,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation, useQuery, useAction } from 'convex/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import logger from '@/lib/logger';
-import { api } from '@/convex/_generated/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,11 +34,14 @@ interface AgentChatProps {
 }
 
 interface Thread {
-  _id: string;
-  title: string;
-  agent_name: string;
-  status: 'active' | 'archived';
-  last_message_at: number;
+  _id?: string;
+  $id?: string;
+  title?: string;
+  agent_name?: string;
+  status?: 'active' | 'archived';
+  last_message_at?: string;
+  createdAt?: string;
+  [key: string]: unknown;
 }
 
 // Message interface removed - using query results directly
@@ -73,6 +75,7 @@ const AGENT_CONFIGS = {
 };
 
 export function AgentChat({ userId }: AgentChatProps) {
+  const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<keyof typeof AGENT_CONFIGS>('support');
   const [activeThread, setActiveThread] = useState<Thread | null>(null);
@@ -80,26 +83,89 @@ export function AgentChat({ userId }: AgentChatProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Queries
-  const threads = useQuery(api.agents.listThreads, {
-    userId: userId as any,
-    status: 'active',
+  const { data: threadsData } = useQuery({
+    queryKey: ['agent-threads', userId],
+    queryFn: async () => {
+      // TODO: Implement agent threads API endpoint
+      return [];
+    },
+    enabled: !!userId,
   });
 
-  const messages = useQuery(
-    api.agents.getMessages,
-    activeThread ? { threadId: activeThread._id as any } : 'skip'
-  );
+  const threads = threadsData || [];
 
-  const usageStats = useQuery(api.agents.getUsageStats, {
-    userId: userId as any,
+  const { data: messagesData } = useQuery({
+    queryKey: ['agent-messages', activeThread?._id || activeThread?.$id],
+    queryFn: async () => {
+      // TODO: Implement agent messages API endpoint
+      return [];
+    },
+    enabled: !!activeThread && (!!activeThread._id || !!activeThread.$id),
   });
 
-  // Actions
-  const createAndRespond = useAction(api.agents.createThreadAndRespond);
-  const generateResponse = useAction(api.agents.generateAgentResponse);
+  const messages = messagesData || [];
+
+  const { data: usageStats } = useQuery({
+    queryKey: ['agent-usage', userId],
+    queryFn: async () => {
+      // TODO: Implement usage stats API endpoint
+      return {
+        totalMessages: 0,
+        totalTokens: 0,
+        totalCost: 0,
+      };
+    },
+    enabled: !!userId,
+  });
 
   // Mutations
-  const archiveThread = useMutation(api.agents.archiveThread);
+  const createAndRespondMutation = useMutation({
+    mutationFn: async (data: { userId: string; agentName: string; prompt: string }) => {
+      // TODO: Implement create thread and respond API endpoint
+      return {
+        threadId: `thread_${Date.now()}`,
+        messageId: `msg_${Date.now()}`,
+      };
+    },
+    onSuccess: (result) => {
+      const newThread: Thread = {
+        _id: result.threadId,
+        title: prompt.slice(0, 50),
+        agent_name: selectedAgent,
+        status: 'active',
+        last_message_at: new Date().toISOString(),
+      };
+      setActiveThread(newThread);
+      queryClient.invalidateQueries({ queryKey: ['agent-threads', userId] });
+      queryClient.invalidateQueries({ queryKey: ['agent-messages', result.threadId] });
+    },
+  });
+
+  const generateResponseMutation = useMutation({
+    mutationFn: async (data: { threadId: string; prompt: string }) => {
+      // TODO: Implement generate response API endpoint
+      return {
+        messageId: `msg_${Date.now()}`,
+      };
+    },
+    onSuccess: (_result, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['agent-messages', variables.threadId] });
+    },
+  });
+
+  // Mutations
+  const archiveThreadMutation = useMutation({
+    mutationFn: async (_threadId: string) => {
+      // TODO: Implement archive thread API endpoint
+      return { success: true };
+    },
+    onSuccess: (_result, threadId) => {
+      queryClient.invalidateQueries({ queryKey: ['agent-threads', userId] });
+      if ((activeThread?._id || activeThread?.$id) === threadId) {
+        setActiveThread(null);
+      }
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,27 +173,19 @@ export function AgentChat({ userId }: AgentChatProps) {
 
     setIsGenerating(true);
     try {
-      const agentConfig = AGENT_CONFIGS[selectedAgent];
-
       if (activeThread) {
         // Continue existing thread
-        await generateResponse({
-          threadId: activeThread._id as any,
-          userId: userId as any,
+        await generateResponseMutation.mutateAsync({
+          threadId: activeThread._id || activeThread.$id || '',
           prompt: prompt.trim(),
-          agentConfig,
-          useTools: true,
         });
       } else {
         // Create new thread
-        await createAndRespond({
-          userId: userId as any,
+        await createAndRespondMutation.mutateAsync({
+          userId,
+          agentName: selectedAgent,
           prompt: prompt.trim(),
-          agentConfig,
-          title: prompt.slice(0, 50),
         });
-
-        // Refresh threads list will happen automatically via Convex subscription
       }
 
       setPrompt('');
@@ -139,10 +197,7 @@ export function AgentChat({ userId }: AgentChatProps) {
   };
 
   const handleArchive = async (threadId: string) => {
-    await archiveThread({ threadId: threadId as any });
-    if (activeThread?._id === threadId) {
-      setActiveThread(null);
-    }
+    await archiveThreadMutation.mutateAsync(threadId);
   };
 
   return (
@@ -159,32 +214,39 @@ export function AgentChat({ userId }: AgentChatProps) {
         <CardContent>
           <ScrollArea className="h-[600px]">
             <div className="space-y-2">
-              {threads?.map((thread) => (
+              {threads?.map((thread: Thread) => {
+                const threadId = thread._id || thread.$id || '';
+                return (
                 <button
-                  key={thread._id}
-                  onClick={() => setActiveThread(thread as Thread)}
+                  key={threadId}
+                  onClick={() => setActiveThread(thread)}
                   className={`w-full rounded-lg border p-3 text-left transition-colors hover:bg-accent ${
-                    activeThread?._id === thread._id ? 'border-primary bg-accent' : ''
+                    (activeThread?._id || activeThread?.$id) === threadId ? 'border-primary bg-accent' : ''
                   }`}
                 >
                   <div className="mb-1 flex items-center justify-between">
-                    <Badge variant="outline">{thread.agent_name}</Badge>
+                    <Badge variant="outline">{thread.agent_name || 'Unknown'}</Badge>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleArchive(thread._id);
+                        handleArchive(threadId);
                       }}
                       className="text-muted-foreground hover:text-foreground"
                     >
                       <Archive className="h-3 w-3" />
                     </button>
                   </div>
-                  <div className="truncate font-medium">{thread.title}</div>
+                  <div className="truncate font-medium">{thread.title || 'Untitled'}</div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    {new Date(thread.last_message_at).toLocaleDateString('tr-TR')}
+                    {thread.last_message_at && typeof thread.last_message_at === 'string'
+                      ? new Date(thread.last_message_at).toLocaleDateString('tr-TR')
+                      : thread.createdAt && typeof thread.createdAt === 'string'
+                        ? new Date(thread.createdAt).toLocaleDateString('tr-TR')
+                        : '-'}
                   </div>
                 </button>
-              ))}
+              );
+              })}
               {(!threads || threads.length === 0) && (
                 <div className="py-8 text-center text-sm text-muted-foreground">
                   No active threads. Start a new conversation!
@@ -205,7 +267,7 @@ export function AgentChat({ userId }: AgentChatProps) {
                 AI Agent Chat
               </CardTitle>
               <CardDescription>
-                {activeThread ? `Thread: ${activeThread.title}` : 'Start a new conversation'}
+                {activeThread ? `Thread: ${activeThread.title || 'Untitled'}` : 'Start a new conversation'}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -253,9 +315,11 @@ export function AgentChat({ userId }: AgentChatProps) {
               <ScrollArea className="mb-4 h-[450px] rounded-lg border p-4">
                 {messages && messages.length > 0 ? (
                   <div className="space-y-4">
-                    {messages.map((msg) => (
+                    {messages.map((msg: { _id?: string; $id?: string; role?: string; content?: string; agent_name?: string; tool_calls?: unknown; [key: string]: unknown }) => {
+                      const msgId = msg._id || msg.$id || '';
+                      return (
                       <div
-                        key={msg._id}
+                        key={msgId}
                         className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
@@ -269,10 +333,10 @@ export function AgentChat({ userId }: AgentChatProps) {
                             ) : (
                               <Bot className="h-3 w-3" />
                             )}
-                            {msg.agent_name || msg.role}
+                            {String(msg.agent_name || msg.role || 'unknown')}
                             {msg.tool_calls && <Wrench className="h-3 w-3" />}
                           </div>
-                          <div className="whitespace-pre-wrap">{msg.content}</div>
+                          <div className="whitespace-pre-wrap">{String(msg.content || '')}</div>
                           {msg.tool_calls && (
                             <div className="mt-2 rounded bg-background/50 p-2 text-xs">
                               <div className="font-medium">Tool Calls:</div>
@@ -283,7 +347,8 @@ export function AgentChat({ userId }: AgentChatProps) {
                           )}
                         </div>
                       </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 ) : (
                   <div className="flex h-full items-center justify-center text-center text-muted-foreground">
@@ -307,8 +372,8 @@ export function AgentChat({ userId }: AgentChatProps) {
                   disabled={isGenerating}
                   className="flex-1"
                 />
-                <Button type="submit" disabled={!prompt.trim() || isGenerating}>
-                  {isGenerating ? (
+                <Button type="submit" disabled={!prompt.trim() || isGenerating || createAndRespondMutation.isPending || generateResponseMutation.isPending}>
+                  {isGenerating || createAndRespondMutation.isPending || generateResponseMutation.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <>
@@ -359,25 +424,25 @@ export function AgentChat({ userId }: AgentChatProps) {
                         <div>
                           <div className="text-sm text-muted-foreground">Total Tokens</div>
                           <div className="text-2xl font-bold">
-                            {usageStats.totalTokens.toLocaleString()}
+                            {(usageStats?.totalTokens || 0).toLocaleString()}
                           </div>
                         </div>
                         <div>
                           <div className="text-sm text-muted-foreground">Requests</div>
                           <div className="text-2xl font-bold">
-                            {usageStats.requestCount.toLocaleString()}
+                            {(usageStats?.totalMessages || 0).toLocaleString()}
                           </div>
                         </div>
                         <div>
                           <div className="text-sm text-muted-foreground">Input Tokens</div>
                           <div className="text-xl font-bold">
-                            {usageStats.inputTokens.toLocaleString()}
+                            {(usageStats?.totalTokens || 0).toLocaleString()}
                           </div>
                         </div>
                         <div>
                           <div className="text-sm text-muted-foreground">Output Tokens</div>
                           <div className="text-xl font-bold">
-                            {usageStats.outputTokens.toLocaleString()}
+                            {(usageStats?.totalTokens || 0).toLocaleString()}
                           </div>
                         </div>
                       </div>

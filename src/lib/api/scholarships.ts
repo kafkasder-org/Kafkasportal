@@ -1,11 +1,14 @@
 /**
  * Scholarships API Client
  * Handles all scholarship, application, and payment operations
+ * Migrated to Appwrite
  */
 
-import { api } from '@/convex/_generated/api';
-import type { Id } from '@/convex/_generated/dataModel';
-import { convex } from '@/lib/convex/client';
+import {
+  appwriteScholarships,
+  appwriteScholarshipApplications,
+  appwriteScholarshipPayments,
+} from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 
 // Scholarship Programs API
@@ -18,8 +21,7 @@ export const scholarshipsApi = {
     isActive?: boolean;
   }) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const response = await convex.query(api.scholarships.list, params || {});
+      const response = await appwriteScholarships.list(params);
       return {
         success: true,
         data: response.documents,
@@ -38,10 +40,9 @@ export const scholarshipsApi = {
   },
 
   // Get single scholarship
-  get: async (id: Id<'scholarships'>) => {
+  get: async (id: string) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const data = await convex.query(api.scholarships.get, { id });
+      const data = await appwriteScholarships.get(id);
       return {
         success: true,
         data,
@@ -74,11 +75,10 @@ export const scholarshipsApi = {
     is_active: boolean;
   }) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const id = await convex.mutation(api.scholarships.create, data);
+      const result = await appwriteScholarships.create(data);
       return {
         success: true,
-        data: { _id: id },
+        data: { _id: result.$id },
         error: null,
       };
     } catch (error) {
@@ -93,7 +93,7 @@ export const scholarshipsApi = {
 
   // Update scholarship
   update: async (
-    id: Id<'scholarships'>,
+    id: string,
     data: {
       title?: string;
       description?: string;
@@ -110,8 +110,7 @@ export const scholarshipsApi = {
     }
   ) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      await convex.mutation(api.scholarships.update, { id, ...data });
+      await appwriteScholarships.update(id, data);
       return {
         success: true,
         error: null,
@@ -126,10 +125,9 @@ export const scholarshipsApi = {
   },
 
   // Delete scholarship
-  remove: async (id: Id<'scholarships'>) => {
+  remove: async (id: string) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      await convex.mutation(api.scholarships.remove, { id });
+      await appwriteScholarships.remove(id);
       return {
         success: true,
         error: null,
@@ -144,12 +142,9 @@ export const scholarshipsApi = {
   },
 
   // Get statistics
-  getStatistics: async (scholarshipId?: Id<'scholarships'>) => {
+  getStatistics: async (scholarshipId?: string) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const stats = await convex.query(api.scholarships.getStatistics, {
-        scholarship_id: scholarshipId,
-      });
+      const stats = await appwriteScholarships.getStatistics(scholarshipId);
       return {
         success: true,
         data: stats,
@@ -172,13 +167,12 @@ export const scholarshipApplicationsApi = {
   list: async (params?: {
     limit?: number;
     skip?: number;
-    scholarship_id?: Id<'scholarships'>;
+    scholarship_id?: string;
     status?: string;
     tc_no?: string;
   }) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const response = await convex.query(api.scholarships.listApplications, params || {});
+      const response = await appwriteScholarshipApplications.list(params);
       return {
         success: true,
         data: response.documents,
@@ -197,10 +191,9 @@ export const scholarshipApplicationsApi = {
   },
 
   // Get single application
-  get: async (id: Id<'scholarship_applications'>) => {
+  get: async (id: string) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const data = await convex.query(api.scholarships.getApplication, { id });
+      const data = await appwriteScholarshipApplications.get(id);
       return {
         success: true,
         data,
@@ -218,8 +211,8 @@ export const scholarshipApplicationsApi = {
 
   // Create application
   create: async (data: {
-    scholarship_id: Id<'scholarships'>;
-    student_id?: Id<'beneficiaries'>;
+    scholarship_id: string;
+    student_id?: string;
     applicant_name: string;
     applicant_tc_no: string;
     applicant_phone: string;
@@ -240,11 +233,10 @@ export const scholarshipApplicationsApi = {
     documents?: string[];
   }) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const id = await convex.mutation(api.scholarships.createApplication, data);
+      const result = await appwriteScholarshipApplications.create(data);
       return {
         success: true,
-        data: { _id: id },
+        data: { _id: result.$id },
         error: null,
       };
     } catch (error) {
@@ -259,18 +251,17 @@ export const scholarshipApplicationsApi = {
 
   // Update application
   update: async (
-    id: Id<'scholarship_applications'>,
+    id: string,
     data: {
       status?: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'waitlisted';
       reviewer_notes?: string;
-      reviewed_by?: Id<'users'>;
+      reviewed_by?: string;
       reviewed_at?: string;
       submitted_at?: string;
     }
   ) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      await convex.mutation(api.scholarships.updateApplication, { id, ...data });
+      await appwriteScholarshipApplications.update(id, data);
       return {
         success: true,
         error: null,
@@ -285,10 +276,9 @@ export const scholarshipApplicationsApi = {
   },
 
   // Submit application
-  submit: async (id: Id<'scholarship_applications'>) => {
+  submit: async (id: string) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      await convex.mutation(api.scholarships.submitApplication, { id });
+      await appwriteScholarshipApplications.submit(id);
       return {
         success: true,
         error: null,
@@ -309,24 +299,11 @@ export const scholarshipPaymentsApi = {
   list: async (params?: {
     limit?: number;
     skip?: number;
-    application_id?: Id<'scholarship_applications'>;
+    application_id?: string;
     status?: string;
   }) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const safeParams = {
-        limit: params?.limit,
-        skip: params?.skip,
-        application_id: params?.application_id,
-        status:
-          params?.status === 'pending' ||
-          params?.status === 'cancelled' ||
-          params?.status === 'failed' ||
-          params?.status === 'paid'
-            ? (params?.status as 'pending' | 'cancelled' | 'failed' | 'paid')
-            : undefined,
-      };
-      const response = await convex.query(api.scholarships.listPayments, safeParams);
+      const response = await appwriteScholarshipPayments.list(params);
       return {
         success: true,
         data: response.documents,
@@ -346,7 +323,7 @@ export const scholarshipPaymentsApi = {
 
   // Create payment
   create: async (data: {
-    application_id: Id<'scholarship_applications'>;
+    application_id: string;
     payment_date: string;
     amount: number;
     currency: 'TRY' | 'USD' | 'EUR';
@@ -356,11 +333,10 @@ export const scholarshipPaymentsApi = {
     notes?: string;
   }) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      const id = await convex.mutation(api.scholarships.createPayment, data);
+      const result = await appwriteScholarshipPayments.create(data);
       return {
         success: true,
-        data: { _id: id },
+        data: { _id: result.$id },
         error: null,
       };
     } catch (error) {
@@ -375,17 +351,16 @@ export const scholarshipPaymentsApi = {
 
   // Update payment
   update: async (
-    id: Id<'scholarship_payments'>,
+    id: string,
     data: {
       status: 'pending' | 'paid' | 'failed' | 'cancelled';
-      processed_by?: Id<'users'>;
+      processed_by?: string;
       receipt_file_id?: string;
       notes?: string;
     }
   ) => {
     try {
-      if (!convex) throw new Error('Convex client not available');
-      await convex.mutation(api.scholarships.updatePayment, { id, ...data });
+      await appwriteScholarshipPayments.update(id, data);
       return {
         success: true,
         error: null,

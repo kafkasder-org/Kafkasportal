@@ -15,18 +15,13 @@ describe('Environment Validation', () => {
   });
 
   describe('Client Environment Validation', () => {
-    it('should validate client env variables (Convex)', async () => {
-      // Set Convex URL (optional but recommended)
-      process.env.NEXT_PUBLIC_CONVEX_URL = 'https://test-project.convex.cloud';
-
+    it('should validate client env variables', async () => {
       // Dynamic import to test validation
       const { validateClientEnv } = await import('@/lib/env-validation');
       expect(() => validateClientEnv()).not.toThrow();
     });
 
     it('should use default values for optional variables', async () => {
-      process.env.NEXT_PUBLIC_CONVEX_URL = 'https://test-project.convex.cloud';
-
       const { getClientEnv } = await import('@/lib/env-validation');
       const env = getClientEnv();
       expect(env.NEXT_PUBLIC_APP_NAME).toBe('Dernek Yönetim Sistemi');
@@ -39,7 +34,6 @@ describe('Environment Validation', () => {
 
     beforeEach(() => {
       vi.unstubAllEnvs(); // Clear stubs from previous tests
-      vi.stubEnv('NEXT_PUBLIC_CONVEX_URL', 'https://test-project.convex.cloud');
 
       // Mock window to be undefined for server-side validation
       originalWindow = global.window;
@@ -71,7 +65,6 @@ describe('Environment Validation', () => {
 
   describe('Feature Flags', () => {
     it('should parse boolean feature flags', async () => {
-      process.env.NEXT_PUBLIC_CONVEX_URL = 'https://test-project.convex.cloud';
       process.env.NEXT_PUBLIC_ENABLE_REALTIME = 'false';
       process.env.NEXT_PUBLIC_ENABLE_ANALYTICS = 'true';
 

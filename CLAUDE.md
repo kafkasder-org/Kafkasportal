@@ -28,8 +28,6 @@ npm run test:e2e               # E2E testleri
 
 # Build & Deploy
 npm run build                  # Production build
-npm run convex:deploy          # Convex deploy
-npm run vercel:prod            # Vercel production deploy
 ```
 
 ## Mimari

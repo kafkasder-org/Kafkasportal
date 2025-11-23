@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from 'convex/react';
-import { useRealtimeQuery, useRealtimeList } from '@/hooks/useRealtimeQuery';
-import { api } from '@/convex/_generated/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { appwriteFinanceRecords } from '@/lib/appwrite/api';
+import type { FinanceRecordCreateInput } from '@/lib/api/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,7 +41,6 @@ import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 import { useAuthStore } from '@/stores/authStore';
 
 type TransactionType = 'deposit' | 'withdrawal' | 'transfer';
@@ -59,6 +58,7 @@ const CATEGORIES = [
 const MINIMUM_BALANCE_THRESHOLD = 5000; // TRY
 
 export default function CashVaultPage() {
+  const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [transactionType, setTransactionType] = useState<TransactionType>('withdrawal');
   const [amount, setAmount] = useState('');
@@ -66,31 +66,77 @@ export default function CashVaultPage() {
   const [receiptNumber, setReceiptNumber] = useState('');
   const [notes, setNotes] = useState('');
 
-  // Fetch vault balance with real-time updates
-  const vaultBalance = useRealtimeQuery(
-    api.finance_records.getVaultBalance,
-    {},
-    {
-      notifyOnChange: true,
-      changeMessage: 'Vezne bakiyesi güncellendi',
-      skipInitial: true,
-    }
-  );
+  // Fetch vault balance
+  const { data: vaultData } = useQuery({
+    queryKey: ['vault-balance'],
+    queryFn: async () => {
+      // Calculate balance from all finance records
+      const response = await appwriteFinanceRecords.list({ limit: 1000 });
+      const records = response.documents || [];
+      
+      let balance = 0;
+      let cashIn = 0;
+      let cashOut = 0;
+      
+      records.forEach((r: { type?: string; amount?: number; payment_method?: string; [key: string]: unknown }) => {
+        const amount = r.amount || 0;
+        if (r.payment_method === 'cash') {
+          if (r.type === 'income') {
+            cashIn += amount;
+            balance += amount;
+          } else if (r.type === 'expense') {
+            cashOut += amount;
+            balance -= amount;
+          }
+        }
+      });
 
-  // Fetch recent transactions with real-time list monitoring
-  const recentTransactions = useRealtimeList(
-    api.finance_records.list,
-    {
-      limit: 50,
+      return {
+        balance,
+        cashIn,
+        cashOut,
+        transactionCount: records.filter((r: { payment_method?: string; [key: string]: unknown }) => r.payment_method === 'cash').length,
+      };
     },
-    {
-      itemName: 'işlem',
-      skipInitial: true,
-    }
-  );
+    refetchInterval: 5000, // Poll every 5 seconds
+  });
+
+  const vaultBalance = vaultData;
+
+  // Fetch recent transactions
+  const { data: recentTransactionsData } = useQuery({
+    queryKey: ['vault-transactions'],
+    queryFn: async () => {
+      const response = await appwriteFinanceRecords.list({ limit: 50 });
+      return response.documents || [];
+    },
+    refetchInterval: 5000,
+  });
+
+  const recentTransactions = recentTransactionsData || [];
 
   // Mutation for creating vault transaction
-  const createTransaction = useMutation(api.finance_records.createVaultTransaction);
+  const createTransaction = useMutation({
+    mutationFn: async (data: { type: string; amount: number; category: string; receipt_number?: string; notes?: string }) => {
+      const createData: FinanceRecordCreateInput = {
+        record_type: data.type === 'deposit' ? 'income' : 'expense',
+        amount: data.amount,
+        category: data.category,
+        currency: 'TRY',
+        description: data.notes || '',
+        transaction_date: new Date().toISOString(),
+        payment_method: 'cash',
+        receipt_number: data.receipt_number,
+        status: 'approved',
+        created_by: '' as FinanceRecordCreateInput['created_by'], // Will be set by backend
+      };
+      return await appwriteFinanceRecords.create(createData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vault-balance'] });
+      queryClient.invalidateQueries({ queryKey: ['vault-transactions'] });
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,12 +167,11 @@ export default function CashVaultPage() {
         return;
       }
 
-      await createTransaction({
-        transaction_type: transactionType,
+      await createTransaction.mutateAsync({
+        type: transactionType,
         amount: amountNumber,
         category,
         receipt_number: receiptNumber || undefined,
-        authorized_by: currentUser.id as Id<'users'>,
         notes: notes || undefined,
       });
 
@@ -154,7 +199,7 @@ export default function CashVaultPage() {
   };
 
   const cashTransactions =
-    recentTransactions?.documents?.filter((record) => record.payment_method === 'cash') || [];
+    recentTransactions?.filter((record: { payment_method?: string; [key: string]: unknown }) => record.payment_method === 'cash') || [];
 
   const isLowBalance = vaultBalance && vaultBalance.balance < MINIMUM_BALANCE_THRESHOLD;
 
@@ -166,7 +211,7 @@ export default function CashVaultPage() {
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
             Kasa bakiyesi minimum eşik değerin ({formatCurrency(MINIMUM_BALANCE_THRESHOLD)})
-            altında! Mevcut bakiye: {formatCurrency(vaultBalance.balance)}
+            altında! Mevcut bakiye: {formatCurrency(vaultBalance?.balance || 0)}
           </AlertDescription>
         </Alert>
       )}

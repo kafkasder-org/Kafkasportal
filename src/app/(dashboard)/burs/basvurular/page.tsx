@@ -32,7 +32,6 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Search, FileText, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
-import type { Id } from '@/convex/_generated/dataModel';
 
 const STATUS_LABELS = {
   draft: { label: 'Taslak', color: 'bg-gray-100 text-gray-700', icon: Clock },
@@ -66,14 +65,14 @@ export default function ScholarshipApplicationsPage() {
         limit: 100,
         status: statusFilter !== 'all' ? statusFilter : undefined,
         scholarship_id:
-          scholarshipFilter !== 'all' ? (scholarshipFilter as Id<'scholarships'>) : undefined,
+          scholarshipFilter !== 'all' ? scholarshipFilter : undefined,
       }),
   });
 
   // Update application mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: Id<'scholarship_applications'>; data: Partial<{ status: string; reviewed_at: string; [key: string]: unknown }> }) =>
-      scholarshipApplicationsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: { status?: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'waitlisted'; reviewed_at?: string; [key: string]: unknown } }) =>
+      scholarshipApplicationsApi.update(id, data as { status?: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'waitlisted'; reviewed_at?: string; reviewed_by?: string; submitted_at?: string }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['scholarship-applications'] });
       toast.success('Başvuru güncellendi');
@@ -111,19 +110,19 @@ export default function ScholarshipApplicationsPage() {
     return { total, submitted, underReview, approved, rejected };
   }, [applications]);
 
-  const handleStatusChange = (applicationId: Id<'scholarship_applications'>, newStatus: string) => {
+  const handleStatusChange = (applicationId: string, newStatus: string) => {
     updateMutation.mutate({
       id: applicationId,
       data: {
-        status: newStatus,
+        status: newStatus as 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'waitlisted',
         reviewed_at: new Date().toISOString(),
       },
     });
   };
 
   const getScholarshipTitle = (scholarshipId: string) => {
-    const scholarship = scholarships.find((s: { _id: string; title?: string; [key: string]: unknown }) => s._id === scholarshipId);
-    return scholarship && 'title' in scholarship ? scholarship.title : 'Bilinmeyen Program';
+    const scholarship = scholarships.find((s: { _id?: string; $id?: string; title?: string; [key: string]: unknown }) => (s._id || s.$id) === scholarshipId);
+    return scholarship && 'title' in scholarship ? (scholarship.title as string) : 'Bilinmeyen Program';
   };
 
   return (
@@ -217,11 +216,14 @@ export default function ScholarshipApplicationsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tüm Programlar</SelectItem>
-                {scholarships.map((scholarship: { _id: string; title: string; [key: string]: unknown }) => (
-                  <SelectItem key={scholarship._id} value={scholarship._id}>
-                    {scholarship.title}
+                {scholarships.map((scholarship: { _id?: string; $id?: string; title?: string; [key: string]: unknown }) => {
+                  const scholarshipId = scholarship._id || scholarship.$id || '';
+                  return (
+                  <SelectItem key={scholarshipId} value={scholarshipId}>
+                    {scholarship.title || 'Bilinmeyen'}
                   </SelectItem>
-                ))}
+                );
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -259,24 +261,25 @@ export default function ScholarshipApplicationsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredApplications.map((application: { status?: string; [key: string]: unknown }) => {
+                {filteredApplications.map((application: { _id?: string; $id?: string; status?: string; applicant_name?: string; applicant_phone?: string; scholarship_id?: string; university?: string; department?: string; gpa?: number; priority_score?: number; submitted_at?: string; [key: string]: unknown }) => {
                   const statusInfo =
-                    STATUS_LABELS[application.status as keyof typeof STATUS_LABELS];
+                    STATUS_LABELS[(application.status || 'draft') as keyof typeof STATUS_LABELS];
                   const StatusIcon = statusInfo.icon;
+                  const appId = application._id || application.$id || '';
 
                   return (
-                    <TableRow key={application._id}>
+                    <TableRow key={appId}>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{application.applicant_name}</div>
+                          <div className="font-medium">{application.applicant_name || '-'}</div>
                           <div className="text-sm text-slate-500">
-                            {application.applicant_phone}
+                            {application.applicant_phone || '-'}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          {getScholarshipTitle(application.scholarship_id)}
+                          {getScholarshipTitle(application.scholarship_id || '')}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -288,7 +291,7 @@ export default function ScholarshipApplicationsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {application.gpa ? (
+                        {application.gpa && typeof application.gpa === 'number' ? (
                           <span className="font-medium">{application.gpa.toFixed(2)}</span>
                         ) : (
                           '-'
@@ -297,7 +300,7 @@ export default function ScholarshipApplicationsPage() {
                       <TableCell>
                         {application.priority_score ? (
                           <Badge variant="outline" className="font-mono">
-                            {application.priority_score}
+                            {String(application.priority_score)}
                           </Badge>
                         ) : (
                           '-'
@@ -311,7 +314,7 @@ export default function ScholarshipApplicationsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm text-slate-600">
-                          {application.submitted_at
+                          {application.submitted_at && typeof application.submitted_at === 'string'
                             ? new Date(application.submitted_at).toLocaleDateString('tr-TR')
                             : 'Henüz gönderilmedi'}
                         </div>
@@ -321,7 +324,7 @@ export default function ScholarshipApplicationsPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            setSelectedApplication(application);
+                            setSelectedApplication({ ...application, _id: appId });
                             setIsDetailDialogOpen(true);
                           }}
                         >
@@ -357,7 +360,7 @@ export default function ScholarshipApplicationsPage() {
                 </Label>
                 <Select
                   value={selectedApplication.status}
-                  onValueChange={(value) => handleStatusChange(selectedApplication._id, value)}
+                  onValueChange={(value) => handleStatusChange(selectedApplication._id || selectedApplication.$id || '', value)}
                 >
                   <SelectTrigger id="status-select" className="w-[200px]">
                     <SelectValue />
