@@ -1,6 +1,6 @@
 # Kafkasder Panel
 
-Dernek Yonetim Sistemi - Next.js 16 + Convex
+Dernek Yonetim Sistemi - Next.js 16 + Appwrite
 
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Vadalov/Kafkasder-panel?utm_source=oss&utm_medium=github&utm_campaign=Vadalov%2FKafkasder-panel&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
@@ -23,7 +23,7 @@ Modern, guvenli ve olceklenebilir dernek yonetim platformu.
 
 - Node.js >= 20.9.0
 - npm >= 9.0.0
-- Convex hesabi
+- Appwrite hesabi (Cloud veya self-hosted)
 
 ### Kurulum
 
@@ -41,10 +41,12 @@ npm install
 
 # Environment variables ayarla
 cp .env.example .env.local
-# .env.local dosyasini duzenle (Convex URL, secrets vb.)
+# .env.local dosyasini duzenle (Appwrite endpoint, project ID, API key vb.)
 
-# Convex ve Next.js'i baslat (ayri terminallerde)
-npm run convex:dev
+# Appwrite database kurulumu (ilk kez)
+npm run appwrite:setup
+
+# Next.js'i baslat
 npm run dev
 ```
 
@@ -55,7 +57,7 @@ Uygulama `http://localhost:3000` adresinde calisacaktir.
 ```bash
 # Development
 npm run dev              # Development server
-npm run convex:dev       # Convex backend
+npm run appwrite:setup   # Appwrite database kurulumu
 
 # Kod Kalitesi
 npm run typecheck        # TypeScript kontrolu
@@ -65,10 +67,10 @@ npm run format           # Prettier formatlama
 # Test
 npm run test             # Unit testleri
 npm run test:e2e         # E2E testleri
+npm run test:backend     # Backend durum kontrolu
 
 # Build & Deploy
 npm run build            # Production build
-npm run convex:deploy    # Convex deploy
 npm run vercel:prod      # Vercel deploy
 ```
 
@@ -79,10 +81,12 @@ npm run vercel:prod      # Vercel deploy
 │   ├── app/              # Next.js App Router
 │   ├── components/       # React componentleri
 │   ├── lib/              # Utility fonksiyonlari
+│   │   ├── appwrite/     # Appwrite backend clients
+│   │   └── backend/      # Unified backend interface
 │   ├── hooks/            # Custom hooks
 │   ├── stores/           # State yonetimi
 │   └── types/            # TypeScript types
-├── convex/               # Backend (Convex)
+├── scripts/              # Setup ve utility scripts
 ├── e2e/                  # E2E testleri
 └── docs/                 # Teknik dokumantasyon
 ```

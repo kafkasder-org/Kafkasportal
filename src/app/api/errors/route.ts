@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { appwriteErrors, normalizeQueryParams } from '@/lib/appwrite/api';
+import { appwriteErrors } from '@/lib/appwrite/api';
 import { createLogger } from '@/lib/logger';
 import { createErrorNotification } from '@/lib/error-notifications';
 import { z } from 'zod';

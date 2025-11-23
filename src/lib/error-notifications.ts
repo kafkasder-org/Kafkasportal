@@ -4,8 +4,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
-import { fetchMutation, fetchQuery } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteUsers, appwriteWorkflowNotifications } from '@/lib/appwrite/api';
 
 const logger = createLogger('error-notifications');
 
@@ -33,17 +32,18 @@ export async function createErrorNotification(options: ErrorNotificationOptions)
 
   try {
     // Get all admin and super admin users
-    const adminUsers = await fetchQuery(api.users.list, {
-      role: 'admin',
-      isActive: true,
+    const adminUsersResult = await appwriteUsers.list({
+      filters: [{ field: 'role', value: 'admin' }, { field: 'isActive', value: true }],
     });
 
-    const superAdminUsers = await fetchQuery(api.users.list, {
-      role: 'super_admin',
-      isActive: true,
+    const superAdminUsersResult = await appwriteUsers.list({
+      filters: [{ field: 'role', value: 'super_admin' }, { field: 'isActive', value: true }],
     });
 
-    const allAdmins = [...adminUsers.documents, ...superAdminUsers.documents];
+    const allAdmins = [
+      ...(adminUsersResult.documents || []),
+      ...(superAdminUsersResult.documents || []),
+    ];
 
     if (allAdmins.length === 0) {
       logger.warn('No admin users found to notify', { errorId });
@@ -70,8 +70,8 @@ Lütfen ${severity === 'critical' ? 'acilen' : ''} kontrol edin.
     // Create notification for each admin user
     const notificationPromises = allAdmins.map(async (admin) => {
       try {
-        const notificationId = await fetchMutation(api.workflow_notifications.create, {
-          recipient: admin._id,
+        const notificationId = await appwriteWorkflowNotifications.create({
+          recipient: admin.$id,
           category: 'hatirlatma',
           title: notificationTitle,
           body: notificationBody,
@@ -90,14 +90,14 @@ Lütfen ${severity === 'critical' ? 'acilen' : ''} kontrol edin.
 
         logger.info('Error notification created', {
           notificationId,
-          recipient: admin._id,
+          recipient: admin.$id,
           errorId,
         });
 
         return notificationId;
       } catch (err) {
         logger.error('Failed to create notification for admin', err, {
-          adminId: admin._id,
+          adminId: admin.$id,
           errorId,
         });
         return null;

@@ -1,7 +1,6 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
-import convexPlugin from '@convex-dev/eslint-plugin';
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -89,26 +88,7 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // Convex dosyaları için özel kurallar
-  {
-    files: ['**/convex/**/*.ts'],
-    plugins: {
-      '@convex-dev': convexPlugin,
-    },
-    rules: {
-      // Object syntax kullan (handler property ile)
-      '@convex-dev/no-old-registered-function-syntax': 'error',
-      // Argument validators gerekli (kullanılmayan argümanlar için toleranslı)
-      '@convex-dev/require-args-validator': [
-        'error',
-        {
-          ignoreUnusedArguments: true,
-        },
-      ],
-      // Node runtime dosyalarından import yapma
-      '@convex-dev/import-wrong-runtime': 'error',
-    },
-  },
+
 
   // Override default ignores
   globalIgnores([
