@@ -4,8 +4,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
-import { appwriteUsers } from '@/lib/appwrite/users';
-import { appwriteWorkflowNotifications } from '@/lib/appwrite/workflow-notifications';
+import { appwriteUsers, appwriteWorkflowNotifications } from '@/lib/appwrite/api';
 
 const logger = createLogger('error-notifications');
 

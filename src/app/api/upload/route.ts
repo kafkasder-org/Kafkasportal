@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import { appwriteStorage } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import {
   requireAuthenticatedUser,
@@ -9,6 +7,7 @@ import {
   buildErrorResponse,
 } from '@/lib/api/auth-utils';
 import { uploadRateLimit, readOnlyRateLimit, dataModificationRateLimit } from '@/lib/rate-limit';
+import { ID } from 'appwrite';
 
 /**
  * POST /api/upload
@@ -22,14 +21,16 @@ async function postUploadHandler(_request: NextRequest) {
     // Require authentication - prevent anonymous upload URL generation
     await requireAuthenticatedUser();
 
-    const convex = getConvexHttp();
+    // Generate a unique file ID for the upload
+    // Note: Appwrite doesn't have a separate "generate upload URL" step like Convex
+    // The upload happens directly via the SDK or REST API
+    const fileId = ID.unique();
 
-    // Generate upload URL from Convex
-    const uploadUrl = await convex.action(api.storage.generateUploadUrl, {});
-
+    // Return the file ID that can be used for direct upload
     return NextResponse.json({
       success: true,
-      uploadUrl,
+      fileId,
+      message: 'Use this fileId with Appwrite SDK to upload the file',
     });
   } catch (error) {
     const authError = buildErrorResponse(error);
@@ -37,11 +38,11 @@ async function postUploadHandler(_request: NextRequest) {
       return NextResponse.json(authError.body, { status: authError.status });
     }
 
-    logger.error('Error generating upload URL:', error);
+    logger.error('Error generating file ID:', error);
     return NextResponse.json(
       {
         success: false,
-        error: "Dosya yükleme URL'si oluşturulamadı",
+        error: "Dosya yükleme için ID oluşturulamadı",
       },
       { status: 500 }
     );
