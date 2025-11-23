@@ -1,7 +1,7 @@
 {
   "name": "dernek-nextjs",
   "version": "0.1.0",
-  "description": "Dernek Yönetim Sistemi - Next.js 16 + Convex. Modern non-profit association management system.",
+  "description": "Dernek Yönetim Sistemi - Next.js 16 + Appwrite. Modern non-profit association management system.",
   "private": true,
   "engines": {
     "node": "20.x",
@@ -27,9 +27,9 @@
     "clean:all": "rm -rf .next node_modules package-lock.json && npm install",
     "clean:temp": "node -e \"const fs=require('fs');const path=require('path');const files=fs.readdirSync('.').filter(f=>/^(lint-|.*-output\\.txt|.*-current\\.txt|test-|typecheck-)/.test(f)&&f.endsWith('.txt'));files.forEach(f=>{try{fs.unlinkSync(f);}catch(e){}});\"",
     "health:check": "curl http://localhost:3000/api/health?detailed=true",
-    "convex:dev": "convex dev",
-    "convex:deploy": "convex deploy",
+    "test:backend": "tsx scripts/test-backend.ts",
     "appwrite:setup": "tsx scripts/appwrite-setup.ts",
+    "appwrite:configure": "./scripts/auto-setup-appwrite.sh",
     "deploy:vercel": "vercel --prod",
     "validate:deploy": "node -e \"fetch(process.env.DEPLOY_URL + '/api/health').then(r => r.json()).then(console.log)\"",
     "vercel:prod": "vercel --prod",
@@ -53,7 +53,6 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.44",
     "@ai-sdk/openai": "^2.0.65",
-    "@convex-dev/persistent-text-streaming": "0.3.0",
     "@googlemaps/js-api-loader": "^2.0.2",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -86,7 +85,6 @@
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "convex": "1.29.3",
     "critters": "^0.0.25",
     "date-fns": "^4.1.0",
     "exceljs": "^4.4.0",
@@ -128,7 +126,6 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@convex-dev/eslint-plugin": "^1.0.0",
     "@next/bundle-analyzer": "^14.0.4",
     "@playwright/test": "^1.48.0",
     "@svgr/webpack": "^8.1.0",

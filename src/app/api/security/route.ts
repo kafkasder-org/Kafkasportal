@@ -9,8 +9,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit, mutationRateLimit } from '@/lib/rate-limit';
-import { fetchQuery, fetchMutation } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteSystemSettings } from '@/lib/appwrite/api';
 
 async function getSecurityHandler(_request: NextRequest) {
   try {
@@ -29,7 +28,9 @@ async function getSecurityHandler(_request: NextRequest) {
       );
     }
 
-    const settings = await fetchQuery(api.security.getSecuritySettings);
+    // Get all security settings from system_settings collection
+    const securitySettings = await appwriteSystemSettings.getByCategory('security');
+    const settings = securitySettings || {};
 
     return NextResponse.json({
       success: true,
@@ -86,30 +87,9 @@ async function updateSecurityHandler(request: NextRequest) {
 
     const body = await request.json();
 
-    let result;
-
-    switch (type) {
-      case 'password':
-        result = await fetchMutation(api.security.updatePasswordPolicy, body);
-        break;
-      case 'session':
-        result = await fetchMutation(api.security.updateSessionSettings, body);
-        break;
-      case '2fa':
-        result = await fetchMutation(api.security.update2FASettings, body);
-        break;
-      case 'general':
-        result = await fetchMutation(api.security.updateGeneralSecurity, body);
-        break;
-      default:
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Geçersiz güvenlik türü',
-          },
-          { status: 400 }
-        );
-    }
+    // Update security settings in system_settings collection
+    await appwriteSystemSettings.updateSetting('security', type, body, user.id);
+    const result = { success: true };
 
     return NextResponse.json({
       success: true,

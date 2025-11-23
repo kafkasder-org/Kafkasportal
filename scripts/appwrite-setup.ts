@@ -783,6 +783,359 @@ const collections: CollectionConfig[] = [
       { key: 'by_occurred_at', type: IndexType.Key, attributes: ['occurred_at'] },
     ],
   },
+
+  // ============================================
+  // DOCUMENTS
+  // ============================================
+  {
+    id: 'files',
+    name: 'Dosyalar',
+    attributes: [
+      { key: 'name', type: 'string', size: 255, required: true },
+      { key: 'file_id', type: 'string', size: 36, required: true },
+      { key: 'bucket_id', type: 'string', size: 100, required: true },
+      { key: 'mime_type', type: 'string', size: 100 },
+      { key: 'size', type: 'integer' },
+      { key: 'uploaded_by', type: 'string', size: 36, required: true },
+      { key: 'uploaded_at', type: 'datetime', required: true },
+      { key: 'related_to', type: 'string', size: 100 },
+      { key: 'related_id', type: 'string', size: 36 },
+      { key: 'category', type: 'string', size: 100 },
+      { key: 'tags', type: 'string', size: 255, array: true },
+      { key: 'is_public', type: 'boolean', default: false },
+    ],
+    indexes: [
+      { key: 'by_uploaded_by', type: IndexType.Key, attributes: ['uploaded_by'] },
+      { key: 'by_related', type: IndexType.Key, attributes: ['related_to', 'related_id'] },
+      { key: 'by_category', type: IndexType.Key, attributes: ['category'] },
+    ],
+  },
+
+  {
+    id: 'document_versions',
+    name: 'Doküman Versiyonları',
+    attributes: [
+      { key: 'file_id', type: 'string', size: 36, required: true },
+      { key: 'version_number', type: 'integer', required: true },
+      { key: 'file_id_version', type: 'string', size: 36, required: true },
+      { key: 'created_by', type: 'string', size: 36, required: true },
+      { key: 'created_at', type: 'datetime', required: true },
+      { key: 'change_summary', type: 'string', size: 65535 },
+      { key: 'is_current', type: 'boolean', required: true, default: true },
+    ],
+    indexes: [
+      { key: 'by_file', type: IndexType.Key, attributes: ['file_id'] },
+      { key: 'by_version', type: IndexType.Key, attributes: ['file_id', 'version_number'] },
+    ],
+  },
+
+  // ============================================
+  // REPORTING
+  // ============================================
+  {
+    id: 'report_configs',
+    name: 'Rapor Yapılandırmaları',
+    attributes: [
+      { key: 'name', type: 'string', size: 255, required: true },
+      { key: 'type', type: 'string', size: 100, required: true },
+      { key: 'config', type: 'string', size: 65535, required: true }, // JSON
+      { key: 'created_by', type: 'string', size: 36, required: true },
+      { key: 'created_at', type: 'datetime', required: true },
+      { key: 'updated_at', type: 'datetime' },
+      { key: 'is_active', type: 'boolean', required: true, default: true },
+    ],
+    indexes: [
+      { key: 'by_type', type: IndexType.Key, attributes: ['type'] },
+      { key: 'by_created_by', type: IndexType.Key, attributes: ['created_by'] },
+    ],
+  },
+
+  // ============================================
+  // THEME
+  // ============================================
+  {
+    id: 'theme_presets',
+    name: 'Tema Ön Ayarları',
+    attributes: [
+      { key: 'name', type: 'string', size: 255, required: true },
+      { key: 'theme_config', type: 'string', size: 65535, required: true }, // JSON
+      { key: 'is_default', type: 'boolean', default: false },
+      { key: 'created_by', type: 'string', size: 36 },
+      { key: 'created_at', type: 'datetime', required: true },
+    ],
+    indexes: [
+      { key: 'by_name', type: IndexType.Key, attributes: ['name'] },
+      { key: 'by_default', type: IndexType.Key, attributes: ['is_default'] },
+    ],
+  },
+
+  // ============================================
+  // RATE LIMITING
+  // ============================================
+  {
+    id: 'rate_limit_log',
+    name: 'Rate Limit Log',
+    attributes: [
+      { key: 'ip_address', type: 'string', size: 45, required: true },
+      { key: 'endpoint', type: 'string', size: 255, required: true },
+      { key: 'request_count', type: 'integer', required: true },
+      { key: 'window_start', type: 'datetime', required: true },
+      { key: 'window_end', type: 'datetime', required: true },
+      { key: 'blocked', type: 'boolean', required: true, default: false },
+    ],
+    indexes: [
+      { key: 'by_ip', type: IndexType.Key, attributes: ['ip_address'] },
+      { key: 'by_endpoint', type: IndexType.Key, attributes: ['endpoint'] },
+      { key: 'by_window', type: IndexType.Key, attributes: ['window_start'] },
+    ],
+  },
+
+  // ============================================
+  // COMMUNICATION LOGS
+  // ============================================
+  {
+    id: 'communication_logs',
+    name: 'İletişim Logları',
+    attributes: [
+      { key: 'message_id', type: 'string', size: 36 },
+      { key: 'recipient', type: 'string', size: 255, required: true },
+      { key: 'channel', type: 'enum', required: true, enumValues: ['sms', 'email', 'whatsapp', 'internal'] },
+      { key: 'status', type: 'enum', required: true, enumValues: ['sent', 'delivered', 'failed', 'pending'] },
+      { key: 'sent_at', type: 'datetime' },
+      { key: 'delivered_at', type: 'datetime' },
+      { key: 'error_message', type: 'string', size: 65535 },
+      { key: 'metadata', type: 'string', size: 65535 }, // JSON
+    ],
+    indexes: [
+      { key: 'by_recipient', type: IndexType.Key, attributes: ['recipient'] },
+      { key: 'by_channel', type: IndexType.Key, attributes: ['channel'] },
+      { key: 'by_status', type: IndexType.Key, attributes: ['status'] },
+    ],
+  },
+
+  // ============================================
+  // SCHOLARSHIP PAYMENTS
+  // ============================================
+  {
+    id: 'scholarship_payments',
+    name: 'Burs Ödemeleri',
+    attributes: [
+      { key: 'scholarship_application_id', type: 'string', size: 36, required: true },
+      { key: 'amount', type: 'float', required: true },
+      { key: 'currency', type: 'enum', required: true, enumValues: ['TRY', 'USD', 'EUR'] },
+      { key: 'payment_date', type: 'datetime', required: true },
+      { key: 'payment_method', type: 'string', size: 50 },
+      { key: 'transaction_reference', type: 'string', size: 100 },
+      { key: 'status', type: 'enum', required: true, enumValues: ['pending', 'completed', 'failed', 'cancelled'] },
+      { key: 'processed_by', type: 'string', size: 36 },
+      { key: 'notes', type: 'string', size: 65535 },
+    ],
+    indexes: [
+      { key: 'by_application', type: IndexType.Key, attributes: ['scholarship_application_id'] },
+      { key: 'by_status', type: IndexType.Key, attributes: ['status'] },
+      { key: 'by_payment_date', type: IndexType.Key, attributes: ['payment_date'] },
+    ],
+  },
+
+  // ============================================
+  // ERROR TRACKING
+  // ============================================
+  {
+    id: 'errors',
+    name: 'Hatalar',
+    attributes: [
+      { key: 'title', type: 'string', size: 255, required: true },
+      { key: 'message', type: 'string', size: 65535, required: true },
+      { key: 'stack', type: 'string', size: 65535 },
+      { key: 'severity', type: 'enum', required: true, enumValues: ['low', 'medium', 'high', 'critical'] },
+      { key: 'status', type: 'enum', required: true, enumValues: ['open', 'investigating', 'resolved', 'ignored'] },
+      { key: 'assigned_to', type: 'string', size: 36 },
+      { key: 'first_occurred', type: 'datetime', required: true },
+      { key: 'last_occurred', type: 'datetime', required: true },
+      { key: 'occurrence_count', type: 'integer', required: true, default: 1 },
+    ],
+    indexes: [
+      { key: 'by_severity', type: IndexType.Key, attributes: ['severity'] },
+      { key: 'by_status', type: IndexType.Key, attributes: ['status'] },
+      { key: 'by_assigned_to', type: IndexType.Key, attributes: ['assigned_to'] },
+    ],
+  },
+
+  {
+    id: 'error_occurrences',
+    name: 'Hata Oluşumları',
+    attributes: [
+      { key: 'error_id', type: 'string', size: 36, required: true },
+      { key: 'occurred_at', type: 'datetime', required: true },
+      { key: 'user_id', type: 'string', size: 36 },
+      { key: 'ip_address', type: 'string', size: 45 },
+      { key: 'user_agent', type: 'string', size: 500 },
+      { key: 'context', type: 'string', size: 65535 }, // JSON
+    ],
+    indexes: [
+      { key: 'by_error', type: IndexType.Key, attributes: ['error_id'] },
+      { key: 'by_occurred_at', type: IndexType.Key, attributes: ['occurred_at'] },
+    ],
+  },
+
+  {
+    id: 'error_logs',
+    name: 'Hata Logları',
+    attributes: [
+      { key: 'error_id', type: 'string', size: 36 },
+      { key: 'level', type: 'enum', required: true, enumValues: ['error', 'warning', 'info', 'debug'] },
+      { key: 'message', type: 'string', size: 65535, required: true },
+      { key: 'timestamp', type: 'datetime', required: true },
+      { key: 'metadata', type: 'string', size: 65535 }, // JSON
+    ],
+    indexes: [
+      { key: 'by_error', type: IndexType.Key, attributes: ['error_id'] },
+      { key: 'by_level', type: IndexType.Key, attributes: ['level'] },
+      { key: 'by_timestamp', type: IndexType.Key, attributes: ['timestamp'] },
+    ],
+  },
+
+  {
+    id: 'system_alerts',
+    name: 'Sistem Uyarıları',
+    attributes: [
+      { key: 'alert_type', type: 'string', size: 100, required: true },
+      { key: 'title', type: 'string', size: 255, required: true },
+      { key: 'message', type: 'string', size: 65535, required: true },
+      { key: 'severity', type: 'enum', required: true, enumValues: ['info', 'warning', 'error', 'critical'] },
+      { key: 'status', type: 'enum', required: true, enumValues: ['active', 'acknowledged', 'resolved'] },
+      { key: 'created_at', type: 'datetime', required: true },
+      { key: 'acknowledged_at', type: 'datetime' },
+      { key: 'acknowledged_by', type: 'string', size: 36 },
+    ],
+    indexes: [
+      { key: 'by_type', type: IndexType.Key, attributes: ['alert_type'] },
+      { key: 'by_severity', type: IndexType.Key, attributes: ['severity'] },
+      { key: 'by_status', type: IndexType.Key, attributes: ['status'] },
+    ],
+  },
+
+  // ============================================
+  // MONITORING
+  // ============================================
+  {
+    id: 'analytics_events',
+    name: 'Analitik Olayları',
+    attributes: [
+      { key: 'event_type', type: 'string', size: 100, required: true },
+      { key: 'user_id', type: 'string', size: 36 },
+      { key: 'session_id', type: 'string', size: 36 },
+      { key: 'properties', type: 'string', size: 65535 }, // JSON
+      { key: 'timestamp', type: 'datetime', required: true },
+    ],
+    indexes: [
+      { key: 'by_event_type', type: IndexType.Key, attributes: ['event_type'] },
+      { key: 'by_user', type: IndexType.Key, attributes: ['user_id'] },
+      { key: 'by_timestamp', type: IndexType.Key, attributes: ['timestamp'] },
+    ],
+  },
+
+  {
+    id: 'performance_metrics',
+    name: 'Performans Metrikleri',
+    attributes: [
+      { key: 'metric_name', type: 'string', size: 100, required: true },
+      { key: 'value', type: 'float', required: true },
+      { key: 'unit', type: 'string', size: 20 },
+      { key: 'timestamp', type: 'datetime', required: true },
+      { key: 'metadata', type: 'string', size: 65535 }, // JSON
+    ],
+    indexes: [
+      { key: 'by_metric', type: IndexType.Key, attributes: ['metric_name'] },
+      { key: 'by_timestamp', type: IndexType.Key, attributes: ['timestamp'] },
+    ],
+  },
+
+  // ============================================
+  // AI FEATURES
+  // ============================================
+  {
+    id: 'ai_chats',
+    name: 'AI Sohbetleri',
+    attributes: [
+      { key: 'user_id', type: 'string', size: 36, required: true },
+      { key: 'title', type: 'string', size: 255 },
+      { key: 'created_at', type: 'datetime', required: true },
+      { key: 'updated_at', type: 'datetime', required: true },
+      { key: 'message_count', type: 'integer', default: 0 },
+    ],
+    indexes: [
+      { key: 'by_user', type: IndexType.Key, attributes: ['user_id'] },
+      { key: 'by_updated_at', type: IndexType.Key, attributes: ['updated_at'] },
+    ],
+  },
+
+  {
+    id: 'agent_threads',
+    name: 'Agent Threads',
+    attributes: [
+      { key: 'chat_id', type: 'string', size: 36 },
+      { key: 'thread_id', type: 'string', size: 100, required: true },
+      { key: 'status', type: 'enum', required: true, enumValues: ['active', 'completed', 'cancelled'] },
+      { key: 'created_at', type: 'datetime', required: true },
+      { key: 'updated_at', type: 'datetime', required: true },
+    ],
+    indexes: [
+      { key: 'by_chat', type: IndexType.Key, attributes: ['chat_id'] },
+      { key: 'by_thread', type: IndexType.Key, attributes: ['thread_id'] },
+      { key: 'by_status', type: IndexType.Key, attributes: ['status'] },
+    ],
+  },
+
+  {
+    id: 'agent_messages',
+    name: 'Agent Mesajları',
+    attributes: [
+      { key: 'thread_id', type: 'string', size: 100, required: true },
+      { key: 'role', type: 'enum', required: true, enumValues: ['user', 'assistant', 'system'] },
+      { key: 'content', type: 'string', size: 65535, required: true },
+      { key: 'created_at', type: 'datetime', required: true },
+      { key: 'metadata', type: 'string', size: 65535 }, // JSON
+    ],
+    indexes: [
+      { key: 'by_thread', type: IndexType.Key, attributes: ['thread_id'] },
+      { key: 'by_role', type: IndexType.Key, attributes: ['role'] },
+      { key: 'by_created_at', type: IndexType.Key, attributes: ['created_at'] },
+    ],
+  },
+
+  {
+    id: 'agent_tools',
+    name: 'Agent Araçları',
+    attributes: [
+      { key: 'tool_name', type: 'string', size: 100, required: true },
+      { key: 'tool_type', type: 'string', size: 50, required: true },
+      { key: 'config', type: 'string', size: 65535 }, // JSON
+      { key: 'is_active', type: 'boolean', required: true, default: true },
+    ],
+    indexes: [
+      { key: 'by_name', type: IndexType.Key, attributes: ['tool_name'] },
+      { key: 'by_type', type: IndexType.Key, attributes: ['tool_type'] },
+    ],
+  },
+
+  {
+    id: 'agent_usage',
+    name: 'Agent Kullanımı',
+    attributes: [
+      { key: 'user_id', type: 'string', size: 36 },
+      { key: 'thread_id', type: 'string', size: 100 },
+      { key: 'tool_name', type: 'string', size: 100 },
+      { key: 'usage_count', type: 'integer', required: true, default: 1 },
+      { key: 'timestamp', type: 'datetime', required: true },
+      { key: 'metadata', type: 'string', size: 65535 }, // JSON
+    ],
+    indexes: [
+      { key: 'by_user', type: IndexType.Key, attributes: ['user_id'] },
+      { key: 'by_thread', type: IndexType.Key, attributes: ['thread_id'] },
+      { key: 'by_tool', type: IndexType.Key, attributes: ['tool_name'] },
+    ],
+  },
 ];
 
 // ============================================
@@ -841,6 +1194,10 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
       array: attr.array || false,
     };
 
+    // Appwrite doesn't allow default values for required attributes
+    const canHaveDefault = !commonParams.required;
+    const defaultValue = canHaveDefault ? attr.default : undefined;
+
     switch (attr.type) {
       case 'string':
         await databases.createStringAttribute(
@@ -849,7 +1206,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.key,
           attr.size || 255,
           commonParams.required,
-          attr.default as string | undefined,
+          defaultValue as string | undefined,
           commonParams.array
         );
         break;
@@ -862,7 +1219,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.required,
           undefined,
           undefined,
-          attr.default as number | undefined,
+          defaultValue as number | undefined,
           commonParams.array
         );
         break;
@@ -875,7 +1232,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.required,
           undefined,
           undefined,
-          attr.default as number | undefined,
+          defaultValue as number | undefined,
           commonParams.array
         );
         break;
@@ -886,7 +1243,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.collectionId,
           commonParams.key,
           commonParams.required,
-          attr.default as boolean | undefined,
+          defaultValue as boolean | undefined,
           commonParams.array
         );
         break;
@@ -897,7 +1254,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.collectionId,
           commonParams.key,
           commonParams.required,
-          attr.default as string | undefined,
+          defaultValue as string | undefined,
           commonParams.array
         );
         break;
@@ -908,7 +1265,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.collectionId,
           commonParams.key,
           commonParams.required,
-          attr.default as string | undefined,
+          defaultValue as string | undefined,
           commonParams.array
         );
         break;
@@ -919,7 +1276,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.collectionId,
           commonParams.key,
           commonParams.required,
-          attr.default as string | undefined,
+          defaultValue as string | undefined,
           commonParams.array
         );
         break;
@@ -930,7 +1287,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.collectionId,
           commonParams.key,
           commonParams.required,
-          attr.default as string | undefined,
+          defaultValue as string | undefined,
           commonParams.array
         );
         break;
@@ -942,7 +1299,7 @@ async function createAttribute(collectionId: string, attr: AttributeConfig) {
           commonParams.key,
           attr.enumValues || [],
           commonParams.required,
-          attr.default as string | undefined,
+          defaultValue as string | undefined,
           commonParams.array
         );
         break;

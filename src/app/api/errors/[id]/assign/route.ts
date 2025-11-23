@@ -4,12 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMutation, fetchQuery } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
-import type { Id } from '@/convex/_generated/dataModel';
+import { appwriteErrors, appwriteTasks } from '@/lib/appwrite/api';
 import { createLogger } from '@/lib/logger';
 import { z } from 'zod';
-import { toConvexId } from '@/lib/convex/id-helpers';
 
 const logger = createLogger('api:errors:assign');
 
@@ -45,7 +42,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     logger.info('Assigning error', { id, assigned_to, create_task });
 
     // Get error details
-    const error = await fetchQuery(api.errors.get, { id: toConvexId(id, 'errors') });
+    const error = await appwriteErrors.get(id);
     if (!error) {
       return NextResponse.json(
         {
@@ -57,46 +54,49 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Assign error
-    const updatedError = await fetchMutation(api.errors.assign, {
-      id: toConvexId(id, 'errors'),
-      assigned_to: toConvexId(assigned_to, 'users'),
+    const updatedError = await appwriteErrors.update(id, {
+      assigned_to,
+      status: 'assigned',
     });
 
     // Create task if requested
-    let taskId: Id<'tasks'> | null = null;
+    let taskId: string | null = null;
     if (create_task) {
       try {
+        const errorData = error as any;
         // Determine task priority based on error severity
         let taskPriority: 'low' | 'normal' | 'high' | 'urgent' = 'normal';
-        if (error.severity === 'critical') taskPriority = 'urgent';
-        else if (error.severity === 'high') taskPriority = 'high';
-        else if (error.severity === 'medium') taskPriority = 'normal';
+        if (errorData.severity === 'critical') taskPriority = 'urgent';
+        else if (errorData.severity === 'high') taskPriority = 'high';
+        else if (errorData.severity === 'medium') taskPriority = 'normal';
         else taskPriority = 'low';
 
         // Create task
-        taskId = await fetchMutation(api.tasks.create, {
-          title: `Fix: ${error.title}`,
-          description: `${error.description}
+        const task = await appwriteTasks.create({
+          title: `Fix: ${errorData.title}`,
+          description: `${errorData.description || ''}
 
-Hata Kodu: ${error.error_code}
-Kategori: ${error.category}
-${error.component ? `Bileşen: ${error.component}` : ''}`,
-          assigned_to: toConvexId(assigned_to, 'users'),
-          created_by: toConvexId(assigned_to, 'users'), // In real scenario, would be current user
+Hata Kodu: ${errorData.error_code || 'N/A'}
+Kategori: ${errorData.category || 'N/A'}
+${errorData.component ? `Bileşen: ${errorData.component}` : ''}`,
+          assigned_to,
+          created_by: assigned_to, // In real scenario, would be current user
           priority: taskPriority,
           status: 'pending',
           category: 'bug_fix',
-          tags: ['error', error.category, error.severity],
+          tags: ['error', errorData.category, errorData.severity].filter(Boolean),
           is_read: false,
         });
 
-        // Link task to error
-        if (taskId) {
-          await fetchMutation(api.errors.linkTask, {
-            id: toConvexId(id, 'errors'),
-            task_id: taskId,
-          });
-        }
+        taskId = (task as any).$id || (task as any).id || '';
+
+        // Link task to error in metadata
+        await appwriteErrors.update(id, {
+          metadata: {
+            ...(errorData.metadata || {}),
+            linked_task_id: taskId,
+          },
+        });
 
         logger.info('Task created for error', { errorId: id, taskId });
       } catch (taskError) {

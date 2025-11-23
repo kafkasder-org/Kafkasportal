@@ -52,6 +52,13 @@ export {
   appwritePartners,
   appwriteScholarships,
   appwriteFinanceRecords,
+  appwriteErrors,
+  appwriteAuditLogs,
+  appwriteCommunicationLogs,
+  appwriteSystemAlerts,
+  appwriteSecurityEvents,
+  appwriteSystemSettings,
+  appwriteParameters,
 } from './api-client';
 export type { AppwriteDocument, AppwriteCrudOperations } from './api-client';
 

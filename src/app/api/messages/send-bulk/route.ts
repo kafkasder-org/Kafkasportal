@@ -256,24 +256,27 @@ async function sendBulkMessageHandler(request: NextRequest) {
       failed: result.failed,
     });
 
-    // Save to communication_logs in Convex
+    // Save to communication_logs using Appwrite
     try {
-      const { api } = await import('@/convex/_generated/api');
-      const { fetchMutation } = await import('convex/nextjs');
-
-      const logId = await fetchMutation(api.communication_logs.createBulkLog, {
+      const { appwriteCommunicationLogs } = await import('@/lib/appwrite/api');
+      
+      const logData = {
         type: type as 'email' | 'sms' | 'whatsapp',
-        recipientCount: recipients.length,
+        recipient_count: recipients.length,
         message,
         successful: result.successful,
         failed: result.failed,
-        sentAt: new Date().toISOString(),
-        userId: user.id as any,
+        sent_at: new Date().toISOString(),
+        user_id: user.id,
+        status: result.failed === 0 ? 'sent' : result.successful === 0 ? 'failed' : 'partial',
         metadata: {
           subject,
           failedRecipients: result.failedRecipients,
         },
-      });
+      };
+
+      const logResponse = await appwriteCommunicationLogs.create(logData);
+      const logId = logResponse.$id || logResponse.id || '';
 
       logger.info('Bulk operation logged successfully', {
         service: 'messages',

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteErrors } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import { Id } from '@/convex/_generated/dataModel';
 
 /**
  * POST /api/errors/update-occurrence
@@ -18,40 +16,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'error_id is required' }, { status: 400 });
     }
 
-    const convex = getConvexHttp();
-
-    // Get current error to update occurrence count
-    const currentError = await convex.query(api.errors.get, {
-      id: error_id as Id<'errors'>,
-    });
+    // Get current error
+    const currentError = await appwriteErrors.get(error_id);
 
     if (!currentError) {
       return NextResponse.json({ success: false, error: 'Error not found' }, { status: 404 });
     }
 
     // Update error with new occurrence data
-    const updateData: any = {
-      id: error_id as Id<'errors'>,
-    };
+    const updateData: Record<string, unknown> = {};
 
     if (occurrence_count !== undefined) {
-      // Note: errors.update doesn't directly update occurrence_count
-      // We need to use the update mutation which may not support this field
-      // For now, we'll update other fields and log the occurrence
+      updateData.occurrence_count = occurrence_count;
     }
 
     if (last_seen) {
-      // Update last_seen through metadata or other means
+      updateData.last_seen = last_seen;
+    }
+
+    // Update metadata if other updates provided
+    if (Object.keys(otherUpdates).length > 0) {
       updateData.metadata = {
-        ...(currentError.metadata || {}),
-        last_seen,
-        occurrence_count: occurrence_count || currentError.occurrence_count,
+        ...((currentError as any).metadata || {}),
         ...otherUpdates,
       };
     }
 
     // Update the error record
-    const result = await convex.mutation(api.errors.update, updateData);
+    const result = await appwriteErrors.update(error_id, updateData);
 
     return NextResponse.json({
       success: true,

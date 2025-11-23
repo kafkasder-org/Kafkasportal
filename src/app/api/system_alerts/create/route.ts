@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteSystemAlerts } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 
 /**
@@ -47,16 +46,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const convex = getConvexHttp();
-
-    // Create alert using monitoring.createAlert
-    const result = await convex.mutation(api.monitoring.createAlert, {
-      alertType: alert_type as 'error' | 'performance' | 'security' | 'system',
+    // Create alert using Appwrite
+    const alertData = {
+      alert_type: alert_type as 'error' | 'performance' | 'security' | 'system',
       severity: severity as 'low' | 'medium' | 'high' | 'critical',
       title,
       description,
       metadata: metadata || {},
-    });
+      acknowledged: false,
+      resolved: false,
+      created_at: new Date().toISOString(),
+    };
+
+    const response = await appwriteSystemAlerts.create(alertData);
+    const result = response.$id || response.id || '';
 
     return NextResponse.json({
       success: true,

@@ -1006,6 +1006,21 @@ export const appwriteSystemSettings = {
       return null;
     }
   },
+  getSetting: async (category: string, key: string) => {
+    const databases = getDatabases();
+    const collectionId = appwriteConfig.collections.systemSettings;
+    try {
+      const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        collectionId,
+        [Query.equal('category', category), Query.equal('key', key), Query.limit(1)]
+      );
+      return response.documents[0] || null;
+    } catch (error) {
+      logger.error('Failed to get system setting', { error, category, key });
+      return null;
+    }
+  },
   updateSettings: async (
     category: string,
     settings: Record<string, unknown>,

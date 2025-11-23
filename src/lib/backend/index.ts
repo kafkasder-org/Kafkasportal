@@ -1,29 +1,29 @@
 /**
- * Unified Backend API
+ * Backend API
  *
- * Provides a unified interface that works with both Convex and Appwrite backends.
- * The backend provider is selected via NEXT_PUBLIC_BACKEND_PROVIDER environment variable.
+ * Appwrite backend interface.
+ * All operations use Appwrite.
  */
 
-import type { ConvexResponse, QueryParams, CreateDocumentData, UpdateDocumentData } from '@/types/database';
+import type { QueryParams, CreateDocumentData, UpdateDocumentData } from '@/types/database';
 
-// Backend provider type
-export type BackendProvider = 'convex' | 'appwrite';
+// Backend provider type (only Appwrite now)
+export type BackendProvider = 'appwrite';
 
-// Get current backend provider
+// Get current backend provider (always Appwrite)
 export const getBackendProvider = (): BackendProvider => {
-  const provider = process.env.NEXT_PUBLIC_BACKEND_PROVIDER || 'convex';
-  return provider as BackendProvider;
+  // Always return 'appwrite' - Convex removed
+  return 'appwrite';
 };
 
-// Check if using Convex
-export const isUsingConvex = (): boolean => {
-  return getBackendProvider() === 'convex';
-};
-
-// Check if using Appwrite
+// Check if using Appwrite (always true)
 export const isUsingAppwrite = (): boolean => {
-  return getBackendProvider() === 'appwrite';
+  return true;
+};
+
+// Legacy function for compatibility (always false now)
+export const isUsingConvex = (): boolean => {
+  return false;
 };
 
 /**
@@ -38,51 +38,34 @@ export interface UnifiedCrudOperations<T> {
 }
 
 /**
- * Create unified CRUD operations that work with both backends
+ * Create CRUD operations for Appwrite
  */
 export async function createUnifiedCrud<T>(
   entityName: string,
-  convexEntityName?: string,
+  _convexEntityName?: string,
   appwriteCollectionName?: string
 ): Promise<UnifiedCrudOperations<T>> {
-  const provider = getBackendProvider();
+  // Always use Appwrite
+  const { createAppwriteCrudOperations } = await import('@/lib/appwrite/api-client');
+  const { appwriteConfig } = await import('@/lib/appwrite/config');
 
-  if (provider === 'appwrite') {
-    // Dynamic import for Appwrite
-    const { createAppwriteCrudOperations } = await import('@/lib/appwrite/api-client');
-    const { appwriteConfig } = await import('@/lib/appwrite/config');
+  // Find the collection name
+  const collectionKey = appwriteCollectionName || entityName;
+  const collectionId = appwriteConfig.collections[collectionKey as keyof typeof appwriteConfig.collections];
 
-    // Find the collection name
-    const collectionKey = appwriteCollectionName || entityName;
-    const collectionId = appwriteConfig.collections[collectionKey as keyof typeof appwriteConfig.collections];
-
-    if (!collectionId) {
-      throw new Error(`Unknown Appwrite collection: ${collectionKey}`);
-    }
-
-    const appwriteOps = createAppwriteCrudOperations(collectionKey as keyof typeof appwriteConfig.collections);
-
-    return {
-      list: appwriteOps.list as unknown as UnifiedCrudOperations<T>['list'],
-      get: appwriteOps.get as unknown as UnifiedCrudOperations<T>['get'],
-      create: appwriteOps.create as unknown as UnifiedCrudOperations<T>['create'],
-      update: appwriteOps.update as unknown as UnifiedCrudOperations<T>['update'],
-      delete: appwriteOps.delete,
-    };
-  } else {
-    // Dynamic import for Convex (via API routes)
-    const { createCrudOperations } = await import('@/lib/api/crud-factory');
-
-    const convexOps = createCrudOperations<T>(convexEntityName || entityName);
-
-    return {
-      list: convexOps.getAll,
-      get: convexOps.getById,
-      create: convexOps.create,
-      update: convexOps.update,
-      delete: convexOps.delete,
-    };
+  if (!collectionId) {
+    throw new Error(`Unknown Appwrite collection: ${collectionKey}`);
   }
+
+  const appwriteOps = createAppwriteCrudOperations(collectionKey as keyof typeof appwriteConfig.collections);
+
+  return {
+    list: appwriteOps.list as unknown as UnifiedCrudOperations<T>['list'],
+    get: appwriteOps.get as unknown as UnifiedCrudOperations<T>['get'],
+    create: appwriteOps.create as unknown as UnifiedCrudOperations<T>['create'],
+    update: appwriteOps.update as unknown as UnifiedCrudOperations<T>['update'],
+    delete: appwriteOps.delete,
+  };
 }
 
 /**
@@ -165,72 +148,30 @@ export interface UnifiedAuth {
 }
 
 export const getAuth = async (): Promise<UnifiedAuth> => {
-  const provider = getBackendProvider();
+  // Always use Appwrite
+  const { appwriteAuth } = await import('@/lib/appwrite/auth');
 
-  if (provider === 'appwrite') {
-    const { appwriteAuth } = await import('@/lib/appwrite/auth');
-
-    return {
-      login: async (email, password) => {
-        const { session, error } = await appwriteAuth.createSession(email, password);
-        return { success: !!session, error };
-      },
-      logout: async () => {
-        return appwriteAuth.deleteSession();
-      },
-      getCurrentUser: async () => {
-        return appwriteAuth.getCurrentUser();
-      },
-      register: async (email, password, name) => {
-        const { user, error } = await appwriteAuth.createAccount(email, password, name);
-        return { success: !!user, error };
-      },
-    };
-  } else {
-    // Convex auth uses API routes
-    return {
-      login: async (email, password) => {
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-          credentials: 'include',
-        });
-        const data = await response.json();
-        return { success: data.success, error: data.error || null };
-      },
-      logout: async () => {
-        const response = await fetch('/api/auth/logout', {
-          method: 'POST',
-          credentials: 'include',
-        });
-        const data = await response.json();
-        return { success: data.success, error: data.error || null };
-      },
-      getCurrentUser: async () => {
-        const response = await fetch('/api/auth/me', {
-          credentials: 'include',
-        });
-        const data = await response.json();
-        return { user: data.user || null, error: data.error || null };
-      },
-      register: async (email, password, name) => {
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, name }),
-          credentials: 'include',
-        });
-        const data = await response.json();
-        return { success: data.success, error: data.error || null };
-      },
-    };
-  }
+  return {
+    login: async (email, password) => {
+      const { session, error } = await appwriteAuth.createSession(email, password);
+      return { success: !!session, error };
+    },
+    logout: async () => {
+      return appwriteAuth.deleteSession();
+    },
+    getCurrentUser: async () => {
+      return appwriteAuth.getCurrentUser();
+    },
+    register: async (email, password, name) => {
+      const { user, error } = await appwriteAuth.createAccount(email, password, name);
+      return { success: !!user, error };
+    },
+  };
 };
 
 // Export provider info
 export const backendInfo = {
-  provider: getBackendProvider(),
-  isConvex: isUsingConvex(),
-  isAppwrite: isUsingAppwrite(),
+  provider: 'appwrite' as const,
+  isConvex: false,
+  isAppwrite: true,
 };

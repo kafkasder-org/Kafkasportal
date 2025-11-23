@@ -9,13 +9,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit, mutationRateLimit } from '@/lib/rate-limit';
-import { fetchQuery, fetchMutation } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteSystemSettings } from '@/lib/appwrite/api';
 
 async function getOrganizationHandler(_request: NextRequest) {
   try {
     // Public endpoint - no auth required for reading branding
-    const branding = await fetchQuery(api.branding.getBrandingSettings);
+    // Get branding settings from system_settings collection
+    const settings = await appwriteSystemSettings.getSetting('branding', 'organization');
+    const branding = settings?.value || {};
 
     return NextResponse.json({
       success: true,
@@ -83,7 +84,9 @@ async function updateOrganizationHandler(request: NextRequest) {
       );
     }
 
-    const result = await fetchMutation(api.branding.updateOrganizationInfo, updates);
+    // Update branding settings in system_settings collection
+    await appwriteSystemSettings.updateSetting('branding', 'organization', updates, user.id);
+    const result = { success: true };
 
     return NextResponse.json({
       success: true,

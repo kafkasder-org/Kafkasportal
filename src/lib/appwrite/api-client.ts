@@ -241,6 +241,13 @@ export const appwriteAidApplications = createAppwriteCrudOperations<AppwriteDocu
 export const appwritePartners = createAppwriteCrudOperations<AppwriteDocument>('partners');
 export const appwriteScholarships = createAppwriteCrudOperations<AppwriteDocument>('scholarships');
 export const appwriteFinanceRecords = createAppwriteCrudOperations<AppwriteDocument>('financeRecords');
+export const appwriteErrors = createAppwriteCrudOperations<AppwriteDocument>('errors');
+export const appwriteAuditLogs = createAppwriteCrudOperations<AppwriteDocument>('auditLogs');
+export const appwriteCommunicationLogs = createAppwriteCrudOperations<AppwriteDocument>('communicationLogs');
+export const appwriteSystemAlerts = createAppwriteCrudOperations<AppwriteDocument>('systemAlerts');
+export const appwriteSecurityEvents = createAppwriteCrudOperations<AppwriteDocument>('securityEvents');
+export const appwriteSystemSettings = createAppwriteCrudOperations<AppwriteDocument>('systemSettings');
+export const appwriteParameters = createAppwriteCrudOperations<AppwriteDocument>('parameters');
 
 // Export for custom collections
 export { createAppwriteCrudOperations as createAppwriteApiClient };

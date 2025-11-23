@@ -8,11 +8,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMutation, fetchQuery } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteErrors } from '@/lib/appwrite/api';
 import { createLogger } from '@/lib/logger';
 import { z } from 'zod';
-import { toConvexId } from '@/lib/convex/id-helpers';
 
 const logger = createLogger('api:errors:detail');
 
@@ -26,7 +24,8 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     logger.info('Fetching error details', { id });
 
-    const error = await fetchQuery(api.errors.get, { id: toConvexId(id, 'errors') });
+    // Get error using Appwrite
+    const error = await appwriteErrors.get(id);
 
     if (!error) {
       return NextResponse.json(
@@ -90,10 +89,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       );
     }
 
-    const updatedError = await fetchMutation(api.errors.update, {
-      id: toConvexId(id, 'errors'),
-      ...validationResult.data,
-    });
+    // Update error using Appwrite
+    const updatedError = await appwriteErrors.update(id, validationResult.data);
 
     logger.info('Error updated successfully', { id });
 

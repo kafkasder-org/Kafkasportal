@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
+import { appwriteDonations } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 
 /**
@@ -19,13 +18,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const convex = getConvexHttp();
-
-    // Update donation with analytics data
-    const result = await convex.mutation(api.donations.update, {
-      id: donation_id as any,
-      ...analytics_data,
-    });
+    // Update donation with analytics data using Appwrite
+    const result = await appwriteDonations.update(donation_id, analytics_data);
 
     return NextResponse.json({
       success: true,

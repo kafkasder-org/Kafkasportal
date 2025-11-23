@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
+import { appwriteAuditLogs, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import type { FunctionReference } from 'convex/server';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit } from '@/lib/rate-limit';
 
@@ -32,27 +31,20 @@ async function getAuditLogsHandler(request: NextRequest) {
     const resource = searchParams.get('resource');
     const limit = parseInt(searchParams.get('limit') || '100');
 
-    const convex = getConvexHttp();
+    // Get audit logs using Appwrite
+    const params = normalizeQueryParams(searchParams);
+    const filters: Record<string, unknown> = {};
+    
+    if (action) filters.action = action;
+    if (resource) filters.resource = resource;
+    if (limit) params.limit = limit;
 
-    const params: {
-      action?: string;
-      resource?: string;
-      limit?: number;
-    } = { limit };
+    const response = await appwriteAuditLogs.list({
+      ...params,
+      filters,
+    });
 
-    if (action) {
-      params.action = action;
-    }
-
-    if (resource) {
-      params.resource = resource;
-    }
-
-    // Use internal function reference since audit_logs not in generated API yet
-    const logs = await convex.query(
-      'audit_logs:list' as unknown as FunctionReference<'query'>,
-      params
-    );
+    const logs = response.data || [];
 
     return NextResponse.json({
       success: true,

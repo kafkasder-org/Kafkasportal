@@ -7,8 +7,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { mutationRateLimit } from '@/lib/rate-limit';
-import { fetchMutation } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteStorage, appwriteSystemSettings } from '@/lib/appwrite/api';
+import { appwriteConfig } from '@/lib/appwrite/config';
+import { ID } from 'appwrite';
 
 async function uploadLogoHandler(request: NextRequest) {
   try {
@@ -77,22 +78,31 @@ async function uploadLogoHandler(request: NextRequest) {
       );
     }
 
-    // Convert file to base64 for Convex storage
+    // Upload to Appwrite Storage
+    const storage = appwriteStorage;
+    const bucketId = appwriteConfig.buckets.avatars; // Use avatars bucket for logos
+    const fileId = ID.unique();
+    
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString('base64');
 
-    // Create a temporary URL (in production, you'd upload to Convex storage)
-    // For now, we'll simulate storage ID and URL
-    const storageId = `${Date.now()}_${file.name}`;
-    const url = `data:${file.type};base64,${base64}`;
+    const uploadedFile = await storage.createFile(
+      bucketId,
+      fileId,
+      buffer,
+      [ID.write('*')] // Public read
+    );
 
-    // Update logo in database
-    await fetchMutation(api.branding.updateLogo, {
-      logoType: logoType as 'main_logo' | 'logo_dark' | 'favicon' | 'email_logo',
-      storageId,
-      url,
-    });
+    const storageId = uploadedFile.$id;
+    const url = storage.getFileView(bucketId, storageId);
+
+    // Update logo URL in system_settings
+    await appwriteSystemSettings.updateSetting(
+      'branding',
+      logoType,
+      { url, storageId, fileName: file.name, fileType: file.type },
+      user.id
+    );
 
     return NextResponse.json({
       success: true,
@@ -159,9 +169,24 @@ async function deleteLogoHandler(request: NextRequest) {
       );
     }
 
-    const result = await fetchMutation(api.branding.removeLogo, {
-      logoType: logoType as 'main_logo' | 'logo_dark' | 'favicon' | 'email_logo',
-    });
+    // Get logo setting to get storage ID
+    const logoSetting = await appwriteSystemSettings.getSetting('branding', logoType);
+    
+    // Delete from storage if exists
+    if (logoSetting?.value?.storageId) {
+      const storage = appwriteStorage;
+      const bucketId = appwriteConfig.buckets.avatars;
+      try {
+        await storage.deleteFile(bucketId, logoSetting.value.storageId);
+      } catch (error) {
+        // Log but don't fail if file doesn't exist
+        console.warn('Failed to delete logo file from storage:', error);
+      }
+    }
+
+    // Remove logo setting from system_settings
+    await appwriteSystemSettings.updateSetting('branding', logoType, null, user.id);
+    const result = { success: true };
 
     return NextResponse.json(result);
   } catch (error) {

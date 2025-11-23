@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import logger from '@/lib/logger';
-import { convexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
 
 // Cache for detailed health checks (30 seconds)
 let healthCache: { data: unknown; timestamp: number } | null = null;
@@ -11,22 +9,25 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const detailed = url.searchParams.get('detailed') === 'true';
 
-  // Basic checks
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL || '';
-  const provider = (
-    process.env.NEXT_PUBLIC_BACKEND_PROVIDER ||
-    process.env.BACKEND_PROVIDER ||
-    'convex'
-  ).toLowerCase();
+  // Appwrite configuration checks
+  const appwriteEndpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || '';
+  const appwriteProjectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '';
+  const appwriteApiKey = process.env.APPWRITE_API_KEY || '';
+  const appwriteDatabaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '';
 
-  const configOk = Boolean(convexUrl && provider === 'convex');
+  const appwriteOk = Boolean(appwriteEndpoint && appwriteProjectId && appwriteApiKey);
+  const configOk = appwriteOk;
 
   const baseResponse = {
     ok: true,
-    provider,
-    convex: {
-      url: Boolean(convexUrl),
-      configured: configOk,
+    provider: 'appwrite' as const,
+    appwrite: {
+      endpoint: Boolean(appwriteEndpoint),
+      projectId: Boolean(appwriteProjectId),
+      databaseId: Boolean(appwriteDatabaseId),
+      apiKey: Boolean(appwriteApiKey),
+      configured: appwriteOk,
+      active: true,
     },
     timestamp: new Date().toISOString(),
     readyForProduction: configOk,
@@ -52,11 +53,19 @@ export async function GET(request: Request) {
   let connectivityError: string | null = null;
   let validationReport: Record<string, unknown> | null = null;
 
-  if (provider === 'convex' && convexUrl) {
+  if (appwriteEndpoint && appwriteProjectId) {
     try {
-      // Test Convex connectivity by querying users
+      // Dynamic import for Appwrite
+      const { serverDatabases } = await import('@/lib/appwrite/server');
+      const { appwriteConfig } = await import('@/lib/appwrite/config');
+
+      if (!serverDatabases || !appwriteConfig.databaseId) {
+        throw new Error('Appwrite not configured');
+      }
+
+      // Test Appwrite connectivity by listing databases
       const startTime = Date.now();
-      await convexHttp.query(api.users.list, {});
+      await serverDatabases.list();
       const responseTime = Date.now() - startTime;
 
       connectivityReport = {
@@ -67,26 +76,26 @@ export async function GET(request: Request) {
         },
         tests: [
           {
-            name: 'Convex Connection',
+            name: 'Appwrite Connection',
             passed: true,
             responseTime,
             message: `Connected in ${responseTime}ms`,
           },
         ],
-        recommendations: responseTime > 3000 ? ['Convex connection is slow'] : [],
+        recommendations: responseTime > 3000 ? ['Appwrite connection is slow'] : [],
       };
 
       validationReport = {
         summary: {
           errors: 0,
-          warnings: convexUrl ? 0 : 1,
+          warnings: appwriteApiKey ? 0 : 1,
         },
         errors: [],
-        warnings: convexUrl ? [] : ['NEXT_PUBLIC_CONVEX_URL is not set'],
+        warnings: appwriteApiKey ? [] : ['APPWRITE_API_KEY is not set (server-side operations will fail)'],
       };
     } catch (_error: unknown) {
       connectivityError = _error instanceof Error ? _error.message : 'Bilinmeyen hata';
-      logger.error('Convex connectivity test failed', _error, {
+      logger.error('Appwrite connectivity test failed', _error, {
         endpoint: '/api/health',
         provider,
         detailed: true,
@@ -100,12 +109,16 @@ export async function GET(request: Request) {
         },
         tests: [
           {
-            name: 'Convex Connection',
+            name: 'Appwrite Connection',
             passed: false,
             message: connectivityError,
           },
         ],
-        recommendations: ['Check NEXT_PUBLIC_CONVEX_URL configuration'],
+        recommendations: [
+          'Check NEXT_PUBLIC_APPWRITE_ENDPOINT configuration',
+          'Check NEXT_PUBLIC_APPWRITE_PROJECT_ID configuration',
+          'Check APPWRITE_API_KEY configuration',
+        ],
       };
 
       validationReport = {
@@ -113,17 +126,18 @@ export async function GET(request: Request) {
           errors: 1,
           warnings: 0,
         },
-        errors: [`Convex connection failed: ${connectivityError}`],
+        errors: [`Appwrite connection failed: ${connectivityError}`],
         warnings: [],
       };
     }
   } else {
+    // Appwrite not configured
     validationReport = {
       summary: {
-        errors: convexUrl ? 0 : 1,
+        errors: 1,
         warnings: 0,
       },
-      errors: convexUrl ? [] : ['NEXT_PUBLIC_CONVEX_URL is not configured'],
+      errors: ['Appwrite is not properly configured. Check NEXT_PUBLIC_APPWRITE_ENDPOINT and NEXT_PUBLIC_APPWRITE_PROJECT_ID'],
       warnings: [],
     };
   }
@@ -154,7 +168,6 @@ export async function GET(request: Request) {
   // Determine status code
   let statusCode = 200;
   if (
-    provider === 'convex' &&
     connectivityReport &&
     connectivityReport.summary &&
     typeof connectivityReport.summary === 'object' &&

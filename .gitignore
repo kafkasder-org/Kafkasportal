@@ -144,6 +144,8 @@ KEYS-AND-CREDENTIALS.md
 .claude/
 .cursor/
 !.cursor/mcp_settings.example.json
+!.cursor/README.md
+!.cursor/mcp_settings.json
 .serena/
 weweb-custom/
 

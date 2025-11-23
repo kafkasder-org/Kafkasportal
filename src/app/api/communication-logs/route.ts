@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getConvexHttp } from '@/lib/convex/server';
+import { appwriteCommunicationLogs, normalizeQueryParams } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
-import type { FunctionReference } from 'convex/server';
 import { requireModuleAccess, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit } from '@/lib/rate-limit';
 
@@ -20,31 +19,24 @@ async function getCommunicationLogsHandler(request: NextRequest) {
     await requireModuleAccess('messages');
 
     const searchParams = request.nextUrl.searchParams;
-    const type = searchParams.get('type') as 'email' | 'sms' | null;
+    const type = searchParams.get('type') as 'email' | 'sms' | 'whatsapp' | null;
     const status = searchParams.get('status') as 'sent' | 'failed' | 'pending' | null;
     const limit = parseInt(searchParams.get('limit') || '100');
 
-    const convex = getConvexHttp();
+    // Get communication logs using Appwrite
+    const params = normalizeQueryParams(searchParams);
+    const filters: Record<string, unknown> = {};
+    
+    if (type) filters.type = type;
+    if (status) filters.status = status;
+    if (limit) params.limit = limit;
 
-    const params: {
-      type?: 'email' | 'sms';
-      status?: 'sent' | 'failed' | 'pending';
-      limit?: number;
-    } = { limit };
+    const response = await appwriteCommunicationLogs.list({
+      ...params,
+      filters,
+    });
 
-    if (type) {
-      params.type = type;
-    }
-
-    if (status) {
-      params.status = status;
-    }
-
-    // Use internal function reference since communication_logs not in generated API yet
-    const logs = await convex.query(
-      'communication_logs:list' as unknown as FunctionReference<'query'>,
-      params
-    );
+    const logs = response.data || [];
 
     return NextResponse.json({
       success: true,

@@ -5,12 +5,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMutation, fetchQuery } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteErrors, normalizeQueryParams } from '@/lib/appwrite/api';
 import { createLogger } from '@/lib/logger';
 import { createErrorNotification } from '@/lib/error-notifications';
 import { z } from 'zod';
-import { toOptionalConvexId } from '@/lib/convex/id-helpers';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit, dataModificationRateLimit } from '@/lib/rate-limit';
 
@@ -82,12 +80,17 @@ async function postErrorHandler(request: NextRequest) {
       severity: data.severity,
     });
 
-    // Create error in Convex
-    const errorId = await fetchMutation(api.errors.create, {
+    // Create error using unified backend
+    // Create error using Appwrite
+    const result = await appwriteErrors.create({
       ...data,
-      user_id: toOptionalConvexId(data.user_id, 'users'),
-      reporter_id: toOptionalConvexId(data.reporter_id, 'users'),
+      user_id: data.user_id || undefined,
+      reporter_id: data.reporter_id || undefined,
+      occurrence_count: 1,
+      first_seen: new Date().toISOString(),
+      last_seen: new Date().toISOString(),
     });
+    const errorId = result.$id || result.id || '';
 
     // Send notification for critical/high severity errors
     if (data.severity === 'critical' || data.severity === 'high') {
@@ -218,17 +221,20 @@ async function getErrorsHandler(request: NextRequest) {
       limit,
     });
 
-    // Fetch errors from Convex
-    const result = await fetchQuery(api.errors.list, {
-      status,
-      severity,
-      category,
-      assigned_to: toOptionalConvexId(assigned_to, 'users'),
-      start_date: start_date || undefined,
-      end_date: end_date || undefined,
-      limit: limit ? parseInt(limit) : undefined,
-      skip: skip ? parseInt(skip) : undefined,
-    });
+    // Fetch errors using unified backend
+    // Fetch errors using Appwrite
+    const params: Record<string, unknown> = {};
+    if (status) params.status = status;
+    if (severity) params.severity = severity;
+    if (category) params.category = category;
+    if (assigned_to) params.assigned_to = assigned_to;
+    if (start_date) params.start_date = start_date;
+    if (end_date) params.end_date = end_date;
+    if (limit) params.limit = parseInt(limit, 10);
+    if (skip) params.skip = parseInt(skip, 10);
+
+    const response = await appwriteErrors.list({ filters: params });
+    const result = response.data || [];
 
     return NextResponse.json({
       success: true,

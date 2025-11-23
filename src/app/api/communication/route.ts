@@ -12,8 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit, mutationRateLimit } from '@/lib/rate-limit';
-import { fetchQuery, fetchMutation } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteSystemSettings } from '@/lib/appwrite/api';
 
 async function getCommunicationHandler(request: NextRequest) {
   try {
@@ -36,6 +35,8 @@ async function getCommunicationHandler(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
 
+    let settings;
+
     if (type) {
       // Get specific type
       if (!['email', 'sms', 'whatsapp'].includes(type)) {
@@ -48,23 +49,27 @@ async function getCommunicationHandler(request: NextRequest) {
         );
       }
 
-      const settings = await fetchQuery(api.communication.getCommunicationSettings, {
-        type: type as 'email' | 'sms' | 'whatsapp',
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: settings,
-      });
+      const setting = await appwriteSystemSettings.getSetting('communication', type);
+      settings = setting?.value || {};
     } else {
       // Get all types
-      const settings = await fetchQuery(api.communication.getAllCommunicationSettings);
+      const [email, sms, whatsapp] = await Promise.all([
+        appwriteSystemSettings.getSetting('communication', 'email'),
+        appwriteSystemSettings.getSetting('communication', 'sms'),
+        appwriteSystemSettings.getSetting('communication', 'whatsapp'),
+      ]);
 
-      return NextResponse.json({
-        success: true,
-        data: settings,
-      });
+      settings = {
+        email: email?.value || {},
+        sms: sms?.value || {},
+        whatsapp: whatsapp?.value || {},
+      };
     }
+
+    return NextResponse.json({
+      success: true,
+      data: settings,
+    });
   } catch (error) {
     const authError = buildErrorResponse(error);
     if (authError) {
@@ -117,27 +122,9 @@ async function updateCommunicationHandler(request: NextRequest) {
 
     const body = await request.json();
 
-    let result;
-
-    switch (type) {
-      case 'email':
-        result = await fetchMutation(api.communication.updateEmailSettings, body);
-        break;
-      case 'sms':
-        result = await fetchMutation(api.communication.updateSmsSettings, body);
-        break;
-      case 'whatsapp':
-        result = await fetchMutation(api.communication.updateWhatsAppSettings, body);
-        break;
-      default:
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Geçersiz iletişim türü',
-          },
-          { status: 400 }
-        );
-    }
+    // Update communication settings in system_settings collection
+    await appwriteSystemSettings.updateSetting('communication', type, body, user.id);
+    const result = { success: true };
 
     return NextResponse.json({
       success: true,

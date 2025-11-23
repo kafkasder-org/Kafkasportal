@@ -4,8 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchQuery } from 'convex/nextjs';
-import { api } from '@/convex/_generated/api';
+import { appwriteErrors } from '@/lib/appwrite/api';
 import { createLogger } from '@/lib/logger';
 import { requireAuthenticatedUser, buildErrorResponse } from '@/lib/api/auth-utils';
 import { readOnlyRateLimit } from '@/lib/rate-limit';
@@ -43,10 +42,35 @@ async function getErrorStatsHandler(request: NextRequest) {
 
     logger.info('Fetching error statistics', { start_date, end_date });
 
-    const stats = await fetchQuery(api.errors.getStats, {
-      start_date: start_date || undefined,
-      end_date: end_date || undefined,
+    // Calculate stats from errors collection using Appwrite
+    const allErrors = await appwriteErrors.list({
+      filters: {
+        ...(start_date ? { first_seen: { gte: start_date } } : {}),
+        ...(end_date ? { last_seen: { lte: end_date } } : {}),
+      },
     });
+
+    const errors = allErrors.data || [];
+    
+    // Calculate statistics
+    const stats = {
+      total: errors.length,
+      by_severity: {
+        critical: errors.filter((e: any) => e.severity === 'critical').length,
+        high: errors.filter((e: any) => e.severity === 'high').length,
+        medium: errors.filter((e: any) => e.severity === 'medium').length,
+        low: errors.filter((e: any) => e.severity === 'low').length,
+      },
+      by_category: errors.reduce((acc: any, e: any) => {
+        acc[e.category] = (acc[e.category] || 0) + 1;
+        return acc;
+      }, {}),
+      by_status: errors.reduce((acc: any, e: any) => {
+        acc[e.status] = (acc[e.status] || 0) + 1;
+        return acc;
+      }, {}),
+      total_occurrences: errors.reduce((sum: number, e: any) => sum + (e.occurrence_count || 1), 0),
+    };
 
     return NextResponse.json({
       success: true,
