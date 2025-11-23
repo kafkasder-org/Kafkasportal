@@ -1,9 +1,10 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
-import { convexHttp } from '@/lib/convex/server';
-import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+// convexHttp removed
+// api removed
+// Id removed
 import { parseAuthSession } from './session';
+import { appwriteServerAuth } from '@/lib/appwrite/auth';
 
 /**
  * Get current user ID from auth session
@@ -11,7 +12,7 @@ import { parseAuthSession } from './session';
  * @param request - NextRequest object (optional, will use cookies() if not provided)
  * @returns User ID or null if not authenticated
  */
-export async function getCurrentUserId(request?: NextRequest): Promise<Id<'users'> | null> {
+export async function getCurrentUserId(request?: NextRequest): Promise<string | null> {
   try {
     let sessionCookie: string | undefined;
 
@@ -41,7 +42,7 @@ export async function getCurrentUserId(request?: NextRequest): Promise<Id<'users
       }
     }
 
-    return sessionData.userId as Id<'users'>;
+    return sessionData.userId as string;
   } catch (_error) {
     return null;
   }
@@ -60,8 +61,8 @@ export async function getCurrentUser(request?: NextRequest) {
   }
 
   try {
-    // Fetch user from Convex
-    const user = await convexHttp.query(api.users.get, { id: userId });
+    // Fetch user from Appwrite
+    const { user } = await appwriteServerAuth.getUser(userId);
     return user;
   } catch (_error) {
     return null;

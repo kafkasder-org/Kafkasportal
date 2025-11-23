@@ -12,4 +12,5 @@ export const convexHttp = {
   action: vi.fn(),
 };
 
-export default { convexHttp };
+const server = { convexHttp };
+export default server;

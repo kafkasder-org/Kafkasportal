@@ -5,7 +5,8 @@
  * Provides type-safe API contracts for all resources
  */
 
-import type { Id } from '@/convex/_generated/dataModel';
+// Id type removed
+type Id<T> = string;
 
 // ========================================
 // BENEFICIARY TYPES
