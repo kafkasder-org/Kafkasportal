@@ -182,7 +182,7 @@ export const POST = authRateLimit(async (request: NextRequest) => {
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
     const signedSession = serializeSessionCookie({
       sessionId,
-      userId: userId,
+      userId,
       expire: expireTime.toISOString(),
     });
 
@@ -213,12 +213,12 @@ export const POST = authRateLimit(async (request: NextRequest) => {
       // Log but don't fail login if this fails
       logger.warn('Failed to update last login time', {
         error: _error,
-        userId: userId,
+        userId,
       });
     }
 
     logger.info('User logged in successfully', {
-      userId: userId,
+      userId,
       email: `${email?.substring(0, 3)}***`,
       role: userData.role,
     });

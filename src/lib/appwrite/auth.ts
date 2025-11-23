@@ -78,7 +78,7 @@ export const appwriteAuth = {
     try {
       const user = await account.get();
       return { user, error: null };
-    } catch (error) {
+    } catch {
       // Not logged in is not an error
       return { user: null, error: null };
     }

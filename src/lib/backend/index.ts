@@ -10,6 +10,8 @@ import type { QueryParams, CreateDocumentData, UpdateDocumentData } from '@/type
 // Backend provider type (only Appwrite now)
 export type BackendProvider = 'appwrite';
 
+export type BackendResponse<T> = T;
+
 // Get current backend provider (always Appwrite)
 export const getBackendProvider = (): BackendProvider => {
   // Always return 'appwrite' - Convex removed
@@ -30,11 +32,11 @@ export const isUsingConvex = (): boolean => {
  * Generic CRUD operations interface
  */
 export interface UnifiedCrudOperations<T> {
-  list: (params?: QueryParams) => Promise<ConvexResponse<T[]>>;
-  get: (id: string) => Promise<ConvexResponse<T>>;
-  create: (data: CreateDocumentData<T>) => Promise<ConvexResponse<T>>;
-  update: (id: string, data: UpdateDocumentData<T>) => Promise<ConvexResponse<T>>;
-  delete: (id: string) => Promise<ConvexResponse<null>>;
+  list: (params?: QueryParams) => Promise<BackendResponse<{ documents: T[]; total: number }>>;
+  get: (id: string) => Promise<BackendResponse<T>>;
+  create: (data: CreateDocumentData<T>) => Promise<BackendResponse<T>>;
+  update: (id: string, data: UpdateDocumentData<T>) => Promise<BackendResponse<T>>;
+  delete: (id: string) => Promise<BackendResponse<void>>;
 }
 
 /**

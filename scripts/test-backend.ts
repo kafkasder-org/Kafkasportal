@@ -9,6 +9,7 @@
 import * as dotenv from 'dotenv';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { execSync } from 'child_process';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -93,8 +94,6 @@ function testConvexConfig() {
 // Test 4: Check for Convex imports in codebase
 function testConvexUsage() {
   try {
-    const { execSync } = require('child_process');
-    
     // Check for common Convex patterns
     const patterns = [
       { pattern: "from 'convex", description: "Direct Convex imports" },
@@ -218,7 +217,7 @@ async function main() {
   console.log(`❌ Failed: ${failed}`);
   console.log(`📈 Total: ${results.length}`);
   
-  console.log('\n' + '='.repeat(50));
+  console.log(`\n${  '='.repeat(50)}`);
   
   if (provider === 'appwrite') {
     if (failed === 0) {
@@ -236,7 +235,7 @@ async function main() {
     console.log('   3. Run this test again');
   }
   
-  console.log('\n' + '='.repeat(50) + '\n');
+  console.log(`\n${  '='.repeat(50)  }\n`);
   
   // Exit with error code if any critical tests failed
   process.exit(failed > 0 ? 1 : 0);

@@ -9,9 +9,9 @@ import { KPICard } from '@/components/ui/kpi-card';
 import { CurrencyWidget } from '@/components/ui/currency-widget';
 import { PageLayout } from '@/components/layouts/PageLayout';
 import { DemoBanner } from '@/components/ui/demo-banner';
-import { useQuery } from 'convex/react';
+// useQuery removed
 import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
-import { api } from '../../../../convex/_generated/api';
+// api removed
 import {
   Users,
   Heart,
@@ -78,6 +78,26 @@ const DynamicCell = dynamic(() => import('recharts').then((mod) => mod.Cell), { 
 export default function DashboardPage() {
   const { user, isAuthenticated, isLoading } = useAuthStore();
 
+  // Mock data for Appwrite migration
+  const enhancedKPIs = {
+    pendingOperations: { total: 0, tasks: 0, applications: 0, trend: 0 },
+    trackedWorkItems: { total: 0, active: 0, trend: 0 },
+    calendarEvents: { total: 0, upcoming: 0, trend: 0 },
+    plannedMeetings: { total: 0, thisWeek: 0 },
+  };
+
+  const dashboardStats = {
+    beneficiaries: { total: 0, recent: 0 },
+    donations: { total: 0, recent: 0, totalAmount: 0 },
+    users: { active: 0 },
+  };
+
+  const currencyData = {
+    rates: [],
+    lastUpdate: new Date().toISOString(),
+  };
+
+  /*
   // Fetch enhanced KPIs and currency rates with real-time updates
   const enhancedKPIs = useQuery(api.monitoring.getEnhancedKPIs);
   const currencyData = useRealtimeQuery(
@@ -97,6 +117,7 @@ export default function DashboardPage() {
       skipInitial: true,
     }
   );
+  */
 
   // ⚠️ DEMO DATA: Aşağıdaki veriler gerçek API'lerden alınmalı (bkz: docs/TODO.md - Mock Data)
   // Sample chart data - memoized to prevent re-renders (moved before early returns)

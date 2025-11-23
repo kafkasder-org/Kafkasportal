@@ -33,8 +33,7 @@ import type {
   WorkflowNotificationCreateInput,
 } from '@/lib/api/types';
 import logger from '@/lib/logger';
-
-const { Databases } = require('node-appwrite');
+import { Databases, InputFile } from 'node-appwrite';
 
 export interface AppwriteQueryParams {
   limit?: number;
@@ -1121,7 +1120,7 @@ export const appwriteSystemSettings = {
       throw error;
     }
   },
-  resetSettings: async (category?: string, updatedBy?: string) => {
+  resetSettings: async (category?: string) => {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.systemSettings;
     try {
@@ -1298,10 +1297,16 @@ export const appwriteStorage = {
 
     try {
       const fileBuffer = file instanceof File ? await file.arrayBuffer() : file;
+      // Handle Buffer properly for node-appwrite
+      const inputFile = InputFile.fromBuffer(
+        fileBuffer instanceof Buffer ? fileBuffer : Buffer.from(fileBuffer),
+        'file' // filename is required but we might not have it here easily, 'file' as default
+      );
+      
       const response = await storage.createFile(
         bucketId,
         fileId,
-        Buffer.from(fileBuffer),
+        inputFile,
         permissions
       );
       return response;
