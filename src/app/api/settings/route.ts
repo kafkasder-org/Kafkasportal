@@ -177,7 +177,7 @@ async function deleteSettingsHandler(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 
-    await appwriteSystemSettings.resetSettings(category || undefined, user.id);
+    await appwriteSystemSettings.resetSettings(category || undefined);
 
     return NextResponse.json({
       success: true,

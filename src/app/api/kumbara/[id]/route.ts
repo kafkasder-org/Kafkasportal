@@ -54,7 +54,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     }
 
     // Fetch donation from Convex
-    const donation = await appwriteDonations.get(id as string);
+    const donation = await appwriteDonations.get(id as string) as { is_kumbara?: boolean; [key: string]: unknown } | null;
 
     if (!donation) {
       return NextResponse.json(
@@ -101,7 +101,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // First, check if donation exists and is a kumbara donation
-    const existingDonation = await appwriteDonations.get(id as string);
+    const existingDonation = await appwriteDonations.get(id as string) as { is_kumbara?: boolean; [key: string]: unknown } | null;
     if (!existingDonation) {
       return NextResponse.json(
         { success: false, error: 'Kumbara bağışı bulunamadı' },
@@ -176,7 +176,7 @@ export async function DELETE(
     }
 
     // First, check if donation exists and is a kumbara donation
-    const existingDonation = await appwriteDonations.get(id as string);
+    const existingDonation = await appwriteDonations.get(id as string) as { is_kumbara?: boolean; [key: string]: unknown } | null;
     if (!existingDonation) {
       return NextResponse.json(
         { success: false, error: 'Kumbara bağışı bulunamadı' },

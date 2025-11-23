@@ -312,25 +312,25 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{dependent.name}</span>
+                      <span className="font-medium">{String(dependent.name || '')}</span>
                       <Badge variant="secondary">
-                        {getRelationshipLabel(dependent.relationship)}
+                        {getRelationshipLabel(String(dependent.relationship || ''))}
                       </Badge>
                     </div>
                     <div className="space-y-1 text-sm text-muted-foreground">
-                      {dependent.birth_date && (
+                      {dependent.birth_date && typeof dependent.birth_date === 'string' ? (
                         <p>Doğum: {new Date(dependent.birth_date).toLocaleDateString('tr-TR')}</p>
-                      )}
-                      {dependent.tc_no && <p>TC: {dependent.tc_no}</p>}
-                      {dependent.phone && <p>Telefon: {dependent.phone}</p>}
-                      {dependent.education_level && <p>Eğitim: {dependent.education_level}</p>}
-                      {dependent.occupation && <p>Meslek: {dependent.occupation}</p>}
-                      {dependent.monthly_income && (
+                      ) : null}
+                      {dependent.tc_no ? <p>TC: {String(dependent.tc_no)}</p> : null}
+                      {dependent.phone ? <p>Telefon: {String(dependent.phone)}</p> : null}
+                      {dependent.education_level ? <p>Eğitim: {String(dependent.education_level)}</p> : null}
+                      {dependent.occupation ? <p>Meslek: {String(dependent.occupation)}</p> : null}
+                      {dependent.monthly_income && typeof dependent.monthly_income === 'number' ? (
                         <p>Gelir: {dependent.monthly_income.toLocaleString('tr-TR')} ₺</p>
-                      )}
-                      {dependent.has_disability && (
+                      ) : null}
+                      {dependent.has_disability ? (
                         <p className="text-orange-600">Engellilik durumu var</p>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                   <Button

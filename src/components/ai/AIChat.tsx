@@ -73,7 +73,7 @@ export function AIChat({ userId }: AIChatProps) {
   const streamStatus = activeChatData?.status === 'pending' ? 'streaming' : 'idle';
 
   const createChatMutation = useMutation({
-    mutationFn: async (data: { user_id: string; prompt: string; title: string }) => {
+    mutationFn: async (_data: { user_id: string; prompt: string; title: string }) => {
       // TODO: Implement AI chat creation API endpoint
       // For now, return a mock response
       return {
@@ -81,7 +81,7 @@ export function AIChat({ userId }: AIChatProps) {
         streamId: `stream_${Date.now()}`,
       };
     },
-    onSuccess: (_result) => {
+    onSuccess: (result) => {
       const newChat: Chat = {
         _id: result.chatId,
         title: prompt.slice(0, 50),

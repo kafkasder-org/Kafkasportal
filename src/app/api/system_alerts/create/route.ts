@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     };
 
     const response = await appwriteSystemAlerts.create(alertData);
-    const result = response.$id || response.id || '';
+    const result = (response as { $id?: string; id?: string }).$id || (response as { $id?: string; id?: string }).id || '';
 
     return NextResponse.json({
       success: true,

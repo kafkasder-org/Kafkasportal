@@ -276,7 +276,7 @@ async function sendBulkMessageHandler(request: NextRequest) {
       };
 
       const logResponse = await appwriteCommunicationLogs.create(logData);
-      const logId = logResponse.$id || logResponse.id || '';
+      const logId = (logResponse as { $id?: string; id?: string }).$id || (logResponse as { $id?: string; id?: string }).id || '';
 
       logger.info('Bulk operation logged successfully', {
         service: 'messages',

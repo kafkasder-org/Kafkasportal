@@ -147,8 +147,6 @@ async function getUsersHandler(request: NextRequest) {
       success: true,
       data: response?.documents ?? [],
       total: response?.total ?? 0,
-      continueCursor: response?.continueCursor ?? null,
-      isDone: response?.isDone ?? true,
     });
   } catch (error: unknown) {
     const authError = buildErrorResponse(error);

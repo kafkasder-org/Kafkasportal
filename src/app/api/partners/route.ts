@@ -108,7 +108,7 @@ async function getPartnersHandler(request: NextRequest) {
       partnership_type: filters?.partnership_type as any,
     });
 
-    const partners = response.data || [];
+    const partners = response.documents || [];
     const total = response.total || 0;
 
     return NextResponse.json({

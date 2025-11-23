@@ -120,7 +120,7 @@ export function AgentChat({ userId }: AgentChatProps) {
 
   // Mutations
   const createAndRespondMutation = useMutation({
-    mutationFn: async (data: { userId: string; agentName: string; prompt: string }) => {
+    mutationFn: async (_data: { userId: string; agentName: string; prompt: string }) => {
       // TODO: Implement create thread and respond API endpoint
       return {
         threadId: `thread_${Date.now()}`,
@@ -142,7 +142,7 @@ export function AgentChat({ userId }: AgentChatProps) {
   });
 
   const generateResponseMutation = useMutation({
-    mutationFn: async (data: { threadId: string; prompt: string }) => {
+    mutationFn: async (_data: { threadId: string; prompt: string }) => {
       // TODO: Implement generate response API endpoint
       return {
         messageId: `msg_${Date.now()}`,
@@ -333,11 +333,11 @@ export function AgentChat({ userId }: AgentChatProps) {
                             ) : (
                               <Bot className="h-3 w-3" />
                             )}
-                            {String(msg.agent_name || msg.role || 'unknown')}
-                            {msg.tool_calls && <Wrench className="h-3 w-3" />}
+                            <span>{String(msg.agent_name || msg.role || 'unknown')}</span>
+                            {msg.tool_calls !== undefined && msg.tool_calls !== null && <Wrench className="h-3 w-3" />}
                           </div>
                           <div className="whitespace-pre-wrap">{String(msg.content || '')}</div>
-                          {msg.tool_calls && (
+                          {msg.tool_calls !== undefined && msg.tool_calls !== null && (
                             <div className="mt-2 rounded bg-background/50 p-2 text-xs">
                               <div className="font-medium">Tool Calls:</div>
                               <pre className="mt-1 overflow-auto">

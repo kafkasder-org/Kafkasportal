@@ -97,7 +97,7 @@ export async function GET(request: Request) {
       connectivityError = _error instanceof Error ? _error.message : 'Bilinmeyen hata';
       logger.error('Appwrite connectivity test failed', _error, {
         endpoint: '/api/health',
-        provider,
+        provider: 'appwrite',
         detailed: true,
       });
 

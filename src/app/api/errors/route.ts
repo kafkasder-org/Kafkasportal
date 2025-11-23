@@ -89,7 +89,7 @@ async function postErrorHandler(request: NextRequest) {
       occurrence_count: 1,
       first_seen: new Date().toISOString(),
       last_seen: new Date().toISOString(),
-    });
+    }) as { $id?: string; id?: string };
     const errorId = result.$id || result.id || '';
 
     // Send notification for critical/high severity errors
@@ -234,7 +234,7 @@ async function getErrorsHandler(request: NextRequest) {
     if (skip) params.skip = parseInt(skip, 10);
 
     const response = await appwriteErrors.list({ filters: params });
-    const result = response.data || [];
+    const result = response.documents || [];
 
     return NextResponse.json({
       success: true,
