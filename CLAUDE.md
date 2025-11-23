@@ -237,11 +237,11 @@ npm run typecheck
 
 ## MCP Sunuculari
 
-Bu proje, AI asistanlarin (Claude, GitHub Copilot vb.) harici sistemlerle etkilesilim kurmasini saglayan MCP (Model Context Protocol) sunucularini destekler.
+Bu proje, AI asistanlarin (Claude, GitHub Copilot vb.) harici sistemlerle etkileşim kurmasini saglayan MCP (Model Context Protocol) sunucularini destekler.
 
 ### Kurulum
 
-MCP sunucularini yapilandirmak icin:
+MCP sunucularini yapılandırmak için:
 
 ```bash
 # Cursor IDE icin
@@ -257,7 +257,7 @@ cp .cursor/mcp_settings.example.json .cursor/mcp_settings.json
 - **Appwrite**: Kullanici yonetimi ve authentication
 - **GitHub**: Repository, issue/PR yonetimi
 - **Browser Use**: Web tarayici otomasyonu
-- **Chrome DevTools**: Chrome gelistirici araclari
+- **Chrome DevTools**: Chrome geliştirici araçları
 
 ### Ornek Kullanim
 
@@ -267,7 +267,7 @@ cp .cursor/mcp_settings.example.json .cursor/mcp_settings.json
 "Login sayfasini test et ve screenshot al"
 ```
 
-Detayli bilgi icin: [docs/mcp-setup.md](./docs/mcp-setup.md)
+Detaylı bilgi için: [docs/mcp-setup.md](./docs/mcp-setup.md)
 
 ## Detayli Dokumantasyon
 
