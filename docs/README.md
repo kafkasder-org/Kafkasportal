@@ -7,6 +7,7 @@ Bu klasor projenin tum teknik dokumantasyonunu icerir.
 | Dosya                                          | Aciklama                                          |
 | ---------------------------------------------- | ------------------------------------------------- |
 | [setup.md](./setup.md)                         | Yerel ortam kurulum rehberi                       |
+| [mcp-quick-start.md](./mcp-quick-start.md)     | MCP sunuculari hizli baslangic (5 dk) (YENİ)      |
 | [mcp-setup.md](./mcp-setup.md)                 | MCP sunuculari kurulum ve kullanim rehberi (YENİ) |
 | [claude-desktop-mcp-setup.md](./claude-desktop-mcp-setup.md) | Claude Desktop MCP yapılandırması (YENİ) |
 | [appwrite-mcp-guide.md](./appwrite-mcp-guide.md) | Appwrite MCP kullanim kilavuzu                 |
