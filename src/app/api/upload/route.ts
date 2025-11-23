@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { appwriteStorage } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import {
   requireAuthenticatedUser,

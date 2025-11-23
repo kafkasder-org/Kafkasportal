@@ -6,7 +6,7 @@
  */
 
 // Type for document IDs (string-based with Appwrite)
-type Id<T extends string> = string;
+type Id<_T extends string> = string;
 
 // ============================================================================
 // Blood Type

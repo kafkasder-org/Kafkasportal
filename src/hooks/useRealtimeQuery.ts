@@ -8,9 +8,12 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 // Stub types for backward compatibility
-type FunctionReference<T extends string> = any;
-type FunctionArgs<T> = any;
-type FunctionReturnType<T> = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FunctionReference<_T extends string> = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FunctionArgs<_T> = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FunctionReturnType<_T> = any;
 
 interface RealtimeQueryOptions {
   /** Show a toast notification when data changes */
