@@ -4,12 +4,16 @@ Bu klasor projenin tum teknik dokumantasyonunu icerir.
 
 ## Icerik
 
-| Dosya                                | Aciklama                                       |
-| ------------------------------------ | ---------------------------------------------- |
-| [setup.md](./setup.md)               | Yerel ortam kurulum rehberi (YENİ!)            |
-| [deployment.md](./deployment.md)     | Vercel ve Convex deployment rehberi            |
-| [testing.md](./testing.md)           | Test altyapisi ve yazim rehberi                |
-| [api-patterns.md](./api-patterns.md) | API route standartlari ve middleware kullanimi |
+| Dosya                                          | Aciklama                                          |
+| ---------------------------------------------- | ------------------------------------------------- |
+| [setup.md](./setup.md)                         | Yerel ortam kurulum rehberi                       |
+| [mcp-setup.md](./mcp-setup.md)                 | MCP sunuculari kurulum ve kullanim rehberi (YENİ) |
+| [claude-desktop-mcp-setup.md](./claude-desktop-mcp-setup.md) | Claude Desktop MCP yapılandırması (YENİ) |
+| [appwrite-mcp-guide.md](./appwrite-mcp-guide.md) | Appwrite MCP kullanim kilavuzu                 |
+| [github-mcp-server.md](./github-mcp-server.md) | GitHub MCP sunucusu kullanim kilavuzu             |
+| [deployment.md](./deployment.md)               | Vercel ve Convex deployment rehberi               |
+| [testing.md](./testing.md)                     | Test altyapisi ve yazim rehberi                   |
+| [api-patterns.md](./api-patterns.md)           | API route standartlari ve middleware kullanimi    |
 
 ## Hizli Erisim
 
