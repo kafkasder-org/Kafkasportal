@@ -18,7 +18,7 @@ const CACHE_FIRST_PATTERNS = [
   /\.(?:woff|woff2|ttf|otf)$/,
 ];
 
-const NETWORK_FIRST_PATTERNS = [/\/api\//, /\.convex\.cloud/];
+const NETWORK_FIRST_PATTERNS = [/\/api\//, /\.appwrite\.io/];
 
 const STALE_WHILE_REVALIDATE_PATTERNS = [/\/_next\/data\//, /\.json$/];
 

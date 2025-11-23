@@ -5,7 +5,8 @@
  * including emergency contacts, passport information, blood type, and communication preferences.
  */
 
-import { Id } from '@/convex/_generated/dataModel';
+// Type for document IDs (string-based with Appwrite)
+type Id<T extends string> = string;
 
 // ============================================================================
 // Blood Type

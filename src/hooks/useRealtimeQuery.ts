@@ -1,12 +1,16 @@
 /**
  * Real-time Query Hooks
- * Wraps Convex useQuery with real-time notifications and optimistic updates
+ * NOTE: Convex has been removed. These hooks are stubs for backward compatibility.
+ * TODO: Implement Appwrite Realtime subscriptions
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { useQuery as useConvexQuery } from 'convex/react';
 import { toast } from 'sonner';
-import type { FunctionReference, FunctionArgs, FunctionReturnType } from 'convex/server';
+
+// Stub types for backward compatibility
+type FunctionReference<T extends string> = any;
+type FunctionArgs<T> = any;
+type FunctionReturnType<T> = any;
 
 interface RealtimeQueryOptions {
   /** Show a toast notification when data changes */
@@ -24,106 +28,37 @@ interface RealtimeQueryOptions {
  * Wraps Convex's useQuery and shows toast when data changes
  */
 export function useRealtimeQuery<Query extends FunctionReference<'query'>>(
-  query: Query,
-  args: FunctionArgs<Query>,
-  options: RealtimeQueryOptions = {}
+  _query: Query,
+  _args: FunctionArgs<Query>,
+  _options: RealtimeQueryOptions = {}
 ): FunctionReturnType<Query> | undefined {
-  const {
-    notifyOnChange = false,
-    changeMessage = 'Veriler güncellendi',
-    skipInitial = true,
-    onChange,
-  } = options;
-
-  const data = useConvexQuery(query, args);
-  const previousDataRef = useRef<FunctionReturnType<Query> | undefined>(undefined);
-  const isInitialRenderRef = useRef(true);
-
+  // Stub implementation - Convex removed
+  // TODO: Implement with Appwrite Realtime
   useEffect(() => {
-    // Skip notification on initial render if requested
-    if (isInitialRenderRef.current) {
-      isInitialRenderRef.current = false;
-      if (skipInitial) {
-        previousDataRef.current = data;
-        return;
-      }
-    }
+    console.warn('useRealtimeQuery is deprecated. Please migrate to Appwrite Realtime API.');
+  }, []);
 
-    // Check if data actually changed
-    if (data !== undefined && previousDataRef.current !== undefined) {
-      const hasChanged = JSON.stringify(data) !== JSON.stringify(previousDataRef.current);
-
-      if (hasChanged) {
-        // Call custom onChange handler
-        onChange?.(data, previousDataRef.current);
-
-        // Show notification if enabled
-        if (notifyOnChange) {
-          toast.info(changeMessage, {
-            duration: 3000,
-            icon: '🔄',
-          });
-        }
-      }
-    }
-
-    previousDataRef.current = data;
-  }, [data, notifyOnChange, changeMessage, onChange, skipInitial]);
-
-  return data;
+  return undefined;
 }
 
 /**
  * Hook for monitoring real-time list updates with detailed notifications
  */
 export function useRealtimeList<Query extends FunctionReference<'query'>>(
-  query: Query,
-  args: FunctionArgs<Query>,
-  options: {
+  _query: Query,
+  _args: FunctionArgs<Query>,
+  _options: {
     itemName?: string;
     skipInitial?: boolean;
   } = {}
 ): FunctionReturnType<Query> | undefined {
-  const { itemName = 'öğe', skipInitial = true } = options;
-
-  const data = useConvexQuery(query, args);
-  const previousCountRef = useRef<number | undefined>(undefined);
-  const isInitialRenderRef = useRef(true);
-
+  // Stub implementation - Convex removed
+  // TODO: Implement with Appwrite Realtime
   useEffect(() => {
-    if (isInitialRenderRef.current) {
-      isInitialRenderRef.current = false;
-      if (skipInitial && Array.isArray(data)) {
-        previousCountRef.current = data.length;
-        return;
-      }
-    }
+    console.warn('useRealtimeList is deprecated. Please migrate to Appwrite Realtime API.');
+  }, []);
 
-    if (Array.isArray(data) && previousCountRef.current !== undefined) {
-      const currentCount = data.length;
-      const previousCount = previousCountRef.current;
-
-      if (currentCount > previousCount) {
-        const newCount = currentCount - previousCount;
-        toast.success(`${newCount} yeni ${itemName} eklendi`, {
-          icon: '✨',
-          duration: 4000,
-        });
-      } else if (currentCount < previousCount) {
-        const removedCount = previousCount - currentCount;
-        toast.info(`${removedCount} ${itemName} kaldırıldı`, {
-          icon: '🗑️',
-          duration: 3000,
-        });
-      }
-
-      previousCountRef.current = currentCount;
-    } else if (Array.isArray(data)) {
-      previousCountRef.current = data.length;
-    }
-  }, [data, itemName, skipInitial]);
-
-  return data;
+  return undefined;
 }
 
 /**
@@ -190,10 +125,10 @@ export function useEditConflictDetection<T extends { _id: string; _updatedAt?: n
 
 /**
  * Hook for showing presence indicators (who is online/editing)
- * This is a placeholder for future implementation with Convex presence
+ * This is a placeholder for future implementation with Appwrite Realtime
  */
 export function usePresence(_resourceId: string, _userId?: string) {
-  // TODO: Implement with Convex presence API
+  // TODO: Implement with Appwrite Realtime API
   // For now, return empty state
   return {
     activeUsers: [] as Array<{ id: string; name: string; cursor?: { x: number; y: number } }>,
