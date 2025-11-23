@@ -89,15 +89,17 @@ npm run vercel:prod      # Vercel deploy
 
 ## Dokumantasyon
 
-| Dosya                                          | Icerik                  |
-| ---------------------------------------------- | ----------------------- |
-| [docs/](./docs/)                               | Teknik dokumantasyon    |
-| [docs/setup.md](./docs/setup.md)               | Kurulum rehberi         |
-| [docs/deployment.md](./docs/deployment.md)     | Deployment rehberi      |
-| [docs/testing.md](./docs/testing.md)           | Test rehberi            |
-| [docs/api-patterns.md](./docs/api-patterns.md) | API standartlari        |
-| [CONTRIBUTING.md](./CONTRIBUTING.md)           | Katki rehberi           |
-| [CLAUDE.md](./CLAUDE.md)                       | AI asistanlari için ref |
+| Dosya                                                  | Icerik                       |
+| ------------------------------------------------------ | ---------------------------- |
+| [docs/](./docs/)                                       | Teknik dokumantasyon         |
+| [docs/setup.md](./docs/setup.md)                       | Kurulum rehberi              |
+| [docs/mcp-quick-start.md](./docs/mcp-quick-start.md)   | MCP hizli baslangic (5 dk)   |
+| [docs/mcp-setup.md](./docs/mcp-setup.md)               | MCP sunuculari kurulumu      |
+| [docs/deployment.md](./docs/deployment.md)             | Deployment rehberi           |
+| [docs/testing.md](./docs/testing.md)                   | Test rehberi                 |
+| [docs/api-patterns.md](./docs/api-patterns.md)         | API standartlari             |
+| [CONTRIBUTING.md](./CONTRIBUTING.md)                   | Katki rehberi                |
+| [CLAUDE.md](./CLAUDE.md)                               | AI asistanlari için referans |
 
 ## Teknoloji Yigini
 

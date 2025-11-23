@@ -235,8 +235,43 @@ npm run build
 npm run typecheck
 ```
 
+## MCP Sunuculari
+
+Bu proje, AI asistanlarin (Claude, GitHub Copilot vb.) harici sistemlerle etkileşim kurmasini saglayan MCP (Model Context Protocol) sunucularini destekler.
+
+### Kurulum
+
+MCP sunucularini yapılandırmak için:
+
+```bash
+# Cursor IDE icin
+cp .cursor/mcp_settings.example.json .cursor/mcp_settings.json
+# Sonra credential'lari duzenleyin
+
+# Claude Desktop icin
+# docs/claude-desktop-mcp-setup.md rehberini takip edin
+```
+
+### Kullanilabilir MCP Sunuculari
+
+- **Appwrite**: Kullanici yonetimi ve authentication
+- **GitHub**: Repository, issue/PR yonetimi
+- **Browser Use**: Web tarayici otomasyonu
+- **Chrome DevTools**: Chrome geliştirici araçları
+
+### Ornek Kullanim
+
+```
+"Appwrite'da yeni kullanici olustur"
+"Bu repository'deki acik issue'lari goster"
+"Login sayfasini test et ve screenshot al"
+```
+
+Detaylı bilgi için: [docs/mcp-setup.md](./docs/mcp-setup.md)
+
 ## Detayli Dokumantasyon
 
+- [docs/mcp-setup.md](./docs/mcp-setup.md) - MCP kurulum rehberi
 - [docs/deployment.md](./docs/deployment.md) - Deployment rehberi
 - [docs/testing.md](./docs/testing.md) - Test rehberi
 - [docs/api-patterns.md](./docs/api-patterns.md) - API standartlari

@@ -143,6 +143,7 @@ KEYS-AND-CREDENTIALS.md
 # IDE and tool-specific directories
 .claude/
 .cursor/
+!.cursor/mcp_settings.example.json
 .serena/
 weweb-custom/
 
