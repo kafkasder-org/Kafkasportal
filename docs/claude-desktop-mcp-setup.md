@@ -74,9 +74,10 @@ Aşağıdaki yapılandırmayı dosyaya ekleyin:
       }
     },
     "github": {
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "your-github-token-here"
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token-here"
       }
     }
   }

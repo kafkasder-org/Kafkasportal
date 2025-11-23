@@ -63,9 +63,10 @@ Aşağıdaki yapılandırmayı ilgili konuma ekleyin:
       "args": []
     },
     "github": {
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "your-github-token"
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token"
       }
     }
   }
@@ -158,7 +159,14 @@ Aşağıdaki yapılandırmayı ilgili konuma ekleyin:
    - GitHub Settings > Developer settings > Personal access tokens
    - Gerekli izinler: `repo`, `read:org`, `workflow`
 
-2. Token'ı yapılandırmaya ekleyin
+2. Environment variable olarak ayarlayın:
+   ```bash
+   GITHUB_PERSONAL_ACCESS_TOKEN=your-token-here
+   ```
+
+3. MCP yapılandırmasına ekleyin
+
+**Gereksinimler**: Node.js >= 18 (npx için)
 
 **Güvenlik**: Token'ı asla commit etmeyin
 
