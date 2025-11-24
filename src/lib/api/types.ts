@@ -106,6 +106,27 @@ export interface TaskUpdateInput extends Partial<TaskCreateInput> {
 }
 
 // ========================================
+// TODO TYPES
+// ========================================
+
+export interface TodoCreateInput {
+  title: string;
+  description?: string;
+  completed?: boolean;
+  completed_at?: string;
+  created_by: Id<'users'>;
+  due_date?: string;
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  tags?: string[];
+  is_read: boolean;
+  [key: string]: unknown;
+}
+
+export interface TodoUpdateInput extends Partial<TodoCreateInput> {
+  auth?: { userId: string; role: string };
+}
+
+// ========================================
 // MEETING TYPES
 // ========================================
 
@@ -369,6 +390,7 @@ export const ApiTypes = {
   Beneficiary: {} as BeneficiaryCreateInput,
   Donation: {} as DonationCreateInput,
   Task: {} as TaskCreateInput,
+  Todo: {} as TodoCreateInput,
   Meeting: {} as MeetingCreateInput,
   MeetingDecision: {} as MeetingDecisionCreateInput,
   MeetingActionItem: {} as MeetingActionItemCreateInput,
