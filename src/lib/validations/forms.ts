@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { requiredPhoneSchema, phoneSchema } from './shared-validators';
+import { requiredPhoneSchema } from './shared-validators';
 
 /**
  * Donation Form Schema

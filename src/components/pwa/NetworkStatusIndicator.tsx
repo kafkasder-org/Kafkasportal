@@ -22,7 +22,7 @@ export function NetworkStatusIndicator() {
       try {
         const stats = await getOfflineStats();
         setPendingCount(stats.pendingCount);
-      } catch (error) {
+      } catch (_error) {
         // Ignore errors
       }
     };

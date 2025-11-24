@@ -13,7 +13,7 @@ import { OfflineSyncPanel } from '@/components/pwa/OfflineSyncPanel';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
 export default function OfflineSettingsPage() {
-  const { isOnline } = useOnlineStatus();
+  const { isOnline: _isOnline } = useOnlineStatus();
   const [isInstalled, setIsInstalled] = useState(false);
   const [swRegistered, setSwRegistered] = useState(false);
   const [backgroundSyncSupported, setBackgroundSyncSupported] = useState(false);
@@ -22,20 +22,29 @@ export default function OfflineSettingsPage() {
     // Check if app is installed
     if (typeof window !== 'undefined') {
       // Check if running as standalone (installed PWA)
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-      setIsInstalled(isStandalone || (window.navigator as any).standalone === true);
+      const checkInstallation = () => {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        setIsInstalled(isStandalone || (window.navigator as any).standalone === true);
+      };
 
       // Check service worker registration
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistration().then((reg) => {
+      const checkServiceWorker = async () => {
+        if ('serviceWorker' in navigator) {
+          const reg = await navigator.serviceWorker.getRegistration();
           setSwRegistered(!!reg);
-        });
-      }
+        }
+      };
 
       // Check background sync support
-      if ('serviceWorker' in navigator && 'sync' in ServiceWorkerRegistration.prototype) {
-        setBackgroundSyncSupported(true);
-      }
+      const checkBackgroundSync = () => {
+        if ('serviceWorker' in navigator && 'sync' in ServiceWorkerRegistration.prototype) {
+          setBackgroundSyncSupported(true);
+        }
+      };
+
+      checkInstallation();
+      checkServiceWorker();
+      checkBackgroundSync();
     }
   }, []);
 
@@ -98,7 +107,7 @@ export default function OfflineSettingsPage() {
           {!isInstalled && (
             <div className="mt-4 p-4 rounded-lg bg-muted">
               <p className="text-sm text-muted-foreground">
-                Uygulamayı ana ekranınıza eklemek için tarayıcı menüsünden "Ana ekrana ekle"
+                Uygulamayı ana ekranınıza eklemek için tarayıcı menüsünden &quot;Ana ekrana ekle&quot;
                 seçeneğini kullanın.
               </p>
             </div>

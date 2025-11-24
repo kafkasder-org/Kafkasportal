@@ -56,7 +56,7 @@ interface CollectionConfig {
 }
 
 // Parse collections from appwrite-setup.ts
-function parseCollectionsFromSetup(): CollectionConfig[] {
+function _parseCollectionsFromSetup(): CollectionConfig[] {
   try {
     const setupFile = readFileSync(join(__dirname, 'appwrite-setup.ts'), 'utf-8');
     // Extract collections array using regex (simplified approach)
@@ -199,7 +199,7 @@ async function checkCollection(
 
   try {
     // Get collection
-    const collection = await databases.getCollection(databaseId, collectionId);
+    const _collection = await databases.getCollection(databaseId, collectionId);
     
     // Get attributes
     const attributes = await databases.listAttributes(databaseId, collectionId);

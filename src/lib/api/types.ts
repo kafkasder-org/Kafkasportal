@@ -5,8 +5,8 @@
  * Provides type-safe API contracts for all resources
  */
 
-// Id type removed
-type Id<T> = string;
+// Id type
+type Id<_T> = string;
 
 // ========================================
 // BENEFICIARY TYPES

@@ -64,7 +64,7 @@ const TaskCard = memo(({ task, onTaskClick }: TaskCardProps) => {
       e.dataTransfer.setData('text/plain', task._id || task.$id || '');
       e.dataTransfer.effectAllowed = 'move';
     },
-    [task._id]
+    [task._id, task.$id]
   );
 
   const handleDragEnd = useCallback(() => {

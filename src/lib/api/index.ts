@@ -6,7 +6,7 @@
  */
 
 import { apiClient, convexApiClient } from './api-client';
-import { appwriteSystemSettings, appwriteParameters } from '@/lib/appwrite/api';
+import { appwriteParameters } from '@/lib/appwrite/api';
 import type {
   AidApplicationDocument,
   CreateDocumentData,

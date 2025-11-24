@@ -62,7 +62,7 @@ test.describe('Login Page - Browser MCP Generated Tests', () => {
 
   test('should validate required email field', async ({ page }) => {
     const emailField = page.locator('input[name="email"], input[type="email"]').first();
-    const passwordField = page.locator('input[name="password"], input[type="password"]').first();
+    const _passwordField = page.locator('input[name="password"], input[type="password"]').first();
     const loginButton = page.locator('button:has-text("Giriş Yap")').first();
 
     // Try to submit empty form
@@ -185,7 +185,7 @@ test.describe('Login Page - Browser MCP Generated Tests', () => {
   test('should handle keyboard navigation', async ({ page }) => {
     const emailField = page.locator('input[name="email"], input[type="email"]').first();
     const passwordField = page.locator('input[name="password"], input[type="password"]').first();
-    const loginButton = page.locator('button:has-text("Giriş Yap")').first();
+    const _loginButton = page.locator('button:has-text("Giriş Yap")').first();
 
     // Tab through form fields
     await emailField.focus();
@@ -198,7 +198,7 @@ test.describe('Login Page - Browser MCP Generated Tests', () => {
     // Should focus on next element (checkbox or button)
   });
 
-  test('should redirect authenticated users from root to dashboard', async ({ page, context }) => {
+  test('should redirect authenticated users from root to dashboard', async ({ page, context: _context }) => {
     // This test assumes you have a valid session
     // In a real scenario, you'd set up authentication cookies first
     
@@ -213,7 +213,7 @@ test.describe('Login Page - Browser MCP Generated Tests', () => {
 
   test('should display notification system', async ({ page }) => {
     // Wait for notification area to be present
-    const notificationArea = page.locator('[role="section"][name*="Notification"]').first();
+    const _notificationArea = page.locator('[role="section"][name*="Notification"]').first();
     
     // Notification area should exist (even if empty)
     // This confirms the notification system is initialized
@@ -301,8 +301,8 @@ test.describe('Social Login Options', () => {
     await googleButton.click();
     
     // May open popup or redirect - handle accordingly
-    const newPage = await navigationPromise;
-    // If popup opened, it would be in newPage
+    const _newPage = await navigationPromise;
+    // If popup opened, it would be in _newPage
   });
 });
 

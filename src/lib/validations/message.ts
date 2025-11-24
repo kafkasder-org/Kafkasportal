@@ -1,12 +1,9 @@
 import { z } from 'zod';
 import { MessageDocument } from '@/types/database';
-import { phoneSchema } from './shared-validators';
+import { phoneSchema, requiredEmailSchema } from './shared-validators';
 
-// Helper for email validation
-export const emailSchema = z
-  .string()
-  .email('Geçerli bir e-posta adresi girin')
-  .max(100, 'E-posta adresi en fazla 100 karakter olmalıdır');
+// Helper for email validation (use required version from shared-validators)
+export const emailSchema = requiredEmailSchema;
 
 // Helper for recipient validation based on message type
 export const recipientSchema = z

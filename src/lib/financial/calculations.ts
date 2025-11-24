@@ -115,17 +115,9 @@ export function matchesDateFilter(
 }
 
 /**
- * Format currency amount
+ * Format currency amount (re-export from utils/format for backward compatibility)
  */
-export function formatCurrency(amount: number, currency: string = 'TRY'): string {
-  const formatted = amount.toLocaleString('tr-TR');
-
-  if (currency === 'TRY') {
-    return `${formatted} ₺`;
-  }
-
-  return `${formatted} ${currency}`;
-}
+export { formatCurrency } from '@/lib/utils/format';
 
 /**
  * Format transaction date

@@ -5,6 +5,7 @@
  * Overview and quick access to all system settings
  */
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -133,7 +134,7 @@ export default function SettingsPage() {
           pendingCount: stats.pendingCount,
           failedCount: stats.failedCount,
         });
-      } catch (error) {
+      } catch (_error) {
         // Ignore errors if offline sync is not available
       }
     };

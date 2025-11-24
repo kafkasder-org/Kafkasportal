@@ -68,7 +68,7 @@ function writeEnvFile(env: Map<string, string>): void {
     }
   }
   
-  writeFileSync(ENV_FILE, lines.join('\n') + '\n', 'utf-8');
+  writeFileSync(ENV_FILE, `${lines.join('\n')}\n`, 'utf-8');
 }
 
 function main() {

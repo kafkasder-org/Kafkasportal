@@ -31,7 +31,7 @@ import {
   Disease,
   Label,
 } from '@/types/beneficiary';
-import { phoneSchema, requiredPhoneSchema } from './shared-validators';
+import { phoneSchema } from './shared-validators';
 
 // === HELPER VALIDATORS ===
 

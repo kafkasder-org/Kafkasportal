@@ -99,7 +99,8 @@ export function useAppwriteRealtime(
     });
 
     unsubscribeRef.current = unsubscribe;
-    setIsConnected(true);
+    // Set connected state asynchronously to avoid cascading renders
+    Promise.resolve().then(() => setIsConnected(true));
     isInitialMount.current = false;
 
     return () => {
@@ -157,7 +158,8 @@ export function useAppwriteRealtimeMultiple(
     });
 
     unsubscribeRefs.current = newUnsubscribes;
-    setConnections(newConnections);
+    // Set connections state asynchronously to avoid cascading renders
+    Promise.resolve().then(() => setConnections(newConnections));
 
     return () => {
       Object.values(unsubscribeRefs.current).forEach((unsubscribe) => unsubscribe());
