@@ -288,13 +288,9 @@ export async function exportToCSV<T = Record<string, unknown>>(
 
 /**
  * Format currency for Turkish Lira
+ * @deprecated Use formatCurrency from @/lib/utils/format instead
  */
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('tr-TR', {
-    style: 'currency',
-    currency: 'TRY',
-  }).format(value);
-}
+export { formatCurrency } from '@/lib/utils/format';
 
 /**
  * Format date for Turkish locale
