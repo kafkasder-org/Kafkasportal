@@ -90,7 +90,8 @@ async function postErrorHandler(request: NextRequest) {
       first_seen: new Date().toISOString(),
       last_seen: new Date().toISOString(),
     });
-    const errorId = result.$id || result.id || '';
+    const typedResult = result as { $id?: string; id?: string };
+    const errorId = typedResult.$id || typedResult.id || '';
 
     // Send notification for critical/high severity errors
     if (data.severity === 'critical' || data.severity === 'high') {
@@ -234,7 +235,7 @@ async function getErrorsHandler(request: NextRequest) {
     if (skip) params.skip = parseInt(skip, 10);
 
     const response = await appwriteErrors.list({ filters: params });
-    const result = response.data || [];
+    const result = response.documents || [];
 
     return NextResponse.json({
       success: true,

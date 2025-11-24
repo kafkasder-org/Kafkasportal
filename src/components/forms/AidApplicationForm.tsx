@@ -174,7 +174,7 @@ export function AidApplicationForm({ onSuccess, onCancel }: AidApplicationFormPr
                   <SelectContent>
                     <SelectItem value="none">Seçiniz</SelectItem>
                     {beneficiaries.map((ben) => (
-                      <SelectItem key={ben._id} value={ben._id}>
+                      <SelectItem key={ben._id || ben.$id || ''} value={ben._id || ben.$id || ''}>
                         {ben.name} - {ben.city}
                       </SelectItem>
                     ))}

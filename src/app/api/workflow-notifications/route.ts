@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       reference: body.reference as
         | { type: 'meeting_action_item' | 'meeting' | 'meeting_decision'; id: string }
         | undefined,
-      metadata: body.metadata,
+      metadata: body.metadata as Record<string, unknown> | undefined,
       created_at: body.created_at as string | undefined,
     });
 

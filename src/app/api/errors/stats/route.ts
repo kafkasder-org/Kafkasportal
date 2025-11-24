@@ -51,8 +51,6 @@ async function getErrorStatsHandler(request: NextRequest) {
       },
     });
 
-    const errors = allErrors.data || [];
-    
     // Type guard for error objects
     interface ErrorRecord {
       severity?: string;
@@ -60,27 +58,29 @@ async function getErrorStatsHandler(request: NextRequest) {
       status?: string;
       occurrence_count?: number;
     }
-    
+
+    const errors = (allErrors.documents || []) as ErrorRecord[];
+
     // Calculate statistics
     const stats = {
       total: errors.length,
       by_severity: {
-        critical: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.CRITICAL).length,
-        high: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.HIGH).length,
-        medium: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.MEDIUM).length,
-        low: errors.filter((e: ErrorRecord) => e.severity === ErrorSeverity.LOW).length,
+        critical: errors.filter((e) => e.severity === ErrorSeverity.CRITICAL).length,
+        high: errors.filter((e) => e.severity === ErrorSeverity.HIGH).length,
+        medium: errors.filter((e) => e.severity === ErrorSeverity.MEDIUM).length,
+        low: errors.filter((e) => e.severity === ErrorSeverity.LOW).length,
       },
-      by_category: errors.reduce((acc: Record<string, number>, e: ErrorRecord) => {
+      by_category: errors.reduce((acc: Record<string, number>, e) => {
         const category = e.category || 'unknown';
         acc[category] = (acc[category] || 0) + 1;
         return acc;
       }, {}),
-      by_status: errors.reduce((acc: Record<string, number>, e: ErrorRecord) => {
+      by_status: errors.reduce((acc: Record<string, number>, e) => {
         const status = e.status || 'unknown';
         acc[status] = (acc[status] || 0) + 1;
         return acc;
       }, {}),
-      total_occurrences: errors.reduce((sum: number, e: ErrorRecord) => sum + (e.occurrence_count || 1), 0),
+      total_occurrences: errors.reduce((sum: number, e) => sum + (e.occurrence_count || 1), 0),
     };
 
     return NextResponse.json({

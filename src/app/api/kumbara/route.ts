@@ -234,7 +234,7 @@ export async function GET(request: NextRequest) {
     // Date range filtering
     if (startDate || endDate) {
       filteredData = filteredData.filter((d) => {
-        const collectionDate = d.collection_date;
+        const collectionDate = (d as unknown as DonationDocument).collection_date;
         if (!collectionDate) return false;
         const date = new Date(collectionDate);
         if (startDate && date < new Date(startDate)) return false;
@@ -290,7 +290,7 @@ export async function GET_STATS(request: NextRequest) {
       limit: 10000, // Get all records for stats
     });
 
-    const donations = result.documents;
+    const donations = result.documents as Array<Record<string, unknown>>;
 
     if (type === 'monthly') {
       // Calculate monthly stats for charts
@@ -484,7 +484,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create donation in Convex
-    const donationId = await appwriteDonations.create((validation.normalizedData || {}) as any);
+    const donationId = (await appwriteDonations.create((validation.normalizedData || {}) as any)) as string;
 
     // Generate QR code for the kumbara
     const qrCode = await generateKumbaraQR({

@@ -231,7 +231,7 @@ export function BankAccountsManager({ beneficiaryId }: BankAccountsManagerProps)
                     <div className="flex items-center gap-2 mb-2">
                       <CreditCard className="h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">{account.bank_name}</span>
-                      <Badge variant="secondary">{getStatusLabel(account.status)}</Badge>
+                      <Badge variant="secondary">{getStatusLabel(account.status || 'active')}</Badge>
                     </div>
                     <div className="space-y-1 text-sm">
                       <p className="text-muted-foreground">

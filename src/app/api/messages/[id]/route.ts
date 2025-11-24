@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { appwriteMessages } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { extractParams } from '@/lib/api/route-helpers';
+import type { MessageDocument, UserDocument } from '@/types/database';
 
 function validateMessageUpdate(data: Record<string, unknown>): {
   isValid: boolean;
@@ -140,7 +141,7 @@ async function sendMessageHandler(
   const { id } = await extractParams(params);
   try {
     // Get message details
-    const message = await appwriteMessages.get(id);
+    const message = (await appwriteMessages.get(id)) as MessageDocument | null;
 
     if (!message) {
       return NextResponse.json({ success: false, error: 'Mesaj bulunamadı' }, { status: 404 });
@@ -149,9 +150,9 @@ async function sendMessageHandler(
     // Get recipient user details (phone/email)
     const { appwriteUsers } = await import('@/lib/appwrite/api');
 
-    const recipients = await Promise.all(
+    const recipients = (await Promise.all(
       message.recipients.map((userId) => appwriteUsers.get(userId))
-    );
+    )) as (UserDocument | null)[];
 
     let sendResult: { success: boolean; error?: string } = { success: false };
 
