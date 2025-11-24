@@ -60,6 +60,7 @@ export const appwriteConfig = {
     meetingDecisions: 'meeting_decisions',
     meetingActionItems: 'meeting_action_items',
     tasks: 'tasks',
+    todos: 'todos',
 
     // Partners
     partners: 'partners',

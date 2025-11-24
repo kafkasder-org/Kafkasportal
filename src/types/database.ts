@@ -250,6 +250,19 @@ export interface TaskDocument extends Document {
   is_read: boolean;
 }
 
+// Todos Collection (Yapılacaklar)
+export interface TodoDocument extends Document {
+  title: string;
+  description?: string;
+  completed: boolean;
+  completed_at?: string;
+  created_by: string;
+  due_date?: string;
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  tags?: string[];
+  is_read: boolean;
+}
+
 // Meetings Collection (Portal Plus - Toplantılar)
 export interface MeetingDocument extends Document {
   title: string;

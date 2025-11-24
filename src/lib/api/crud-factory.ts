@@ -16,6 +16,7 @@ const CACHE_TTL = {
   beneficiaries: 5 * 60 * 1000, // 5 minutes
   donations: 3 * 60 * 1000, // 3 minutes
   tasks: 2 * 60 * 1000, // 2 minutes
+  todos: 2 * 60 * 1000, // 2 minutes
   users: 4 * 60 * 1000, // 4 minutes
   meetings: 3 * 60 * 1000, // 3 minutes
   messages: 1 * 60 * 1000, // 1 minute (real-time)
@@ -146,6 +147,7 @@ export function createCrudOperations<T>(
 export const beneficiaries = createCrudOperations('beneficiaries', 'beneficiaries');
 export const donations = createCrudOperations('donations', 'donations');
 export const tasks = createCrudOperations('tasks', 'tasks');
+export const todos = createCrudOperations('todos', 'todos');
 export const users = createCrudOperations('users', 'users');
 export const meetings = createCrudOperations('meetings', 'meetings');
 export const messages = createCrudOperations('messages', 'messages');
