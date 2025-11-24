@@ -116,7 +116,12 @@ weweb-custom/
 .cursor/rules/kluster-code-verify.mdc
 .github/instructions/codacy.instructions.md
 .cursor/rules/codacy.mdc
-.claude/
+# Claude Code - ignore local settings but allow shared hooks
+.claude/*
+!.claude/hooks/
+.claude/hooks/*
+!.claude/hooks/session-start.sh
+!.claude/settings.json
 
 # Browser MCP screenshots and temporary files
 .playwright-mcp/
