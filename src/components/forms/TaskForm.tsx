@@ -247,14 +247,18 @@ export function TaskForm({ onSuccess, onCancel, initialData, taskId }: TaskFormP
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="unassigned">Atanmadı</SelectItem>
-                {users.map((user: UserDocument) => (
-                  <SelectItem key={user._id} value={user._id}>
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      {user.name}
-                    </div>
-                  </SelectItem>
-                ))}
+                {users.map((user: UserDocument) => {
+                  const userId = user._id || user.$id;
+                  if (!userId) return null;
+                  return (
+                    <SelectItem key={userId} value={userId}>
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        {user.name}
+                      </div>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
             {errors.assigned_to && (

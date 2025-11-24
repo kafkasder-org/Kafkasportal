@@ -61,7 +61,7 @@ const TaskCard = memo(({ task, onTaskClick }: TaskCardProps) => {
   const handleDragStart = useCallback(
     (e: React.DragEvent) => {
       setIsDragging(true);
-      e.dataTransfer.setData('text/plain', task._id);
+      e.dataTransfer.setData('text/plain', task._id || task.$id || '');
       e.dataTransfer.effectAllowed = 'move';
     },
     [task._id]

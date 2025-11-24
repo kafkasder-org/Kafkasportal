@@ -147,6 +147,8 @@ async function sendMessageHandler(
       return NextResponse.json({ success: false, error: 'Mesaj bulunamadı' }, { status: 404 });
     }
 
+    const messageData = message as { recipients?: string[]; message_type?: string; content?: string; subject?: string; [key: string]: unknown };
+
     // Get recipient user details (phone/email)
     const { appwriteUsers } = await import('@/lib/appwrite/api');
 
@@ -157,7 +159,7 @@ async function sendMessageHandler(
     let sendResult: { success: boolean; error?: string } = { success: false };
 
     // Send based on message type
-    if (message.message_type === 'sms') {
+    if (messageData.message_type === 'sms') {
       const { sendBulkSMS } = await import('@/lib/services/sms');
       // Note: Users table doesn't have phone field currently
       // For now, we'll need to get phone from beneficiaries or another source
@@ -172,20 +174,20 @@ async function sendMessageHandler(
 
       if (phoneNumbers.length === 0) {
         logger.warn('No phone numbers found for SMS recipients', {
-          recipients: message.recipients,
+          recipients: messageData.recipients,
         });
         // For now, mark as sent (simulated) since phone field is not available
         sendResult = { success: true };
       } else {
-        const result = await sendBulkSMS(phoneNumbers, message.content);
+        const result = await sendBulkSMS(phoneNumbers, messageData.content || '');
         sendResult = {
           success: result.failed === 0,
           error: result.failed > 0 ? `${result.failed} SMS gönderilemedi` : undefined,
         };
       }
-    } else if (message.message_type === 'email') {
+    } else if (messageData.message_type === 'email') {
       const { sendBulkEmails } = await import('@/lib/services/email');
-      const emails = recipients.map((user) => user?.email).filter(Boolean) as string[];
+      const emails = recipients.map((user: unknown) => (user as { email?: string })?.email).filter(Boolean) as string[];
 
       if (emails.length === 0) {
         return NextResponse.json(
@@ -194,7 +196,7 @@ async function sendMessageHandler(
         );
       }
 
-      const result = await sendBulkEmails(emails, message.subject || 'Mesaj', message.content);
+      const result = await sendBulkEmails(emails, messageData.subject || 'Mesaj', messageData.content || '');
       sendResult = {
         success: result.failed === 0,
         error: result.failed > 0 ? `${result.failed} email gönderilemedi` : undefined,

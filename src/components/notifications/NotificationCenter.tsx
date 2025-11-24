@@ -66,9 +66,11 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
         (n) => n.status !== 'okundu'
       );
       await Promise.all(
-        unreadNotifications.map((n) =>
-          convexApiClient.workflowNotifications.markNotificationRead(n.$id || n._id)
-        )
+        unreadNotifications.map((n) => {
+          const notificationId = n.$id || n._id;
+          if (!notificationId) return Promise.resolve();
+          return convexApiClient.workflowNotifications.markNotificationRead(notificationId);
+        })
       );
     },
     onSuccess: () => {
@@ -224,13 +226,15 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
                                     {notification.category}
                                   </Badge>
                                   <span className="text-xs text-muted-foreground">
-                                    {format(
-                                      new Date(notification.created_at || notification.$createdAt),
-                                      'dd MMM yyyy, HH:mm',
-                                      {
-                                        locale: tr,
-                                      }
-                                    )}
+                                    {notification.created_at || notification.$createdAt
+                                      ? format(
+                                          new Date(notification.created_at || notification.$createdAt || ''),
+                                          'dd MMM yyyy, HH:mm',
+                                          {
+                                            locale: tr,
+                                          }
+                                        )
+                                      : ''}
                                   </span>
                                 </div>
                               </div>

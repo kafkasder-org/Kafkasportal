@@ -210,7 +210,7 @@ export function MessageForm({
         return;
       }
 
-      recipientValue = matchedUser._id;
+      recipientValue = matchedUser._id || matchedUser.$id || '';
     }
 
     const validationErrors = validateRecipients([recipientValue], messageType);
