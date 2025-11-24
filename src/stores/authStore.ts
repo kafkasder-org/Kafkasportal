@@ -5,7 +5,7 @@ import { getCsrfTokenFromCookie } from '@/lib/csrf';
 
 /**
  * Authentication Store (Zustand)
- * Real authentication using server-side API routes and Convex backend
+ * Real authentication using server-side API routes and Appwrite backend
  */
 
 import { create } from 'zustand';

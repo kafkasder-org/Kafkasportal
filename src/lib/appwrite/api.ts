@@ -1,7 +1,6 @@
 /**
  * Appwrite API Helper
  * Provides a unified interface for calling Appwrite from API routes
- * Replaces Convex API helper
  */
 
 import { ID, Query } from 'appwrite';

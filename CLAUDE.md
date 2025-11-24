@@ -94,7 +94,6 @@ src/app/
 @/hooks/*        → ./src/hooks/*
 @/stores/*       → ./src/stores/*
 @/types/*        → ./src/types/*
-@/convex/*       → ./convex/*
 ```
 
 ## Kod Kurallari
@@ -174,7 +173,6 @@ await beneficiaries.update(id, updates);
 await beneficiaries.delete(id);
 ```
 
-> **Not:** Eski `@/lib/api/convex-api-client` import'lari backward compatibility icin hala calisir, ancak yeni kod `@/lib/api/api-client` kullanmalidir.
 
 ## Theme System
 

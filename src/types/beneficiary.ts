@@ -499,9 +499,8 @@ export interface Beneficiary {
   earthquakeVictim?: boolean;
 
   // === METADATA ===
-  // Convex stores timestamps as ISO 8601 strings
-  createdAt: string; // ISO 8601 format (Convex)
-  updatedAt: string; // ISO 8601 format (Convex)
+  createdAt: string; // ISO 8601 format
+  updatedAt: string; // ISO 8601 format
   createdBy: string;
   updatedBy: string;
 }

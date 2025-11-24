@@ -2,7 +2,6 @@
  * Appwrite Realtime Hooks
  *
  * Provides real-time data synchronization using Appwrite Realtime API.
- * Replaces the deprecated Convex-based realtime hooks.
  *
  * Features:
  * - Real-time document subscriptions

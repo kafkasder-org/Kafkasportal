@@ -5,7 +5,7 @@
  * Components can import from '@/lib/api' instead of '@/lib/api/api-client'
  */
 
-import { apiClient, convexApiClient } from './api-client';
+import { apiClient, legacyApiClient } from './api-client';
 import { appwriteParameters } from '@/lib/appwrite/api';
 import type {
   AidApplicationDocument,
@@ -19,7 +19,7 @@ import type {
 const api = apiClient;
 
 export default api;
-export { apiClient as api, convexApiClient }; // convexApiClient for backward compatibility
+export { apiClient as api, legacyApiClient }; // legacyApiClient for backward compatibility
 export type { ConvexResponse, QueryParams, CreateDocumentData, UpdateDocumentData };
 
 // Parameters API - Migrated to Appwrite
@@ -128,7 +128,7 @@ export const parametersApi = {
   },
 };
 
-// Re-export aidApplications API from convexApiClient
+// Re-export aidApplications API
 export const aidApplicationsApi = {
   getAidApplication: (id: string) => api.aidApplications.getAidApplication(id),
   updateStage: (id: string, stage: AidApplicationDocument['stage']) =>

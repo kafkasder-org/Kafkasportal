@@ -113,7 +113,7 @@ export function BeneficiaryQuickAddModal({ open, onOpenChange }: BeneficiaryQuic
   const onSubmit = async (data: QuickAddBeneficiaryFormData) => {
     setIsLoading(true);
     try {
-      // Convex API için data mapping - CreateDocumentData<BeneficiaryDocument> contract
+      // API için data mapping - CreateDocumentData<BeneficiaryDocument> contract
       const beneficiaryData: CreateDocumentData<BeneficiaryDocument> = {
         name: `${data.firstName} ${data.lastName}`,
         tc_no: data.identityNumber || '',

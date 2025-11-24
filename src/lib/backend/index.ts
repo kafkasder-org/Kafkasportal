@@ -14,18 +14,12 @@ export type BackendResponse<T> = T;
 
 // Get current backend provider (always Appwrite)
 export const getBackendProvider = (): BackendProvider => {
-  // Always return 'appwrite' - Convex removed
   return 'appwrite';
 };
 
 // Check if using Appwrite (always true)
 export const isUsingAppwrite = (): boolean => {
   return true;
-};
-
-// Legacy function for compatibility (always false now)
-export const isUsingConvex = (): boolean => {
-  return false;
 };
 
 /**
@@ -173,6 +167,5 @@ export const getAuth = async (): Promise<UnifiedAuth> => {
 // Export provider info
 export const backendInfo = {
   provider: 'appwrite' as const,
-  isConvex: false,
   isAppwrite: true,
 };

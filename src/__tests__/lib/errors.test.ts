@@ -102,7 +102,7 @@ describe('Error Handling Library', () => {
       expect(translateError(500)).toContain('Sunucu hatası');
     });
 
-    it('should translate Convex error codes', () => {
+    it('should translate custom error codes', () => {
       expect(translateError('user_not_found')).toContain('bulunamadı');
       expect(translateError('user_already_exists')).toContain('zaten kayıtlı');
       expect(translateError('user_invalid_credentials')).toContain('hatalı');

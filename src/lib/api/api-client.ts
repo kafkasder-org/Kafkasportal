@@ -746,4 +746,4 @@ export const cacheUtils = {
 };
 
 // Backward compatibility export
-export const convexApiClient = apiClient;
+export const legacyApiClient = apiClient;

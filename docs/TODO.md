@@ -24,7 +24,7 @@ Bu doküman, Kafkasder Panel projesinde yapılması gereken tüm görevleri, iyi
 **Kategori:** Infrastructure
 **Tahmini Süre:** ~~2-3 hafta~~ **Tamamlandı**
 
-**Açıklama:** ~~Convex'ten Appwrite Realtime'a migration tamamlanmalı. Şu anda `useRealtimeQuery` ve `useRealtimeList` hook'ları stub implementation olarak kalmış durumda.~~
+**Açıklama:** ~~Appwrite Realtime migration tamamlandı. `useRealtimeQuery` ve `useRealtimeList` hook'ları artık Appwrite Realtime API kullanıyor.~~
 
 **ÇÖZÜLDÜ:** Appwrite Realtime implementasyonu tamamlandı. Tüm hook'lar artık Appwrite Realtime API kullanıyor.
 

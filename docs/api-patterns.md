@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     await requireModuleAccess('beneficiaries');
     const { searchParams } = new URL(request.url);
     const params = normalizeQueryParams(searchParams);
-    const response = await convexBeneficiaries.list(params);
+    const response = await api.beneficiaries.list(params);
     // ... more logic
   } catch (error) {
     logger.error('Error', error);
@@ -54,7 +54,7 @@ export const GET = buildApiRoute({
   // Clean handler logic
   const { searchParams } = new URL(request.url);
   const params = normalizeQueryParams(searchParams);
-  const response = await convexBeneficiaries.list(params);
+  const response = await api.beneficiaries.list(params);
   return successResponse(response);
 });
 

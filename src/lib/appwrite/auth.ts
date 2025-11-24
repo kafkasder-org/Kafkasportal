@@ -2,7 +2,6 @@
  * Appwrite Authentication
  *
  * Authentication helpers for Appwrite.
- * Replaces the custom bcrypt-based auth system from Convex.
  */
 
 import { ID, type Models } from 'appwrite';

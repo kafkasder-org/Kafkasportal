@@ -2,7 +2,6 @@
  * Appwrite Database Setup Script
  *
  * Bu script Appwrite'da database, collection'lar ve index'leri oluşturur.
- * Convex schema'sından Appwrite schema'sına dönüşüm.
  *
  * Kullanım:
  *   npx tsx scripts/appwrite-setup.ts
@@ -65,7 +64,7 @@ interface CollectionConfig {
   }[];
 }
 
-// Collection definitions based on Convex schema
+// Collection definitions
 const collections: CollectionConfig[] = [
   // ============================================
   // USER MANAGEMENT

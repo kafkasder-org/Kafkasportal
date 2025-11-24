@@ -162,7 +162,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const isLoading = allSettings === undefined || themePresets === undefined;
 
-  // Settings derived from Convex query
+  // Settings derived from API query
   const settings = (allSettings ?? {}) as AllSettings;
 
   // Set initial theme when defaultTheme loads
@@ -270,7 +270,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // Refresh settings
   const refreshSettings = useCallback(() => {
-    // Convex automatically refetches on data changes
+    // React Query automatically refetches on data changes
     // This function is kept for API compatibility but is a no-op
   }, []);
 

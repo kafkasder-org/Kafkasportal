@@ -1,13 +1,13 @@
 /**
- * Convex Collection Types
- * TypeScript definitions for Convex documents
+ * Database Collection Types
+ * TypeScript definitions for Appwrite documents
  */
 
 import type { PermissionValue } from '@/types/permissions';
 
-// Base Document type (supports both Convex and Appwrite)
+// Base Document type for Appwrite
 export interface Document {
-  // Convex fields (legacy support)
+  // Legacy ID fields (backward compatibility)
   _id?: string;
   _creationTime?: number;
   _updatedAt?: number;
@@ -463,16 +463,20 @@ export interface PartnerDocument extends Document {
 }
 
 // API Response Types
-export interface ConvexListResponse<T> {
+export interface ListResponse<T> {
   total: number;
   documents: T[];
 }
 
-export interface ConvexResponse<T> {
+export interface ApiResponse<T> {
   data: T | null;
   error: string | null;
   total?: number;
 }
+
+// Legacy aliases for backward compatibility
+export type ConvexListResponse<T> = ListResponse<T>;
+export type ConvexResponse<T> = ApiResponse<T>;
 
 // Query Parameters
 export interface QueryParams {
@@ -501,11 +505,14 @@ export interface UploadedFile {
 }
 
 // Error Types
-export interface ConvexError {
+export interface ApiError {
   code: number;
   message: string;
   type: string;
 }
+
+// Legacy alias for backward compatibility
+export type ConvexError = ApiError;
 
 // Collection Names (for type safety)
 export type CollectionName =

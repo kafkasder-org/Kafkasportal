@@ -14,8 +14,8 @@ export const getSearchHotkey = () => {
   return process.platform === 'darwin' ? 'Meta+K' : 'Control+K';
 };
 
-// Convex Connection Test Helper
-export async function testConvexConnection(): Promise<boolean> {
+// API Connection Test Helper
+export async function testApiConnection(): Promise<boolean> {
   try {
     const response = await fetch('/api/health', {
       method: 'GET',
@@ -24,7 +24,7 @@ export async function testConvexConnection(): Promise<boolean> {
     const data = await response.json();
     return data.status === 'connected' || data.success === true;
   } catch (_error) {
-    console.warn('Convex connection test failed:', error);
+    console.warn('API connection test failed:', error);
     return false;
   }
 }

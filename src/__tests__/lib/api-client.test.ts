@@ -21,7 +21,7 @@ vi.mock('@/lib/api-cache', () => ({
   })),
 }));
 
-describe('Convex API Client', () => {
+describe('API Client', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockFetch.mockResolvedValue({

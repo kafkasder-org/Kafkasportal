@@ -34,7 +34,7 @@ src/__tests__/
 │   └── api-client.test.ts           # API client CRUD operations
 ├── setup.ts                         # Global test setup
 └── mocks/
-    └── convex-api.ts               # Convex API mocks
+    └── handlers.ts                 # API mock handlers
 
 e2e/                                # End-to-end tests (Playwright)
 ├── example.spec.ts                 # Standalone example tests (no app required)

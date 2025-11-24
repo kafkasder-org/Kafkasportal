@@ -27,7 +27,7 @@ Bu dosya, projedeki TODO yorumlarindan cikarilan ve implement edilmesi gereken o
 
 **Oncelik:** Yuksek
 **Kategori:** Infrastructure
-**Aciklama:** Convex'ten Appwrite Realtime'a migration tamamla.
+**Aciklama:** Appwrite Realtime migration tamamlandı.
 
 **Gereksinimler:**
 - `useRealtimeQuery` hook'unu Appwrite Realtime ile implement et

@@ -26,7 +26,7 @@ export const appwriteConfig = {
     receipts: process.env.NEXT_PUBLIC_APPWRITE_BUCKET_RECEIPTS || 'receipts',
   },
 
-  // Collection IDs (mapped from Convex collections)
+  // Collection IDs
   collections: {
     // User Management
     users: 'users',

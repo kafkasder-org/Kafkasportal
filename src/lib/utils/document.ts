@@ -1,12 +1,12 @@
 /**
  * Document Utility Functions
- * Helper functions for working with documents that support both Convex and Appwrite
+ * Helper functions for working with Appwrite documents
  */
 
 import type { Document } from '@/types/database';
 
 /**
- * Get document ID (supports both Convex _id and Appwrite $id)
+ * Get document ID (supports $id, _id, and id fields)
  */
 export function getDocumentId(doc: Document | null | undefined): string {
   if (!doc) return '';
@@ -14,7 +14,7 @@ export function getDocumentId(doc: Document | null | undefined): string {
 }
 
 /**
- * Get document creation time (supports both Convex and Appwrite)
+ * Get document creation time
  */
 export function getDocumentCreatedAt(doc: Document | null | undefined): Date | null {
   if (!doc) return null;
@@ -28,7 +28,7 @@ export function getDocumentCreatedAt(doc: Document | null | undefined): Date | n
 }
 
 /**
- * Get document updated time (supports both Convex and Appwrite)
+ * Get document updated time
  */
 export function getDocumentUpdatedAt(doc: Document | null | undefined): Date | null {
   if (!doc) return null;
@@ -47,13 +47,5 @@ export function getDocumentUpdatedAt(doc: Document | null | undefined): Date | n
 export function isAppwriteDocument(doc: Document | null | undefined): boolean {
   if (!doc) return false;
   return !!doc.$id;
-}
-
-/**
- * Check if document is from Convex
- */
-export function isConvexDocument(doc: Document | null | undefined): boolean {
-  if (!doc) return false;
-  return !!doc._id && !doc.$id;
 }
 

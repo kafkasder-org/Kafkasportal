@@ -1,5 +1,5 @@
 /**
- * API Types for Convex CRUD Operations
+ * API Types for CRUD Operations
  *
  * Replaces 'any' types with proper TypeScript interfaces
  * Provides type-safe API contracts for all resources
@@ -338,7 +338,7 @@ export type UpdateMutationPayload<T extends { [key: string]: unknown }> = T & {
 /**
  * Standard response from Appwrite HTTP API
  */
-export interface ConvexListResponse<T> {
+export interface ListResponse<T> {
   documents?: T[];
   data?: T[];
   total?: number;
@@ -346,15 +346,20 @@ export interface ConvexListResponse<T> {
   message?: string;
 }
 
-export interface ConvexGetResponse<T> {
+export interface GetResponse<T> {
   data?: T;
   error?: string | null;
 }
 
-export interface ConvexMutationResponse<T> {
+export interface MutationResponse<T> {
   data?: T;
   error?: string | null;
 }
+
+// Legacy aliases for backward compatibility
+export type ConvexListResponse<T> = ListResponse<T>;
+export type ConvexGetResponse<T> = GetResponse<T>;
+export type ConvexMutationResponse<T> = MutationResponse<T>;
 
 // ========================================
 // TYPE EXPORTS

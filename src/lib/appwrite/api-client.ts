@@ -2,7 +2,7 @@
  * Appwrite API Client
  *
  * Generic CRUD operations for Appwrite database.
- * Provides a unified interface similar to the existing Convex API client.
+ * Provides a unified interface for CRUD operations.
  */
 
 import { ID, Query, type Models } from 'appwrite';

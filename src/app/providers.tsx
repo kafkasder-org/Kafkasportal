@@ -95,7 +95,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // Removed hydration check - let the app render immediately
   // The store will handle hydration internally
 
-  // Render with Appwrite (no Convex dependency)
+  // Render with Appwrite
   return (
     <QueryClientProvider client={queryClient}>
       <SuspenseBoundary

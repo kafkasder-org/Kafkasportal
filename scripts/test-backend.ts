@@ -74,9 +74,9 @@ function testAppwriteConfig() {
   return { endpoint, projectId, databaseId, apiKey };
 }
 
-// Test 3: Legacy Convex Configuration (removed - no longer needed)
+// Test 3: Reserved for future tests
 
-// Test 4: Check for legacy Convex imports (removed - migration complete)
+// Test 4: Reserved for future tests
 
 // Test 5: Appwrite Library Check
 function testAppwriteLibrary() {

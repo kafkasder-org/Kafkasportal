@@ -105,7 +105,7 @@ If you discover a security vulnerability in Kafkasder Panel, please report it by
 2. **Enable rate limiting** on all public endpoints
 3. **Configure HTTPS** in production
 4. **Set up Sentry** for error monitoring
-5. **Regular backups** of Convex database
+5. **Regular backups** of Appwrite database
 
 ### Input Validation
 

@@ -321,8 +321,8 @@ export const beneficiarySchema = z
     notes: z.string().max(2000).optional(),
 
     // Metadata
-    createdAt: z.string().datetime().optional(), // Convex ISO 8601 string
-    updatedAt: z.string().datetime().optional(), // Convex ISO 8601 string
+    createdAt: z.string().datetime().optional(), // ISO 8601 string
+    updatedAt: z.string().datetime().optional(), // ISO 8601 string
     createdBy: z.string().optional(),
     updatedBy: z.string().optional(),
   })

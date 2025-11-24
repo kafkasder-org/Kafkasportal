@@ -181,17 +181,7 @@ npm start
 
 ## Sık Karşılaşılan Sorunlar
 
-### 1. Convex Bağlantı Hatası
-
-**Sorun**: "Failed to connect to Convex"
-
-**Çözüm**:
-
-- `.env.local` dosyasında `NEXT_PUBLIC_CONVEX_URL` ayarlı mı kontrol edin
-- `npm run convex:dev` çalışıyor mu kontrol edin
-- Convex dashboard'da deployment aktif mi kontrol edin
-
-### 2. Port Çakışması
+### 1. Port Çakışması
 
 **Sorun**: "Port 3000 is already in use"
 
@@ -205,7 +195,7 @@ kill -9 $(lsof -ti:3000)
 PORT=3001 npm run dev
 ```
 
-### 3. Module Not Found
+### 2. Module Not Found
 
 **Sorun**: "Cannot find module..."
 
@@ -217,7 +207,7 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
-### 4. TypeScript Hataları
+### 3. TypeScript Hataları
 
 **Sorun**: Type errors after git pull
 
@@ -232,7 +222,7 @@ rm -rf .next
 npm run build
 ```
 
-### 5. Puppeteer Chromium Download Error
+### 4. Puppeteer Chromium Download Error
 
 **Sorun**: "Failed to download Chromium"
 
