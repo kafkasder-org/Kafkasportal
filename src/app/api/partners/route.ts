@@ -1,0 +1,225 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { appwritePartners, normalizeQueryParams } from '@/lib/appwrite/api';
+import logger from '@/lib/logger';
+import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
+import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
+
+// TypeScript interfaces
+interface PartnerFilters {
+  type?: string;
+  status?: string;
+  partnership_type?: string;
+}
+
+interface PartnerData {
+  name?: string;
+  type?: string;
+  contact_person?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  website?: string;
+  tax_number?: string;
+  partnership_type?: string;
+  collaboration_start_date?: string;
+  collaboration_end_date?: string;
+  notes?: string;
+  status?: string;
+  total_contribution?: number;
+  contribution_count?: number;
+  logo_url?: string;
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+/**
+ * Validate partner data
+ */
+function validatePartnerData(data: PartnerData): ValidationResult {
+  const errors: string[] = [];
+
+  // Required fields
+  if (!data.name || data.name.trim().length < 2) {
+    errors.push('Partner adı en az 2 karakter olmalıdır');
+  }
+
+  if (!data.type || !['organization', 'individual', 'sponsor'].includes(data.type)) {
+    errors.push('Geçersiz partner türü');
+  }
+
+  if (
+    !data.partnership_type ||
+    !['donor', 'supplier', 'volunteer', 'sponsor', 'service_provider'].includes(
+      data.partnership_type
+    )
+  ) {
+    errors.push('Geçersiz işbirliği türü');
+  }
+
+  // Email validation (optional but if provided must be valid)
+  if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    errors.push('Geçerli bir email adresi giriniz');
+  }
+
+  // Phone validation (optional but if provided must be valid)
+  if (data.phone && !/^[0-9\s\-\+\(\)]{10,15}$/.test(data.phone)) {
+    errors.push('Geçerli bir telefon numarası giriniz');
+  }
+
+  // Status validation
+  if (data.status && !['active', 'inactive', 'pending'].includes(data.status)) {
+    errors.push('Geçersiz durum değeri');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * GET /api/partners
+ * List partners with pagination and filters
+ */
+async function getPartnersHandler(request: NextRequest) {
+  try {
+    // Require authentication and module access
+    await requireModuleAccess('partners');
+
+    const { searchParams } = new URL(request.url);
+    const params = normalizeQueryParams(searchParams);
+
+    // Extract filters from query params
+    const filters: PartnerFilters = {};
+    if (searchParams.get('type')) filters.type = searchParams.get('type') || undefined;
+    if (searchParams.get('status')) filters.status = searchParams.get('status') || undefined;
+    if (searchParams.get('partnership_type'))
+      filters.partnership_type = searchParams.get('partnership_type') || undefined;
+
+    const response = await appwritePartners.list({
+      limit: params.limit,
+      skip: params.skip,
+      search: params.search,
+      type: filters?.type as any,
+      status: filters?.status as any,
+      partnership_type: filters?.partnership_type as any,
+    });
+
+    const partners = response.documents || [];
+    const total = response.total || 0;
+
+    return NextResponse.json({
+      success: true,
+      data: partners,
+      total,
+      message: `${total} partner bulundu`,
+    });
+  } catch (_error: unknown) {
+    // Handle auth errors with buildErrorResponse
+    const authError = buildErrorResponse(_error);
+    if (authError) {
+      return NextResponse.json(authError.body, { status: authError.status });
+    }
+
+    logger.error('Partners list error', _error, {
+      endpoint: '/api/partners',
+      method: 'GET',
+    });
+
+    return NextResponse.json(
+      { success: false, error: 'Listeleme işlemi başarısız' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/partners
+ * Create new partner
+ */
+async function createPartnerHandler(request: NextRequest) {
+  let body: PartnerData | null = null;
+  try {
+    // Verify CSRF token
+    await verifyCsrfToken(request);
+
+    // Require authentication and module access
+    await requireModuleAccess('partners');
+
+    body = (await request.json()) as PartnerData;
+
+    // Validate input
+    if (!body) {
+      return NextResponse.json({ success: false, error: 'Veri bulunamadı' }, { status: 400 });
+    }
+
+    // Validate partner data
+    const validation = validatePartnerData(body);
+    if (!validation.isValid) {
+      return NextResponse.json(
+        { success: false, error: 'Doğrulama hatası', details: validation.errors },
+        { status: 400 }
+      );
+    }
+
+    // Prepare Appwrite mutation data
+    const partnerData = {
+      name: body.name || '',
+      type: body.type as 'organization' | 'individual' | 'sponsor',
+      contact_person: body.contact_person,
+      email: body.email,
+      phone: body.phone,
+      address: body.address,
+      website: body.website,
+      tax_number: body.tax_number,
+      partnership_type: body.partnership_type as
+        | 'donor'
+        | 'supplier'
+        | 'volunteer'
+        | 'sponsor'
+        | 'service_provider',
+      collaboration_start_date: body.collaboration_start_date,
+      collaboration_end_date: body.collaboration_end_date,
+      notes: body.notes,
+      status: (body.status as 'active' | 'inactive' | 'pending') || 'active',
+      total_contribution: body.total_contribution || 0,
+      contribution_count: body.contribution_count || 0,
+      logo_url: body.logo_url,
+    };
+
+    const response = await appwritePartners.create(partnerData);
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: response,
+        message: 'Partner başarıyla oluşturuldu',
+      },
+      { status: 201 }
+    );
+  } catch (_error: unknown) {
+    // Handle auth errors with buildErrorResponse
+    const authError = buildErrorResponse(_error);
+    if (authError) {
+      return NextResponse.json(authError.body, { status: authError.status });
+    }
+
+    logger.error('Partner creation error', _error, {
+      endpoint: '/api/partners',
+      method: 'POST',
+      partnerName: body?.name,
+    });
+
+    return NextResponse.json(
+      { success: false, error: 'Oluşturma işlemi başarısız' },
+      { status: 500 }
+    );
+  }
+}
+
+// Export handlers with rate limiting
+export const GET = readOnlyRateLimit(getPartnersHandler);
+export const POST = dataModificationRateLimit(createPartnerHandler);
