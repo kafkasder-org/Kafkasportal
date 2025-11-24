@@ -117,7 +117,7 @@ export default function DashboardPage() {
   );
   */
 
-  // ⚠️ DEMO DATA: Aşağıdaki veriler gerçek API'lerden alınmalı (bkz: docs/TODO.md - Mock Data)
+  // ⚠️ DEMO DATA: Aşağıdaki veriler gerçek API'lerden alınmalı (bkz: docs/ISSUES.md - Mock Data)
   // Sample chart data - memoized to prevent re-renders (moved before early returns)
   const donationData = useMemo(
     () => [

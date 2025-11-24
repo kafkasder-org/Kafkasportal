@@ -2,11 +2,10 @@
  * API Client Index
  *
  * Re-exports Appwrite API clients for backward compatibility.
- * Components can import from '@/lib/api' instead of '@/lib/api/convex-api-client'
- * Note: convex-api-client.ts is a legacy file name but now uses Appwrite backend
+ * Components can import from '@/lib/api' instead of '@/lib/api/api-client'
  */
 
-import { convexApiClient } from './convex-api-client';
+import { apiClient, convexApiClient } from './api-client';
 import { appwriteSystemSettings, appwriteParameters } from '@/lib/appwrite/api';
 import type {
   AidApplicationDocument,
@@ -17,10 +16,10 @@ import type {
 } from '@/types/database';
 
 // Export as default for backward compatibility
-const api = convexApiClient;
+const api = apiClient;
 
 export default api;
-export { convexApiClient as api };
+export { apiClient as api, convexApiClient }; // convexApiClient for backward compatibility
 export type { ConvexResponse, QueryParams, CreateDocumentData, UpdateDocumentData };
 
 // Parameters API - Migrated to Appwrite

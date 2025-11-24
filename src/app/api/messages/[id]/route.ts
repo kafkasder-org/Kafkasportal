@@ -161,23 +161,21 @@ async function sendMessageHandler(
     // Send based on message type
     if (messageData.message_type === 'sms') {
       const { sendBulkSMS } = await import('@/lib/services/sms');
-      // Note: Users table doesn't have phone field currently
-      // For now, we'll need to get phone from beneficiaries or another source
-      // This is a placeholder - implement based on your data structure
+      // Extract phone numbers from users and beneficiaries (phone field exists in database schema)
       const phoneNumbers = recipients
-        .map((_user) => {
-          // TODO: Telefon numarası schema'ya eklenmeli (bkz: docs/TODO.md #2)
-          // users.phone veya beneficiary.phone üzerinden alınmalı
-          return '';
+        .map((user) => {
+          const phone = (user as { phone?: string })?.phone;
+          if (!phone) return null;
+          // Sanitize phone to ensure standard format
+          return sanitizePhone(phone);
         })
-        .filter((phone): phone is string => typeof phone === 'string' && phone.length > 0);
+        .filter((phone): phone is string => phone !== null && phone.length === 10);
 
       if (phoneNumbers.length === 0) {
-        logger.warn('No phone numbers found for SMS recipients', {
+        logger.warn('No valid phone numbers found for SMS recipients', {
           recipients: messageData.recipients,
         });
-        // For now, mark as sent (simulated) since phone field is not available
-        sendResult = { success: true };
+        sendResult = { success: false, error: 'Geçerli telefon numarası bulunamadı' };
       } else {
         const result = await sendBulkSMS(phoneNumbers, messageData.content || '');
         sendResult = {

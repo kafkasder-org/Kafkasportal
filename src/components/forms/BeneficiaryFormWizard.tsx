@@ -27,7 +27,7 @@ import { HealthInfoStep } from './beneficiary-steps/HealthInfoStep';
 
 // Import validation and types
 import { beneficiarySchema, type BeneficiaryFormData } from '@/lib/validations/beneficiary';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import { formatErrorMessage } from '@/lib/errors';
 import type { CreateDocumentData, BeneficiaryDocument } from '@/types/database';
 

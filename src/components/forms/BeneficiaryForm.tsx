@@ -18,16 +18,18 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import { toast } from 'sonner';
 import { Loader2, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { requiredPhoneSchema } from '@/lib/validations/shared-validators';
+import { sanitizePhone } from '@/lib/sanitization';
 
 // Validation schema
 const beneficiarySchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
   tc_no: z.string().length(11, 'TC Kimlik numarası 11 haneli olmalıdır'),
-  phone: z.string().min(10, 'Geçerli bir telefon numarası girin'),
+  phone: requiredPhoneSchema,
   address: z.string().min(10, 'Adres en az 10 karakter olmalıdır'),
   city: z.string().min(2, 'Şehir adı girin'),
   district: z.string().min(2, 'İlçe adı girin'),
@@ -185,21 +187,12 @@ export function BeneficiaryForm({ onSuccess, onCancel }: BeneficiaryFormProps) {
       let value = e.target.value.replace(/\D/g, '');
       if (value.length > 10) value = value.slice(0, 10);
 
-      // Format as 0555 123 45 67
-      if (value.length >= 4) {
-        value = `${value.slice(0, 4)} ${value.slice(4)}`;
-      }
-      if (value.length >= 8) {
-        value = `${value.slice(0, 8)} ${value.slice(8)}`;
-      }
-      if (value.length >= 11) {
-        value = `${value.slice(0, 11)} ${value.slice(11)}`;
-      }
-
       e.target.value = value;
       register('phone').onChange(e);
-      if (value.replace(/\s/g, '').length > 0) {
-        validateField('phone', value.replace(/\s/g, ''));
+      
+      if (value.length === 10) {
+        const sanitized = sanitizePhone(value);
+        if (sanitized) validateField('phone', sanitized);
       }
     },
     [register, validateField]
@@ -285,9 +278,9 @@ export function BeneficiaryForm({ onSuccess, onCancel }: BeneficiaryFormProps) {
               <Input
                 id="phone"
                 {...register('phone')}
-                placeholder="0555 123 45 67"
+                placeholder="5551234567"
                 onChange={handlePhoneChange}
-                maxLength={14}
+                maxLength={10}
                 aria-describedby={errors.phone ? 'phone-error' : undefined}
                 aria-invalid={!!errors.phone}
                 disabled={isSubmitting}

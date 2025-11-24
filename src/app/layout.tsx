@@ -5,8 +5,9 @@ import { lazyLoadComponent } from '@/lib/performance';
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import { NetworkStatusIndicator } from '@/components/pwa/NetworkStatusIndicator';
 
-// Use system fonts temporarily due to build environment restrictions
-// TODO: Re-enable Google Fonts (Inter, Poppins, Montserrat) when network access is available
+// Using system fonts for better performance and offline support
+// Google Fonts (Inter, Poppins, Montserrat) can be re-enabled if needed
+// See: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 const fontVariables = {
   '--font-body':
     'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { DonationDocument } from '@/types/database';
+import { requiredPhoneSchema, phoneSchema } from './shared-validators';
 
 // Kumbara donation creation schema
 export const kumbaraCreateSchema = z.object({
@@ -7,11 +8,7 @@ export const kumbaraCreateSchema = z.object({
     .string()
     .min(2, 'Bağışçı adı en az 2 karakter olmalıdır')
     .max(100, 'Bağışçı adı en fazla 100 karakter olabilir'),
-  donor_phone: z
-    .string()
-    .min(10, 'Telefon numarası en az 10 karakter olmalıdır')
-    .max(20, 'Telefon numarası en fazla 20 karakter olabilir')
-    .regex(/^(\+90|0)?[5][0-9]{9}$/, 'Geçerli bir Türkiye telefon numarası giriniz (5XXXXXXXXX)'),
+  donor_phone: requiredPhoneSchema,
   donor_email: z.string().email('Geçerli bir e-posta adresi giriniz').optional().or(z.literal('')),
   amount: z
     .number()
@@ -116,11 +113,7 @@ export const kumbaraLocationSchema = z.object({
     .max(300, 'Adres en fazla 300 karakter olabilir')
     .optional(),
   contact_person: z.string().max(100, 'İletişim kişisi en fazla 100 karakter olabilir').optional(),
-  contact_phone: z
-    .string()
-    .max(20, 'İletişim telefonu en fazla 20 karakter olabilir')
-    .optional()
-    .or(z.literal('')),
+  contact_phone: phoneSchema.or(z.literal('')),
   is_active: z.boolean().default(true),
 });
 

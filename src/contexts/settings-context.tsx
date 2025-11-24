@@ -8,6 +8,8 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import logger from '@/lib/logger';
 
 // Setting value types
 export type SettingValue = string | number | boolean | object | null;
@@ -127,18 +129,30 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const { data: themePresetsData } = useQuery({
     queryKey: ['theme-presets'],
     queryFn: async () => {
-      // TODO: Create theme presets API route
-      // For now, return empty array
-      return [];
+      try {
+        const response = await fetch('/api/settings/theme-presets');
+        const json = await response.json();
+        return json.data || [];
+      } catch (error) {
+        logger.error('Failed to fetch theme presets', error);
+        toast.error('Tema ayarları yüklenemedi');
+        return [];
+      }
     },
   });
 
   const { data: defaultThemeData } = useQuery({
     queryKey: ['theme-presets', 'default'],
     queryFn: async () => {
-      // TODO: Create default theme API route
-      // For now, return null
-      return null;
+      try {
+        const response = await fetch('/api/settings/theme-presets/default');
+        const json = await response.json();
+        return json.data || null;
+      } catch (error) {
+        logger.error('Failed to fetch default theme', error);
+        toast.error('Varsayılan tema yüklenemedi');
+        return null;
+      }
     },
   });
 
@@ -240,36 +254,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     async (themeName: string) => {
       const theme = themePresets.find((t) => t.name === themeName);
       if (theme) {
-        // Map Convex theme to ThemePreset format
-        const mappedTheme: ThemePreset = {
-          _id: theme._id,
-          name: theme.name,
-          description: theme.description,
-          colors: theme.colors,
-          typography: theme.typography
-            ? {
-                fontFamily: theme.typography.font_family,
-                baseSize: theme.typography.base_size,
-                headingScale: theme.typography.heading_scale,
-                lineHeight: theme.typography.line_height,
-                fontWeightRegular: theme.typography.font_weight_regular,
-                fontWeightMedium: theme.typography.font_weight_medium,
-                fontWeightBold: theme.typography.font_weight_bold,
-              }
-            : undefined,
-          layout: theme.layout
-            ? {
-                sidebarWidth: theme.layout.sidebar_width,
-                containerMaxWidth: theme.layout.container_max_width,
-                borderRadius: theme.layout.border_radius,
-                spacingScale: theme.layout.spacing_scale as 'tight' | 'normal' | 'relaxed',
-                cardElevation: theme.layout.card_elevation as 'flat' | 'subtle' | 'medium' | 'high',
-              }
-            : undefined,
-          isDefault: theme.is_default,
-          isCustom: theme.is_custom,
-        };
-        setCurrentTheme(mappedTheme);
+        // Theme data from API is already in the correct format
+        setCurrentTheme(theme);
         localStorage.setItem('selected-theme', themeName);
       }
     },

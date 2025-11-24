@@ -3,6 +3,8 @@ import { appwriteDonations } from '@/lib/appwrite/api';
 import { extractParams } from '@/lib/api/route-helpers';
 import logger from '@/lib/logger';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
+import { sanitizePhone } from '@/lib/sanitization';
+import { phoneSchema } from '@/lib/validations/shared-validators';
 
 function validateDonationUpdate(data: Record<string, unknown>): {
   isValid: boolean;
@@ -22,12 +24,13 @@ function validateDonationUpdate(data: Record<string, unknown>): {
   ) {
     errors.push('Geçersiz e-posta');
   }
-  if (
-    data.donor_phone &&
-    typeof data.donor_phone === 'string' &&
-    !/^[0-9\s\-\+\(\)]{10,15}$/.test(data.donor_phone)
-  ) {
-    errors.push('Geçersiz telefon numarası');
+  if (data.donor_phone && typeof data.donor_phone === 'string') {
+    const sanitized = sanitizePhone(data.donor_phone);
+    if (!sanitized || !phoneSchema.safeParse(sanitized).success) {
+      errors.push('Geçersiz telefon numarası (5XXXXXXXXX formatında olmalıdır)');
+    } else {
+      data.donor_phone = sanitized;
+    }
   }
   if (data.status && !['pending', 'completed', 'cancelled'].includes(data.status as string)) {
     errors.push('Geçersiz durum');

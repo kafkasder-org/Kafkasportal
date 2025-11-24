@@ -107,56 +107,170 @@ export const useAuthStore = create<AuthStore>()(
 
           // Initialize authentication
           initializeAuth: () => {
-            const stored = localStorage.getItem('auth-session');
-            if (stored) {
-              try {
-                const sessionData = JSON.parse(stored);
-                // Check if we have a valid session
-                if (sessionData.userId) {
-                  set((state) => {
-                    state.user = {
-                      id: sessionData.userId,
-                      email: sessionData.email,
-                      name: sessionData.name,
-                      role: sessionData.role,
-                      permissions: sessionData.permissions ?? [],
-                      avatar: sessionData.avatar ?? null,
-                      isActive: true,
-                      createdAt: new Date().toISOString(),
-                      updatedAt: new Date().toISOString(),
-                    };
-                    state.isAuthenticated = true;
-                    state.isInitialized = true;
-                    state.isLoading = false;
-                  });
-                  (async () => {
-                    try {
-                      const resp = await fetch('/api/auth/session', {
-                        method: 'GET',
-                        cache: 'no-store',
-                      });
-                      if (!resp.ok) {
-                        localStorage.removeItem('auth-session');
-                        set((state) => {
-                          state.isAuthenticated = false;
-                          state.user = null;
-                        });
-                      }
-                    } catch {
-                      // Network errors: keep current state
-                    }
-                  })();
-                  return;
-                }
-              } catch {
-                localStorage.removeItem('auth-session');
-              }
-            }
-
+            // Run async validation
+            (async () => {
             set((state) => {
-              state.isInitialized = true;
-              state.isLoading = false;
+              state.isLoading = true;
             });
+
+            try {
+              // First, validate server-side session (cookie)
+              const sessionResp = await fetch('/api/auth/session', {
+                method: 'GET',
+                cache: 'no-store',
+                credentials: 'include',
+              });
+
+              if (sessionResp.ok) {
+                const sessionData = await sessionResp.json();
+                if (sessionData.success && sessionData.data?.userId) {
+                  // Server session is valid, get user data
+                  const stored = localStorage.getItem('auth-session');
+                  if (stored) {
+                    try {
+                      const localData = JSON.parse(stored);
+                      // Check if localStorage has old wildcard permission or invalid permissions
+                      const hasOldWildcard = Array.isArray(localData.permissions) && localData.permissions.includes('*');
+                      const hasInvalidPermissions = !Array.isArray(localData.permissions) || localData.permissions.length === 0;
+                      
+                      if (localData.userId === sessionData.data.userId && !hasOldWildcard && !hasInvalidPermissions) {
+                        // LocalStorage matches server session and has valid permissions
+                        set((state) => {
+                          state.user = {
+                            id: localData.userId,
+                            email: localData.email,
+                            name: localData.name,
+                            role: localData.role,
+                            permissions: localData.permissions ?? [],
+                            avatar: localData.avatar ?? null,
+                            isActive: true,
+                            createdAt: localData.createdAt || new Date().toISOString(),
+                            updatedAt: localData.updatedAt || new Date().toISOString(),
+                          };
+                          state.isAuthenticated = true;
+                          state.isInitialized = true;
+                          state.isLoading = false;
+                        });
+                        return;
+                      }
+                      // If old wildcard or invalid permissions, fetch from server
+                    } catch {
+                      // Invalid localStorage data, will fetch from server
+                    }
+                  }
+
+                  // Fetch user data from server
+                  try {
+                    const userResp = await fetch('/api/auth/user', {
+                      method: 'GET',
+                      cache: 'no-store',
+                      credentials: 'include',
+                    });
+
+                    if (userResp.ok) {
+                      const userData = await userResp.json();
+                      if (userData.success && userData.data) {
+                        const user = userData.data;
+                        // Update localStorage
+                        localStorage.setItem(
+                          'auth-session',
+                          JSON.stringify({
+                            userId: user.id,
+                            email: user.email,
+                            name: user.name,
+                            role: user.role,
+                            permissions: user.permissions ?? [],
+                            avatar: user.avatar ?? null,
+                          })
+                        );
+
+                        set((state) => {
+                          state.user = user;
+                          state.isAuthenticated = true;
+                          state.isInitialized = true;
+                          state.isLoading = false;
+                        });
+                        return;
+                      }
+                    }
+                  } catch {
+                    // Failed to fetch user, but session is valid
+                    // Use localStorage if available
+                    const stored = localStorage.getItem('auth-session');
+                    if (stored) {
+                      try {
+                        const localData = JSON.parse(stored);
+                        set((state) => {
+                          state.user = {
+                            id: localData.userId,
+                            email: localData.email,
+                            name: localData.name,
+                            role: localData.role,
+                            permissions: localData.permissions ?? [],
+                            avatar: localData.avatar ?? null,
+                            isActive: true,
+                            createdAt: localData.createdAt || new Date().toISOString(),
+                            updatedAt: localData.updatedAt || new Date().toISOString(),
+                          };
+                          state.isAuthenticated = true;
+                          state.isInitialized = true;
+                          state.isLoading = false;
+                        });
+                        return;
+                      } catch {
+                        // Invalid localStorage
+                      }
+                    }
+                  }
+                }
+              }
+
+              // No valid server session, clear localStorage
+              localStorage.removeItem('auth-session');
+              set((state) => {
+                state.isAuthenticated = false;
+                state.user = null;
+                state.isInitialized = true;
+                state.isLoading = false;
+              });
+            } catch (error) {
+              // Network error - check localStorage as fallback
+              const stored = localStorage.getItem('auth-session');
+              if (stored) {
+                try {
+                  const localData = JSON.parse(stored);
+                  if (localData.userId) {
+                    set((state) => {
+                      state.user = {
+                        id: localData.userId,
+                        email: localData.email,
+                        name: localData.name,
+                        role: localData.role,
+                        permissions: localData.permissions ?? [],
+                        avatar: localData.avatar ?? null,
+                        isActive: true,
+                        createdAt: localData.createdAt || new Date().toISOString(),
+                        updatedAt: localData.updatedAt || new Date().toISOString(),
+                      };
+                      state.isAuthenticated = true;
+                      state.isInitialized = true;
+                      state.isLoading = false;
+                    });
+                    return;
+                  }
+                } catch {
+                  // Invalid localStorage
+                }
+              }
+
+              set((state) => {
+                state.isAuthenticated = false;
+                state.user = null;
+                state.isInitialized = true;
+                state.isLoading = false;
+              });
+            }
+            })();
           },
 
           // Login action

@@ -4,16 +4,17 @@ Bu klasor projenin tum teknik dokumantasyonunu icerir.
 
 ## Icerik
 
-| Dosya                                          | Aciklama                                          |
-| ---------------------------------------------- | ------------------------------------------------- |
-| [setup.md](./setup.md)                         | Yerel ortam kurulum rehberi                       |
-| [mcp-quick-start.md](./mcp-quick-start.md)     | MCP sunuculari hizli baslangic (5 dk) (YENİ)      |
-| [mcp-setup.md](./mcp-setup.md)                 | MCP sunuculari kurulum ve kullanim rehberi (YENİ) |
-| [claude-desktop-mcp-setup.md](./claude-desktop-mcp-setup.md) | Claude Desktop MCP yapılandırması (YENİ) |
-| [appwrite-mcp-guide.md](./appwrite-mcp-guide.md) | Appwrite MCP kullanim kilavuzu                 |
-| [github-mcp-server.md](./github-mcp-server.md) | GitHub MCP sunucusu kullanim kilavuzu             |
-| [testing.md](./testing.md)                     | Test altyapisi ve yazim rehberi                   |
-| [api-patterns.md](./api-patterns.md)           | API route standartlari ve middleware kullanimi    |
+| Dosya                                                        | Aciklama                                       |
+| ------------------------------------------------------------ | ---------------------------------------------- |
+| [setup.md](./setup.md)                                       | Yerel ortam kurulum rehberi                    |
+| [mcp-setup.md](./mcp-setup.md)                               | MCP sunuculari kurulum ve kullanim rehberi     |
+| [claude-desktop-mcp-setup.md](./claude-desktop-mcp-setup.md) | Claude Desktop MCP yapilandirmasi              |
+| [appwrite-mcp.md](./appwrite-mcp.md)                         | Appwrite MCP kullanim kilavuzu                 |
+| [appwrite-guide.md](./appwrite-guide.md)                     | Appwrite kullanim rehberi ve ornekler          |
+| [github-mcp-server.md](./github-mcp-server.md)               | GitHub MCP sunucusu kullanim kilavuzu          |
+| [testing.md](./testing.md)                                   | Test altyapisi ve yazim rehberi                |
+| [api-patterns.md](./api-patterns.md)                         | API route standartlari ve middleware kullanimi |
+| [ISSUES.md](./ISSUES.md)                                     | Acik issue'lar ve ozellik istekleri            |
 
 ## Hizli Erisim
 
@@ -24,7 +25,7 @@ Kafkasder-panel/
 ├── src/
 │   ├── app/                 # Next.js App Router sayfalari
 │   │   ├── (dashboard)/     # Dashboard layout grubu
-│   │   ├── api/             # API route'lari (Convex proxy)
+│   │   ├── api/             # API route'lari (Appwrite proxy)
 │   │   └── login/           # Giris sayfasi
 │   ├── components/          # React componentleri
 │   │   └── ui/              # Radix UI temel componentleri
@@ -34,9 +35,9 @@ Kafkasder-panel/
 │   ├── hooks/               # Custom React hooks
 │   ├── stores/              # Zustand state yonetimi
 │   └── types/               # TypeScript type tanimlari
-├── convex/                  # Convex backend
-│   ├── schema.ts            # Veritabani semasi
-│   └── [resource].ts        # Query/mutation dosyalari
+├── src/lib/appwrite/        # Appwrite backend
+│   ├── config.ts            # Yapilandirma
+│   └── client.ts            # Client/Server SDK
 ├── e2e/                     # Playwright E2E testleri
 └── docs/                    # Teknik dokumantasyon
 ```
@@ -46,7 +47,6 @@ Kafkasder-panel/
 ```bash
 # Development
 npm run dev              # Next.js dev server (localhost:3000)
-npm run convex:dev       # Convex backend (es zamanli calistirilmali)
 
 # Kod Kalitesi
 npm run typecheck        # TypeScript tip kontrolu
@@ -69,7 +69,7 @@ npm run build            # Production build
 | Kategori       | Teknoloji                                 |
 | -------------- | ----------------------------------------- |
 | **Frontend**   | Next.js 16, React 19, TypeScript          |
-| **Backend**    | Convex (serverless database)              |
+| **Backend**    | Appwrite (serverless database)            |
 | **Styling**    | Tailwind CSS 4, Radix UI                  |
 | **State**      | Zustand (client), TanStack Query (server) |
 | **Forms**      | React Hook Form + Zod                     |
@@ -78,19 +78,19 @@ npm run build            # Production build
 
 ### Mimari Prensipler
 
-#### 1. Convex-First Backend
+#### 1. Appwrite-First Backend
 
-Convex birincil backend'dir. Next.js API route'lari sadece proxy gorevindedir:
+Appwrite birincil backend'dir. Next.js API route'lari sadece proxy gorevindedir:
 
-- Tum veritabani islemleri `convex/` klasorunde
+- Tum veritabani islemleri `src/lib/appwrite/` klasorunde
 - API route'lari rate limiting, CSRF ve auth middleware saglar
-- Real-time updates Convex tarafindan yonetilir
+- Real-time updates Appwrite tarafindan yonetilir
 
 #### 2. Type-Safe Her Sey
 
 - TypeScript strict mode aktif
 - Zod ile runtime validation
-- Convex argument validators zorunlu
+- Appwrite schema validators zorunlu
 
 #### 3. Guvenlik Oncelikli
 
@@ -103,8 +103,8 @@ Convex birincil backend'dir. Next.js API route'lari sadece proxy gorevindedir:
 
 ### Yeni Ozellik Ekleme
 
-1. **Convex Schema** - `convex/schema.ts`'e tablo ekle
-2. **Convex Functions** - Query/mutation dosyasi olustur
+1. **Appwrite Collection** - Appwrite Console'da collection olustur
+2. **Config** - `src/lib/appwrite/config.ts`'e collection ID ekle
 3. **API Route** - `src/app/api/[resource]/route.ts` ekle
 4. **Validation** - `src/lib/validations/` altina Zod semasi ekle
 5. **UI** - Component ve sayfa olustur
@@ -143,12 +143,12 @@ await beneficiaries.delete(id);
 ## Onemli Kurallar
 
 1. **console.log YASAK** - `src/lib/logger.ts` kullan
-2. **Convex object syntax** - `handler` property zorunlu
-3. **Zod validation** - Tum inputlar validate edilmeli
-4. **Prettier/ESLint** - Commit oncesi kontrol edilir
+2. **Zod validation** - Tum inputlar validate edilmeli
+3. **Prettier/ESLint** - Commit oncesi kontrol edilir
 
 ## Daha Fazla Bilgi
 
+- [Appwrite Rehberi](./appwrite-guide.md)
 - [Test Rehberi](./testing.md)
 - [API Patterns](./api-patterns.md)
 - [Contributing](../CONTRIBUTING.md)

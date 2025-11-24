@@ -113,7 +113,7 @@ Aşağıdaki yapılandırmayı ilgili konuma ekleyin:
 
 **Daha fazla bilgi**: [docs/appwrite-mcp-guide.md](./appwrite-mcp-guide.md)
 
-### 3. Browser Use
+### 3. Browser Use / Cursor IDE Browser
 
 **Amaç**: Web tarayıcı otomasyonu ve test
 
@@ -124,9 +124,13 @@ Aşağıdaki yapılandırmayı ilgili konuma ekleyin:
 "Web scraping yap"
 ```
 
-**Kurulum**: Otomatik (uzak MCP sunucusu)
+**Kurulum**: Otomatik (Cursor IDE'de built-in olarak gelir)
 
 **Gereksinimler**: İnternet bağlantısı
+
+**Daha fazla bilgi**: 
+- [Browser MCP Guide](./playwright-mcp-browser.md) - Comprehensive guide
+- [Browser MCP Examples](./browser-mcp-examples.md) - Practical examples
 
 ### 4. Chrome DevTools
 
@@ -386,6 +390,8 @@ Birden fazla sunucuyu tek bir proxy üzerinden yönetebilirsiniz:
 - [Appwrite MCP Kullanım Kılavuzu](./appwrite-mcp-guide.md)
 - [GitHub MCP Kullanım Kılavuzu](./github-mcp-server.md)
 - [GitHub MCP Demo Örnekleri](./github-mcp-server-demo.md)
+- [Browser MCP Guide](./playwright-mcp-browser.md) - Browser automation guide
+- [Browser MCP Examples](./browser-mcp-examples.md) - Practical examples
 
 ### MCP Sunucu Kaynak Kodları
 

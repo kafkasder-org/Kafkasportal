@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { UserForm, type UserFormValues } from '@/components/forms/user-form';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import { useAuthStore } from '@/stores/authStore';
 
 export default function CreateUserPage() {

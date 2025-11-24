@@ -133,7 +133,7 @@ async function createBeneficiaryHandler(request: NextRequest) {
       );
     }
 
-    // Prepare Convex mutation data
+    // Prepare Appwrite mutation data
     const beneficiaryData = {
       name: body.name || '',
       tc_no: body.tc_no || '',

@@ -19,7 +19,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import { toast } from 'sonner';
 import { Loader2, FileText, DollarSign, Package, Utensils, Stethoscope } from 'lucide-react';
 

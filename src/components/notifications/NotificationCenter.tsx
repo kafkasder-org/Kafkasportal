@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { convexApiClient } from '@/lib/api/convex-api-client';
+import { apiClient } from '@/lib/api/api-client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -28,7 +28,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
   const { data: notificationsResponse } = useQuery({
     queryKey: ['workflow-notifications', userId],
     queryFn: async () => {
-      const response = await convexApiClient.workflowNotifications.getNotifications({
+      const response = await apiClient.workflowNotifications.getNotifications({
         filters: { recipient: userId },
         limit: 50,
       });
@@ -47,7 +47,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
   // Mutations
   const markAsReadMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await convexApiClient.workflowNotifications.markNotificationRead(id);
+      const response = await apiClient.workflowNotifications.markNotificationRead(id);
       return response;
     },
     onSuccess: () => {
@@ -69,7 +69,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
         unreadNotifications.map((n) => {
           const notificationId = n.$id || n._id;
           if (!notificationId) return Promise.resolve();
-          return convexApiClient.workflowNotifications.markNotificationRead(notificationId);
+          return apiClient.workflowNotifications.markNotificationRead(notificationId);
         })
       );
     },
@@ -84,7 +84,7 @@ export function NotificationCenter({ userId }: NotificationCenterProps) {
 
   const deleteNotificationMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await convexApiClient.workflowNotifications.deleteNotification(id);
+      const response = await apiClient.workflowNotifications.deleteNotification(id);
       return response;
     },
     onSuccess: () => {

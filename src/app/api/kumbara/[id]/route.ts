@@ -53,7 +53,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       );
     }
 
-    // Fetch donation from Convex
+    // Fetch donation from Appwrite
     const donation = (await appwriteDonations.get(id as string)) as DonationDocument | null;
 
     if (!donation) {
@@ -129,7 +129,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       );
     }
 
-    // Update donation in Convex
+    // Update donation in Appwrite
     if (validation.normalizedData) {
       const { payment_method, ...restData } = validation.normalizedData;
       const updateData: DonationUpdateInput = {
@@ -191,7 +191,7 @@ export async function DELETE(
       );
     }
 
-    // Delete donation from Convex
+    // Delete donation from Appwrite
     await appwriteDonations.remove(id as string);
 
     logger.info('Deleted kumbara donation', {

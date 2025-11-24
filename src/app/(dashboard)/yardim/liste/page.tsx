@@ -38,7 +38,7 @@ import {
   FileDown,
 } from 'lucide-react';
 import { generateAidListPDF } from '@/lib/utils/pdf-export';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import type { AidApplicationDocument } from '@/types/database';
 
 interface AidRecord extends AidApplicationDocument {

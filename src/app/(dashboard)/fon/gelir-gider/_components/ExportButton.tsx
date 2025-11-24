@@ -113,7 +113,7 @@ export function exportFinancialDataAsCSV(records: FinanceRecord[]): void {
     downloadCSV(csvContent);
     toast.success('Veriler başarıyla dışa aktarıldı');
   } catch (error) {
-    console.error('Export failed:', error);
+    logger.error('Export failed', error as Error);
     toast.error('Dışa aktarma işlemi başarısız oldu');
   }
 }

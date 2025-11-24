@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { Eye, EyeOff, Mail, Lock, Shield, Building2, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { OAuthButton } from '@/components/auth/OAuthButton';
 
 interface CorporateLoginFormProps {
   className?: string;
@@ -519,13 +520,49 @@ export function CorporateLoginForm({
                   )}
                 </Button>
               </motion.div>
+
+              {/* OAuth Divider */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: 0.55 }}
+                className="relative mt-6"
+              >
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-slate-500">veya</span>
+                </div>
+              </motion.div>
+
+              {/* OAuth Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.6 }}
+                className="space-y-2 mt-4"
+              >
+                <OAuthButton
+                  provider="google"
+                  redirectUrl={typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback'}
+                  className="w-full"
+                  variant="outline"
+                />
+                <OAuthButton
+                  provider="github"
+                  redirectUrl={typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback'}
+                  className="w-full"
+                  variant="outline"
+                />
+              </motion.div>
             </form>
 
             {/* Footer */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.6 }}
+              transition={{ duration: 0.3, delay: 0.7 }}
               className="mt-6 pt-6 border-t border-slate-200 text-center"
             >
               <p className="text-sm text-slate-600">

@@ -59,8 +59,8 @@ export default function IncomeExpensePage() {
 
   const handleEditRecord = (record: FinanceRecord) => {
     _setSelectedRecord(record);
-    // Open edit dialog or navigate to edit page
-    // TODO: Implement edit functionality
+    // Edit dialog not yet implemented
+    // See docs/ISSUES.md - Issue #8: Transaction Edit Dialog
   };
 
   return (

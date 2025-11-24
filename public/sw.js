@@ -198,8 +198,86 @@ self.addEventListener('sync', (event) => {
 });
 
 async function syncOfflineData() {
-  // TODO: Implement offline data sync with Appwrite
   console.warn('[SW] Syncing offline data...');
+
+  try {
+    // Get pending mutations from IndexedDB
+    const db = await openOfflineDB();
+    const mutations = await getAllMutations(db);
+
+    if (mutations.length === 0) {
+      console.warn('[SW] No pending mutations to sync');
+      return;
+    }
+
+    console.warn(`[SW] Found ${mutations.length} pending mutations`);
+
+    let success = 0;
+    let failed = 0;
+
+    // Sort by timestamp (oldest first)
+    mutations.sort((a, b) => a.timestamp - b.timestamp);
+
+    for (const mutation of mutations) {
+      try {
+        const endpoint = `/api/${mutation.collection}`;
+        const method =
+          mutation.type === 'create' ? 'POST' : mutation.type === 'update' ? 'PUT' : 'DELETE';
+
+        const response = await fetch(endpoint, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(mutation.data),
+        });
+
+        if (response.ok || response.status === 409) {
+          await removeMutationFromDB(db, mutation.id);
+          success++;
+        } else {
+          failed++;
+        }
+      } catch (error) {
+        console.error('[SW] Failed to sync mutation:', error);
+        failed++;
+      }
+    }
+
+    console.warn(`[SW] Sync completed: ${success} success, ${failed} failed`);
+  } catch (error) {
+    console.error('[SW] Offline sync failed:', error);
+  }
+}
+
+// IndexedDB helpers for Service Worker
+const OFFLINE_DB_NAME = 'kafkasder-offline';
+const OFFLINE_STORE_NAME = 'pending-mutations';
+
+function openOfflineDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(OFFLINE_DB_NAME, 1);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+  });
+}
+
+function getAllMutations(db) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([OFFLINE_STORE_NAME], 'readonly');
+    const store = transaction.objectStore(OFFLINE_STORE_NAME);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function removeMutationFromDB(db, id) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([OFFLINE_STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(OFFLINE_STORE_NAME);
+    const request = store.delete(id);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
 }
 
 /**

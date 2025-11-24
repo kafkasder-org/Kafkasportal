@@ -1,7 +1,11 @@
 /**
  * Real-time Query Hooks
  * NOTE: Convex has been removed. These hooks are stubs for backward compatibility.
- * TODO: Implement Appwrite Realtime subscriptions
+ *
+ * Migration Plan (see docs/ISSUES.md - Issue #4: Appwrite Realtime Migration):
+ * 1. Implement Appwrite Realtime subscriptions using client.subscribe()
+ * 2. Replace useQuery with Appwrite realtime channels
+ * 3. Add presence tracking using Appwrite Realtime
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -37,7 +41,8 @@ export function useRealtimeQuery<Query extends FunctionReference<'query'>>(
   _options: RealtimeQueryOptions = {}
 ): FunctionReturnType<Query> | undefined {
   // Stub implementation - Convex removed
-  // TODO: Implement with Appwrite Realtime
+  // Migration: Use Appwrite client.subscribe() for realtime updates
+  // See docs/ISSUES.md - Issue #4: Appwrite Realtime Migration
   useEffect(() => {
     logger.warn('useRealtimeQuery is deprecated. Please migrate to Appwrite Realtime API.');
   }, []);
@@ -57,7 +62,8 @@ export function useRealtimeList<Query extends FunctionReference<'query'>>(
   } = {}
 ): FunctionReturnType<Query> | undefined {
   // Stub implementation - Convex removed
-  // TODO: Implement with Appwrite Realtime
+  // Migration: Use Appwrite client.subscribe() for realtime list updates
+  // See docs/ISSUES.md - Issue #4: Appwrite Realtime Migration
   useEffect(() => {
     logger.warn('useRealtimeList is deprecated. Please migrate to Appwrite Realtime API.');
   }, []);
@@ -132,8 +138,8 @@ export function useEditConflictDetection<T extends { _id: string; _updatedAt?: n
  * This is a placeholder for future implementation with Appwrite Realtime
  */
 export function usePresence(_resourceId: string, _userId?: string) {
-  // TODO: Implement with Appwrite Realtime API
-  // For now, return empty state
+  // Presence tracking requires Appwrite Realtime API implementation
+  // See docs/ISSUES.md - Issue #4: Appwrite Realtime Migration
   return {
     activeUsers: [] as Array<{ id: string; name: string; cursor?: { x: number; y: number } }>,
     isUserActive: false,

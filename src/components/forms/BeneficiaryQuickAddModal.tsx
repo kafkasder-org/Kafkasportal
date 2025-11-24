@@ -27,7 +27,7 @@ import {
   quickAddBeneficiarySchema,
   QuickAddBeneficiaryFormData,
 } from '@/lib/validations/beneficiary';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import type { BeneficiaryDocument, CreateDocumentData } from '@/types/database';
 
 interface BeneficiaryQuickAddModalProps {

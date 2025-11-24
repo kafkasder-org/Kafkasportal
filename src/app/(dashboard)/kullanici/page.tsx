@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { UsersTable, type UsersTableItem } from '@/components/tables/users-table';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import { useAuthStore } from '@/stores/authStore';
 import type { PermissionValue } from '@/types/permissions';
 

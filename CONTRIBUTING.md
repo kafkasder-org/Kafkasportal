@@ -27,7 +27,7 @@ Thank you for your interest in contributing to Kafkasder Panel! This document pr
 - Node.js >= 20.9.0
 - npm >= 9.0.0
 - Git
-- Convex account (for backend development)
+- Appwrite hesabi (Cloud veya self-hosted)
 
 ### Setup
 
@@ -53,13 +53,9 @@ Thank you for your interest in contributing to Kafkasder Panel! This document pr
    # Edit .env.local with your values
    ```
 
-5. **Start development servers**
+5. **Start development server**
 
    ```bash
-   # Terminal 1: Convex backend
-   npm run convex:dev
-
-   # Terminal 2: Next.js frontend
    npm run dev
    ```
 

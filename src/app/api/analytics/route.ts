@@ -45,7 +45,7 @@ async function postAnalyticsHandler(request: NextRequest) {
     });
 
     // In production, you might want to:
-    // 1. Store in Convex database
+    // 1. Store in Appwrite database
     // 2. Send to Google Analytics 4
     // 3. Send to Mixpanel/Amplitude
     // 4. Send to custom analytics service

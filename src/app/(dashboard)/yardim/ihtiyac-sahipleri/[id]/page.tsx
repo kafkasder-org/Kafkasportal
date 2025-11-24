@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { AdvancedBeneficiaryForm } from '@/components/forms/AdvancedBeneficiaryForm';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 import type { BeneficiaryDocument } from '@/types/database';
 import type { BeneficiaryFormData } from '@/lib/validations/beneficiary';
 

@@ -47,6 +47,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { KumbaraForm } from './KumbaraForm';
 import { KumbaraPrintQR } from './KumbaraPrintQR';
+import { useAppwriteRealtime } from '@/hooks/useAppwriteRealtime';
+import { appwriteConfig } from '@/lib/appwrite/config';
 
 interface KumbaraDonation {
   _id: string;
@@ -78,6 +80,30 @@ export function KumbaraList({ onCreate }: KumbaraListProps) {
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const queryClient = useQueryClient();
+
+  // Real-time subscription for donations
+  const { isConnected } = useAppwriteRealtime(
+    appwriteConfig.collections.donations,
+    {
+      notifyOnChange: true,
+      changeMessage: 'Yeni kumbara bağışı eklendi',
+      skipInitial: true,
+      onChange: (event) => {
+        // Invalidate queries to refresh the list
+        queryClient.invalidateQueries({ queryKey: ['kumbara-donations'] });
+        queryClient.invalidateQueries({ queryKey: ['kumbara-stats'] });
+        
+        // Show specific messages
+        if (event === 'create') {
+          toast.success('Yeni kumbara bağışı eklendi!');
+        } else if (event === 'update') {
+          toast.info('Kumbara bağışı güncellendi');
+        } else if (event === 'delete') {
+          toast.warning('Kumbara bağışı silindi');
+        }
+      },
+    }
+  );
 
   const { data, isLoading, error } = useQuery<{
     donations: KumbaraDonation[];

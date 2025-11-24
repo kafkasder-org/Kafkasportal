@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Legacy API Client
+ * Appwrite API Client
  *
  * Client-side wrapper that calls Next.js API routes which internally use Appwrite.
  * This provides a clean interface for components to use while keeping the actual
@@ -119,9 +119,9 @@ async function apiRequest<T>(
 }
 
 /**
- * Convex-based API client that uses Next.js API routes
+ * Appwrite-based API client that uses Next.js API routes
  */
-export const convexApiClient = {
+export const apiClient = {
   // Beneficiaries
   beneficiaries: {
     getBeneficiaries: async (
@@ -276,7 +276,7 @@ export const convexApiClient = {
       tab: string
     ): Promise<ConvexResponse<MeetingDocument[]>> => {
       // Helper method for backward compatibility
-      return convexApiClient.meetings.getMeetings({
+      return apiClient.meetings.getMeetings({
         filters: { status: tab === 'all' ? undefined : tab },
       });
     },
@@ -744,3 +744,6 @@ export const cacheUtils = {
     });
   },
 };
+
+// Backward compatibility export
+export const convexApiClient = apiClient;

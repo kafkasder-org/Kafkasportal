@@ -25,9 +25,12 @@ export function ModernSidebar({
   const pathname = usePathname();
   const userPermissions = useAuthStore((state) => state.user?.permissions ?? []);
 
+  // Check if user has wildcard permission (full access)
+  const hasWildcardPermission = userPermissions.includes('*' as any);
+  
   // DEV MODE: If no permissions, show all modules (for development/testing)
   const hasNoPermissions = userPermissions.length === 0;
-  const effectivePermissions = hasNoPermissions
+  const effectivePermissions = hasWildcardPermission || hasNoPermissions
     ? Object.values(MODULE_PERMISSIONS)
     : userPermissions;
 

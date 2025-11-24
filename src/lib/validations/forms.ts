@@ -4,13 +4,14 @@
  */
 
 import { z } from 'zod';
+import { requiredPhoneSchema, phoneSchema } from './shared-validators';
 
 /**
  * Donation Form Schema
  */
 export const donationSchema = z.object({
   donor_name: z.string().min(2, 'Donör adı en az 2 karakter olmalıdır'),
-  donor_phone: z.string().min(10, 'Geçerli bir telefon numarası girin'),
+  donor_phone: requiredPhoneSchema,
   donor_email: z.string().email('Geçerli bir email adresi girin').optional().or(z.literal('')),
   amount: z.number().min(1, "Tutar 0'dan büyük olmalıdır"),
   currency: z.enum(['TRY', 'USD', 'EUR']),
@@ -31,7 +32,7 @@ export type DonationFormData = z.infer<typeof donationSchema>;
 export const beneficiarySchema = z.object({
   name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
   tc_no: z.string().length(11, 'TC kimlik numarası 11 haneli olmalıdır'),
-  phone: z.string().min(10, 'Geçerli bir telefon numarası girin'),
+  phone: requiredPhoneSchema,
   email: z.string().email('Geçerli bir email adresi girin').optional().or(z.literal('')),
   address: z.string().min(5, 'Adres en az 5 karakter olmalıdır'),
   city: z.string().min(2, 'Şehir seçin'),

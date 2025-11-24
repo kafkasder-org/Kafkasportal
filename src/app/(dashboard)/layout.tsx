@@ -32,7 +32,7 @@ import logger from '@/lib/logger';
 import { useQueryClient } from '@tanstack/react-query';
 import { prefetchData } from '@/lib/cache-config';
 import { CACHE_KEYS } from '@/lib/cache-config';
-import { convexApiClient } from '@/lib/api/convex-api-client';
+import { apiClient } from '@/lib/api/api-client';
 import { PerformanceMonitor } from '@/lib/performance-monitor';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
@@ -224,14 +224,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           await prefetchData(
             queryClient,
             [CACHE_KEYS.BENEFICIARIES],
-            () => convexApiClient.beneficiaries.getBeneficiaries({ limit: 20 }),
+            () => apiClient.beneficiaries.getBeneficiaries({ limit: 20 }),
             'BENEFICIARIES'
           );
         } else if (pathname.startsWith('/bagis/liste') || pathname.startsWith('/bagis')) {
           await prefetchData(
             queryClient,
             [CACHE_KEYS.DONATIONS],
-            () => convexApiClient.donations.getDonations({ limit: 20 }),
+            () => apiClient.donations.getDonations({ limit: 20 }),
             'DONATIONS'
           );
         } else if (pathname.startsWith('/yardim/basvurular')) {

@@ -46,7 +46,7 @@ import {
   FileDown,
 } from 'lucide-react';
 import { generateDonationPDF } from '@/lib/utils/pdf-export';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 
 interface DonationReport {
   _id: string;

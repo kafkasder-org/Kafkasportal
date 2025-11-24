@@ -137,7 +137,8 @@ export default function BulkMessagingPage() {
     setWizardStep(step);
   };
 
-  // TODO: Implement start over functionality
+  // Start over functionality can be added if needed
+  // Currently users can refresh the page to reset the wizard
   // const handleStartOver = () => {
   //   setWizardStep('compose');
   //   setMessageType('sms');

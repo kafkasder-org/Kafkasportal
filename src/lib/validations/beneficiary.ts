@@ -31,6 +31,7 @@ import {
   Disease,
   Label,
 } from '@/types/beneficiary';
+import { phoneSchema, requiredPhoneSchema } from './shared-validators';
 
 // === HELPER VALIDATORS ===
 
@@ -60,11 +61,7 @@ const tcKimlikNoSchema = z
     return digits[10] === check11;
   }, 'Geçersiz TC Kimlik No');
 
-// Telefon numarası validasyonu (E.164 format)
-const phoneSchema = z
-  .string()
-  .regex(/^(\+905\d{9}|5\d{9})$/, 'Telefon numarası geçerli Türk cep telefonu formatında olmalıdır')
-  .optional();
+// phoneSchema is now imported from shared-validators
 
 // Email validasyonu
 const emailSchema = z

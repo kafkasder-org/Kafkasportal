@@ -21,14 +21,14 @@ export function DemoBanner() {
             Bu sayfada gösterilen veriler demo amaçlıdır. Production ortamında gerçek veriler
             kullanılacaktır. Detaylar için{' '}
             <a
-              href="https://github.com/your-repo/blob/main/docs/TODO.md"
+              href="https://github.com/kafkasder-org/Kafkasportal/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-amber-900"
             >
-              TODO.md
+              GitHub Issues
             </a>{' '}
-            dosyasına bakabilirsiniz.
+            sayfasına bakabilirsiniz.
           </p>
         </div>
       </div>

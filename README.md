@@ -16,6 +16,13 @@ Modern, guvenli ve olceklenebilir dernek yonetim platformu.
 - **Coklu Kanal Iletisim**: WhatsApp, SMS, Email entegrasyonu
 - **Finansal Dashboard**: Gelir-gider raporlama
 - **Guvenlik**: 2FA, CSRF korumasi, rate limiting
+- **📱 Offline-First PWA**: Queue mutations when offline, automatic background sync, manual sync controls
+- **🎨 Theme Customization**: Full theme management system with preset themes and custom color palettes
+  - Light/Dark/Auto theme modes with system preference detection
+  - Pre-built theme presets for quick styling
+  - Custom color palette creator with live preview
+  - User-specific theme saving and management
+  - Admin controls for organization-wide theme settings
 
 ## Hizli Baslangic
 
@@ -96,13 +103,14 @@ npm run build            # Production build
 | ------------------------------------------------------ | ---------------------------- |
 | [docs/](./docs/)                                       | Teknik dokumantasyon         |
 | [docs/setup.md](./docs/setup.md)                       | Kurulum rehberi              |
-| [docs/mcp-quick-start.md](./docs/mcp-quick-start.md)   | MCP hizli baslangic (5 dk)   |
+| [docs/appwrite-guide.md](./docs/appwrite-guide.md)     | Appwrite kullanim rehberi    |
+| [docs/offline-sync-guide.md](./docs/offline-sync-guide.md) | Offline sync rehberi      |
 | [docs/mcp-setup.md](./docs/mcp-setup.md)               | MCP sunuculari kurulumu      |
 | [docs/deployment.md](./docs/deployment.md)             | Deployment rehberi           |
 | [docs/testing.md](./docs/testing.md)                   | Test rehberi                 |
 | [docs/api-patterns.md](./docs/api-patterns.md)         | API standartlari             |
 | [CONTRIBUTING.md](./CONTRIBUTING.md)                   | Katki rehberi                |
-| [CLAUDE.md](./CLAUDE.md)                               | AI asistanlari için referans |
+| [CLAUDE.md](./CLAUDE.md)                               | AI asistanlari icin referans |
 
 ## Teknoloji Yigini
 
@@ -112,6 +120,20 @@ npm run build            # Production build
 - **State**: Zustand + TanStack Query
 - **Testing**: Vitest + Playwright
 - **Deployment**: Appwrite Cloud
+
+## Teknik Detaylar
+
+### Offline-First Mimari
+
+Uygulama offline-first bir PWA mimarisi kullanır:
+
+- **IndexedDB Queue**: Offline durumda yapılan değişiklikler IndexedDB'de kuyruğa eklenir
+- **Service Worker**: Background sync ve cache yönetimi için Service Worker kullanılır
+- **Otomatik Senkronizasyon**: İnternet bağlantısı kurulduğunda işlemler otomatik olarak senkronize edilir
+- **Retry Mekanizması**: Exponential backoff ile başarısız senkronizasyonlar yeniden denenir (max 3 deneme)
+- **Conflict Resolution**: Last-write-wins stratejisi ile çakışmalar çözülür
+
+Offline sync özellikleri mutation hook'ları (`useAppwriteMutation`, `useFormMutation`) ile otomatik olarak çalışır. Detaylı bilgi için [Offline Sync Guide](./docs/offline-sync-guide.md) dokümantasyonuna bakın.
 
 ## Environment Variables
 

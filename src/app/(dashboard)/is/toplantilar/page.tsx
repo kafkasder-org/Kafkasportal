@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic';
 import { DemoBanner } from '@/components/ui/demo-banner';
 import { MeetingsHeader } from './_components/MeetingsHeader';
 import { useAuthStore } from '@/stores/authStore';
-import { meetings as meetingsApi } from '@/lib/api/convex-api-client';
+import { meetings as meetingsApi } from '@/lib/api/api-client';
 import type { MeetingDocument } from '@/types/database';
 import { Calendar, CheckCircle, XCircle } from 'lucide-react';
 import { MeetingForm } from '@/components/forms/MeetingForm';
@@ -61,7 +61,8 @@ export default function MeetingsPage() {
   const completedMeetings = meetings.filter((m) => m.status === 'completed').length;
   const cancelledMeetings = meetings.filter((m) => m.status === 'cancelled').length;
 
-  // TODO: Implement delete meeting functionality
+  // Delete meeting functionality not yet implemented
+  // See docs/ISSUES.md - Issue #9: Meeting Delete Functionality
   // const deleteMeetingMutation = useMutation({
   //   mutationFn: (meetingId: string) => meetingsApi.delete(meetingId),
   //   onSuccess: () => {

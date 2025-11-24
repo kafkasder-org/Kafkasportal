@@ -1,10 +1,10 @@
 /**
  * API Client Tests
- * Tests for Convex API client functionality
+ * Tests for Appwrite API client functionality
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { convexApiClient, cacheUtils } from '@/lib/api/convex-api-client';
+import { apiClient, cacheUtils } from '@/lib/api/api-client';
 
 // Mock fetch
 const mockFetch = vi.fn();
@@ -36,7 +36,7 @@ describe('Convex API Client', () => {
 
   describe('Beneficiaries API', () => {
     it('should get beneficiaries with pagination', async () => {
-      const result = await convexApiClient.beneficiaries.getBeneficiaries({
+      const result = await apiClient.beneficiaries.getBeneficiaries({
         page: 1,
         limit: 10,
         search: 'test',
@@ -47,7 +47,7 @@ describe('Convex API Client', () => {
     });
 
     it('should get single beneficiary', async () => {
-      const result = await convexApiClient.beneficiaries.getBeneficiary('test-id');
+      const result = await apiClient.beneficiaries.getBeneficiary('test-id');
 
       expect(result.data).toEqual({ _id: 'test-id', name: 'Test' });
       expect(mockFetch).toHaveBeenCalledWith('/api/beneficiaries/test-id', {
@@ -71,7 +71,7 @@ describe('Convex API Client', () => {
         family_size: 4,
         status: 'TASLAK' as const,
       };
-      const result = await convexApiClient.beneficiaries.createBeneficiary(testData);
+      const result = await apiClient.beneficiaries.createBeneficiary(testData);
 
       expect(result.data).toEqual({ _id: 'test-id', name: 'Test' });
       expect(mockFetch).toHaveBeenCalledWith(
@@ -85,7 +85,7 @@ describe('Convex API Client', () => {
 
     it('should update beneficiary', async () => {
       const updateData = { name: 'Updated Name' };
-      const result = await convexApiClient.beneficiaries.updateBeneficiary('test-id', updateData);
+      const result = await apiClient.beneficiaries.updateBeneficiary('test-id', updateData);
 
       expect(result.data).toEqual({ _id: 'test-id', name: 'Test' });
       expect(mockFetch).toHaveBeenCalledWith(
@@ -103,7 +103,7 @@ describe('Convex API Client', () => {
         json: () => Promise.resolve({ success: true, data: null }),
       });
 
-      const result = await convexApiClient.beneficiaries.deleteBeneficiary('test-id');
+      const result = await apiClient.beneficiaries.deleteBeneficiary('test-id');
 
       expect(result.data).toBeNull();
       expect(mockFetch).toHaveBeenCalledWith(
@@ -131,7 +131,7 @@ describe('Convex API Client', () => {
     });
 
     it('should get partners with filters', async () => {
-      const result = await convexApiClient.partners.getPartners({
+      const result = await apiClient.partners.getPartners({
         page: 1,
         limit: 10,
         filters: {
@@ -157,7 +157,7 @@ describe('Convex API Client', () => {
           }),
       });
 
-      const result = await convexApiClient.partners.getPartner('partner-1');
+      const result = await apiClient.partners.getPartner('partner-1');
 
       expect(result.data).toEqual({
         _id: 'partner-1',
@@ -179,7 +179,7 @@ describe('Convex API Client', () => {
         status: 'active' as const,
       };
 
-      const result = await convexApiClient.partners.createPartner(partnerData);
+      const result = await apiClient.partners.createPartner(partnerData);
 
       expect(result.data).toEqual({ _id: 'test-id', name: 'Test' });
       expect(mockFetch).toHaveBeenCalledWith(
@@ -237,7 +237,7 @@ describe('Convex API Client', () => {
           }),
       });
 
-      const result = await convexApiClient.beneficiaries.getBeneficiary('nonexistent');
+      const result = await apiClient.beneficiaries.getBeneficiary('nonexistent');
 
       expect(result.data).toBeNull();
       expect(result.error).toBe('Not found');
@@ -246,7 +246,7 @@ describe('Convex API Client', () => {
     it('should handle network errors', async () => {
       mockFetch.mockRejectedValue(new Error('Network error'));
 
-      const result = await convexApiClient.beneficiaries.getBeneficiaries();
+      const result = await apiClient.beneficiaries.getBeneficiaries();
 
       expect(result.data).toBeNull();
       expect(result.error).toBe('Network error');

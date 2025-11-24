@@ -83,10 +83,13 @@ export function AgentChat({ userId }: AgentChatProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Queries
+  // AI Agent API endpoints not yet implemented
+  // Requires: /api/agent/threads, /api/agent/messages, /api/agent/usage
+  // See docs/ISSUES.md - Issue #3: AI Agent API Endpoints
   const { data: threadsData } = useQuery({
     queryKey: ['agent-threads', userId],
     queryFn: async () => {
-      // TODO: Implement agent threads API endpoint
+      // Endpoint: GET /api/agent/threads
       return [];
     },
     enabled: !!userId,
@@ -97,7 +100,7 @@ export function AgentChat({ userId }: AgentChatProps) {
   const { data: messagesData } = useQuery({
     queryKey: ['agent-messages', activeThread?._id || activeThread?.$id],
     queryFn: async () => {
-      // TODO: Implement agent messages API endpoint
+      // Endpoint: GET /api/agent/threads/[id]/messages
       return [];
     },
     enabled: !!activeThread && (!!activeThread._id || !!activeThread.$id),
@@ -108,7 +111,7 @@ export function AgentChat({ userId }: AgentChatProps) {
   const { data: usageStats } = useQuery({
     queryKey: ['agent-usage', userId],
     queryFn: async () => {
-      // TODO: Implement usage stats API endpoint
+      // Endpoint: GET /api/agent/usage
       return {
         totalMessages: 0,
         totalTokens: 0,
@@ -121,7 +124,7 @@ export function AgentChat({ userId }: AgentChatProps) {
   // Mutations
   const createAndRespondMutation = useMutation({
     mutationFn: async (_data: { userId: string; agentName: string; prompt: string }) => {
-      // TODO: Implement create thread and respond API endpoint
+      // Endpoint: POST /api/agent/threads (create thread and first response)
       return {
         threadId: `thread_${Date.now()}`,
         messageId: `msg_${Date.now()}`,
@@ -143,7 +146,7 @@ export function AgentChat({ userId }: AgentChatProps) {
 
   const generateResponseMutation = useMutation({
     mutationFn: async (_data: { threadId: string; prompt: string }) => {
-      // TODO: Implement generate response API endpoint
+      // Endpoint: POST /api/agent/threads/[id]/messages
       return {
         messageId: `msg_${Date.now()}`,
       };
@@ -156,7 +159,7 @@ export function AgentChat({ userId }: AgentChatProps) {
   // Mutations
   const archiveThreadMutation = useMutation({
     mutationFn: async (_threadId: string) => {
-      // TODO: Implement archive thread API endpoint
+      // Endpoint: POST /api/agent/threads/[id]/archive
       return { success: true };
     },
     onSuccess: (_result, threadId) => {

@@ -72,13 +72,7 @@ export const POST = authRateLimit(async (request: NextRequest) => {
     // Look up user by email in Appwrite
     // email is guaranteed to be a string here due to validation above
     const emailLower = email.toLowerCase();
-    const usersResponse = await appwriteUsers.list({
-      search: emailLower,
-      limit: 1,
-    });
-    const user = usersResponse.documents?.find(
-      (u) => u.email?.toLowerCase() === emailLower
-    );
+    const user = await appwriteUsers.getByEmail(emailLower);
 
     if (!user) {
       // Record failed attempt

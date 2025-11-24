@@ -96,28 +96,32 @@ export function sanitizeEmail(email: string): string | null {
  * Sanitize phone number (Turkish format)
  * Removes all non-digit characters and validates format
  */
+/**
+ * Sanitize phone number to standard format
+ * Normalizes to 5XXXXXXXXX format (removes +90 and 0 prefixes)
+ * Returns: 5XXXXXXXXX (10 digits, no prefix)
+ */
 export function sanitizePhone(phone: string): string | null {
   if (!phone) return null;
 
   // Remove all non-digit characters
   const digits = phone.replace(/\D/g, '');
 
-  // Turkish mobile phone format: +90 5XX XXX XX XX (must start with 5 for mobile)
+  // Turkish mobile phone format: 5XXXXXXXXX (must start with 5 for mobile)
   // Mobile numbers start with 5 (5XX is the mobile prefix)
 
   if (digits.length === 12 && digits.startsWith('905')) {
-    // Format: 905551234567 (12 digits starting with 905) -> +905551234567
-    return `+${digits}`;
+    // Format: 905551234567 (12 digits starting with 905) -> 5551234567
+    return digits.substring(2);
   } else if (digits.length === 11 && digits.startsWith('905')) {
-    // Format: 905551234567 (already 11 digits with 90) -> +905551234567
-    return `+${digits}`;
+    // Format: 905551234567 (11 digits with 90) -> 5551234567
+    return digits.substring(2);
   } else if (digits.length === 11 && digits.startsWith('05')) {
-    // Format: 05551234567 (11 digits with leading 0) -> +905551234567
-    // Remove leading 0 and add +90
-    return `+90${digits.substring(1)}`;
+    // Format: 05551234567 (11 digits with leading 0) -> 5551234567
+    return digits.substring(1);
   } else if (digits.length === 10 && digits.startsWith('5')) {
-    // Format: 5551234567 (10 digits without country code) -> +905551234567
-    return `+90${digits}`;
+    // Format: 5551234567 (10 digits without country code) -> 5551234567 (no change)
+    return digits;
   }
 
   // Reject landline numbers (not starting with 5 after country code)

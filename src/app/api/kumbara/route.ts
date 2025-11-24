@@ -483,7 +483,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create donation in Convex
+    // Create donation in Appwrite
     const donationId = (await appwriteDonations.create((validation.normalizedData || {}) as any)) as string;
 
     // Generate QR code for the kumbara

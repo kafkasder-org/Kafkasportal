@@ -58,11 +58,12 @@ function FinancialDashboardPageContent() {
   });
 
   // Fetch dashboard metrics
+  // Dashboard metrics API endpoint not yet implemented
+  // Currently calculating from all records (performance impact for large datasets)
+  // See docs/ISSUES.md - Issue #5: Financial Dashboard API Endpoints
   const { data: metrics } = useQuery({
     queryKey: ['finance-metrics', dateRange.from, dateRange.to],
     queryFn: async () => {
-      // TODO: Create API endpoint for dashboard metrics
-      // For now, fetch all records and calculate metrics
       const response = await appwriteFinanceRecords.list({
         limit: 1000,
       });
@@ -94,10 +95,11 @@ function FinancialDashboardPageContent() {
   });
 
   // Fetch monthly data for charts
+  // Monthly data API endpoint not yet implemented
+  // See docs/ISSUES.md - Issue #5: Financial Dashboard API Endpoints
   const { data: monthlyData } = useQuery({
     queryKey: ['finance-monthly'],
     queryFn: async () => {
-      // TODO: Create API endpoint for monthly data
       const response = await appwriteFinanceRecords.list({ limit: 1000 });
       const records = response.documents || [];
       
@@ -193,8 +195,8 @@ function FinancialDashboardPageContent() {
   }, [monthlyData]);
 
   const handleExport = () => {
-    // TODO: PDF/Excel export ekle (bkz: docs/TODO.md #3)
-    // Öneri: jsPDF + jspdf-autotable kullan (zaten dependency'de var)
+    // PDF/Excel export requires jsPDF and xlsx libraries
+    // See docs/ISSUES.md - Issue #6: Financial Reports Export
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
       logger.info('Exporting financial data');

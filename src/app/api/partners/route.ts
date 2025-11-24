@@ -165,7 +165,7 @@ async function createPartnerHandler(request: NextRequest) {
       );
     }
 
-    // Prepare Convex mutation data
+    // Prepare Appwrite mutation data
     const partnerData = {
       name: body.name || '',
       type: body.type as 'organization' | 'individual' | 'sponsor',

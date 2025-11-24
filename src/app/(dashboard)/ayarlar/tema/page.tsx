@@ -6,6 +6,7 @@
  */
 
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSettings, useTheme } from '@/contexts/settings-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,15 +14,31 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Palette, Sun, Moon, Monitor, Check, RefreshCw, Sparkles } from 'lucide-react';
+import logger from '@/lib/logger';
+import { getCsrfTokenFromCookie, fetchWithCsrf } from '@/lib/csrf';
+import { Palette, Sun, Moon, Monitor, Check, RefreshCw, Sparkles, Trash2 } from 'lucide-react';
 
 export default function ThemeSettingsPage() {
+  const queryClient = useQueryClient();
   const { isLoading } = useSettings();
   const { currentTheme, themePresets, setTheme, themeMode, setThemeMode, resolvedThemeMode } =
     useTheme();
 
   const [selectedPreset, setSelectedPreset] = useState<string>(currentTheme?.name || '');
+  const [customThemeName, setCustomThemeName] = useState<string>('');
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [customColors, setCustomColors] = useState({
     primary: currentTheme?.colors?.primary || '#3b82f6',
     secondary: currentTheme?.colors?.secondary || '#6b7280',
@@ -48,9 +65,79 @@ export default function ThemeSettingsPage() {
     setCustomColors((prev) => ({ ...prev, [colorKey]: value }));
   };
 
-  const applyCustomColors = () => {
-    // TODO: Implement custom color save to database
-    toast.info('Özel renk kaydetme özelliği yakında gelecek');
+  const applyCustomColors = async () => {
+    // Validate theme name
+    if (!customThemeName.trim()) {
+      toast.error('Lütfen bir tema adı girin');
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      // Create theme preset object
+      const themeData = {
+        name: customThemeName.trim(),
+        description: 'Kullanıcı tarafından oluşturulan özel tema',
+        colors: customColors,
+        isCustom: true,
+        isDefault: false,
+      };
+
+      // Make POST request to create theme preset (fetchWithCsrf handles CSRF token)
+      const response = await fetchWithCsrf('/api/settings/theme-presets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(themeData),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        throw new Error(json.error || 'Tema kaydedilemedi');
+      }
+
+      // Invalidate queries to refetch
+      await queryClient.invalidateQueries({ queryKey: ['theme-presets'] });
+
+      // Apply the new theme
+      await setTheme(customThemeName.trim());
+
+      toast.success('Özel tema başarıyla kaydedildi ve uygulandı');
+      
+      // Reset form
+      setCustomThemeName('');
+    } catch (error) {
+      logger.error('Failed to save custom theme', error);
+      toast.error(error instanceof Error ? error.message : 'Tema kaydedilemedi');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteCustomTheme = async (presetId: string, presetName: string) => {
+    try {
+      // Make DELETE request (fetchWithCsrf handles CSRF token)
+      const response = await fetchWithCsrf(`/api/settings/theme-presets?id=${presetId}`, {
+        method: 'DELETE',
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        throw new Error(json.error || 'Tema silinemedi');
+      }
+
+      // Invalidate queries to refetch
+      await queryClient.invalidateQueries({ queryKey: ['theme-presets'] });
+
+      toast.success(`${presetName} teması başarıyla silindi`);
+    } catch (error) {
+      logger.error('Failed to delete custom theme', error);
+      toast.error(error instanceof Error ? error.message : 'Tema silinemedi');
+    }
   };
 
   const resetToDefault = async () => {
@@ -218,17 +305,58 @@ export default function ThemeSettingsPage() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="font-semibold">{preset.name}</h3>
-                        {preset.isDefault && (
-                          <Badge variant="secondary" className="text-xs">
-                            Varsayılan
-                          </Badge>
-                        )}
-                        {selectedPreset === preset.name && (
-                          <Badge className="text-xs">
-                            <Check className="w-3 h-3 mr-1" />
-                            Aktif
-                          </Badge>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {preset.isDefault && (
+                            <Badge variant="secondary" className="text-xs">
+                              Varsayılan
+                            </Badge>
+                          )}
+                          {preset.isCustom && (
+                            <Badge variant="outline" className="text-xs">
+                              Özel
+                            </Badge>
+                          )}
+                          {selectedPreset === preset.name && (
+                            <Badge className="text-xs">
+                              <Check className="w-3 h-3 mr-1" />
+                              Aktif
+                            </Badge>
+                          )}
+                          {preset.isCustom && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Temayı Sil</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    "{preset.name}" temasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>İptal</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteCustomTheme(preset._id || '', preset.name);
+                                    }}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Sil
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
                       </div>
 
                       {preset.description && (
@@ -297,6 +425,21 @@ export default function ThemeSettingsPage() {
               <CardDescription>Kendi renk paletinizi oluşturun ve kaydedin</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Theme Name Input */}
+              <div className="space-y-2">
+                <Label htmlFor="theme-name">Tema Adı</Label>
+                <Input
+                  id="theme-name"
+                  type="text"
+                  value={customThemeName}
+                  onChange={(e) => setCustomThemeName(e.target.value)}
+                  placeholder="Özel temam için bir isim girin"
+                  className="max-w-md"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Bu tema kaydedilecek ve hazır temalar listesinde görünecektir
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Primary Color */}
                 <div className="space-y-2">
@@ -444,9 +587,18 @@ export default function ThemeSettingsPage() {
 
               {/* Action Buttons */}
               <div className="flex gap-2 pt-4">
-                <Button onClick={applyCustomColors} className="flex-1">
-                  <Check className="w-4 h-4 mr-2" />
-                  Renkleri Kaydet
+                <Button onClick={applyCustomColors} className="flex-1" disabled={isSaving}>
+                  {isSaving ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Kaydediliyor...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      Renkleri Kaydet
+                    </>
+                  )}
                 </Button>
                 <Button
                   variant="outline"

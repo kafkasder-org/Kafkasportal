@@ -5,6 +5,8 @@ import type { DonationDocument, Document } from '@/types/database';
 import type { PaymentMethod } from '@/lib/api/types';
 import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
 import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
+import { sanitizePhone } from '@/lib/sanitization';
+import { phoneSchema } from '@/lib/validations/shared-validators';
 
 /**
  * Validate donation payload
@@ -28,8 +30,13 @@ function validateDonation(data: Partial<DonationDocument>): {
   if (data.donor_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.donor_email)) {
     errors.push('Geçersiz e-posta');
   }
-  if (data.donor_phone && !/^[0-9\s\-\+\(\)]{10,15}$/.test(data.donor_phone)) {
-    errors.push('Geçersiz telefon numarası');
+  if (data.donor_phone) {
+    const sanitized = sanitizePhone(data.donor_phone);
+    if (!sanitized || !phoneSchema.safeParse(sanitized).success) {
+      errors.push('Geçersiz telefon numarası (5XXXXXXXXX formatında olmalıdır)');
+    } else {
+      data.donor_phone = sanitized; // Normalize edilmiş değeri kullan
+    }
   }
 
   if (errors.length > 0) {

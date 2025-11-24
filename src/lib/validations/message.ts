@@ -1,11 +1,6 @@
 import { z } from 'zod';
 import { MessageDocument } from '@/types/database';
-
-// Helper for Turkish phone numbers (10 digits, starts with 5)
-export const phoneNumberSchema = z
-  .string()
-  .regex(/^5\d{9}$/, 'Geçerli bir Türk telefon numarası girin (5XXXXXXXXX)')
-  .length(10, 'Telefon numarası 10 haneli olmalıdır');
+import { phoneSchema } from './shared-validators';
 
 // Helper for email validation
 export const emailSchema = z
@@ -62,7 +57,7 @@ export const messageSchema = z
 
       // Recipients must be valid phone numbers for SMS
       data.recipients.forEach((recipient, index) => {
-        if (!/^5\d{9}$/.test(recipient)) {
+        if (!phoneSchema.safeParse(recipient).success) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'SMS için geçerli telefon numarası girin (5XXXXXXXXX)',
@@ -198,7 +193,7 @@ export const validateRecipients = (
 
   recipients.forEach((recipient, index) => {
     if (messageType === 'sms') {
-      if (!/^5\d{9}$/.test(recipient)) {
+      if (!phoneSchema.safeParse(recipient).success) {
         errors.push(`Alıcı ${index + 1}: Geçerli telefon numarası girin (5XXXXXXXXX)`);
       }
     } else if (messageType === 'email') {
@@ -233,7 +228,7 @@ export const estimateSmsCost = (recipientCount: number, content: string) => {
 // Helper function to format phone number for display
 export const formatPhoneNumber = (phone: string) => {
   if (phone.length === 10 && phone.startsWith('5')) {
-    return `+90 ${phone.slice(0, 3)} ${phone.slice(3, 6)} ${phone.slice(6, 8)} ${phone.slice(8)}`;
+    return `${phone.slice(0, 3)} ${phone.slice(3, 6)} ${phone.slice(6, 8)} ${phone.slice(8)}`;
   }
   return phone;
 };

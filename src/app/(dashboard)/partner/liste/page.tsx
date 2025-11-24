@@ -42,7 +42,7 @@ import {
   User,
   Star,
 } from 'lucide-react';
-import { convexApiClient as api } from '@/lib/api/convex-api-client';
+import { apiClient as api } from '@/lib/api/api-client';
 
 interface Partner {
   _id: string;

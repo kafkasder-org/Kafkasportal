@@ -51,7 +51,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // Call optional error callback
     this.props.onError?.(error, errorInfo);
 
-    // TODO: Send to Sentry when integrated
+    // Sentry integration is configured but not enabled in ErrorBoundary
+    // Uncomment below to enable automatic error reporting:
     // Sentry.captureException(error, { contexts: { react: { componentStack: errorInfo.componentStack } } });
   }
 

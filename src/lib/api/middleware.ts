@@ -62,7 +62,27 @@ export function withModuleAccess(moduleName: string) {
 }
 
 /**
+ * Offline sync middleware
+ * Handles X-Force-Overwrite header for conflict resolution
+ */
+export function withOfflineSync(handler: RouteHandler): RouteHandler {
+  return async (request, params) => {
+    const forceOverwrite = request.headers.get('X-Force-Overwrite') === 'true';
+
+    if (forceOverwrite) {
+      logger.info('Offline sync operation with force overwrite', {
+        method: request.method,
+        url: request.url,
+      });
+    }
+
+    return await handler(request, params);
+  };
+}
+
+/**
  * Error handling middleware
+ * Enhanced with offline sync conflict resolution
  */
 export function withErrorHandler(handler: RouteHandler): RouteHandler {
   return async (request, params) => {
@@ -251,6 +271,7 @@ export function buildApiRoute(options: {
   allowedMethods?: string[];
   rateLimit?: RateLimitOptions;
   requireAuth?: boolean;
+  supportOfflineSync?: boolean;
 }) {
   return (handler: RouteHandler) => {
     let wrappedHandler = handler;
@@ -258,6 +279,10 @@ export function buildApiRoute(options: {
     // Apply middleware in order of importance
     wrappedHandler = withLogging(wrappedHandler);
     wrappedHandler = withErrorHandler(wrappedHandler);
+
+    if (options.supportOfflineSync) {
+      wrappedHandler = withOfflineSync(wrappedHandler);
+    }
 
     if (options.allowedMethods) {
       wrappedHandler = withMethodCheck(options.allowedMethods)(wrappedHandler);

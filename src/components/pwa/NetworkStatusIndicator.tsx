@@ -8,17 +8,31 @@
 import { useEffect, useState } from 'react';
 import { WifiOff, Wifi } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getOfflineStats } from '@/lib/offline-sync';
 
 export function NetworkStatusIndicator() {
   const [isOnline, setIsOnline] = useState(() =>
     typeof navigator !== 'undefined' ? navigator.onLine : true
   );
   const [showIndicator, setShowIndicator] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
-    const handleOnline = () => {
+    const loadPendingCount = async () => {
+      try {
+        const stats = await getOfflineStats();
+        setPendingCount(stats.pendingCount);
+      } catch (error) {
+        // Ignore errors
+      }
+    };
+
+    const handleOnline = async () => {
       setIsOnline(true);
       setShowIndicator(true);
+
+      // Load pending count to show sync status
+      await loadPendingCount();
 
       // Hide after 3 seconds
       setTimeout(() => {
@@ -26,20 +40,35 @@ export function NetworkStatusIndicator() {
       }, 3000);
     };
 
-    const handleOffline = () => {
+    const handleOffline = async () => {
       setIsOnline(false);
       setShowIndicator(true);
+      // Load pending count when going offline
+      await loadPendingCount();
       // Don't auto-hide offline status
     };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
+    // Load initial pending count
+    if (!isOnline) {
+      loadPendingCount();
+    }
+
+    // Refresh pending count every 10 seconds when offline
+    const interval = setInterval(() => {
+      if (!isOnline) {
+        loadPendingCount();
+      }
+    }, 10000);
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      clearInterval(interval);
     };
-  }, []);
+  }, [isOnline]);
 
   // Don't show anything if online and indicator is hidden
   if (isOnline && !showIndicator) {
@@ -72,6 +101,7 @@ export function NetworkStatusIndicator() {
           <WifiOff className="h-4 w-4 text-red-600 dark:text-red-400 animate-pulse" />
           <span className="text-sm font-medium text-red-800 dark:text-red-200">
             İnternet bağlantısı yok
+            {pendingCount > 0 && ` (${pendingCount} işlem bekliyor)`}
           </span>
         </>
       )}

@@ -74,24 +74,25 @@ export const tcKimlikNoSchema = z
 // ============================================================================
 
 /**
- * Turkish mobile phone validator (E.164 format)
- * Accepts: +905XXXXXXXXX or 5XXXXXXXXX
+ * Turkish mobile phone validator
+ * Accepts: 5XXXXXXXXX (10 digits, Turkish mobile format)
  */
 export const phoneSchema = z
   .string()
   .regex(
-    /^(\+905\d{9}|5\d{9})$/,
-    'Telefon numarası geçerli Türk cep telefonu formatında olmalıdır (5XXXXXXXXX)'
+    /^5\d{9}$/,
+    'Telefon numarası 10 haneli olmalı ve 5 ile başlamalıdır (5XXXXXXXXX)'
   )
   .optional();
 
 /**
  * Required phone validator
+ * Accepts: 5XXXXXXXXX (10 digits, Turkish mobile format)
  */
 export const requiredPhoneSchema = z
   .string()
   .min(10, 'Telefon numarası gereklidir')
-  .regex(/^(\+905\d{9}|5\d{9})$/, 'Geçerli bir Türk cep telefonu numarası girin (5XXXXXXXXX)');
+  .regex(/^5\d{9}$/, 'Telefon numarası 10 haneli olmalı ve 5 ile başlamalıdır (5XXXXXXXXX)');
 
 /**
  * International phone validator

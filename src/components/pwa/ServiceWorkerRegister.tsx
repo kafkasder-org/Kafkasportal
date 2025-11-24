@@ -128,18 +128,35 @@ export function ServiceWorkerRegister() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const handleOnline = () => {
+    let syncInterval: NodeJS.Timeout | null = null;
+
+    const handleOnline = async () => {
       toast.success('İnternet bağlantısı yeniden kuruldu', {
         icon: '🌐',
         duration: 3000,
       });
 
-      // Sync offline data if service worker supports it
+      // Try background sync first
       if (registration && 'sync' in registration) {
-        (registration as any).sync.register('sync-offline-data').catch((error: any) => {
+        try {
+          (registration as any).sync.register('sync-offline-data');
+          logger.info('Background sync registered');
+        } catch (error) {
           logger.error('Background sync registration failed', { error });
-        });
+          // Fallback to direct sync if background sync fails
+          await syncOfflineData();
+        }
+      } else {
+        // Fallback: sync directly if background sync not supported
+        await syncOfflineData();
       }
+
+      // Set up periodic sync fallback (every 5 minutes)
+      syncInterval = setInterval(async () => {
+        if (navigator.onLine) {
+          await syncOfflineData();
+        }
+      }, 5 * 60 * 1000); // 5 minutes
     };
 
     const handleOffline = () => {
@@ -150,12 +167,32 @@ export function ServiceWorkerRegister() {
       });
     };
 
+    const syncOfflineData = async () => {
+      try {
+        const { syncPendingMutations } = await import('@/lib/offline-sync');
+        const result = await syncPendingMutations();
+        if (result.success > 0) {
+          logger.info('Periodic sync completed', result);
+        }
+      } catch (error) {
+        logger.error('Periodic sync failed', { error });
+      }
+    };
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+
+    // Initial sync check if online
+    if (navigator.onLine) {
+      handleOnline();
+    }
 
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      if (syncInterval) {
+        clearInterval(syncInterval);
+      }
     };
   }, [registration]);
 

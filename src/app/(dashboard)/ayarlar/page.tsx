@@ -19,6 +19,7 @@ import {
   Zap,
   Lock,
   Eye,
+  Wifi,
 } from 'lucide-react';
 
 interface SettingCategory {
@@ -100,9 +101,47 @@ const settingCategories: SettingCategory[] = [
       'Sıralama ve filtreleme',
     ],
   },
+  {
+    title: 'Offline ve PWA',
+    description: 'Çevrimdışı senkronizasyon ve uygulama ayarları',
+    icon: Wifi,
+    href: '/ayarlar/offline',
+    badge: 'Beta',
+    badgeVariant: 'secondary',
+    features: [
+      'Offline mutation queue',
+      'Background sync',
+      'PWA installation',
+      'Cache management',
+    ],
+  },
 ];
 
 export default function SettingsPage() {
+  const [offlineStats, setOfflineStats] = useState<{
+    pendingCount: number;
+    failedCount: number;
+  }>({ pendingCount: 0, failedCount: 0 });
+
+  useEffect(() => {
+    // Load offline stats
+    const loadStats = async () => {
+      try {
+        const { getOfflineStats } = await import('@/lib/offline-sync');
+        const stats = await getOfflineStats();
+        setOfflineStats({
+          pendingCount: stats.pendingCount,
+          failedCount: stats.failedCount,
+        });
+      } catch (error) {
+        // Ignore errors if offline sync is not available
+      }
+    };
+    loadStats();
+    const interval = setInterval(loadStats, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       {/* Page Header */}
@@ -175,6 +214,22 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+
+        {offlineStats.pendingCount > 0 && (
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-lg bg-blue-500/10">
+                  <Wifi className="w-6 h-6 text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{offlineStats.pendingCount}</p>
+                  <p className="text-sm text-muted-foreground">Bekleyen Offline İşlem</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Settings Categories */}
@@ -229,7 +284,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Tema ve ayar değişiklikleriniz Convex real-time sync ile anında tüm cihazlarda
+              Tema ve ayar değişiklikleriniz Appwrite real-time sync ile anında tüm cihazlarda
               güncellenir. LocalStorage ile tercihleriniz saklanır ve bir sonraki oturumda
               hatırlanır.
             </p>
