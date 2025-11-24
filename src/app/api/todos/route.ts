@@ -6,38 +6,25 @@ import { parseBody } from '@/lib/api/route-helpers';
 import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
 import { todoSchema } from '@/lib/validations/todo';
 
-function validateTodo(data: Record<string, unknown>): {
-  isValid: boolean;
-  errors: string[];
-  normalizedData?: Record<string, unknown>;
-} {
-  const errors: string[] = [];
-  if (!data.title || (typeof data.title === 'string' && data.title.trim().length < 1)) {
-    errors.push('Yapılacak başlığı boş olamaz');
-  }
-  if (data.priority && !['low', 'normal', 'high', 'urgent'].includes(data.priority as string)) {
-    errors.push('Geçersiz öncelik değeri');
-  }
-  if (typeof data.completed !== 'boolean' && data.completed !== undefined) {
-    errors.push('Tamamlama durumu boolean olmalıdır');
-  }
-
-  if (errors.length > 0) {
-    return { isValid: false, errors };
-  }
-
-  const normalizedData = {
-    ...data,
-    priority: (data.priority as string) || 'normal',
-    completed: typeof data.completed === 'boolean' ? data.completed : false,
-    is_read: typeof data.is_read === 'boolean' ? data.is_read : false,
-  };
-
-  return { isValid: true, errors: [], normalizedData };
-}
-
 /**
  * GET /api/todos
+ * Fetch all todos with optional filtering
+ *
+ * @param request - Next.js request object
+ * @returns JSON response with todo list and total count
+ *
+ * Query Parameters:
+ * - completed: boolean - Filter by completion status
+ * - priority: 'low' | 'normal' | 'high' | 'urgent' - Filter by priority
+ * - created_by: string - Filter by creator user ID
+ * - tags: string - Filter by tag (comma-separated)
+ * - search: string - Search in title and description
+ * - limit: number - Results per page (default: 100)
+ * - offset: number - Pagination offset (default: 0)
+ *
+ * Security:
+ * - Requires 'todos' module access
+ * - Rate limited for read operations
  */
 async function getTodosHandler(request: NextRequest) {
   try {
@@ -55,13 +42,43 @@ async function getTodosHandler(request: NextRequest) {
       total: response.total,
     });
   } catch (error) {
-    logger.error('Failed to fetch todos', { error });
+    logger.error('Failed to fetch todos', { error, url: request.url });
     return buildErrorResponse(error, 500);
   }
 }
 
 /**
  * POST /api/todos
+ * Create a new todo item
+ *
+ * @param request - Next.js request object with JSON body
+ * @returns JSON response with created todo
+ *
+ * Request Body:
+ * {
+ *   title: string (required, 1-100 chars)
+ *   description?: string (max 500 chars)
+ *   priority?: 'low' | 'normal' | 'high' | 'urgent' (default: 'normal')
+ *   due_date?: string (ISO date string, must be future or today)
+ *   tags?: string[] (max 10 items)
+ *   is_read: boolean (required)
+ *   created_by: string (required, current user ID)
+ *   completed?: boolean (default: false)
+ * }
+ *
+ * Response Status Codes:
+ * - 201 Created - Todo successfully created
+ * - 400 Bad Request - Invalid input data
+ * - 401 Unauthorized - User not authenticated
+ * - 403 Forbidden - User lacks required module access
+ * - 429 Too Many Requests - Rate limit exceeded
+ * - 500 Internal Server Error - Server error
+ *
+ * Security:
+ * - Requires 'todos' module access
+ * - CSRF token verification required
+ * - Rate limited for data modifications
+ * - Input validated with Zod schema
  */
 async function createTodoHandler(request: NextRequest) {
   try {
@@ -71,20 +88,29 @@ async function createTodoHandler(request: NextRequest) {
 
     const body = await parseBody(request);
 
-    // Validate with schema
+    // Validate with Zod schema
     const result = todoSchema.safeParse(body);
     if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
+      logger.warn('Todo validation failed', { errors, userId: body.created_by });
+
       return NextResponse.json(
         {
           success: false,
           error: 'Validation failed',
-          details: result.error.flatten().fieldErrors,
+          details: errors,
         },
         { status: 400 }
       );
     }
 
     const todo = await appwriteTodos.create(result.data);
+
+    logger.info('Todo created', {
+      todoId: todo.$id,
+      userId: result.data.created_by,
+      title: result.data.title,
+    });
 
     return NextResponse.json(
       {

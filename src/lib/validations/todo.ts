@@ -8,7 +8,7 @@ import { z } from 'zod';
 // Future date validation (due date should be today or future)
 const futureDateSchema = z
   .string()
-  .refine((dateStr) => {
+  .refine((dateStr: string) => {
     if (!dateStr) return true; // Optional field
     const date = new Date(dateStr);
     const today = new Date();
@@ -67,10 +67,7 @@ export const todoCreateSchema = todoSchema.omit({
   created_by: true, // Will be set automatically
 });
 
-export const todoUpdateSchema = todoSchema
-  .omit({ created_by: true })
-  .partial()
-  .strict();
+export const todoUpdateSchema = todoSchema.omit({ created_by: true }).partial().strict();
 
 // === QUICK TODO SCHEMA (minimal fields) ===
 
@@ -89,7 +86,10 @@ export const quickTodoSchema = z.object({
 // === FILTER SCHEMA ===
 
 export const todoFilterSchema = z.object({
-  completed: z.enum(['true', 'false']).optional().transform((val) => val === 'true'),
+  completed: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((val: string | undefined) => val === 'true'),
   priority: priorityEnum.optional(),
   created_by: z.string().optional(),
   tags: z.string().optional(),

@@ -1001,11 +1001,7 @@ export const appwriteSystemSettings = {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.systemSettings;
     try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        []
-      );
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, []);
       // Group by category
       const grouped: Record<string, Record<string, unknown>> = {};
       response.documents.forEach((doc: Record<string, unknown>) => {
@@ -1026,11 +1022,9 @@ export const appwriteSystemSettings = {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.systemSettings;
     try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        [Query.equal('category', category)]
-      );
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+        Query.equal('category', category),
+      ]);
       const settings: Record<string, unknown> = {};
       response.documents.forEach((doc: Record<string, unknown>) => {
         settings[doc.key as string] = doc.value;
@@ -1045,11 +1039,11 @@ export const appwriteSystemSettings = {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.systemSettings;
     try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        [Query.equal('category', category), Query.equal('key', key), Query.limit(1)]
-      );
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+        Query.equal('category', category),
+        Query.equal('key', key),
+        Query.limit(1),
+      ]);
       return response.documents[0]?.value || null;
     } catch (error) {
       logger.error('Failed to get system setting', { error, category, key });
@@ -1060,11 +1054,11 @@ export const appwriteSystemSettings = {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.systemSettings;
     try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        [Query.equal('category', category), Query.equal('key', key), Query.limit(1)]
-      );
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+        Query.equal('category', category),
+        Query.equal('key', key),
+        Query.limit(1),
+      ]);
       return response.documents[0] || null;
     } catch (error) {
       logger.error('Failed to get system setting', { error, category, key });
@@ -1084,11 +1078,11 @@ export const appwriteSystemSettings = {
       // Process each setting
       for (const [key, value] of Object.entries(settings)) {
         // Check if setting exists
-        const existing = await databases.listDocuments(
-          appwriteConfig.databaseId,
-          collectionId,
-          [Query.equal('category', category), Query.equal('key', key), Query.limit(1)]
-        );
+        const existing = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+          Query.equal('category', category),
+          Query.equal('key', key),
+          Query.limit(1),
+        ]);
 
         const settingData: Record<string, unknown> = {
           category,
@@ -1122,23 +1116,18 @@ export const appwriteSystemSettings = {
       throw error;
     }
   },
-  updateSetting: async (
-    category: string,
-    key: string,
-    value: unknown,
-    updatedBy?: string
-  ) => {
+  updateSetting: async (category: string, key: string, value: unknown, updatedBy?: string) => {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.systemSettings;
     const updatedAt = new Date().toISOString();
 
     try {
       // Check if setting exists
-      const existing = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        [Query.equal('category', category), Query.equal('key', key), Query.limit(1)]
-      );
+      const existing = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+        Query.equal('category', category),
+        Query.equal('key', key),
+        Query.limit(1),
+      ]);
 
       const settingData: Record<string, unknown> = {
         category,
@@ -1206,11 +1195,7 @@ export const appwriteThemePresets = {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.themePresets;
     try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        []
-      );
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, []);
       return response.documents;
     } catch (error) {
       logger.error('Failed to list theme presets', { error });
@@ -1224,11 +1209,10 @@ export const appwriteThemePresets = {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.themePresets;
     try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        [Query.equal('is_default', true), Query.limit(1)]
-      );
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+        Query.equal('is_default', true),
+        Query.limit(1),
+      ]);
       return response.documents[0] || null;
     } catch (error) {
       logger.error('Failed to get default theme preset', { error });
@@ -1258,11 +1242,7 @@ export const appwriteThemePresets = {
  * Files/Documents API
  */
 export const appwriteFiles = {
-  list: async (params?: {
-    beneficiaryId?: string;
-    bucket?: string;
-    documentType?: string;
-  }) => {
+  list: async (params?: { beneficiaryId?: string; bucket?: string; documentType?: string }) => {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.files;
     const queries: string[] = [];
@@ -1299,11 +1279,10 @@ export const appwriteFiles = {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.files;
     try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        collectionId,
-        [Query.equal('storageId', storageId), Query.limit(1)]
-      );
+      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+        Query.equal('storageId', storageId),
+        Query.limit(1),
+      ]);
       return response.documents[0] || null;
     } catch (error) {
       logger.error('Failed to get file by storage ID', { error, storageId });
@@ -1350,22 +1329,18 @@ export const appwriteStorage = {
       // Dynamically import InputFile to avoid middleware issues
       const nodeAppwrite = await import('node-appwrite');
       const InputFile = (nodeAppwrite as any).InputFile || nodeAppwrite.default?.InputFile;
-      
+
       if (!InputFile) {
         throw new Error('InputFile not found in node-appwrite. Please check the import.');
       }
-      
+
       const fileBuffer = file instanceof File ? await file.arrayBuffer() : file;
       // Handle Buffer properly for node-appwrite
-      const buffer = fileBuffer instanceof Buffer ? fileBuffer : Buffer.from(fileBuffer as ArrayBuffer);
+      const buffer =
+        fileBuffer instanceof Buffer ? fileBuffer : Buffer.from(fileBuffer as ArrayBuffer);
       const inputFile = InputFile.fromBuffer(buffer, 'file');
-      
-      const response = await storage.createFile(
-        bucketId,
-        fileId,
-        inputFile,
-        permissions
-      );
+
+      const response = await storage.createFile(bucketId, fileId, inputFile, permissions);
       return response;
     } catch (error) {
       logger.error('Failed to upload file to Appwrite storage', { error, bucketId, fileId });
@@ -1515,7 +1490,11 @@ export const appwriteConsents = {
     }
 
     try {
-      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        collectionId,
+        queries
+      );
       return {
         documents: response.documents,
         total: response.total,
@@ -1561,7 +1540,11 @@ export const appwriteDependents = {
     }
 
     try {
-      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        collectionId,
+        queries
+      );
       return {
         documents: response.documents,
         total: response.total,
@@ -1607,7 +1590,11 @@ export const appwriteBankAccounts = {
     }
 
     try {
-      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        collectionId,
+        queries
+      );
       return {
         documents: response.documents,
         total: response.total,
@@ -1677,7 +1664,11 @@ export const appwriteScholarships = {
     }
 
     try {
-      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        collectionId,
+        queries
+      );
       return {
         documents: response.documents,
         total: response.total,
@@ -1719,9 +1710,18 @@ export const appwriteScholarships = {
     try {
       const [all, approved, pending, rejected] = await Promise.all([
         databases.listDocuments(appwriteConfig.databaseId, collectionId, queries),
-        databases.listDocuments(appwriteConfig.databaseId, collectionId, [...queries, Query.equal('status', 'approved')]),
-        databases.listDocuments(appwriteConfig.databaseId, collectionId, [...queries, Query.equal('status', 'pending')]),
-        databases.listDocuments(appwriteConfig.databaseId, collectionId, [...queries, Query.equal('status', 'rejected')]),
+        databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+          ...queries,
+          Query.equal('status', 'approved'),
+        ]),
+        databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+          ...queries,
+          Query.equal('status', 'pending'),
+        ]),
+        databases.listDocuments(appwriteConfig.databaseId, collectionId, [
+          ...queries,
+          Query.equal('status', 'rejected'),
+        ]),
       ]);
 
       return {
@@ -1741,7 +1741,9 @@ export const appwriteScholarships = {
  * Scholarship Applications API
  */
 export const appwriteScholarshipApplications = {
-  list: async (params?: AppwriteQueryParams & { scholarship_id?: string; status?: string; tc_no?: string }) => {
+  list: async (
+    params?: AppwriteQueryParams & { scholarship_id?: string; status?: string; tc_no?: string }
+  ) => {
     const databases = getDatabases();
     const collectionId = appwriteConfig.collections.scholarshipApplications;
     const queries = buildQueries(params);
@@ -1757,7 +1759,11 @@ export const appwriteScholarshipApplications = {
     }
 
     try {
-      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        collectionId,
+        queries
+      );
       return {
         documents: response.documents,
         total: response.total,
@@ -1815,7 +1821,11 @@ export const appwriteScholarshipPayments = {
     }
 
     try {
-      const response = await databases.listDocuments(appwriteConfig.databaseId, collectionId, queries);
+      const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        collectionId,
+        queries
+      );
       return {
         documents: response.documents,
         total: response.total,
@@ -1847,4 +1857,3 @@ export const appwriteScholarshipPayments = {
     return await deleteDocument('scholarshipPayments', id);
   },
 };
-
