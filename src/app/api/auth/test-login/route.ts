@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { generateCsrfToken } from '@/lib/csrf';
 import { appwriteUsers } from '@/lib/appwrite/api';
 import { verifyPassword } from '@/lib/auth/password';
@@ -52,7 +51,6 @@ export async function GET() {
 
     // Set session cookie
     const signedSession = serializeSessionCookie(sessionData);
-    const _cookieStore = await cookies();
     
     // Create response with redirect
     const response = NextResponse.redirect(new URL('/genel', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'));
