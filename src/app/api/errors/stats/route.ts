@@ -58,9 +58,9 @@ async function getErrorStatsHandler(request: NextRequest) {
       status?: string;
       occurrence_count?: number;
     }
-    
+
     const errors = (allErrors.documents || []) as ErrorRecord[];
-    
+
     // Calculate statistics
     const stats = {
       total: errors.length,
@@ -75,12 +75,12 @@ async function getErrorStatsHandler(request: NextRequest) {
         acc[category] = (acc[category] || 0) + 1;
         return acc;
       }, {}),
-      by_status: errors.reduce((acc: Record<string, number>, e: ErrorRecord) => {
+      by_status: errors.reduce((acc: Record<string, number>, e) => {
         const status = e.status || 'unknown';
         acc[status] = (acc[status] || 0) + 1;
         return acc;
       }, {}),
-      total_occurrences: errors.reduce((sum: number, e: ErrorRecord) => sum + (e.occurrence_count || 1), 0),
+      total_occurrences: errors.reduce((sum: number, e) => sum + (e.occurrence_count || 1), 0),
     };
 
     return NextResponse.json({

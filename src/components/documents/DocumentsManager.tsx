@@ -220,13 +220,9 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
             <span className="ml-2 text-sm text-muted-foreground">Yükleniyor...</span>
           </div>
         ) : documents && documents.length > 0 ? (
-          documents.map((doc: { $id?: string; _id?: string; storageId?: string; fileType?: string; fileName?: string; fileSize?: number; uploadedAt?: string; [key: string]: unknown }) => {
-            const fileType = typeof doc.fileType === 'string' ? doc.fileType : 'application/octet-stream';
-            const Icon = getFileIcon(fileType);
-            const docId = doc.$id || doc._id || doc.storageId || '';
-            const fileName = String(doc.fileName || 'Dosya');
-            const fileSize = typeof doc.fileSize === 'number' ? doc.fileSize : 0;
-            const uploadedAt = typeof doc.uploadedAt === 'string' ? doc.uploadedAt : '';
+          documents.map((doc: Record<string, unknown>) => {
+            const Icon = getFileIcon(String(doc.fileType || ''));
+            const docId = String(doc.$id || doc._id || doc.storageId || '');
             return (
               <Card key={docId} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
@@ -236,10 +232,10 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
                         <Icon className="h-5 w-5 text-blue-600" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{fileName as React.ReactNode}</p>
+                        <p className="font-medium text-sm truncate">{String(doc.fileName || '')}</p>
                         <p className="text-xs text-muted-foreground">
-                          {formatFileSize(fileSize)} •{' '}
-                          {uploadedAt ? new Date(uploadedAt).toLocaleDateString('tr-TR') : ''}
+                          {formatFileSize(Number(doc.fileSize) || 0)} •{' '}
+                          {new Date(String(doc.uploadedAt || '')).toLocaleDateString('tr-TR')}
                         </p>
                       </div>
                     </div>
@@ -247,7 +243,7 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDownload(doc as Document)}
+                        onClick={() => handleDownload(doc as unknown as Document)}
                         className="gap-2"
                       >
                         <Download className="h-4 w-4" />
@@ -257,7 +253,7 @@ export function DocumentsManager({ beneficiaryId }: DocumentsManagerProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          deleteMutation.mutate(doc.storageId || docId);
+                          deleteMutation.mutate(String(doc.storageId || docId));
                         }}
                         disabled={deleteMutation.isPending}
                         className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"

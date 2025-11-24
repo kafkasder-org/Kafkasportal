@@ -318,17 +318,17 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                       </Badge>
                     </div>
                     <div className="space-y-1 text-sm text-muted-foreground">
-                      {dependent.birth_date && typeof dependent.birth_date === 'string' ? (
-                        <p>Doğum: {new Date(dependent.birth_date).toLocaleDateString('tr-TR')}</p>
-                      ) : null}
-                      {dependent.tc_no ? <p>TC: {String(dependent.tc_no)}</p> : null}
-                      {dependent.phone ? <p>Telefon: {String(dependent.phone)}</p> : null}
-                      {dependent.education_level ? <p>Eğitim: {String(dependent.education_level)}</p> : null}
-                      {dependent.occupation ? <p>Meslek: {String(dependent.occupation)}</p> : null}
-                      {dependent.monthly_income && typeof dependent.monthly_income === 'number' ? (
-                        <p>Gelir: {dependent.monthly_income.toLocaleString('tr-TR')} ₺</p>
-                      ) : null}
-                      {dependent.has_disability ? (
+                      {Boolean(dependent.birth_date) && (
+                        <p>Doğum: {new Date(String(dependent.birth_date)).toLocaleDateString('tr-TR')}</p>
+                      )}
+                      {Boolean(dependent.tc_no) && <p>TC: {String(dependent.tc_no)}</p>}
+                      {Boolean(dependent.phone) && <p>Telefon: {String(dependent.phone)}</p>}
+                      {Boolean(dependent.education_level) && <p>Eğitim: {String(dependent.education_level)}</p>}
+                      {Boolean(dependent.occupation) && <p>Meslek: {String(dependent.occupation)}</p>}
+                      {Boolean(dependent.monthly_income) && (
+                        <p>Gelir: {Number(dependent.monthly_income).toLocaleString('tr-TR')} ₺</p>
+                      )}
+                      {Boolean(dependent.has_disability) && (
                         <p className="text-orange-600">Engellilik durumu var</p>
                       ) : null}
                     </div>

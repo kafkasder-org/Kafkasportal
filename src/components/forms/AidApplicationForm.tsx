@@ -173,15 +173,11 @@ export function AidApplicationForm({ onSuccess, onCancel }: AidApplicationFormPr
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Seçiniz</SelectItem>
-                    {beneficiaries.map((ben) => {
-                      const beneficiaryId = ben._id || ben.$id;
-                      if (!beneficiaryId) return null;
-                      return (
-                        <SelectItem key={beneficiaryId} value={beneficiaryId}>
-                          {ben.name} - {ben.city}
-                        </SelectItem>
-                      );
-                    })}
+                    {beneficiaries.map((ben) => (
+                      <SelectItem key={ben._id || ben.$id || ''} value={ben._id || ben.$id || ''}>
+                        {ben.name} - {ben.city}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

@@ -89,8 +89,9 @@ async function postErrorHandler(request: NextRequest) {
       occurrence_count: 1,
       first_seen: new Date().toISOString(),
       last_seen: new Date().toISOString(),
-    }) as { $id?: string; id?: string };
-    const errorId = result.$id || result.id || '';
+    });
+    const typedResult = result as { $id?: string; id?: string };
+    const errorId = typedResult.$id || typedResult.id || '';
 
     // Send notification for critical/high severity errors
     if (data.severity === 'critical' || data.severity === 'high') {
