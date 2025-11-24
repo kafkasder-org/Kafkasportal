@@ -24,9 +24,10 @@
  * }
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { requireModuleAccess, verifyCsrfToken, buildErrorResponse } from '@/lib/api/auth-utils';
-import { dataModificationRateLimit } from '@/lib/rate-limit';
+import { NextRequest } from 'next/server';
+import { buildApiRoute } from '@/lib/api/middleware';
+import { successResponse, errorResponse, parseBody } from '@/lib/api/route-helpers';
+import { requireAuthenticatedUser, verifyCsrfToken } from '@/lib/api/auth-utils';
 import logger from '@/lib/logger';
 import { z } from 'zod';
 import { sendSMS } from '@/lib/services/sms';
@@ -151,169 +152,128 @@ async function sendBulkEmailMessages(
   return result;
 }
 
-async function sendBulkMessageHandler(request: NextRequest) {
-  try {
-    // Require authentication with messages module access
-    const { user } = await requireModuleAccess('messages');
+export const POST = buildApiRoute({
+  requireModule: 'messages',
+  allowedMethods: ['POST'],
+  rateLimit: { maxRequests: 20, windowMs: 60000 },
+  supportOfflineSync: false,
+})(async (request: NextRequest) => {
+  await verifyCsrfToken(request);
+  const { user } = await requireAuthenticatedUser();
 
-    // CSRF protection
-    await verifyCsrfToken(request);
+  const { data: body, error: parseError } = await parseBody(request);
+  if (parseError || !body) {
+    return errorResponse(parseError || 'Veri bulunamadı', 400);
+  }
 
-    // Parse and validate request body
-    const body = await request.json();
-    const validation = bulkMessageSchema.safeParse(body);
+  const validation = bulkMessageSchema.safeParse(body);
+  if (!validation.success) {
+    return errorResponse('Geçersiz istek', 400, validation.error.issues.map((i) => i.message));
+  }
 
-    if (!validation.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Geçersiz istek',
-          details: validation.error.issues,
-        },
-        { status: 400 }
-      );
-    }
+  const { type, recipients, message, subject } = validation.data;
 
-    const { type, recipients, message, subject } = validation.data;
+  // Email requires subject
+  if (type === 'email' && !subject) {
+    return errorResponse('Email göndermek için konu başlığı gereklidir', 400);
+  }
 
-    // Email requires subject
-    if (type === 'email' && !subject) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Email göndermek için konu başlığı gereklidir',
-        },
-        { status: 400 }
-      );
-    }
+  logger.info('Starting bulk message sending', {
+    service: 'messages',
+    type,
+    userId: user.id,
+    recipientCount: recipients.length,
+    messageLength: message.length,
+  });
 
-    logger.info('Starting bulk message sending', {
-      service: 'messages',
-      type,
-      userId: user.id,
-      recipientCount: recipients.length,
-      messageLength: message.length,
-    });
+  let result: {
+    total: number;
+    successful: number;
+    failed: number;
+    failedRecipients: Array<{ recipient: string; error: string }>;
+  };
 
-    let result: {
-      total: number;
-      successful: number;
-      failed: number;
-      failedRecipients: Array<{ recipient: string; error: string }>;
-    };
+  // Send messages based on type
+  switch (type) {
+    case 'sms':
+      result = await sendBulkSMSMessages(recipients, message);
+      break;
 
-    // Send messages based on type
-    switch (type) {
-      case 'sms':
-        result = await sendBulkSMSMessages(recipients, message);
-        break;
+    case 'email':
+      result = await sendBulkEmailMessages(recipients, message, subject);
+      break;
 
-      case 'email':
-        result = await sendBulkEmailMessages(recipients, message, subject);
-        break;
-
-      case 'whatsapp':
-        try {
-          const whatsappResult = await sendBulkWhatsAppMessages(recipients, message);
-          result = {
-            total: whatsappResult.total,
-            successful: whatsappResult.successful,
-            failed: whatsappResult.failed,
-            failedRecipients: whatsappResult.failedRecipients.map((phone) => ({
-              recipient: phone,
-              error: 'WhatsApp mesajı gönderilemedi',
-            })),
-          };
-        } catch (error) {
-          // WhatsApp client not initialized
-          return NextResponse.json(
-            {
-              success: false,
-              error: 'WhatsApp servisi hazır değil. Lütfen önce WhatsApp QR kodunu okutun.',
-              details: error instanceof Error ? error.message : 'Unknown error',
-            },
-            { status: 503 }
-          );
-        }
-        break;
-
-      default:
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Geçersiz mesaj tipi',
-          },
-          { status: 400 }
+    case 'whatsapp':
+      try {
+        const whatsappResult = await sendBulkWhatsAppMessages(recipients, message);
+        result = {
+          total: whatsappResult.total,
+          successful: whatsappResult.successful,
+          failed: whatsappResult.failed,
+          failedRecipients: whatsappResult.failedRecipients.map((phone) => ({
+            recipient: phone,
+            error: 'WhatsApp mesajı gönderilemedi',
+          })),
+        };
+      } catch (error) {
+        // WhatsApp client not initialized
+        return errorResponse(
+          'WhatsApp servisi hazır değil. Lütfen önce WhatsApp QR kodunu okutun.',
+          503,
+          [error instanceof Error ? error.message : 'Unknown error']
         );
-    }
+      }
+      break;
 
-    logger.info('Bulk message sending completed', {
-      service: 'messages',
-      type,
-      userId: user.id,
-      total: result.total,
+    default:
+      return errorResponse('Geçersiz mesaj tipi', 400);
+  }
+
+  logger.info('Bulk message sending completed', {
+    service: 'messages',
+    type,
+    userId: user.id,
+    total: result.total,
+    successful: result.successful,
+    failed: result.failed,
+  });
+
+  // Save to communication_logs using Appwrite
+  try {
+    const { appwriteCommunicationLogs } = await import('@/lib/appwrite/api');
+    
+    const logData = {
+      type: type as 'email' | 'sms' | 'whatsapp',
+      recipient_count: recipients.length,
+      message,
       successful: result.successful,
       failed: result.failed,
+      sent_at: new Date().toISOString(),
+      user_id: user.id,
+      status: result.failed === 0 ? 'sent' : result.successful === 0 ? 'failed' : 'partial',
+      metadata: {
+        subject,
+        failedRecipients: result.failedRecipients,
+      },
+    };
+
+    const logResponse = await appwriteCommunicationLogs.create(logData);
+    const typedLogResponse = logResponse as { $id?: string; id?: string };
+    const logId = typedLogResponse.$id || typedLogResponse.id || '';
+
+    logger.info('Bulk operation logged successfully', {
+      service: 'messages',
+      logId,
     });
-
-    // Save to communication_logs using Appwrite
-    try {
-      const { appwriteCommunicationLogs } = await import('@/lib/appwrite/api');
-      
-      const logData = {
-        type: type as 'email' | 'sms' | 'whatsapp',
-        recipient_count: recipients.length,
-        message,
-        successful: result.successful,
-        failed: result.failed,
-        sent_at: new Date().toISOString(),
-        user_id: user.id,
-        status: result.failed === 0 ? 'sent' : result.successful === 0 ? 'failed' : 'partial',
-        metadata: {
-          subject,
-          failedRecipients: result.failedRecipients,
-        },
-      };
-
-      const logResponse = await appwriteCommunicationLogs.create(logData);
-      const typedLogResponse = logResponse as { $id?: string; id?: string };
-      const logId = typedLogResponse.$id || typedLogResponse.id || '';
-
-      logger.info('Bulk operation logged successfully', {
-        service: 'messages',
-        logId,
-      });
-    } catch (logError) {
-      // Log error but don't fail the request
-      logger.error('Failed to save communication log', logError, {
-        service: 'messages',
-      });
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: `${result.successful} mesaj başarıyla gönderildi${result.failed > 0 ? `, ${result.failed} mesaj başarısız` : ''}`,
-      data: result,
-    });
-  } catch (error) {
-    const authError = buildErrorResponse(error);
-    if (authError) {
-      return NextResponse.json(authError.body, { status: authError.status });
-    }
-
-    logger.error('Failed to send bulk messages', error, {
+  } catch (logError) {
+    // Log error but don't fail the request
+    logger.error('Failed to save communication log', logError, {
       service: 'messages',
     });
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Toplu mesaj gönderilemedi',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
   }
-}
 
-export const POST = dataModificationRateLimit(sendBulkMessageHandler);
+  return successResponse(
+    result,
+    `${result.successful} mesaj başarıyla gönderildi${result.failed > 0 ? `, ${result.failed} mesaj başarısız` : ''}`
+  );
+});

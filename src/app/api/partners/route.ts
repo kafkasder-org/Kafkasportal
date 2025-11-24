@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { appwritePartners, normalizeQueryParams } from '@/lib/appwrite/api';
-import logger from '@/lib/logger';
-import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
-import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
+import { buildApiRoute } from '@/lib/api/middleware';
+import { successResponse, errorResponse, parseBody } from '@/lib/api/route-helpers';
+import { verifyCsrfToken, requireAuthenticatedUser } from '@/lib/api/auth-utils';
 
 // TypeScript interfaces
 interface PartnerFilters {
@@ -84,142 +84,86 @@ function validatePartnerData(data: PartnerData): ValidationResult {
  * GET /api/partners
  * List partners with pagination and filters
  */
-async function getPartnersHandler(request: NextRequest) {
-  try {
-    // Require authentication and module access
-    await requireModuleAccess('partners');
+export const GET = buildApiRoute({
+  requireModule: 'partners',
+  allowedMethods: ['GET'],
+  rateLimit: { maxRequests: 100, windowMs: 60000 },
+})(async (request: NextRequest) => {
+  const { searchParams } = new URL(request.url);
+  const params = normalizeQueryParams(searchParams);
 
-    const { searchParams } = new URL(request.url);
-    const params = normalizeQueryParams(searchParams);
-
-    // Extract filters from query params
-    const filters: PartnerFilters = {};
-    if (searchParams.get('type')) filters.type = searchParams.get('type') || undefined;
-    if (searchParams.get('status')) filters.status = searchParams.get('status') || undefined;
-    if (searchParams.get('partnership_type'))
-      filters.partnership_type = searchParams.get('partnership_type') || undefined;
+  // Extract filters from query params
+  const filters: PartnerFilters = {};
+  if (searchParams.get('type')) filters.type = searchParams.get('type') || undefined;
+  if (searchParams.get('status')) filters.status = searchParams.get('status') || undefined;
+  if (searchParams.get('partnership_type'))
+    filters.partnership_type = searchParams.get('partnership_type') || undefined;
 
     const response = await appwritePartners.list({
       limit: params.limit,
       skip: params.skip,
       search: params.search,
-      type: filters?.type as any,
-      status: filters?.status as any,
-      partnership_type: filters?.partnership_type as any,
+      type: filters?.type,
+      status: filters?.status,
+      partnership_type: filters?.partnership_type,
     });
 
-    const partners = response.documents || [];
-    const total = response.total || 0;
+  const partners = response.documents || [];
+  const total = response.total || 0;
 
-    return NextResponse.json({
-      success: true,
-      data: partners,
-      total,
-      message: `${total} partner bulundu`,
-    });
-  } catch (_error: unknown) {
-    // Handle auth errors with buildErrorResponse
-    const authError = buildErrorResponse(_error);
-    if (authError) {
-      return NextResponse.json(authError.body, { status: authError.status });
-    }
-
-    logger.error('Partners list error', _error, {
-      endpoint: '/api/partners',
-      method: 'GET',
-    });
-
-    return NextResponse.json(
-      { success: false, error: 'Listeleme işlemi başarısız' },
-      { status: 500 }
-    );
-  }
-}
+  return successResponse(partners, `${total} partner bulundu`);
+});
 
 /**
  * POST /api/partners
  * Create new partner
  */
-async function createPartnerHandler(request: NextRequest) {
-  let body: PartnerData | null = null;
-  try {
-    // Verify CSRF token
-    await verifyCsrfToken(request);
+export const POST = buildApiRoute({
+  requireModule: 'partners',
+  allowedMethods: ['POST'],
+  rateLimit: { maxRequests: 50, windowMs: 60000 },
+  supportOfflineSync: true,
+})(async (request: NextRequest) => {
+  await verifyCsrfToken(request);
+  await requireAuthenticatedUser();
 
-    // Require authentication and module access
-    await requireModuleAccess('partners');
-
-    body = (await request.json()) as PartnerData;
-
-    // Validate input
-    if (!body) {
-      return NextResponse.json({ success: false, error: 'Veri bulunamadı' }, { status: 400 });
-    }
-
-    // Validate partner data
-    const validation = validatePartnerData(body);
-    if (!validation.isValid) {
-      return NextResponse.json(
-        { success: false, error: 'Doğrulama hatası', details: validation.errors },
-        { status: 400 }
-      );
-    }
-
-    // Prepare Appwrite mutation data
-    const partnerData = {
-      name: body.name || '',
-      type: body.type as 'organization' | 'individual' | 'sponsor',
-      contact_person: body.contact_person,
-      email: body.email,
-      phone: body.phone,
-      address: body.address,
-      website: body.website,
-      tax_number: body.tax_number,
-      partnership_type: body.partnership_type as
-        | 'donor'
-        | 'supplier'
-        | 'volunteer'
-        | 'sponsor'
-        | 'service_provider',
-      collaboration_start_date: body.collaboration_start_date,
-      collaboration_end_date: body.collaboration_end_date,
-      notes: body.notes,
-      status: (body.status as 'active' | 'inactive' | 'pending') || 'active',
-      total_contribution: body.total_contribution || 0,
-      contribution_count: body.contribution_count || 0,
-      logo_url: body.logo_url,
-    };
-
-    const response = await appwritePartners.create(partnerData);
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: response,
-        message: 'Partner başarıyla oluşturuldu',
-      },
-      { status: 201 }
-    );
-  } catch (_error: unknown) {
-    // Handle auth errors with buildErrorResponse
-    const authError = buildErrorResponse(_error);
-    if (authError) {
-      return NextResponse.json(authError.body, { status: authError.status });
-    }
-
-    logger.error('Partner creation error', _error, {
-      endpoint: '/api/partners',
-      method: 'POST',
-      partnerName: body?.name,
-    });
-
-    return NextResponse.json(
-      { success: false, error: 'Oluşturma işlemi başarısız' },
-      { status: 500 }
-    );
+  const { data: body, error: parseError } = await parseBody<PartnerData>(request);
+  if (parseError || !body) {
+    return errorResponse(parseError || 'Veri bulunamadı', 400);
   }
-}
 
-// Export handlers with rate limiting
-export const GET = readOnlyRateLimit(getPartnersHandler);
-export const POST = dataModificationRateLimit(createPartnerHandler);
+  // Validate partner data
+  const validation = validatePartnerData(body);
+  if (!validation.isValid) {
+    return errorResponse('Doğrulama hatası', 400, validation.errors);
+  }
+
+  // Prepare Appwrite mutation data
+  const partnerData = {
+    name: body.name || '',
+    type: body.type as 'organization' | 'individual' | 'sponsor',
+    contact_person: body.contact_person,
+    email: body.email,
+    phone: body.phone,
+    address: body.address,
+    website: body.website,
+    tax_number: body.tax_number,
+    partnership_type: body.partnership_type as
+      | 'donor'
+      | 'supplier'
+      | 'volunteer'
+      | 'sponsor'
+      | 'service_provider',
+    collaboration_start_date: body.collaboration_start_date,
+    collaboration_end_date: body.collaboration_end_date,
+    notes: body.notes,
+    status: (body.status as 'active' | 'inactive' | 'pending') || 'active',
+    total_contribution: body.total_contribution || 0,
+    contribution_count: body.contribution_count || 0,
+    logo_url: body.logo_url,
+  };
+
+  const response = await appwritePartners.create(partnerData);
+
+  return successResponse(response, 'Partner başarıyla oluşturuldu', 201);
+});

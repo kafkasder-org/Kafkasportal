@@ -59,7 +59,9 @@ export async function createUnifiedCrud<T>(
     get: appwriteOps.get as unknown as UnifiedCrudOperations<T>['get'],
     create: appwriteOps.create as unknown as UnifiedCrudOperations<T>['create'],
     update: appwriteOps.update as unknown as UnifiedCrudOperations<T>['update'],
-    delete: appwriteOps.delete,
+    delete: async (id: string) => {
+      await appwriteOps.delete(id);
+    },
   };
 }
 

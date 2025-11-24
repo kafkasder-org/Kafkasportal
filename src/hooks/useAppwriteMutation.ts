@@ -67,6 +67,7 @@ export function useAppwriteMutation<TData = unknown, TVariables = unknown, TErro
             type: mutationType,
             collection: collectionName,
             data: variables as Record<string, unknown>,
+            retryCount: 0,
           });
 
           toast.info('İşlem offline kuyruğuna eklendi', {

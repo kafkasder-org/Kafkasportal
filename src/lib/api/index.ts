@@ -27,7 +27,7 @@ export const parametersApi = {
   getAllParameters: async () => {
     try {
       const response = await appwriteParameters.list();
-      const flattened = (response.documents || []).map((doc: { category?: string; key?: string; value?: unknown; [key: string]: unknown }) => ({
+      const flattened = ((response.documents || []) as Array<{ category?: string; key?: string; value?: unknown; [key: string]: unknown }>).map((doc) => ({
         category: doc.category || '',
         key: doc.key || '',
         value: doc.value,
@@ -50,9 +50,9 @@ export const parametersApi = {
 
     try {
       const response = await appwriteParameters.list();
-      const items = (response.documents || [])
-        .filter((doc: { category?: string; [key: string]: unknown }) => doc.category === category)
-        .map((doc: { category?: string; key?: string; value?: unknown; [key: string]: unknown }) => ({
+      const items = ((response.documents || []) as Array<{ category?: string; key?: string; value?: unknown; [key: string]: unknown }>)
+        .filter((doc) => doc.category === category)
+        .map((doc) => ({
           category: doc.category || category,
           key: doc.key || '',
           value: doc.value,
@@ -113,13 +113,13 @@ export const parametersApi = {
     try {
       // Find parameter by category and key, then delete
       const response = await appwriteParameters.list();
-      const param = (response.documents || []).find(
-        (doc: { category?: string; key?: string; [key: string]: unknown }) =>
+      const param = ((response.documents || []) as Array<{ category?: string; key?: string; _id?: string; $id?: string; [key: string]: unknown }>).find(
+        (doc) =>
           doc.category === data.category && doc.key === data.key
       );
       
       if (param && (param._id || param.$id)) {
-        await appwriteParameters.remove(param._id || param.$id || '');
+        await appwriteParameters.remove((param._id || param.$id) as string);
       }
       return { success: true, error: null };
     } catch (error) {

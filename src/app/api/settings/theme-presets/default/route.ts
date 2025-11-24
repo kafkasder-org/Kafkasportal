@@ -30,7 +30,7 @@ async function getDefaultThemeHandler(_request: NextRequest) {
     }
 
     // Parse theme_config JSON string
-    let themeConfig: any = {};
+    let themeConfig: Record<string, unknown> = {};
     try {
       themeConfig = typeof defaultPreset.theme_config === 'string'
         ? JSON.parse(defaultPreset.theme_config)

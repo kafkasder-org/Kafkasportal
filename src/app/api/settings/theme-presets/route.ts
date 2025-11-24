@@ -34,9 +34,17 @@ async function getThemePresetsHandler(_request: NextRequest) {
     const presets = await appwriteThemePresets.list();
 
     // Parse and format theme presets
-    const formattedPresets: ThemePreset[] = presets.map((preset: any) => {
+    const formattedPresets: ThemePreset[] = presets.map((preset: {
+      $id?: string;
+      _id?: string;
+      name: string;
+      description: string;
+      theme_config?: string | Record<string, unknown>;
+      is_default?: boolean;
+      is_custom?: boolean;
+    }) => {
       // Parse theme_config JSON string
-      let themeConfig: any = {};
+      let themeConfig: Record<string, unknown> = {};
       try {
         themeConfig = typeof preset.theme_config === 'string' 
           ? JSON.parse(preset.theme_config) 
@@ -103,7 +111,7 @@ async function createThemePresetHandler(request: NextRequest) {
         {
           success: false,
           error: 'Geçersiz veri',
-          details: validationResult.error.errors,
+          details: validationResult.error.issues,
         },
         { status: 400 }
       );
@@ -142,10 +150,18 @@ async function createThemePresetHandler(request: NextRequest) {
     };
 
     // Create theme preset
-    const newPreset = await appwriteThemePresets.create(createData);
+    const newPreset = await appwriteThemePresets.create(createData) as {
+      $id?: string;
+      _id?: string;
+      name: string;
+      description: string;
+      theme_config?: string | Record<string, unknown>;
+      is_default?: boolean;
+      is_custom?: boolean;
+    };
 
     // Format response
-    let themeConfigParsed: any = {};
+    let themeConfigParsed: Record<string, unknown> = {};
     try {
       themeConfigParsed = typeof newPreset.theme_config === 'string'
         ? JSON.parse(newPreset.theme_config)
@@ -155,7 +171,7 @@ async function createThemePresetHandler(request: NextRequest) {
     }
 
     const formattedPreset: ThemePreset = {
-      _id: newPreset.$id || newPreset._id,
+      _id: newPreset.$id || newPreset._id || '',
       name: newPreset.name,
       description: newPreset.description,
       colors: themeConfigParsed.colors || {},
@@ -222,7 +238,7 @@ async function updateThemePresetHandler(request: NextRequest) {
         {
           success: false,
           error: 'Geçersiz veri',
-          details: validationResult.error.errors,
+          details: validationResult.error.issues,
         },
         { status: 400 }
       );
@@ -308,7 +324,7 @@ async function deleteThemePresetHandler(request: NextRequest) {
     }
 
     // Check if the preset is the default
-    const preset = await appwriteThemePresets.get(id);
+    const preset = await appwriteThemePresets.get(id) as { is_default?: boolean } | null;
     if (preset?.is_default === true) {
       return NextResponse.json(
         { success: false, error: 'Varsayılan tema silinemez' },

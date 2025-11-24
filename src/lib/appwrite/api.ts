@@ -1296,14 +1296,17 @@ export const appwriteStorage = {
 
     try {
       // Dynamically import InputFile to avoid middleware issues
-      const { InputFile } = await import('node-appwrite');
+      const nodeAppwrite = await import('node-appwrite');
+      const InputFile = (nodeAppwrite as any).InputFile || nodeAppwrite.default?.InputFile;
+      
+      if (!InputFile) {
+        throw new Error('InputFile not found in node-appwrite. Please check the import.');
+      }
       
       const fileBuffer = file instanceof File ? await file.arrayBuffer() : file;
       // Handle Buffer properly for node-appwrite
-      const inputFile = InputFile.fromBuffer(
-        fileBuffer instanceof Buffer ? fileBuffer : Buffer.from(fileBuffer),
-        'file' // filename is required but we might not have it here easily, 'file' as default
-      );
+      const buffer = fileBuffer instanceof Buffer ? fileBuffer : Buffer.from(fileBuffer as ArrayBuffer);
+      const inputFile = InputFile.fromBuffer(buffer, 'file');
       
       const response = await storage.createFile(
         bucketId,

@@ -76,7 +76,7 @@ export function useAppwriteDocument<T = unknown>({
 
   useEffect(() => {
     if (!client || !enabled || !documentId) {
-      return undefined;
+      return;
     }
 
     const channel = `databases.${databaseId}.collections.${collectionId}.documents.${documentId}`;
@@ -128,6 +128,7 @@ export function useAppwriteDocument<T = unknown>({
       if (onError) {
         onError(error);
       }
+      return undefined;
     }
   }, [
     databaseId,
@@ -186,7 +187,7 @@ export function useAppwriteCollection<T = unknown>({
 
   useEffect(() => {
     if (!client || !enabled) {
-      return undefined;
+      return;
     }
 
     const channel = `databases.${databaseId}.collections.${collectionId}.documents`;
@@ -254,6 +255,7 @@ export function useAppwriteCollection<T = unknown>({
       if (onError) {
         onError(error);
       }
+      return undefined;
     }
   }, [
     databaseId,
@@ -303,7 +305,7 @@ export function useAppwriteMultipleChannels({
 
   useEffect(() => {
     if (!client || !enabled || channels.length === 0) {
-      return undefined;
+      return;
     }
 
     try {
@@ -336,6 +338,7 @@ export function useAppwriteMultipleChannels({
       if (onError) {
         onError(error);
       }
+      return undefined;
     }
   }, [channels, enabled, onMessage, onError]);
 

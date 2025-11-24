@@ -58,6 +58,10 @@ export interface UseStandardFormOptions<TFormData extends FieldValues, TResponse
    * Show error toast (default: true)
    */
   showErrorToast?: boolean;
+  /**
+   * Collection name for offline sync routing (required for offline support)
+   */
+  collection?: string;
 }
 
 export interface UseStandardFormReturn<TFormData extends FieldValues, TResponse> {
@@ -123,6 +127,7 @@ export function useStandardForm<TFormData extends FieldValues, TResponse = unkno
     resetOnSuccess = true,
     showSuccessToast = true,
     showErrorToast = true,
+    collection,
   } = options;
 
   // Initialize form with schema validation
@@ -145,6 +150,7 @@ export function useStandardForm<TFormData extends FieldValues, TResponse = unkno
     queryKey,
     successMessage,
     errorMessage,
+    collection: collection || 'unknown',
     showSuccessToast,
     showErrorToast,
     onSuccess: () => {
@@ -231,6 +237,7 @@ interface DeleteFormOptions<TResponse = unknown> {
   mutationFn: () => Promise<TResponse>;
   queryKey: string | string[];
   entityName: string;
+  collection?: string;
   onSuccess?: (data: TResponse) => void;
 }
 
@@ -241,11 +248,13 @@ interface DeleteFormOptions<TResponse = unknown> {
 export function useDeleteForm<TResponse = unknown>(
   options: DeleteFormOptions<TResponse>
 ): ReturnType<typeof useFormMutation<TResponse, void>> {
-  const { mutationFn, queryKey, entityName, onSuccess } = options;
+  const { mutationFn, queryKey, entityName, collection, onSuccess } = options;
 
   return useFormMutation<TResponse, void>({
     mutationFn,
     queryKey,
+    collection: collection || 'unknown',
+    mutationType: 'delete',
     successMessage: `${entityName} başarıyla silindi`,
     errorMessage: `${entityName} silinirken hata`,
     onSuccess: () => {

@@ -56,9 +56,11 @@ export async function GET() {
     const response = NextResponse.redirect(new URL('/genel', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'));
 
     // Set cookies on response
+    const nodeEnv = process.env.NODE_ENV;
+    const isProduction = nodeEnv === 'production';
     response.cookies.set('auth-session', signedSession, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'strict',
       maxAge: 24 * 60 * 60, // 24 hours
       path: '/',
@@ -66,7 +68,7 @@ export async function GET() {
 
     response.cookies.set('csrf-token', csrfToken, {
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'strict',
       maxAge: 24 * 60 * 60, // 24 hours
       path: '/',

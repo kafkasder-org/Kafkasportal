@@ -9,7 +9,8 @@
  * @see src/hooks/useAppwriteRealtime.ts for full Appwrite Realtime implementation
  */
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import {
   useAppwriteDocument,
   useAppwriteCollection,

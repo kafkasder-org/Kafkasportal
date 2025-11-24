@@ -47,7 +47,7 @@ export const oauthAuth = {
       const successUrl = redirectUrl || `${window.location.origin}/auth/callback`;
       const failureUrl = `${window.location.origin}/auth/callback?error=oauth_failed`;
 
-      account.createOAuth2Session(OAuthProvider.GitHub, successUrl, failureUrl);
+      account.createOAuth2Session(OAuthProvider.Github, successUrl, failureUrl);
     } catch (error) {
       logger.error('GitHub OAuth failed', { error });
       throw error;

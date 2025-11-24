@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { appwriteMeetings, normalizeQueryParams } from '@/lib/appwrite/api';
-import logger from '@/lib/logger';
-import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
+import { buildApiRoute } from '@/lib/api/middleware';
+import { successResponse, errorResponse, parseBody } from '@/lib/api/route-helpers';
+import { verifyCsrfToken, requireAuthenticatedUser } from '@/lib/api/auth-utils';
 
 function validateMeeting(data: Record<string, unknown>): {
   isValid: boolean;
@@ -37,99 +38,66 @@ function validateMeeting(data: Record<string, unknown>): {
 /**
  * GET /api/meetings
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireModuleAccess('workflow');
+export const GET = buildApiRoute({
+  requireModule: 'workflow',
+  allowedMethods: ['GET'],
+  rateLimit: { maxRequests: 100, windowMs: 60000 },
+})(async (request: NextRequest) => {
+  const { searchParams } = new URL(request.url);
+  const params = normalizeQueryParams(searchParams);
 
-    const { searchParams } = new URL(request.url);
-    const params = normalizeQueryParams(searchParams);
+  const response = await appwriteMeetings.list({
+    ...params,
+    organizer: searchParams.get('organizer') || undefined,
+  });
 
-    const response = await appwriteMeetings.list({
-      ...params,
-      organizer: searchParams.get('organizer') || undefined,
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: response.documents || [],
-      total: response.total || 0,
-    });
-  } catch (_error: unknown) {
-    const authError = buildErrorResponse(_error);
-    if (authError) {
-      return NextResponse.json(authError.body, { status: authError.status });
-    }
-
-    logger.error('List meetings error', _error, {
-      endpoint: '/api/meetings',
-      method: 'GET',
-    });
-    return NextResponse.json({ success: false, error: 'Veri alınamadı' }, { status: 500 });
-  }
-}
+  return successResponse(response.documents || []);
+});
 
 /**
  * POST /api/meetings
  */
-async function createMeetingHandler(request: NextRequest) {
-  let body: unknown = null;
-  try {
-    await verifyCsrfToken(request);
-    await requireModuleAccess('workflow');
+export const POST = buildApiRoute({
+  requireModule: 'workflow',
+  allowedMethods: ['POST'],
+  rateLimit: { maxRequests: 50, windowMs: 60000 },
+  supportOfflineSync: true,
+})(async (request: NextRequest) => {
+  await verifyCsrfToken(request);
+  await requireAuthenticatedUser();
 
-    body = await request.json();
-    const validation = validateMeeting(body as Record<string, unknown>);
-    if (!validation.isValid || !validation.normalizedData) {
-      return NextResponse.json(
-        { success: false, error: 'Doğrulama hatası', details: validation.errors },
-        { status: 400 }
-      );
-    }
-
-    const meetingData = {
-      title: validation.normalizedData.title as string,
-      description: validation.normalizedData.description as string | undefined,
-      meeting_date: validation.normalizedData.meeting_date as string,
-      location: validation.normalizedData.location as string | undefined,
-      organizer: validation.normalizedData.organizer as string,
-      participants: (validation.normalizedData.participants as string[]) || [],
-      status: (validation.normalizedData.status || 'scheduled') as
-        | 'scheduled'
-        | 'ongoing'
-        | 'completed'
-        | 'cancelled',
-      meeting_type: (validation.normalizedData.meeting_type || 'general') as
-        | 'general'
-        | 'committee'
-        | 'board'
-        | 'other',
-      agenda: validation.normalizedData.agenda as string | undefined,
-      notes: validation.normalizedData.notes as string | undefined,
-    };
-
-    const response = await appwriteMeetings.create(meetingData);
-
-    return NextResponse.json(
-      { success: true, data: response, message: 'Toplantı başarıyla oluşturuldu' },
-      { status: 201 }
-    );
-  } catch (_error: unknown) {
-    const authError = buildErrorResponse(_error);
-    if (authError) {
-      return NextResponse.json(authError.body, { status: authError.status });
-    }
-
-    logger.error('Create meeting error', _error, {
-      endpoint: '/api/meetings',
-      method: 'POST',
-      title: (body as Record<string, unknown>)?.title,
-      meetingDate: (body as Record<string, unknown>)?.meeting_date,
-    });
-    return NextResponse.json(
-      { success: false, error: 'Oluşturma işlemi başarısız' },
-      { status: 500 }
-    );
+  const { data: body, error: parseError } = await parseBody<Record<string, unknown>>(request);
+  if (parseError || !body) {
+    return errorResponse(parseError || 'Veri bulunamadı', 400);
   }
-}
 
-export const POST = createMeetingHandler;
+  const validation = validateMeeting(body);
+  if (!validation.isValid || !validation.normalizedData) {
+    return errorResponse('Doğrulama hatası', 400, validation.errors);
+  }
+
+  const meetingData = {
+    title: validation.normalizedData.title as string,
+    description: validation.normalizedData.description as string | undefined,
+    meeting_date: validation.normalizedData.meeting_date as string,
+    location: validation.normalizedData.location as string | undefined,
+    organizer: validation.normalizedData.organizer as string,
+    participants: (validation.normalizedData.participants as string[]) || [],
+    status: (validation.normalizedData.status || 'scheduled') as
+      | 'scheduled'
+      | 'ongoing'
+      | 'completed'
+      | 'cancelled',
+    meeting_type: (validation.normalizedData.meeting_type || 'general') as
+      | 'general'
+      | 'committee'
+      | 'board'
+      | 'other',
+    agenda: validation.normalizedData.agenda as string | undefined,
+    notes: validation.normalizedData.notes as string | undefined,
+  };
+
+  const response = await appwriteMeetings.create(meetingData);
+
+  return successResponse(response, 'Toplantı başarıyla oluşturuldu', 201);
+});

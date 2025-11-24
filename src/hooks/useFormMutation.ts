@@ -86,6 +86,7 @@ export function useFormMutation<TData = unknown, TVariables = unknown>({
             type: mutationType,
             collection,
             data: variables as Record<string, unknown>,
+            retryCount: 0,
           });
 
           toast.info('İşlem offline kuyruğuna eklendi', {

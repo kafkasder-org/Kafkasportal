@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { appwriteMessages } from '@/lib/appwrite/api';
 import logger from '@/lib/logger';
 import { extractParams } from '@/lib/api/route-helpers';
+import { sanitizePhone } from '@/lib/sanitization';
 import type { MessageDocument, UserDocument } from '@/types/database';
 
 function validateMessageUpdate(data: Record<string, unknown>): {

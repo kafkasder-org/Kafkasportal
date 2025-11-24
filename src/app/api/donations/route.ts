@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { appwriteDonations, normalizeQueryParams } from '@/lib/appwrite/api';
-import logger from '@/lib/logger';
-import type { DonationDocument, Document } from '@/types/database';
-import type { PaymentMethod } from '@/lib/api/types';
-import { verifyCsrfToken, buildErrorResponse, requireModuleAccess } from '@/lib/api/auth-utils';
-import { dataModificationRateLimit, readOnlyRateLimit } from '@/lib/rate-limit';
+import { buildApiRoute } from '@/lib/api/middleware';
+import { successResponse, errorResponse, parseBody } from '@/lib/api/route-helpers';
+import { verifyCsrfToken, requireAuthenticatedUser } from '@/lib/api/auth-utils';
 import { sanitizePhone } from '@/lib/sanitization';
 import { phoneSchema } from '@/lib/validations/shared-validators';
+import type { DonationDocument, Document } from '@/types/database';
+import type { PaymentMethod } from '@/lib/api/types';
 
 /**
  * Validate donation payload
@@ -56,99 +56,64 @@ function validateDonation(data: Partial<DonationDocument>): {
  * GET /api/donations
  * List donations
  */
-async function getDonationsHandler(request: NextRequest) {
-  try {
-    await requireModuleAccess('donations');
+export const GET = buildApiRoute({
+  requireModule: 'donations',
+  allowedMethods: ['GET'],
+  rateLimit: { maxRequests: 100, windowMs: 60000 },
+})(async (request: NextRequest) => {
+  const { searchParams } = new URL(request.url);
+  const params = normalizeQueryParams(searchParams);
 
-    const { searchParams } = new URL(request.url);
-    const params = normalizeQueryParams(searchParams);
+  const response = await appwriteDonations.list({
+    ...params,
+    donor_email: searchParams.get('donor_email') || undefined,
+  });
 
-    const response = await appwriteDonations.list({
-      ...params,
-      donor_email: searchParams.get('donor_email') || undefined,
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: response.documents || [],
-      total: response.total || 0,
-    });
-  } catch (_error: unknown) {
-    const authError = buildErrorResponse(_error);
-    if (authError) {
-      return NextResponse.json(authError.body, { status: authError.status });
-    }
-
-    logger.error('List donations error', _error, {
-      endpoint: '/api/donations',
-      method: 'GET',
-    });
-    return NextResponse.json({ success: false, error: 'Veri alınamadı' }, { status: 500 });
-  }
-}
+  return successResponse(response.documents || []);
+});
 
 /**
  * POST /api/donations
  * Create donation
  */
-async function createDonationHandler(request: NextRequest) {
-  let body: unknown = null;
-  try {
-    await verifyCsrfToken(request);
-    await requireModuleAccess('donations');
+export const POST = buildApiRoute({
+  requireModule: 'donations',
+  allowedMethods: ['POST'],
+  rateLimit: { maxRequests: 50, windowMs: 60000 },
+  supportOfflineSync: true,
+})(async (request: NextRequest) => {
+  await verifyCsrfToken(request);
+  await requireAuthenticatedUser();
 
-    body = await request.json();
-    const validation = validateDonation(body as Record<string, unknown>);
-    if (!validation.isValid || !validation.normalizedData) {
-      return NextResponse.json(
-        { success: false, error: 'Doğrulama hatası', details: validation.errors },
-        { status: 400 }
-      );
-    }
-
-    const donationData = {
-      donor_name: validation.normalizedData.donor_name || '',
-      donor_phone: validation.normalizedData.donor_phone || '',
-      donor_email: validation.normalizedData.donor_email,
-      amount: validation.normalizedData.amount || 0,
-      currency: (validation.normalizedData.currency || 'TRY') as 'TRY' | 'USD' | 'EUR',
-      donation_type: validation.normalizedData.donation_type || '',
-      payment_method: (validation.normalizedData.payment_method || 'cash') as PaymentMethod,
-      donation_purpose: validation.normalizedData.donation_purpose || '',
-      notes: validation.normalizedData.notes,
-      receipt_number: validation.normalizedData.receipt_number || '',
-      receipt_file_id: validation.normalizedData.receipt_file_id,
-      status: (validation.normalizedData.status || 'pending') as
-        | 'pending'
-        | 'completed'
-        | 'cancelled',
-    };
-
-    const response = await appwriteDonations.create(donationData);
-
-    return NextResponse.json(
-      { success: true, data: response, message: 'Bağış başarıyla oluşturuldu' },
-      { status: 201 }
-    );
-  } catch (_error: unknown) {
-    const authError = buildErrorResponse(_error);
-    if (authError) {
-      return NextResponse.json(authError.body, { status: authError.status });
-    }
-
-    logger.error('Create donation error', _error, {
-      endpoint: '/api/donations',
-      method: 'POST',
-      donorName: (body as Record<string, unknown>)?.donor_name,
-      amount: (body as Record<string, unknown>)?.amount,
-    });
-    return NextResponse.json(
-      { success: false, error: 'Oluşturma işlemi başarısız' },
-      { status: 500 }
-    );
+  const { data: body, error: parseError } = await parseBody<Record<string, unknown>>(request);
+  if (parseError || !body) {
+    return errorResponse(parseError || 'Veri bulunamadı', 400);
   }
-}
 
-// Export handlers with rate limiting
-export const GET = readOnlyRateLimit(getDonationsHandler);
-export const POST = dataModificationRateLimit(createDonationHandler);
+  const validation = validateDonation(body as Partial<DonationDocument>);
+  if (!validation.isValid || !validation.normalizedData) {
+    return errorResponse('Doğrulama hatası', 400, validation.errors);
+  }
+
+  const donationData = {
+    donor_name: validation.normalizedData.donor_name || '',
+    donor_phone: validation.normalizedData.donor_phone || '',
+    donor_email: validation.normalizedData.donor_email,
+    amount: validation.normalizedData.amount || 0,
+    currency: (validation.normalizedData.currency || 'TRY') as 'TRY' | 'USD' | 'EUR',
+    donation_type: validation.normalizedData.donation_type || '',
+    payment_method: (validation.normalizedData.payment_method || 'cash') as PaymentMethod,
+    donation_purpose: validation.normalizedData.donation_purpose || '',
+    notes: validation.normalizedData.notes,
+    receipt_number: validation.normalizedData.receipt_number || '',
+    receipt_file_id: validation.normalizedData.receipt_file_id,
+    status: (validation.normalizedData.status || 'pending') as
+      | 'pending'
+      | 'completed'
+      | 'cancelled',
+  };
+
+  const response = await appwriteDonations.create(donationData);
+
+  return successResponse(response, 'Bağış başarıyla oluşturuldu', 201);
+});
