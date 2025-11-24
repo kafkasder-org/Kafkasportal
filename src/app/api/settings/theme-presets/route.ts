@@ -19,7 +19,7 @@ import type { ThemePreset } from '@/contexts/settings-context';
  * GET - Get all theme presets
  * Requires authentication and settings:manage permission
  */
-async function getThemePresetsHandler(request: NextRequest) {
+async function getThemePresetsHandler(_request: NextRequest) {
   try {
     // Require authentication with settings:manage permission
     const { user } = await requireAuthenticatedUser();

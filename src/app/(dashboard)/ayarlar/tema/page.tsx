@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import logger from '@/lib/logger';
-import { getCsrfTokenFromCookie, fetchWithCsrf } from '@/lib/csrf';
+import { fetchWithCsrf } from '@/lib/csrf';
 import { Palette, Sun, Moon, Monitor, Check, RefreshCw, Sparkles, Trash2 } from 'lucide-react';
 
 export default function ThemeSettingsPage() {
@@ -338,7 +338,7 @@ export default function ThemeSettingsPage() {
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>Temayı Sil</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    "{preset.name}" temasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                                    &quot;{preset.name}&quot; temasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

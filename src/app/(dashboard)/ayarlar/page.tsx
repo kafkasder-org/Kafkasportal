@@ -133,7 +133,7 @@ export default function SettingsPage() {
           pendingCount: stats.pendingCount,
           failedCount: stats.failedCount,
         });
-      } catch (error) {
+      } catch (_error) {
         // Ignore errors if offline sync is not available
       }
     };

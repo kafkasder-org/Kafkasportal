@@ -52,7 +52,7 @@ export async function GET() {
 
     // Set session cookie
     const signedSession = serializeSessionCookie(sessionData);
-    const cookieStore = await cookies();
+    const _cookieStore = await cookies();
     
     // Create response with redirect
     const response = NextResponse.redirect(new URL('/genel', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'));

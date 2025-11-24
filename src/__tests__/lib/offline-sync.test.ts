@@ -14,7 +14,6 @@ import {
   retryMutation,
   clearAllMutations,
 } from '@/lib/offline-sync';
-import logger from '@/lib/logger';
 
 // Mock logger
 vi.mock('@/lib/logger', () => ({
@@ -35,7 +34,7 @@ beforeEach(() => {
 
   // Mock IndexedDB
   global.indexedDB = {
-    open: vi.fn((name: string) => {
+    open: vi.fn((_name: string) => {
       const request = {
         onerror: null,
         onsuccess: null,

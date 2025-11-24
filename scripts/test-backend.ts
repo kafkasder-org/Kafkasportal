@@ -8,8 +8,6 @@
 
 import * as dotenv from 'dotenv';
 import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
-import { execSync } from 'child_process';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -97,7 +95,7 @@ function testAppwriteLibrary() {
     } else {
       addResult('Appwrite Server SDK', 'fail', 'Not installed. Run: npm install node-appwrite');
     }
-  } catch (error) {
+  } catch (_error) {
     addResult('Appwrite Library Check', 'fail', 'Could not read package.json');
   }
 }
@@ -140,7 +138,7 @@ async function main() {
   const provider = testBackendProvider();
   console.log('');
   
-  const appwriteConfig = testAppwriteConfig();
+  const _appwriteConfig = testAppwriteConfig();
   console.log('');
   
   testAppwriteLibrary();

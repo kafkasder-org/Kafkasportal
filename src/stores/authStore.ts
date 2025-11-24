@@ -233,7 +233,7 @@ export const useAuthStore = create<AuthStore>()(
                 state.isInitialized = true;
                 state.isLoading = false;
               });
-            } catch (error) {
+            } catch (_error) {
               // Network error - check localStorage as fallback
               const stored = localStorage.getItem('auth-session');
               if (stored) {

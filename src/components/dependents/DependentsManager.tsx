@@ -330,7 +330,7 @@ export function DependentsManager({ beneficiaryId }: DependentsManagerProps) {
                       )}
                       {Boolean(dependent.has_disability) && (
                         <p className="text-orange-600">Engellilik durumu var</p>
-                      ) : null}
+                      )}
                     </div>
                   </div>
                   <Button

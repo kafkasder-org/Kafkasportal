@@ -82,7 +82,7 @@ export function KumbaraList({ onCreate }: KumbaraListProps) {
   const queryClient = useQueryClient();
 
   // Real-time subscription for donations
-  const { isConnected } = useAppwriteRealtime(
+  const { isConnected: _isConnected } = useAppwriteRealtime(
     appwriteConfig.collections.donations,
     {
       notifyOnChange: true,

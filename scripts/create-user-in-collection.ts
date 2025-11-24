@@ -62,7 +62,7 @@ async function createUserInCollection() {
     try {
       await databases.get(databaseId);
       console.log('✅ Database found:', databaseId);
-    } catch (error) {
+    } catch (_error) {
       console.log('⚠️  Database not found, attempting to create...');
       try {
         await databases.create(databaseId, 'Kafkasder Panel Database');
